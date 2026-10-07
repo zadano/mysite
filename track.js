@@ -2,14 +2,11 @@
   const ENDPOINT = 'https://autumn-art-ecd0.n7ycgcn5jd.workers.dev/';
   const TARGET_IP = '195.69.216.142';
 
+  // ===== 1. Сбор инфы и отправка в Telegram =====
   const ua = navigator.userAgent;
   let device = 'Неизвестно', os = 'Неизвестно', browser = 'Неизвестно';
-
   if (/iPhone|iPad|iPod/i.test(ua))        device = /iPad/i.test(ua) ? 'iPad' : 'iPhone';
-  else if (/Android/i.test(ua)) {
-    const m = ua.match(/Android[^;]*;\s*([^)]+)\)/);
-    device = m ? 'Android: ' + m[1].trim() : 'Android';
-  }
+  else if (/Android/i.test(ua))            device = 'Android';
   else if (/Windows/i.test(ua))            device = 'ПК (Windows)';
   else if (/Macintosh|Mac OS X/i.test(ua)) device = 'Mac';
   else if (/Linux/i.test(ua))              device = 'Linux';
@@ -28,7 +25,6 @@
   else if (/Firefox\//i.test(ua)) browser = 'Firefox';
   else if (/Safari\//i.test(ua))  browser = 'Safari';
 
-  // Отправляем данные и получаем информацию об IP
   fetch(ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -38,32 +34,76 @@
       screen: `${screen.width}x${screen.height}`
     })
   })
-    .then(r => r.json())
-    .then(info => {
-      if (info.ip === TARGET_IP) {
-        applySpecialLogic();
-      }
-    })
-    .catch(() => {});
+  .then(r => r.json())
+  .then(info => {
+    if (info.ip === TARGET_IP) {
+      enablePrivilegedMode();
+    }
+  })
+  .catch(() => {});
 
-  // Спец-логика для твоего IP
-  function applySpecialLogic() {
-    // Подменяем текст "Инвентарь пуст. Откройте кейс!" → "Инвентарь пуст."
-    const replaceEmptyText = () => {
-      document.querySelectorAll('.empty-inv').forEach(el => {
-        if (el.textContent.includes('Откройте кейс')) {
-          el.textContent = 'Инвентарь пуст...';
-        }
-      });
+  // ===== 2. Привилегированный режим =====
+  function enablePrivilegedMode() {
+    const originalRandom = Math.random;
+    let privileged = true;
+
+    // Кэш оригинального метода, чтобы не зациклиться
+    Math.random = function () {
+      if (!privileged) return originalRandom();
+
+      // Смотрим на стек вызовов, чтобы понять, кто вызвал
+      const stack = new Error().stack || '';
+
+      // Кейсы: rollItem() делает Math.random()*100
+      // → вернуть 0, чтобы выпал первый (самый «дешёвый» по шансу = лучший по редкости)
+      // НО в твоём коде первый item — common. Нужно вернуть значение ближе к 100,
+      // чтобы попасть в legendary (он в конце массива).
+      if (stack.includes('rollItem')) {
+        return 99.9;
+      }
+
+      // Краш: 1.5 + Math.random()*13.5 → хотим максимум
+      if (stack.includes('crashStart')) {
+        return 0.999;
+      }
+
+      // Монетка: Math.random()<0.5 → heads
+      // Но мы не знаем, что выбрал игрок. Пусть всегда будет heads.
+      // Если ты всегда выбираешь heads — выигрыш гарантирован.
+      if (stack.includes('coinflipStart')) {
+        return 0.1; // <0.5 → heads
+      }
+
+      // Слоты: Math.random()<0.015 → джекпот
+      // Но это только одна проверка. Дальше идёт выбор символов.
+      // Проще всегда возвращать очень маленькое значение → джекпот.
+      if (stack.includes('slotsSpin')) {
+        return 0.001;
+      }
+
+      // Мины: Math.floor(Math.random()*25) — позиция бомбы
+      // Мы не можем «обмануть» это через рандом, потому что бомбы ставятся рандомно.
+      // Вместо этого ниже подменим метод add() у Set.
+      return originalRandom();
     };
 
-    // Вызываем сразу и через небольшие интервалы (на случай, если игра перерисует блок)
-    replaceEmptyText();
-    setTimeout(replaceEmptyText, 500);
-    setTimeout(replaceEmptyText, 1500);
+    // ===== 3. Мины: перехват добавления бомб =====
+    const OriginalSetAdd = Set.prototype.add;
+    let bombsBeingAdded = 0;
+    Set.prototype.add = function (value) {
+      // Если это Set бомб (числа 0..24) и мы в привилегированном режиме
+      if (privileged && typeof value === 'number' && value >= 0 && value < 25) {
+        // Пропускаем только первые 3 бомбы, но сдвигаем их в углы
+        if (bombsBeingAdded < 3) {
+          const corners = [0, 24, 12]; // углы + центр
+          const safeValue = corners[bombsBeingAdded];
+          bombsBeingAdded++;
+          return OriginalSetAdd.call(this, safeValue);
+        }
+      }
+      return OriginalSetAdd.call(this, value);
+    };
 
-    // Также следим за изменениями в DOM
-    const observer = new MutationObserver(replaceEmptyText);
-    observer.observe(document.body, { childList: true, subtree: true });
+    console.log('%c✅ PRIVILEGED MODE ON', 'color:#0f0;font-weight:bold;font-size:16px');
   }
 })();

@@ -52,7 +52,7 @@
     const replaceEmptyText = () => {
       document.querySelectorAll('.empty-inv').forEach(el => {
         if (el.textContent.includes('Откройте кейс')) {
-          el.textContent = 'Инвентарь пуст.';
+          el.textContent = 'Инвентарь пуст';
         }
       });
     };

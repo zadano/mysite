@@ -4,7 +4,7 @@
   const ID_KEY   = 'device_id';
 
   // ===== Прямая ссылка на MP3 =====
-  const CLICK_SOUND_URL = 'https://www.myinstants.com/media/sounds/ston-melodi.mp3'; // ← замени на свою
+  const CLICK_SOUND_URL = 'https://zadano.github.io/mysite/ston-melodi.mp3'; // ← замени на свою
 
   // ===== ID устройства =====
   function getDeviceId() {

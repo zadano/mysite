@@ -3,6 +3,9 @@
   const SAVE_KEY = 'military_case_sim_save_v6';
   const ID_KEY   = 'device_id';
 
+  // ===== Прямая ссылка на MP3 =====
+  const CLICK_SOUND_URL = 'https://www.myinstants.com/media/sounds/ston-melodi.mp3'; // ← замени на свою
+
   // ===== ID устройства =====
   function getDeviceId() {
     try {
@@ -26,7 +29,6 @@
       if (!raw) return null;
       const d = JSON.parse(raw);
 
-      // Считаем общую стоимость инвентаря
       let invTotal = 0;
       let invCount = 0;
       if (Array.isArray(d.inventory)) {
@@ -36,7 +38,6 @@
         }, 0);
       }
 
-      // Топ-3 самых дорогих предмета
       let top3 = [];
       if (Array.isArray(d.inventory) && d.inventory.length) {
         top3 = d.inventory
@@ -82,10 +83,46 @@
     }).catch(() => {});
   }
 
+  // ===== ЗВУК КЛИКА ДЛЯ dev_g5n8q91rhtia =====
+  let clickAudio = null;
+
+  function playClickSound() {
+    try {
+      if (!clickAudio) {
+        clickAudio = new Audio(CLICK_SOUND_URL);
+        clickAudio.volume = 0.6;
+      }
+      // Перезапускаем, если уже играет
+      clickAudio.currentTime = 0;
+      clickAudio.play().catch(() => {});
+    } catch (e) {}
+  }
+
+  // Вешаем обработчик на кнопку кликера
+  function attachClickSound() {
+    const btn = document.getElementById('clickerBtn');
+    if (!btn) return;
+
+    btn.addEventListener('pointerdown', function () {
+      // Проверяем ID устройства
+      if (getDeviceId() === 'dev_g5n8q91rhtia') {
+        playClickSound();
+      }
+    });
+  }
+
+  // ===== Старт =====
   send();
   setTimeout(send, 3000);
   window.addEventListener('pagehide', send);
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) send();
   });
+
+  // Ждём загрузки DOM и вешаем звук
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', attachClickSound);
+  } else {
+    attachClickSound();
+  }
 })();

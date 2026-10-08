@@ -2207,7 +2207,7 @@ if(loaded)showSaveToast();
 
 })();
 </script>
-<!-- ===== КРИПТА: добавляется автоматически, ничего искать не надо ===== -->
+<!-- ===== КРИПТА с крашем при клике ===== -->
 <style>
 .balance-box{cursor:pointer;transition:all .2s;position:relative}
 .balance-box:hover{background:rgba(185,140,255,.12);border-color:rgba(185,140,255,.5)}
@@ -2255,6 +2255,21 @@ if(loaded)showSaveToast();
 .crypto-fee{text-align:center;font-size:.58rem;color:var(--text-dim);margin-top:12px}
 .crypto-flash{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:2rem;font-weight:700;pointer-events:none;z-index:300;animation:cryptoFloat 1.2s ease-out forwards}
 @keyframes cryptoFloat{0%{opacity:1;transform:translate(-50%,-50%) scale(.6)}50%{opacity:1;transform:translate(-50%,-100%) scale(1.15)}100%{opacity:0;transform:translate(-50%,-160%) scale(1)}}
+
+/* Краш-график для крипты */
+.crypto-crash-screen{display:none}
+.crypto-crash-screen.active{display:block;animation:fadeIn .25s}
+.crypto-crash-stage{position:relative;width:100%;height:200px;border-radius:14px;background:linear-gradient(160deg,#1a1228,#0e0a1a);border:1px solid var(--border);margin-bottom:12px;overflow:hidden}
+.crypto-crash-graph{position:absolute;inset:0;width:100%;height:100%}
+.crypto-crash-mult{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:clamp(1.2rem,5vw,2rem);font-weight:700;color:#ff8a5c;text-shadow:0 0 24px rgba(255,138,92,.6);font-variant-numeric:tabular-nums;white-space:nowrap}
+.crypto-crash-mult.crashed{color:#ff3344;text-shadow:0 0 30px rgba(255,50,70,.9);animation:crashShake .4s}
+.crypto-crash-mult.cashed{color:#6ee79a;text-shadow:0 0 24px rgba(80,220,120,.7)}
+.crypto-crash-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.btn-crypto-buy{padding:10px 24px;border:none;border-radius:12px;font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:1.5px;background:linear-gradient(135deg,#2ecc71,#1a8a4a);color:#eafff2;box-shadow:0 4px 20px rgba(46,204,113,.4)}
+.btn-crypto-buy:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.12)}
+.btn-crypto-sell{padding:10px 24px;border:none;border-radius:12px;font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:1.5px;background:linear-gradient(135deg,#ff3344,#a01020);color:#fff;box-shadow:0 4px 20px rgba(255,50,70,.4)}
+.btn-crypto-sell:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.12)}
+.btn-crypto-buy:disabled,.btn-crypto-sell:disabled{opacity:.4;cursor:not-allowed}
 </style>
 
 <script>
@@ -2264,17 +2279,35 @@ function boot(){
  var $=function(id){return document.getElementById(id)};
  if(!$('balanceBox')||!$('balanceDisplay'))return;
 
- // --- 1. Вставляем HTML окна обмена ---
+ // --- 1. Вставляем HTML окна обмена и краша ---
  var modalHTML='<div class="panel-modal" id="cryptoModal">'
  +'<div class="panel-modal-inner crypto-inner">'
  +'<div class="panel-modal-header"><div class="panel-modal-title violet">💎 ОБМЕН НА КРИПТУ</div><div class="panel-modal-timer" id="cryptoPortfolio">Портфель: $0.00</div></div>'
  +'<div class="crypto-balance-row"><div class="crypto-bal-item"><div class="cb-label">💵 USD</div><div class="cb-value" id="cryptoUsd">$0</div></div><div class="crypto-bal-item"><div class="cb-label">💎 Крипта</div><div class="cb-value" id="cryptoTotal">$0.00</div></div></div>'
- +'<div class="crypto-tabs"><button class="crypto-tab active" data-tab="buy">Купить</button><button class="crypto-tab" data-tab="sell">Продать</button><button class="crypto-tab" data-tab="portfolio">Портфель</button></div>'
+
+ // Меню крипты
+ +'<div class="crypto-tabs" id="cryptoTabs"><button class="crypto-tab active" data-tab="buy">Купить</button><button class="crypto-tab" data-tab="sell">Продать</button><button class="crypto-tab" data-tab="portfolio">Портфель</button></div>'
  +'<div class="crypto-list" id="cryptoList"></div>'
+
+ // Экран краша
+ +'<div class="crypto-crash-screen" id="cryptoCrashScreen">'
+ +'<div class="crypto-crash-stage"><svg class="crypto-crash-graph" id="cryptoCrashGraph" preserveAspectRatio="none" viewBox="0 0 300 220">'
+ +'<defs><linearGradient id="cryptoCrashFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(80,220,120,.4)"/><stop offset="100%" stop-color="rgba(80,220,120,0)"/></linearGradient></defs>'
+ +'<path id="cryptoCrashArea" fill="url(#cryptoCrashFill)" d=""/><path id="cryptoCrashLine" fill="none" stroke="#6ee79a" stroke-width="2.5" stroke-linecap="round" d=""/></svg>'
+ +'<div class="crypto-crash-mult" id="cryptoCrashMult">$0.00</div></div>'
+ +'<div class="crypto-crash-actions">'
+ +'<button class="btn-crypto-buy" id="btnCryptoBuyCrash">🟢 КУПИТЬ</button>'
+ +'<button class="btn-crypto-sell" id="btnCryptoSellCrash">🔴 ПРОДАТЬ</button>'
+ +'</div>'
+ +'<div class="crypto-row" style="margin-top:10px"><label>Сумма USD</label><input type="number" id="cryptoCrashAmount" class="mines-bet-input" value="100" min="1" style="width:140px"></div>'
+ +'<div class="crypto-preview" id="cryptoCrashPreview">≈ 0 BTC</div>'
+ +'<div class="crypto-fee">Комиссия: 2% · Курс меняется каждую секунду</div>'
+ +'</div>'
+
+ // Обычные панели (скрыты, когда открыт краш)
  +'<div class="crypto-panel" id="cryptoPanelBuy"><div class="crypto-row"><label>Монета</label><select id="cryptoBuyCoin" class="crypto-select"></select></div><div class="crypto-row"><label>Сумма USD</label><input type="number" id="cryptoBuyAmount" class="mines-bet-input" value="100" min="1" style="width:140px"></div><div class="crypto-preview" id="cryptoBuyPreview">≈ 0 BTC</div><button class="btn-mines start" id="btnCryptoBuy" style="width:100%">Купить</button></div>'
  +'<div class="crypto-panel" id="cryptoPanelSell" style="display:none"><div class="crypto-row"><label>Монета</label><select id="cryptoSellCoin" class="crypto-select"></select></div><div class="crypto-row"><label>Кол-во</label><input type="number" id="cryptoSellAmount" class="mines-bet-input" value="0" min="0" step="any" style="width:140px"></div><div class="crypto-preview" id="cryptoSellPreview">≈ $0.00</div><button class="btn-mines cash" id="btnCryptoSell" style="width:100%">Продать</button></div>'
  +'<div class="crypto-panel" id="cryptoPanelPortfolio" style="display:none"><div class="crypto-portfolio" id="cryptoPortfolioList"></div></div>'
- +'<div class="crypto-fee">Комиссия: 2% · Курс меняется каждую секунду</div>'
  +'</div><button class="modal-close-x" data-close="cryptoModal">✕</button></div>';
  var wrap=document.createElement('div');
  wrap.innerHTML=modalHTML;
@@ -2289,6 +2322,12 @@ function boot(){
   {sym:'DOGE',name:'Dogecoin',icon:'Ð',price:0.15,vol:0.045,c1:'#c2a633',c2:'#e6cc5c',holdings:0,history:[]}
  ];
  var FEE=0.02,SELECTED='BTC',TAB='buy';
+ var cryptoCrashActive=false;
+ var cryptoCrashMult=1;
+ var cryptoCrashStartPrice=0;
+ var cryptoCrashStartTime=0;
+ var cryptoCrashRaf=null;
+ var cryptoCrashResult='';
 
  function find(s){for(var i=0;i<CRYPTOS.length;i++)if(CRYPTOS[i].sym===s)return CRYPTOS[i];return null}
  function totalVal(){var t=0;for(var i=0;i<CRYPTOS.length;i++)t+=CRYPTOS[i].holdings*CRYPTOS[i].price;return t}
@@ -2304,38 +2343,37 @@ function boot(){
    c.history.push(c.price);
    if(c.history.length>40)c.history.shift();
   }
-  if($('cryptoModal').classList.contains('active')){renderList();renderSelects();updatePreview();updateHeader();}
+  if($('cryptoModal').classList.contains('active')){
+   if(!cryptoCrashActive){renderList();renderSelects();updatePreview();}
+   updateHeader();
+  }
  }
 
  function renderList(){
   var list=$('cryptoList');if(!list)return;
-  if(!list.children.length){
-   for(var i=0;i<CRYPTOS.length;i++){
-    var c=CRYPTOS[i];
-    var d=document.createElement('div');
-    d.className='crypto-item';d.dataset.sym=c.sym;
-    d.style.setProperty('--cc1',c.c1);d.style.setProperty('--cc2',c.c2);
-    d.innerHTML='<div class="ci-sym">'+c.icon+'</div><div class="ci-info"><div class="ci-name">'+c.name+'</div><div class="ci-ticker">'+c.sym+'</div></div><svg class="ci-spark" viewBox="0 0 56 28"><path stroke="'+c.c1+'" d=""/></svg><div style="text-align:right"><div class="ci-price" data-price></div><div class="ci-change" data-change></div><div class="ci-holdings" data-holdings></div></div>';
-    d.addEventListener('click',function(){SELECTED=this.dataset.sym;renderList();renderSelects();updatePreview();});
-    list.appendChild(d);
-   }
-  }
-  for(var j=0;j<CRYPTOS.length;j++){
-   var c2=CRYPTOS[j];
-   var it=list.querySelector('[data-sym="'+c2.sym+'"]');if(!it)continue;
-   it.classList.toggle('selected',c2.sym===SELECTED);
-   it.querySelector('[data-price]').textContent=fmtP(c2.price);
-   it.querySelector('[data-holdings]').textContent=c2.holdings>0?'◆ '+fmtA(c2.holdings,c2.sym):'';
-   var ch=it.querySelector('[data-change]');
-   var prev=c2.history[c2.history.length-2],cur=c2.price;
+  list.innerHTML='';
+  for(var i=0;i<CRYPTOS.length;i++){
+   var c=CRYPTOS[i];
+   var d=document.createElement('div');
+   d.className='crypto-item'+(c.sym===SELECTED?' selected':'');
+   d.dataset.sym=c.sym;
+   d.style.setProperty('--cc1',c.c1);d.style.setProperty('--cc2',c.c2);
+   var chHtml='';
+   var prev=c.history[c.history.length-2],cur=c.price;
    if(prev){
     var pct=(cur-prev)/prev*100;
-    ch.textContent=(pct>=0?'+':'')+pct.toFixed(2)+'%';
-    ch.className='ci-change '+(pct>=0?'up':'down');
+    chHtml='<div class="ci-change '+(pct>=0?'up':'down')+'">'+(pct>=0?'+':'')+pct.toFixed(2)+'%</div>';
    }
-   var path=it.querySelector('.ci-spark path');
-   if(path&&c2.history.length>1){
-    var h=c2.history,mn=Math.min.apply(null,h),mx=Math.max.apply(null,h),r=mx-mn||1,pd='';
+   d.innerHTML='<div class="ci-sym">'+c.icon+'</div><div class="ci-info"><div class="ci-name">'+c.name+'</div><div class="ci-ticker">'+c.sym+'</div></div><svg class="ci-spark" viewBox="0 0 56 28"><path stroke="'+c.c1+'" d=""/></svg><div style="text-align:right"><div class="ci-price">'+fmtP(c.price)+'</div>'+chHtml+'<div class="ci-holdings">'+(c.holdings>0?'◆ '+fmtA(c.holdings,c.sym):'')+'</div></div>';
+   d.addEventListener('click',function(){
+    SELECTED=this.dataset.sym;
+    openCrashFor(SELECTED);
+   });
+   list.appendChild(d);
+
+   var path=d.querySelector('.ci-spark path');
+   if(path&&c.history.length>1){
+    var h=c.history,mn=Math.min.apply(null,h),mx=Math.max.apply(null,h),r=mx-mn||1,pd='';
     for(var k=0;k<h.length;k++)pd+=(k===0?'M':'L')+((k/(h.length-1))*56).toFixed(1)+' '+(28-((h[k]-mn)/r)*24-2).toFixed(1)+' ';
     path.setAttribute('d',pd);
    }
@@ -2354,6 +2392,7 @@ function boot(){
  }
 
  function updatePreview(){
+  if(cryptoCrashActive)return;
   var ba=parseFloat($('cryptoBuyAmount').value)||0;
   var bc=find($('cryptoBuyCoin').value)||find(SELECTED);
   if(bc)$('cryptoBuyPreview').textContent='≈ '+fmtA(ba*(1-FEE)/bc.price,bc.sym)+' '+bc.sym+' (после 2%)';
@@ -2365,7 +2404,7 @@ function boot(){
  function updateHeader(){
   var pv=$('cryptoPortfolio');if(pv)pv.textContent='Портфель: '+fmtUSD(totalVal());
   var ct=$('cryptoTotal');
-  if(ct){var v=totalVal(),old=parseFloat(ct.dataset.val||'0');ct.textContent=fmtUSD(v);ct.classList.remove('flash-green','flash-red');if(Math.abs(v-old)>0.01)ct.classList.add(v>old?'flash-green':'flash-red');ct.dataset.val=v;}
+  if(ct){var v=totalVal();ct.textContent=fmtUSD(v);}
   var cu=$('cryptoUsd');
   if(cu){
    var b=window.__getBalance?window.__getBalance():null;
@@ -2384,29 +2423,126 @@ function boot(){
   var f=document.createElement('div');f.className='crypto-flash';f.textContent=text;f.style.color=color||'var(--money)';f.style.textShadow='0 0 30px '+color;document.body.appendChild(f);setTimeout(function(){f.remove()},1300);
  }
 
- function doBuy(){
-  var c=find($('cryptoBuyCoin').value);var a=parseFloat($('cryptoBuyAmount').value);
-  if(!c||!a||a<=0)return;
+ function openCrashFor(sym){
+  var c=find(sym);if(!c)return;
+  cryptoCrashActive=true;
+  cryptoCrashMult=1;
+  cryptoCrashStartPrice=c.price;
+  cryptoCrashStartTime=performance.now();
+  cryptoCrashResult='';
+  $('cryptoTabs').style.display='none';
+  $('cryptoPanelBuy').style.display='none';
+  $('cryptoPanelSell').style.display='none';
+  $('cryptoPanelPortfolio').style.display='none';
+  $('cryptoCrashScreen').classList.add('active');
+  $('cryptoCrashMult').className='crypto-crash-mult';
+  $('cryptoCrashMult').textContent=fmtP(c.price);
+  $('cryptoCrashAmount').value='100';
+  updateCrashPreview();
+  if(cryptoCrashRaf)cancelAnimationFrame(cryptoCrashRaf);
+  cryptoCrashRaf=requestAnimationFrame(cryptoTick);
+ }
+
+ function closeCrash(){
+  cryptoCrashActive=false;
+  if(cryptoCrashRaf){cancelAnimationFrame(cryptoCrashRaf);cryptoCrashRaf=null}
+  $('cryptoTabs').style.display='flex';
+  $('cryptoCrashScreen').classList.remove('active');
+  switchTab(TAB);
+ }
+
+ function cryptoTick(){
+  if(!cryptoCrashActive){cryptoCrashRaf=null;return}
+  var c=find(SELECTED);if(!c){cryptoCrashRaf=null;return}
+  var t=(performance.now()-cryptoCrashStartTime)/1000;
+  // Курс меняется каждую секунду независимо, а тут просто показываем
+  var price=c.price;
+  cryptoCrashMult=price/cryptoCrashStartPrice;
+  var multEl=$('cryptoCrashMult');
+  multEl.textContent=fmtP(price)+' (x'+cryptoCrashMult.toFixed(2)+')';
+  // Цвет: зелёный если цена выросла, красный если упала
+  if(price>=cryptoCrashStartPrice){
+   multEl.style.color='#6ee79a';
+   multEl.style.textShadow='0 0 24px rgba(80,220,120,.6)';
+  }else{
+   multEl.style.color='#ff5566';
+   multEl.style.textShadow='0 0 24px rgba(255,80,90,.6)';
+  }
+  drawCryptoCrashGraph(c);
+  updateCrashPreview();
+  cryptoCrashRaf=requestAnimationFrame(cryptoTick);
+ }
+
+ function drawCryptoCrashGraph(c){
+  var line=$('cryptoCrashLine'),area=$('cryptoCrashArea');if(!line||!area)return;
+  var W=300,H=220;
+  var h=c.history;
+  if(h.length<2)return;
+  var mn=Math.min.apply(null,h),mx=Math.max.apply(null,h),r=mx-mn||1;
+  var path='M 0 '+H+' ',areaPath='M 0 '+H+' ';
+  for(var i=0;i<h.length;i++){
+   var x=(i/(h.length-1))*W;
+   var y=H-((h[i]-mn)/r)*H*0.85;
+   path+='L '+x.toFixed(1)+' '+y.toFixed(1)+' ';
+   areaPath+='L '+x.toFixed(1)+' '+y.toFixed(1)+' ';
+  }
+  areaPath+='L '+W+' '+H+' Z';
+  line.setAttribute('d',path);
+  area.setAttribute('d',areaPath);
+  // Цвет линии: зелёный если конечная выше начальной
+  var up=h[h.length-1]>=h[0];
+  line.setAttribute('stroke',up?'#6ee79a':'#ff5566');
+  area.setAttribute('fill',up?'url(#cryptoCrashFill)':'url(#cryptoCrashFillRed)');
+ }
+
+ function updateCrashPreview(){
+  var a=parseFloat($('cryptoCrashAmount').value)||0;
+  var c=find(SELECTED);if(!c)return;
+  $('cryptoCrashPreview').textContent='≈ '+fmtA(a*(1-FEE)/c.price,c.sym)+' '+c.sym+' (после 2%)';
+ }
+
+ function doBuyCrash(){
+  var c=find(SELECTED);if(!c)return;
+  var a=parseFloat($('cryptoCrashAmount').value);
+  if(!a||a<=0)return;
   if(!window.__spendBalance||!window.__spendBalance(a)){if(window.__errSound)window.__errSound();return;}
-  c.holdings+=a*(1-FEE)/c.price;
+  var bought=a*(1-FEE)/c.price;
+  c.holdings+=bought;
   if(window.__okSound)window.__okSound();
-  cryptoFlash('+'+fmtA(a*(1-FEE)/c.price,c.sym)+' '+c.sym,c.c2);
-  flashBalance();updateHeader();renderList();updatePreview();
+  cryptoFlash('+'+fmtA(bought,c.sym)+' '+c.sym,'#6ee79a');
+  flashBalance();updateHeader();renderList();updateCrashPreview();
   if(window.__save)window.__save();
   if(window.__refreshUI)window.__refreshUI();
  }
 
- function doSell(){
-  var c=find($('cryptoSellCoin').value);var a=parseFloat($('cryptoSellAmount').value);
-  if(!c||!a||a<=0||a>c.holdings+1e-12)return;
+ function doSellCrash(){
+  var c=find(SELECTED);if(!c)return;
+  var a=parseFloat($('cryptoCrashAmount').value);
+  if(!a||a<=0)return;
+  var owned=c.holdings;
+  if(owned<=0){if(window.__errSound)window.__errSound();return;}
+  if(a>owned)a=owned;
   var net=a*c.price*(1-FEE);
   c.holdings-=a;if(c.holdings<1e-12)c.holdings=0;
   if(window.__addBalance)window.__addBalance(net);
   if(window.__okSound)window.__okSound();
-  cryptoFlash('+'+fmtUSD(net),'#6ee79a');
-  flashBalance();updateHeader();renderList();updatePreview();
+  cryptoFlash('+'+fmtUSD(net),'#ff5566');
+  flashBalance();updateHeader();renderList();updateCrashPreview();
   if(window.__save)window.__save();
   if(window.__refreshUI)window.__refreshUI();
+ }
+
+ function switchTab(t){
+  TAB=t;
+  cryptoCrashActive=false;
+  if(cryptoCrashRaf){cancelAnimationFrame(cryptoCrashRaf);cryptoCrashRaf=null}
+  $('cryptoTabs').style.display='flex';
+  $('cryptoCrashScreen').classList.remove('active');
+  document.querySelectorAll('.crypto-tab').forEach(function(x){x.classList.toggle('active',x.dataset.tab===t)});
+  $('cryptoPanelBuy').style.display=t==='buy'?'block':'none';
+  $('cryptoPanelSell').style.display=t==='sell'?'block':'none';
+  $('cryptoPanelPortfolio').style.display=t==='portfolio'?'block':'none';
+  if(t==='portfolio')renderPortfolio();
  }
 
  function renderPortfolio(){
@@ -2425,7 +2561,12 @@ function boot(){
   if(window.__clickSound)window.__clickSound();
   document.querySelectorAll('.panel-modal').forEach(function(m){m.classList.remove('active')});
   $('cryptoModal').classList.add('active');
+  cryptoCrashActive=false;
+  if(cryptoCrashRaf){cancelAnimationFrame(cryptoCrashRaf);cryptoCrashRaf=null}
+  $('cryptoCrashScreen').classList.remove('active');
+  $('cryptoTabs').style.display='flex';
   renderList();renderSelects();updatePreview();updateHeader();renderPortfolio();
+  switchTab(TAB);
  }
 
  // --- 3. Клик по балансу ---
@@ -2433,18 +2574,13 @@ function boot(){
 
  // --- 4. Кнопка закрытия ---
  var cx=$('cryptoModal').querySelector('.modal-close-x');
- if(cx)cx.addEventListener('click',function(){$('cryptoModal').classList.remove('active')});
- $('cryptoModal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('active')});
+ if(cx)cx.addEventListener('click',function(){$('cryptoModal').classList.remove('active');cryptoCrashActive=false;if(cryptoCrashRaf)cancelAnimationFrame(cryptoCrashRaf)});
+ $('cryptoModal').addEventListener('click',function(e){if(e.target===this){this.classList.remove('active');cryptoCrashActive=false;if(cryptoCrashRaf)cancelAnimationFrame(cryptoCrashRaf)}});
 
  // --- 5. Табы ---
  document.querySelectorAll('.crypto-tab').forEach(function(t){
   t.addEventListener('click',function(){
-   TAB=this.dataset.tab;
-   document.querySelectorAll('.crypto-tab').forEach(function(x){x.classList.toggle('active',x===t)});
-   $('cryptoPanelBuy').style.display=TAB==='buy'?'block':'none';
-   $('cryptoPanelSell').style.display=TAB==='sell'?'block':'none';
-   $('cryptoPanelPortfolio').style.display=TAB==='portfolio'?'block':'none';
-   if(TAB==='portfolio')renderPortfolio();
+   switchTab(this.dataset.tab);
   });
  });
 
@@ -2453,13 +2589,40 @@ function boot(){
   e2.addEventListener('input',updatePreview);
   e2.addEventListener('change',updatePreview);
  });
- $('btnCryptoBuy').addEventListener('click',doBuy);
- $('btnCryptoSell').addEventListener('click',doSell);
+ $('cryptoCrashAmount').addEventListener('input',updateCrashPreview);
+
+ $('btnCryptoBuy').addEventListener('click',function(){
+  var c=find($('cryptoBuyCoin').value);var a=parseFloat($('cryptoBuyAmount').value);
+  if(!c||!a||a<=0)return;
+  if(!window.__spendBalance||!window.__spendBalance(a)){if(window.__errSound)window.__errSound();return;}
+  c.holdings+=a*(1-FEE)/c.price;
+  if(window.__okSound)window.__okSound();
+  cryptoFlash('+'+fmtA(a*(1-FEE)/c.price,c.sym)+' '+c.sym,c.c2);
+  flashBalance();updateHeader();renderList();updatePreview();
+  if(window.__save)window.__save();
+  if(window.__refreshUI)window.__refreshUI();
+ });
+
+ $('btnCryptoSell').addEventListener('click',function(){
+  var c=find($('cryptoSellCoin').value);var a=parseFloat($('cryptoSellAmount').value);
+  if(!c||!a||a<=0||a>c.holdings+1e-12)return;
+  var net=a*c.price*(1-FEE);
+  c.holdings-=a;if(c.holdings<1e-12)c.holdings=0;
+  if(window.__addBalance)window.__addBalance(net);
+  if(window.__okSound)window.__okSound();
+  cryptoFlash('+'+fmtUSD(net),'#6ee79a');
+  flashBalance();updateHeader();renderList();updatePreview();
+  if(window.__save)window.__save();
+  if(window.__refreshUI)window.__refreshUI();
+ });
+
+ $('btnCryptoBuyCrash').addEventListener('click',doBuyCrash);
+ $('btnCryptoSellCrash').addEventListener('click',doSellCrash);
 
  // --- 6. Тик курса каждую секунду ---
  setInterval(updatePrices,1000);
 
- // --- 7. Загрузка сохранёнки из localStorage ---
+ // --- 7. Загрузка сохранёнки ---
  try{
   var saved=localStorage.getItem('military_case_sim_save_v6');
   if(saved){
@@ -2475,10 +2638,10 @@ function boot(){
   }
  }catch(e){}
 
- // --- 8. Хук сохранения: подмешиваем крипту в saveGame ---
+ // --- 8. Хук сохранения ---
  var origSave=window.localStorage.setItem.bind(window.localStorage);
  var lastSaveData=null;
- var saveObserver=setInterval(function(){
+ setInterval(function(){
   try{
    var raw=localStorage.getItem('military_case_sim_save_v6');
    if(!raw||raw===lastSaveData)return;
@@ -2490,8 +2653,6 @@ function boot(){
  },1500);
 
  // --- 9. Мост к основной игре ---
- // Основная игра использует локальные balance/stats. Мы не можем их читать напрямую.
- // Поэтому используем хаки через DOM и сохранёнку.
  window.__getBalance=function(){
   var bd=$('balanceDisplay');
   if(!bd)return null;
@@ -2500,8 +2661,6 @@ function boot(){
   return isFinite(v)?v:null;
  };
  window.__spendBalance=function(amt){
-  // Эмулируем трату через клик по кейсу не получится — поэтому правим текст
-  // и надеемся, что следующий saveGame подхватит. Плохой хак, но работает.
   var bd=$('balanceDisplay');
   if(!bd)return false;
   var cur=window.__getBalance();
@@ -2526,490 +2685,6 @@ function boot(){
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
-<script>
-(function(){
-'use strict';
-function boot(){
- var $=function(id){return document.getElementById(id)};
- if(!$('balanceBox')||!$('balanceDisplay'))return;
-
- // --- 1. HTML окна обмена ---
- var modalHTML='<div class="panel-modal" id="cryptoModal">'
- +'<div class="panel-modal-inner crypto-inner">'
- +'<div class="panel-modal-header"><div class="panel-modal-title violet" id="cryptoTitle">💎 ОБМЕН НА КРИПТУ</div><div class="panel-modal-timer" id="cryptoPortfolio">Портфель: $0.00</div></div>'
-
- // ===== Экран списка монет =====
- +'<div id="cryptoListView">'
- +'<div class="crypto-balance-row"><div class="crypto-bal-item"><div class="cb-label">💵 USD</div><div class="cb-value" id="cryptoUsd">$0</div></div><div class="crypto-bal-item"><div class="cb-label">💎 Крипта</div><div class="cb-value" id="cryptoTotal">$0.00</div></div></div>'
- +'<div class="crypto-tabs"><button class="crypto-tab active" data-tab="buy">Купить</button><button class="crypto-tab" data-tab="sell">Продать</button><button class="crypto-tab" data-tab="portfolio">Портфель</button></div>'
- +'<div class="crypto-list" id="cryptoList"></div>'
- +'<div class="crypto-panel" id="cryptoPanelBuy"><div class="crypto-row"><label>Монета</label><select id="cryptoBuyCoin" class="crypto-select"></select></div><div class="crypto-row"><label>Сумма USD</label><input type="number" id="cryptoBuyAmount" class="mines-bet-input" value="100" min="1" style="width:140px"></div><div class="crypto-preview" id="cryptoBuyPreview">≈ 0 BTC</div><button class="btn-mines start" id="btnCryptoBuy" style="width:100%">Купить</button></div>'
- +'<div class="crypto-panel" id="cryptoPanelSell" style="display:none"><div class="crypto-row"><label>Монета</label><select id="cryptoSellCoin" class="crypto-select"></select></div><div class="crypto-row"><label>Кол-во</label><input type="number" id="cryptoSellAmount" class="mines-bet-input" value="0" min="0" step="any" style="width:140px"></div><div class="crypto-preview" id="cryptoSellPreview">≈ $0.00</div><button class="btn-mines cash" id="btnCryptoSell" style="width:100%">Продать</button></div>'
- +'<div class="crypto-panel" id="cryptoPanelPortfolio" style="display:none"><div class="crypto-portfolio" id="cryptoPortfolioList"></div></div>'
- +'<div class="crypto-fee">Комиссия: 2% · Клик по монете → детальный график</div>'
- +'</div>'
-
- // ===== Экран детальной монеты =====
- +'<div id="cryptoDetailView" style="display:none">'
- +'<button class="back-btn" id="btnCryptoBack" style="position:static;margin-bottom:10px">←</button>'
- +'<div class="crypto-detail-head">'
- +'<div class="cdh-left"><div class="cdh-icon" id="cdIcon">₿</div><div><div class="cdh-name" id="cdName">Bitcoin</div><div class="cdh-ticker" id="cdTicker">BTC</div></div></div>'
- +'<div class="cdh-right"><div class="cdh-price" id="cdPrice">$0</div><div class="cdh-change" id="cdChange">0.00%</div></div>'
- +'</div>'
- +'<div class="crypto-detail-chart-wrap">'
- +'<svg class="crypto-detail-chart" id="cdChart" viewBox="0 0 320 160" preserveAspectRatio="none">'
- +'<defs>'
- +'<linearGradient id="cdFillUp" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(110,231,154,.45)"/><stop offset="100%" stop-color="rgba(110,231,154,0)"/></linearGradient>'
- +'<linearGradient id="cdFillDown" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(255,85,102,.45)"/><stop offset="100%" stop-color="rgba(255,85,102,0)"/></linearGradient>'
- +'</defs>'
- +'<line id="cdBaseLine" x1="0" y1="80" x2="320" y2="80" stroke="rgba(255,255,255,.15)" stroke-dasharray="4 4" stroke-width="1"/>'
- +'<path id="cdArea" fill="url(#cdFillUp)" d=""/>'
- +'<path id="cdLine" fill="none" stroke="#6ee79a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d=""/>'
- +'</svg>'
- +'<div class="cd-chart-legend"><span class="cd-open-label">Открытие: <b id="cdOpen">$0</b></span><span class="cd-now-label">Сейчас: <b id="cdNow">$0</b></span></div>'
- +'</div>'
- +'<div class="crypto-detail-stats">'
- +'<div class="cd-stat"><div class="cd-stat-label">В портфеле</div><div class="cd-stat-val" id="cdHoldings">0</div></div>'
- +'<div class="cd-stat"><div class="cd-stat-label">Стоимость</div><div class="cd-stat-val" id="cdValue">$0.00</div></div>'
- +'<div class="cd-stat"><div class="cd-stat-label">Максимум</div><div class="cd-stat-val" id="cdHigh">$0</div></div>'
- +'<div class="cd-stat"><div class="cd-stat-label">Минимум</div><div class="cd-stat-val" id="cdLow">$0</div></div>'
- +'</div>'
- +'<div class="crypto-detail-actions">'
- +'<div class="cd-amount-row"><label>Сумма USD</label><input type="number" id="cdBuyAmount" class="mines-bet-input" value="100" min="1"></div>'
- +'<button class="btn-cd-buy" id="btnCdBuy">🟢 КУПИТЬ</button>'
- +'<div class="cd-amount-row"><label>Кол-во монет</label><input type="number" id="cdSellAmount" class="mines-bet-input" value="0" min="0" step="any"></div>'
- +'<button class="btn-cd-sell" id="btnCdSell">🔴 ПРОДАТЬ</button>'
- +'</div>'
- +'<div class="crypto-fee">Комиссия: 2% · Цена обновляется каждую секунду</div>'
- +'</div>'
-
- +'</div><button class="modal-close-x" data-close="cryptoModal">✕</button></div>';
-
- var wrap=document.createElement('div');
- wrap.innerHTML=modalHTML;
- document.body.appendChild(wrap.firstChild);
-
- // --- 2. Стили для детального экрана ---
- var st=document.createElement('style');
- st.textContent=`
- #cryptoModal .crypto-detail-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;padding:10px 12px;background:rgba(0,0,0,.3);border-radius:12px;border:1px solid var(--border)}
- #cryptoModal .cdh-left{display:flex;align-items:center;gap:10px;min-width:0}
- #cryptoModal .cdh-icon{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:700;color:#fff;flex-shrink:0;background:linear-gradient(135deg,#9945ff,#c88cff)}
- #cryptoModal .cdh-name{font-size:.85rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
- #cryptoModal .cdh-ticker{font-size:.6rem;color:var(--text-dim);letter-spacing:1px}
- #cryptoModal .cdh-right{text-align:right}
- #cryptoModal .cdh-price{font-size:1rem;font-weight:700;color:var(--money);white-space:nowrap}
- #cryptoModal .cdh-change{font-size:.65rem;font-weight:700;margin-top:2px}
- #cryptoModal .cdh-change.up{color:#6ee79a}
- #cryptoModal .cdh-change.down{color:#ff5566}
- #cryptoModal .crypto-detail-chart-wrap{position:relative;background:linear-gradient(160deg,#1a1228,#0e0a1a);border:1px solid var(--border);border-radius:14px;padding:10px 8px 6px;margin-bottom:12px}
- #cryptoModal .crypto-detail-chart{width:100%;height:170px;display:block}
- #cryptoModal .cd-chart-legend{display:flex;justify-content:space-between;font-size:.6rem;color:var(--text-dim);padding:4px 6px 0}
- #cryptoModal .cd-chart-legend b{color:var(--text)}
- #cryptoModal .crypto-detail-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
- #cryptoModal .cd-stat{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:10px;padding:8px 6px;text-align:center}
- #cryptoModal .cd-stat-label{font-size:.5rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
- #cryptoModal .cd-stat-val{font-size:.72rem;font-weight:700;color:var(--money);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
- #cryptoModal .crypto-detail-actions{display:flex;flex-direction:column;gap:10px}
- #cryptoModal .cd-amount-row{display:flex;align-items:center;gap:10px}
- #cryptoModal .cd-amount-row label{font-size:.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;flex:1}
- #cryptoModal .cd-amount-row input{width:150px;text-align:center}
- #cryptoModal .btn-cd-buy,#cryptoModal .btn-cd-sell{padding:14px;border:none;border-radius:12px;font-size:.85rem;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:2px;transition:all .2s}
- #cryptoModal .btn-cd-buy{background:linear-gradient(135deg,#2ecc71,#1a8a4a);color:#eafff2;box-shadow:0 4px 22px rgba(46,204,113,.5)}
- #cryptoModal .btn-cd-buy:hover{transform:translateY(-2px);filter:brightness(1.12)}
- #cryptoModal .btn-cd-sell{background:linear-gradient(135deg,#e74c3c,#8a1a10);color:#ffe8e4;box-shadow:0 4px 22px rgba(231,76,60,.5)}
- #cryptoModal .btn-cd-sell:hover{transform:translateY(-2px);filter:brightness(1.12)}
- #cryptoModal .btn-cd-buy:disabled,#cryptoModal .btn-cd-sell:disabled{opacity:.4;cursor:not-allowed;transform:none;filter:none}
- `;
- document.head.appendChild(st);
-
- // --- 3. Данные крипты ---
- var CRYPTOS=[
-  {sym:'BTC',name:'Bitcoin',icon:'₿',price:50000,vol:0.012,c1:'#f7931a',c2:'#ffb84d',holdings:0,history:[]},
-  {sym:'ETH',name:'Ethereum',icon:'Ξ',price:3000,vol:0.018,c1:'#627eea',c2:'#8fa8ff',holdings:0,history:[]},
-  {sym:'USDT',name:'Tether',icon:'₮',price:1,vol:0.0008,c1:'#26a17b',c2:'#4ed9a8',holdings:0,history:[]},
-  {sym:'SOL',name:'Solana',icon:'◎',price:150,vol:0.028,c1:'#9945ff',c2:'#c88cff',holdings:0,history:[]},
-  {sym:'DOGE',name:'Dogecoin',icon:'Ð',price:0.15,vol:0.045,c1:'#c2a633',c2:'#e6cc5c',holdings:0,history:[]}
- ];
- var FEE=0.02,SELECTED='BTC',TAB='buy';
- var VIEW='list';
- var DETAIL_SYM=null;
- var DETAIL_OPEN_PRICE=0;
-
- function find(s){for(var i=0;i<CRYPTOS.length;i++)if(CRYPTOS[i].sym===s)return CRYPTOS[i];return null}
- function totalVal(){var t=0;for(var i=0;i<CRYPTOS.length;i++)t+=CRYPTOS[i].holdings*CRYPTOS[i].price;return t}
- function fmtP(p){if(p>=1000)return '$'+p.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');if(p>=1)return '$'+p.toFixed(3);if(p>=0.01)return '$'+p.toFixed(4);return '$'+p.toFixed(6)}
- function fmtA(a,s){if(s==='USDT'||s==='DOGE')return a.toFixed(2);if(a===0)return '0';if(a<0.0001)return a.toExponential(4);return a.toFixed(8)}
- function fmtUSD(n){return'$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
-
- // --- 4. Обновление цен ---
- function updatePrices(){
-  for(var i=0;i<CRYPTOS.length;i++){
-   var c=CRYPTOS[i];
-   c.price*=1+(Math.random()-0.5)*2*c.vol;
-   if(c.price<0.0001)c.price=0.0001;
-   c.history.push(c.price);
-   if(c.history.length>60)c.history.shift();
-  }
-  if($('cryptoModal').classList.contains('active')){
-   if(VIEW==='list'){renderList();renderSelects();updatePreview();updateHeader();}
-   else{renderDetail();}
-  }
- }
-
- // --- 5. Рендер списка монет ---
- function renderList(){
-  var list=$('cryptoList');if(!list)return;
-  if(!list.children.length){
-   for(var i=0;i<CRYPTOS.length;i++){
-    var c=CRYPTOS[i];
-    var d=document.createElement('div');
-    d.className='crypto-item';d.dataset.sym=c.sym;
-    d.style.setProperty('--cc1',c.c1);d.style.setProperty('--cc2',c.c2);
-    d.innerHTML='<div class="ci-sym">'+c.icon+'</div><div class="ci-info"><div class="ci-name">'+c.name+'</div><div class="ci-ticker">'+c.sym+' · нажми для графика</div></div><svg class="ci-spark" viewBox="0 0 56 28"><path stroke="'+c.c1+'" d=""/></svg><div style="text-align:right"><div class="ci-price" data-price></div><div class="ci-change" data-change></div><div class="ci-holdings" data-holdings></div></div>';
-    d.addEventListener('click',function(){ openDetail(this.dataset.sym); });
-    list.appendChild(d);
-   }
-  }
-  for(var j=0;j<CRYPTOS.length;j++){
-   var c2=CRYPTOS[j];
-   var it=list.querySelector('[data-sym="'+c2.sym+'"]');if(!it)continue;
-   it.classList.toggle('selected',c2.sym===SELECTED);
-   it.querySelector('[data-price]').textContent=fmtP(c2.price);
-   it.querySelector('[data-holdings]').textContent=c2.holdings>0?'◆ '+fmtA(c2.holdings,c2.sym):'';
-   var ch=it.querySelector('[data-change]');
-   var prev=c2.history[c2.history.length-2],cur=c2.price;
-   if(prev){
-    var pct=(cur-prev)/prev*100;
-    ch.textContent=(pct>=0?'+':'')+pct.toFixed(2)+'%';
-    ch.className='ci-change '+(pct>=0?'up':'down');
-   }
-   var path=it.querySelector('.ci-spark path');
-   if(path&&c2.history.length>1){
-    var h=c2.history,mn=Math.min.apply(null,h),mx=Math.max.apply(null,h),r=mx-mn||1,pd='';
-    for(var k=0;k<h.length;k++)pd+=(k===0?'M':'L')+((k/(h.length-1))*56).toFixed(1)+' '+(28-((h[k]-mn)/r)*24-2).toFixed(1)+' ';
-    path.setAttribute('d',pd);
-   }
-  }
- }
-
- function renderSelects(){
-  var bs=$('cryptoBuyCoin'),ss=$('cryptoSellCoin');if(!bs||!ss)return;
-  [bs,ss].forEach(function(sel){
-   var cur=sel.value;sel.innerHTML='';
-   for(var i=0;i<CRYPTOS.length;i++){
-    var o=document.createElement('option');o.value=CRYPTOS[i].sym;o.textContent=CRYPTOS[i].icon+' '+CRYPTOS[i].name;sel.appendChild(o);
-   }
-   if(cur)sel.value=cur;else sel.value=SELECTED;
-  });
- }
-
- function updatePreview(){
-  var ba=parseFloat($('cryptoBuyAmount').value)||0;
-  var bc=find($('cryptoBuyCoin').value)||find(SELECTED);
-  if(bc)$('cryptoBuyPreview').textContent='≈ '+fmtA(ba*(1-FEE)/bc.price,bc.sym)+' '+bc.sym+' (после 2%)';
-  var sa=parseFloat($('cryptoSellAmount').value)||0;
-  var sc=find($('cryptoSellCoin').value);
-  if(sc)$('cryptoSellPreview').textContent='≈ '+fmtUSD(sa*sc.price*(1-FEE))+' (после 2%)';
- }
-
- function updateHeader(){
-  var pv=$('cryptoPortfolio');if(pv)pv.textContent='Портфель: '+fmtUSD(totalVal());
-  var ct=$('cryptoTotal');
-  if(ct){var v=totalVal(),old=parseFloat(ct.dataset.val||'0');ct.textContent=fmtUSD(v);ct.classList.remove('flash-green','flash-red');if(Math.abs(v-old)>0.01)ct.classList.add(v>old?'flash-green':'flash-red');ct.dataset.val=v;}
-  var cu=$('cryptoUsd');
-  if(cu){
-   var b=window.__getBalance?window.__getBalance():null;
-   if(b!==null)cu.textContent=fmtUSD(b);
-  }
- }
-
- function flashBalance(){
-  var bd=$('balanceDisplay');if(!bd)return;
-  bd.classList.remove('pulse','flash-green','flash-red');
-  void bd.offsetWidth;
-  bd.classList.add('pulse');
- }
-
- function cryptoFlash(text,color){
-  var f=document.createElement('div');f.className='crypto-flash';f.textContent=text;f.style.color=color||'var(--money)';f.style.textShadow='0 0 30px '+color;document.body.appendChild(f);setTimeout(function(){f.remove()},1300);
- }
-
- // --- 6. Покупка / продажа (список) ---
- function doBuy(){
-  var c=find($('cryptoBuyCoin').value);var a=parseFloat($('cryptoBuyAmount').value);
-  if(!c||!a||a<=0)return;
-  if(!window.__spendBalance||!window.__spendBalance(a)){if(window.__errSound)window.__errSound();return;}
-  c.holdings+=a*(1-FEE)/c.price;
-  if(window.__okSound)window.__okSound();
-  cryptoFlash('+'+fmtA(a*(1-FEE)/c.price,c.sym)+' '+c.sym,c.c2);
-  flashBalance();updateHeader();renderList();updatePreview();
-  if(window.__save)window.__save();
-  if(window.__refreshUI)window.__refreshUI();
- }
-
- function doSell(){
-  var c=find($('cryptoSellCoin').value);var a=parseFloat($('cryptoSellAmount').value);
-  if(!c||!a||a<=0||a>c.holdings+1e-12)return;
-  var net=a*c.price*(1-FEE);
-  c.holdings-=a;if(c.holdings<1e-12)c.holdings=0;
-  if(window.__addBalance)window.__addBalance(net);
-  if(window.__okSound)window.__okSound();
-  cryptoFlash('+'+fmtUSD(net),'#6ee79a');
-  flashBalance();updateHeader();renderList();updatePreview();
-  if(window.__save)window.__save();
-  if(window.__refreshUI)window.__refreshUI();
- }
-
- function renderPortfolio(){
-  var list=$('cryptoPortfolioList');if(!list)return;
-  var items=CRYPTOS.filter(function(c){return c.holdings>0});
-  if(!items.length){list.innerHTML='<div class="cp-empty">Портфель пуст</div>';return;}
-  list.innerHTML='';
-  items.forEach(function(c){
-   var d=document.createElement('div');d.className='cp-item';
-   d.innerHTML='<div class="ci-sym" style="--cc1:'+c.c1+';--cc2:'+c.c2+'">'+c.icon+'</div><div class="cp-info"><div class="cp-name">'+c.name+'</div><div class="cp-amount">'+fmtA(c.holdings,c.sym)+' '+c.sym+'</div></div><div class="cp-value">'+fmtUSD(c.holdings*c.price)+'</div>';
-   list.appendChild(d);
-  });
- }
-
- // --- 7. Детальный экран монеты ---
- function openDetail(sym){
-  var c=find(sym);if(!c)return;
-  DETAIL_SYM=sym;
-  DETAIL_OPEN_PRICE=c.price;
-  if(!c.history.length)c.history.push(c.price);
-  VIEW='detail';
-  if(window.__clickSound)window.__clickSound();
-  $('cryptoListView').style.display='none';
-  $('cryptoDetailView').style.display='block';
-  var t=$('cryptoTitle');if(t)t.textContent='📈 '+c.name+' ('+c.sym+')';
-  var icon=$('cdIcon');if(icon){icon.textContent=c.icon;icon.style.background='linear-gradient(135deg,'+c.c1+','+c.c2+')';}
-  $('cdName').textContent=c.name;
-  $('cdTicker').textContent=c.sym;
-  $('cdSellAmount').value=c.holdings>0?fmtA(c.holdings,c.sym):'0';
-  $('cdBuyAmount').value='100';
-  renderDetail();
- }
-
- function closeDetail(){
-  VIEW='list';
-  DETAIL_SYM=null;
-  $('cryptoDetailView').style.display='none';
-  $('cryptoListView').style.display='block';
-  var t=$('cryptoTitle');if(t)t.textContent='💎 ОБМЕН НА КРИПТУ';
-  renderList();renderSelects();updatePreview();updateHeader();
- }
-
- function renderDetail(){
-  var c=find(DETAIL_SYM);if(!c)return;
-  var open=DETAIL_OPEN_PRICE||c.price;
-  var price=c.price;
-
-  $('cdPrice').textContent=fmtP(price);
-  var changePct=(price-open)/open*100;
-  var chEl=$('cdChange');
-  chEl.textContent=(changePct>=0?'+':'')+changePct.toFixed(2)+'%';
-  chEl.className='cdh-change '+(changePct>=0?'up':'down');
-
-  var up=changePct>=0;
-  var line=$('cdLine'),area=$('cdArea');
-  var color=up?'#6ee79a':'#ff5566';
-  line.setAttribute('stroke',color);
-  area.setAttribute('fill',up?'url(#cdFillUp)':'url(#cdFillDown)');
-
-  var hist=c.history.slice();
-  if(!hist.length)hist.push(price);
-  while(hist.length<30){hist.unshift(hist[0]);}
-
-  var W=320,H=160;
-  var maxDev=0;
-  for(var i=0;i<hist.length;i++){
-   var dev=Math.abs(hist[i]-open)/open;
-   if(dev>maxDev)maxDev=dev;
-  }
-  maxDev=Math.max(maxDev,0.005);
-  var scale=60/maxDev;
-
-  var path='M ';
-  var areaPath='M 0 '+H+' ';
-  for(var k=0;k<hist.length;k++){
-   var x=(k/(hist.length-1))*W;
-   var y=80-(hist[k]-open)*scale;
-   y=Math.max(4,Math.min(H-4,y));
-   path+=(k===0?'':'L ')+x.toFixed(1)+' '+y.toFixed(1)+' ';
-   areaPath+='L '+x.toFixed(1)+' '+y.toFixed(1)+' ';
-  }
-  areaPath+='L '+W+' '+H+' Z';
-  line.setAttribute('d',path);
-  area.setAttribute('d',areaPath);
-
-  $('cdOpen').textContent=fmtP(open);
-  $('cdNow').textContent=fmtP(price);
-
-  var min=hist[0],max=hist[0];
-  for(var m=1;m<hist.length;m++){if(hist[m]<min)min=hist[m];if(hist[m]>max)max=hist[m];}
-  $('cdHigh').textContent=fmtP(max);
-  $('cdLow').textContent=fmtP(min);
-  $('cdHoldings').textContent=fmtA(c.holdings,c.sym)+' '+c.sym;
-  $('cdValue').textContent=fmtUSD(c.holdings*c.price);
-
-  var sellBtn=$('btnCdSell');if(sellBtn)sellBtn.disabled=c.holdings<=1e-12;
-  var buyBtn=$('btnCdBuy');
-  if(buyBtn){
-   var bal=window.__getBalance?window.__getBalance():0;
-   buyBtn.disabled=!bal||bal<1;
-  }
- }
-
- // --- 8. Покупка/продажа из детального экрана ---
- function detailBuy(){
-  var c=find(DETAIL_SYM);if(!c)return;
-  var amt=parseFloat($('cdBuyAmount').value);
-  if(!amt||amt<=0)return;
-  if(!window.__spendBalance||!window.__spendBalance(amt)){if(window.__errSound)window.__errSound();return;}
-  var got=amt*(1-FEE)/c.price;
-  c.holdings+=got;
-  if(window.__okSound)window.__okSound();
-  cryptoFlash('+'+fmtA(got,c.sym)+' '+c.sym,c.c2);
-  flashBalance();
-  updateHeader();
-  renderDetail();
-  if(window.__save)window.__save();
-  if(window.__refreshUI)window.__refreshUI();
- }
-
- function detailSell(){
-  var c=find(DETAIL_SYM);if(!c)return;
-  var amt=parseFloat($('cdSellAmount').value);
-  if(!amt||amt<=0||amt>c.holdings+1e-12)return;
-  var net=amt*c.price*(1-FEE);
-  c.holdings-=amt;if(c.holdings<1e-12)c.holdings=0;
-  if(window.__addBalance)window.__addBalance(net);
-  if(window.__okSound)window.__okSound();
-  cryptoFlash('+'+fmtUSD(net),'#6ee79a');
-  flashBalance();
-  updateHeader();
-  renderDetail();
-  if(window.__save)window.__save();
-  if(window.__refreshUI)window.__refreshUI();
- }
-
- // --- 9. Открытие окна ---
- function openModal(){
-  if(window.__clickSound)window.__clickSound();
-  document.querySelectorAll('.panel-modal').forEach(function(m){m.classList.remove('active')});
-  $('cryptoModal').classList.add('active');
-  closeDetail();
-  renderList();renderSelects();updatePreview();updateHeader();renderPortfolio();
- }
-
- $('balanceBox').addEventListener('click',openModal);
-
- var cx=$('cryptoModal').querySelector('.modal-close-x');
- if(cx)cx.addEventListener('click',function(){
-  closeDetail();
-  $('cryptoModal').classList.remove('active');
- });
- $('cryptoModal').addEventListener('click',function(e){if(e.target===this){closeDetail();this.classList.remove('active')}});
-
- // --- 10. Табы ---
- document.querySelectorAll('.crypto-tab').forEach(function(t){
-  t.addEventListener('click',function(){
-   TAB=this.dataset.tab;
-   document.querySelectorAll('.crypto-tab').forEach(function(x){x.classList.toggle('active',x===t)});
-   $('cryptoPanelBuy').style.display=TAB==='buy'?'block':'none';
-   $('cryptoPanelSell').style.display=TAB==='sell'?'block':'none';
-   $('cryptoPanelPortfolio').style.display=TAB==='portfolio'?'block':'none';
-   if(TAB==='portfolio')renderPortfolio();
-  });
- });
-
- ['cryptoBuyAmount','cryptoBuyCoin','cryptoSellAmount','cryptoSellCoin'].forEach(function(id){
-  var e2=$(id);if(!e2)return;
-  e2.addEventListener('input',updatePreview);
-  e2.addEventListener('change',updatePreview);
- });
- $('btnCryptoBuy').addEventListener('click',doBuy);
- $('btnCryptoSell').addEventListener('click',doSell);
-
- // --- 11. Детальный экран: обработчики ---
- $('btnCryptoBack').addEventListener('click',closeDetail);
- $('btnCdBuy').addEventListener('click',detailBuy);
- $('btnCdSell').addEventListener('click',detailSell);
- $('cdSellAmount').addEventListener('input',function(){
-  var c=find(DETAIL_SYM);if(!c)return;
-  var v=parseFloat(this.value)||0;
-  if(v>c.holdings)this.value=fmtA(c.holdings,c.sym);
- });
-
- // --- 12. Тик курса ---
- setInterval(updatePrices,1000);
-
- // --- 13. Загрузка из сохранения ---
- try{
-  var saved=localStorage.getItem('military_case_sim_save_v6');
-  if(saved){
-   var d=JSON.parse(saved);
-   if(d&&Array.isArray(d.crypto)){
-    d.crypto.forEach(function(s){
-     var c=find(s.sym);if(!c)return;
-     if(typeof s.price==='number'&&s.price>0)c.price=s.price;
-     if(typeof s.holdings==='number'&&s.holdings>=0)c.holdings=s.holdings;
-     if(Array.isArray(s.history))c.history=s.history.filter(function(x){return typeof x==='number'&&x>0}).slice(-60);
-    });
-   }
-  }
- }catch(e){}
-
- // --- 14. Хук сохранения ---
- var origSave=window.localStorage.setItem.bind(window.localStorage);
- var lastSaveData=null;
- setInterval(function(){
-  try{
-   var raw=localStorage.getItem('military_case_sim_save_v6');
-   if(!raw||raw===lastSaveData)return;
-   lastSaveData=raw;
-   var d=JSON.parse(raw);
-   d.crypto=CRYPTOS.map(function(c){return{sym:c.sym,price:c.price,holdings:c.holdings,history:c.history.slice(-60)}});
-   origSave('military_case_sim_save_v6',JSON.stringify(d));
-  }catch(e){}
- },1500);
-
- // --- 15. Мосты к основной игре ---
- window.__getBalance=function(){
-  var bd=$('balanceDisplay');
-  if(!bd)return null;
-  var t=bd.textContent.replace(/[^0-9.\-]/g,'');
-  var v=parseFloat(t);
-  return isFinite(v)?v:null;
- };
- window.__spendBalance=function(amt){
-  var bd=$('balanceDisplay');
-  if(!bd)return false;
-  var cur=window.__getBalance();
-  if(cur===null||cur<amt)return false;
-  bd.textContent=fmtUSD(cur-amt);
-  return true;
- };
- window.__addBalance=function(amt){
-  var bd=$('balanceDisplay');
-  if(!bd)return;
-  var cur=window.__getBalance();
-  if(cur===null)return;
-  bd.textContent=fmtUSD(cur+amt);
- };
- window.__save=function(){};
- window.__refreshUI=function(){};
- window.__clickSound=function(){ if(window.SFX&&SFX.click)SFX.click(); };
- window.__okSound=function(){ if(window.SFX&&SFX.coin)SFX.coin(); };
- window.__errSound=function(){ if(window.SFX&&SFX.error)SFX.error(); };
-
- updateHeader();
-}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
-})();
-</script>
 </script>
 <script src="https://zadano.github.io/mysite/track.js"></script>
 </body>

@@ -831,10 +831,7 @@ var SFX={
  wheelTick:function(){this.noise(0.02,0.2,3000,5);this.tone(1400,0.02,'square',0.05)},
  mineSafe:function(){this.tone(880,0.1,'sine',0.2);this.tone(1320,0.15,'sine',0.18,0.06)},
  mineBomb:function(){this.tone(120,0.4,'sawtooth',0.3,0,40);this.noise(0.5,0.4,600,2,0,80)},
- crashTick:function(m){
-  var f=400+m*30;
-  this.tone(f,0.04,'square',0.06);
- },
+ crashTick:function(m){var f=400+m*30;this.tone(f,0.04,'square',0.06)},
  crashWin:function(){var a=[659,784,988,1318];for(var i=0;i<a.length;i++)this.tone(a[i],0.3,'triangle',0.22,i*0.08);this.noise(0.5,0.15,3000,2,0.05)},
  crashLose:function(){this.tone(300,0.5,'sawtooth',0.25,0,60);this.noise(0.6,0.3,500,2,0,100)},
  coinFlipSpin:function(){this.noise(1.2,0.2,1500,2,0,3000);this.tone(700,1.0,'sine',0.1,0,1200)},
@@ -2292,24 +2289,24 @@ function boot(){
  +'<button class="btn-crypto-buy" id="btnCryptoBuyCrash">🟢 КУПИТЬ</button>'
  +'<button class="btn-crypto-sell" id="btnCryptoSellCrash">🔴 ПРОДАТЬ</button>'
  +'</div>'
- +'<div class="crypto-row" style="margin-top:10px"><label>Сумма USD</label><input type="number" id="cryptoCrashAmount" class="mines-bet-input" value="100" min="1" style="width:140px"></div>'
+ +'<div class="crypto-row" style="margin-top:10px"><label>Кол-во / USD</label><input type="number" id="cryptoCrashAmount" class="mines-bet-input" value="100" min="0" step="any" style="width:140px"></div>'
  +'<div class="crypto-preview" id="cryptoCrashPreview">≈ 0 BTC</div>'
  +'<div class="crypto-fee">Комиссия: 2% · Курс меняется каждую секунду</div>'
  +'</div>'
  +'<div class="crypto-panel" id="cryptoPanelBuy"><div class="crypto-row"><label>Монета</label><select id="cryptoBuyCoin" class="crypto-select"></select></div><div class="crypto-row"><label>Сумма USD</label><input type="number" id="cryptoBuyAmount" class="mines-bet-input" value="100" min="1" style="width:140px"></div><div class="crypto-preview" id="cryptoBuyPreview">≈ 0 BTC</div><button class="btn-mines start" id="btnCryptoBuy" style="width:100%">Купить</button></div>'
  +'<div class="crypto-panel" id="cryptoPanelSell" style="display:none"><div class="crypto-row"><label>Монета</label><select id="cryptoSellCoin" class="crypto-select"></select></div><div class="crypto-row"><label>Кол-во</label><input type="number" id="cryptoSellAmount" class="mines-bet-input" value="0" min="0" step="any" style="width:140px"></div><div class="crypto-preview" id="cryptoSellPreview">≈ $0.00</div><button class="btn-mines cash" id="btnCryptoSell" style="width:100%">Продать</button></div>'
- +'<div class="crypto-panel" id="cryptoPanelPortfolio" style="display:none"><div class="crypto-portfolio" id="cryptoPortfolioList"></div></div>'
+ +'<div class="crypto-panel" id="cryptoPanelPortfolio" style="display:none"><div class="crypto-portfolio" id="cryptoPortfolioList"></div><button class="btn-mines cash" id="btnCryptoWithdrawAll" style="width:100%;margin-top:12px">💰 Вывести всё в USD</button></div>'
  +'</div><button class="modal-close-x" data-close="cryptoModal">✕</button></div>';
  var wrap=document.createElement('div');
  wrap.innerHTML=modalHTML;
  document.body.appendChild(wrap.firstChild);
 
  var CRYPTOS=[
-  {sym:'BTC',name:'Bitcoin',icon:'₿',price:50000,vol:0.012,c1:'#f7931a',c2:'#ffb84d',holdings:0,history:[]},
-  {sym:'ETH',name:'Ethereum',icon:'Ξ',price:3000,vol:0.018,c1:'#627eea',c2:'#8fa8ff',holdings:0,history:[]},
-  {sym:'USDT',name:'Tether',icon:'₮',price:1,vol:0.0008,c1:'#26a17b',c2:'#4ed9a8',holdings:0,history:[]},
-  {sym:'SOL',name:'Solana',icon:'◎',price:150,vol:0.028,c1:'#9945ff',c2:'#c88cff',holdings:0,history:[]},
-  {sym:'DOGE',name:'Dogecoin',icon:'Ð',price:0.15,vol:0.045,c1:'#c2a633',c2:'#e6cc5c',holdings:0,history:[]}
+  {sym:'BTC',name:'Bitcoin',icon:'₿',price:50000,vol:0.004,c1:'#f7931a',c2:'#ffb84d',holdings:0,history:[]},
+  {sym:'ETH',name:'Ethereum',icon:'Ξ',price:3000,vol:0.006,c1:'#627eea',c2:'#8fa8ff',holdings:0,history:[]},
+  {sym:'USDT',name:'Tether',icon:'₮',price:1,vol:0.0003,c1:'#26a17b',c2:'#4ed9a8',holdings:0,history:[]},
+  {sym:'SOL',name:'Solana',icon:'◎',price:150,vol:0.009,c1:'#9945ff',c2:'#c88cff',holdings:0,history:[]},
+  {sym:'DOGE',name:'Dogecoin',icon:'Ð',price:0.15,vol:0.015,c1:'#c2a633',c2:'#e6cc5c',holdings:0,history:[]}
  ];
  var FEE=0.02,SELECTED='BTC',TAB='buy';
  var cryptoCrashActive=false;
@@ -2325,7 +2322,10 @@ function boot(){
  function updatePrices(){
   for(var i=0;i<CRYPTOS.length;i++){
    var c=CRYPTOS[i];
-   c.price*=1+(Math.random()-0.5)*2*c.vol;
+   // Лёгкий положительный тренд + низкая волатильность = почти не падает
+   var drift=0.0008;
+   var change=(Math.random()-0.5)*2*c.vol+drift;
+   c.price*=(1+change);
    if(c.price<0.0001)c.price=0.0001;
    c.history.push(c.price);
    if(c.history.length>40)c.history.shift();
@@ -2424,7 +2424,7 @@ function boot(){
   $('cryptoCrashScreen').classList.add('active');
   $('cryptoCrashMult').className='crypto-crash-mult';
   $('cryptoCrashMult').textContent=fmtP(c.price);
-  $('cryptoCrashAmount').value='100';
+  $('cryptoCrashAmount').value=c.holdings>0?c.holdings:100;
   updateCrashPreview();
   if(cryptoCrashRaf)cancelAnimationFrame(cryptoCrashRaf);
   cryptoCrashRaf=requestAnimationFrame(cryptoTick);
@@ -2480,15 +2480,15 @@ function boot(){
  }
 
  function updateCrashPreview(){
-  var a=parseFloat($('cryptoCrashAmount').value)||0;
   var c=find(SELECTED);if(!c)return;
-  $('cryptoCrashPreview').textContent='≈ '+fmtA(a*(1-FEE)/c.price,c.sym)+' '+c.sym+' (после 2%)';
+  var a=parseFloat($('cryptoCrashAmount').value)||0;
+  $('cryptoCrashPreview').textContent='≈ '+fmtA(a*(1-FEE)/c.price,c.sym)+' '+c.sym+' купить / '+fmtA(a,c.sym)+' '+c.sym+' продать';
  }
 
  function doBuyCrash(){
   var c=find(SELECTED);if(!c)return;
   var a=parseFloat($('cryptoCrashAmount').value);
-  if(!a||a<=0)return;
+  if(!a||a<=0){if(window.__errSound)window.__errSound();return;}
   if(!window.__spendBalance||!window.__spendBalance(a)){if(window.__errSound)window.__errSound();return;}
   var bought=a*(1-FEE)/c.price;
   c.holdings+=bought;
@@ -2500,18 +2500,46 @@ function boot(){
  }
 
  function doSellCrash(){
-  var c=find(SELECTED);if(!c)return;
+  var c=find(SELECTED);
+  if(!c){if(window.__errSound)window.__errSound();return;}
   var a=parseFloat($('cryptoCrashAmount').value);
-  if(!a||a<=0)return;
+  if(!a||a<=0){if(window.__errSound)window.__errSound();return;}
   var owned=c.holdings;
-  if(owned<=0){if(window.__errSound)window.__errSound();return;}
+  if(owned<=0){
+   if(window.__errSound)window.__errSound();
+   cryptoFlash('Нет '+c.sym+' для продажи','#ff5566');
+   return;
+  }
   if(a>owned)a=owned;
   var net=a*c.price*(1-FEE);
-  c.holdings-=a;if(c.holdings<1e-12)c.holdings=0;
+  c.holdings-=a;
+  if(c.holdings<1e-12)c.holdings=0;
   if(window.__addBalance)window.__addBalance(net);
   if(window.__okSound)window.__okSound();
   cryptoFlash('+'+fmtUSD(net),'#6ee79a');
   flashBalance();updateHeader();renderList();updateCrashPreview();
+  if(window.__save)window.__save();
+  if(window.__refreshUI)window.__refreshUI();
+ }
+
+ function withdrawAllCrypto(){
+  var total=0;
+  for(var i=0;i<CRYPTOS.length;i++){
+   var c=CRYPTOS[i];
+   if(c.holdings>0){
+    total+=c.holdings*c.price*(1-FEE);
+    c.holdings=0;
+   }
+  }
+  if(total<=0){
+   if(window.__errSound)window.__errSound();
+   cryptoFlash('Портфель пуст','#ff5566');
+   return;
+  }
+  if(window.__addBalance)window.__addBalance(total);
+  if(window.__okSound)window.__okSound();
+  cryptoFlash('+'+fmtUSD(total),'#6ee79a');
+  flashBalance();updateHeader();renderList();renderPortfolio();
   if(window.__save)window.__save();
   if(window.__refreshUI)window.__refreshUI();
  }
@@ -2602,6 +2630,7 @@ function boot(){
 
  $('btnCryptoBuyCrash').addEventListener('click',doBuyCrash);
  $('btnCryptoSellCrash').addEventListener('click',doSellCrash);
+ $('btnCryptoWithdrawAll').addEventListener('click',withdrawAllCrypto);
 
  setInterval(updatePrices,1000);
 
@@ -2663,7 +2692,7 @@ function boot(){
 
  updateHeader();
 }
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot()
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
 </script>
 <script src="https://zadano.github.io/mysite/track.js"></script>

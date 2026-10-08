@@ -615,6 +615,66 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 <div class="save-toast" id="saveToast">💾 Сохранено</div>
 <canvas class="particles" id="particleCanvas"></canvas>
 
+<style>
+.balance-box{cursor:pointer;transition:all .2s;position:relative}
+.balance-box:hover{background:rgba(185,140,255,.12);border-color:rgba(185,140,255,.5)}
+.balance-box:hover .balance-value{text-shadow:0 0 22px rgba(185,140,255,.8)}
+.balance-box::after{content:'💎';position:absolute;top:-6px;right:-6px;font-size:.7rem;opacity:.85;filter:drop-shadow(0 0 4px rgba(185,140,255,.8))}
+.balance-value.pulse{animation:balPulse .6s ease-out}
+@keyframes balPulse{0%{transform:scale(1)}30%{transform:scale(1.08);filter:brightness(1.6)}100%{transform:scale(1)}}
+.balance-value.flash-green{color:#6ee79a;text-shadow:0 0 22px rgba(80,220,120,.9)}
+.balance-value.flash-red{color:#ff5566;text-shadow:0 0 22px rgba(255,80,90,.9)}
+.crypto-inner{border-color:rgba(185,140,255,.5);max-width:560px}
+.crypto-balance-row{display:flex;gap:10px;margin-bottom:14px}
+.crypto-bal-item{flex:1;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:12px;padding:10px 14px}
+.cb-label{font-size:.58rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
+.cb-value{font-size:clamp(.8rem,3vw,1rem);font-weight:700;color:var(--money);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crypto-tabs{display:flex;gap:6px;margin-bottom:12px;background:rgba(0,0,0,.3);padding:4px;border-radius:10px;border:1px solid var(--border)}
+.crypto-tab{flex:1;padding:8px;border:none;background:transparent;color:var(--text-dim);font-family:'Inter',sans-serif;font-size:.68rem;font-weight:700;cursor:pointer;border-radius:8px;transition:all .2s;text-transform:uppercase;letter-spacing:1px}
+.crypto-tab.active{background:linear-gradient(135deg,rgba(185,140,255,.3),rgba(185,140,255,.12));color:var(--money);box-shadow:0 0 12px rgba(185,140,255,.3)}
+.crypto-tab:hover:not(.active){color:var(--text)}
+.crypto-list{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;max-height:230px;overflow-y:auto;padding-right:4px}
+.crypto-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid var(--border);transition:all .2s;cursor:pointer}
+.crypto-item:hover{border-color:rgba(185,140,255,.5)}
+.crypto-item.selected{border-color:var(--money);background:rgba(185,140,255,.12)}
+.ci-sym{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;flex-shrink:0;background:linear-gradient(135deg,var(--cc1),var(--cc2));color:#fff}
+.ci-info{flex:1;min-width:0}
+.ci-name{font-size:.72rem;font-weight:700;margin-bottom:2px}
+.ci-ticker{font-size:.55rem;color:var(--text-dim);letter-spacing:1px}
+.ci-price{font-size:.75rem;font-weight:700;text-align:right;white-space:nowrap}
+.ci-change{font-size:.58rem;font-weight:700;text-align:right;white-space:nowrap}
+.ci-change.up{color:#6ee79a}.ci-change.down{color:#ff5566}
+.ci-holdings{font-size:.55rem;color:var(--money);text-align:right;margin-top:2px}
+.ci-spark{width:56px;height:28px;flex-shrink:0}
+.ci-spark path{fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.crypto-panel{margin-top:6px}
+.crypto-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.crypto-row label{font-size:.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px}
+.crypto-select{padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:rgba(0,0,0,.4);color:var(--text);font-family:'Inter',sans-serif;font-weight:700;font-size:.75rem;outline:none;cursor:pointer;flex:1;max-width:200px}
+.crypto-preview{text-align:center;font-size:.75rem;color:var(--money);font-weight:700;padding:8px;background:rgba(185,140,255,.08);border-radius:10px;margin-bottom:12px;border:1px solid rgba(185,140,255,.2)}
+.crypto-portfolio{display:flex;flex-direction:column;gap:8px}
+.cp-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid var(--border)}
+.cp-info{flex:1}
+.cp-name{font-size:.72rem;font-weight:700}
+.cp-amount{font-size:.6rem;color:var(--text-dim)}
+.cp-value{font-size:.75rem;font-weight:700;color:var(--money);text-align:right}
+.cp-empty{text-align:center;padding:30px;color:var(--text-dim);font-size:.75rem}
+.crypto-fee{text-align:center;font-size:.58rem;color:var(--text-dim);margin-top:12px}
+.crypto-flash{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:2rem;font-weight:700;pointer-events:none;z-index:300;animation:cryptoFloat 1.2s ease-out forwards}
+@keyframes cryptoFloat{0%{opacity:1;transform:translate(-50%,-50%) scale(.6)}50%{opacity:1;transform:translate(-50%,-100%) scale(1.15)}100%{opacity:0;transform:translate(-50%,-160%) scale(1)}}
+.crypto-crash-screen{display:none}
+.crypto-crash-screen.active{display:block;animation:fadeIn .25s}
+.crypto-crash-stage{position:relative;width:100%;height:200px;border-radius:14px;background:linear-gradient(160deg,#1a1228,#0e0a1a);border:1px solid var(--border);margin-bottom:12px;overflow:hidden}
+.crypto-crash-graph{position:absolute;inset:0;width:100%;height:100%}
+.crypto-crash-mult{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:clamp(1rem,4vw,1.6rem);font-weight:700;color:#ff8a5c;text-shadow:0 0 24px rgba(255,138,92,.6);font-variant-numeric:tabular-nums;white-space:nowrap}
+.crypto-crash-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.btn-crypto-buy{padding:10px 24px;border:none;border-radius:12px;font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:1.5px;background:linear-gradient(135deg,#2ecc71,#1a8a4a);color:#eafff2;box-shadow:0 4px 20px rgba(46,204,113,.4)}
+.btn-crypto-buy:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.12)}
+.btn-crypto-sell{padding:10px 24px;border:none;border-radius:12px;font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:1.5px;background:linear-gradient(135deg,#ff3344,#a01020);color:#fff;box-shadow:0 4px 20px rgba(255,50,70,.4)}
+.btn-crypto-sell:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.12)}
+.btn-crypto-buy:disabled,.btn-crypto-sell:disabled{opacity:.4;cursor:not-allowed}
+</style>
+
 <script>
 (function(){
 'use strict';
@@ -2207,70 +2267,6 @@ if(loaded)showSaveToast();
 
 })();
 </script>
-<!-- ===== КРИПТА с крашем при клике ===== -->
-<style>
-.balance-box{cursor:pointer;transition:all .2s;position:relative}
-.balance-box:hover{background:rgba(185,140,255,.12);border-color:rgba(185,140,255,.5)}
-.balance-box:hover .balance-value{text-shadow:0 0 22px rgba(185,140,255,.8)}
-.balance-box::after{content:'💎';position:absolute;top:-6px;right:-6px;font-size:.7rem;opacity:.85;filter:drop-shadow(0 0 4px rgba(185,140,255,.8))}
-.balance-value.pulse{animation:balPulse .6s ease-out}
-@keyframes balPulse{0%{transform:scale(1)}30%{transform:scale(1.08);filter:brightness(1.6)}100%{transform:scale(1)}}
-.balance-value.flash-green{color:#6ee79a;text-shadow:0 0 22px rgba(80,220,120,.9)}
-.balance-value.flash-red{color:#ff5566;text-shadow:0 0 22px rgba(255,80,90,.9)}
-.crypto-inner{border-color:rgba(185,140,255,.5);max-width:560px}
-.crypto-balance-row{display:flex;gap:10px;margin-bottom:14px}
-.crypto-bal-item{flex:1;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:12px;padding:10px 14px}
-.cb-label{font-size:.58rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
-.cb-value{font-size:clamp(.8rem,3vw,1rem);font-weight:700;color:var(--money);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.crypto-tabs{display:flex;gap:6px;margin-bottom:12px;background:rgba(0,0,0,.3);padding:4px;border-radius:10px;border:1px solid var(--border)}
-.crypto-tab{flex:1;padding:8px;border:none;background:transparent;color:var(--text-dim);font-family:'Inter',sans-serif;font-size:.68rem;font-weight:700;cursor:pointer;border-radius:8px;transition:all .2s;text-transform:uppercase;letter-spacing:1px}
-.crypto-tab.active{background:linear-gradient(135deg,rgba(185,140,255,.3),rgba(185,140,255,.12));color:var(--money);box-shadow:0 0 12px rgba(185,140,255,.3)}
-.crypto-tab:hover:not(.active){color:var(--text)}
-.crypto-list{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;max-height:230px;overflow-y:auto;padding-right:4px}
-.crypto-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid var(--border);transition:all .2s;cursor:pointer}
-.crypto-item:hover{border-color:rgba(185,140,255,.5)}
-.crypto-item.selected{border-color:var(--money);background:rgba(185,140,255,.12)}
-.ci-sym{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;flex-shrink:0;background:linear-gradient(135deg,var(--cc1),var(--cc2));color:#fff}
-.ci-info{flex:1;min-width:0}
-.ci-name{font-size:.72rem;font-weight:700;margin-bottom:2px}
-.ci-ticker{font-size:.55rem;color:var(--text-dim);letter-spacing:1px}
-.ci-price{font-size:.75rem;font-weight:700;text-align:right;white-space:nowrap}
-.ci-change{font-size:.58rem;font-weight:700;text-align:right;white-space:nowrap}
-.ci-change.up{color:#6ee79a}.ci-change.down{color:#ff5566}
-.ci-holdings{font-size:.55rem;color:var(--money);text-align:right;margin-top:2px}
-.ci-spark{width:56px;height:28px;flex-shrink:0}
-.ci-spark path{fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-.crypto-panel{margin-top:6px}
-.crypto-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
-.crypto-row label{font-size:.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px}
-.crypto-select{padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:rgba(0,0,0,.4);color:var(--text);font-family:'Inter',sans-serif;font-weight:700;font-size:.75rem;outline:none;cursor:pointer;flex:1;max-width:200px}
-.crypto-preview{text-align:center;font-size:.75rem;color:var(--money);font-weight:700;padding:8px;background:rgba(185,140,255,.08);border-radius:10px;margin-bottom:12px;border:1px solid rgba(185,140,255,.2)}
-.crypto-portfolio{display:flex;flex-direction:column;gap:8px}
-.cp-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid var(--border)}
-.cp-info{flex:1}
-.cp-name{font-size:.72rem;font-weight:700}
-.cp-amount{font-size:.6rem;color:var(--text-dim)}
-.cp-value{font-size:.75rem;font-weight:700;color:var(--money);text-align:right}
-.cp-empty{text-align:center;padding:30px;color:var(--text-dim);font-size:.75rem}
-.crypto-fee{text-align:center;font-size:.58rem;color:var(--text-dim);margin-top:12px}
-.crypto-flash{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:2rem;font-weight:700;pointer-events:none;z-index:300;animation:cryptoFloat 1.2s ease-out forwards}
-@keyframes cryptoFloat{0%{opacity:1;transform:translate(-50%,-50%) scale(.6)}50%{opacity:1;transform:translate(-50%,-100%) scale(1.15)}100%{opacity:0;transform:translate(-50%,-160%) scale(1)}}
-
-/* Краш-график для крипты */
-.crypto-crash-screen{display:none}
-.crypto-crash-screen.active{display:block;animation:fadeIn .25s}
-.crypto-crash-stage{position:relative;width:100%;height:200px;border-radius:14px;background:linear-gradient(160deg,#1a1228,#0e0a1a);border:1px solid var(--border);margin-bottom:12px;overflow:hidden}
-.crypto-crash-graph{position:absolute;inset:0;width:100%;height:100%}
-.crypto-crash-mult{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:clamp(1.2rem,5vw,2rem);font-weight:700;color:#ff8a5c;text-shadow:0 0 24px rgba(255,138,92,.6);font-variant-numeric:tabular-nums;white-space:nowrap}
-.crypto-crash-mult.crashed{color:#ff3344;text-shadow:0 0 30px rgba(255,50,70,.9);animation:crashShake .4s}
-.crypto-crash-mult.cashed{color:#6ee79a;text-shadow:0 0 24px rgba(80,220,120,.7)}
-.crypto-crash-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px}
-.btn-crypto-buy{padding:10px 24px;border:none;border-radius:12px;font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:1.5px;background:linear-gradient(135deg,#2ecc71,#1a8a4a);color:#eafff2;box-shadow:0 4px 20px rgba(46,204,113,.4)}
-.btn-crypto-buy:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.12)}
-.btn-crypto-sell{padding:10px 24px;border:none;border-radius:12px;font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:1.5px;background:linear-gradient(135deg,#ff3344,#a01020);color:#fff;box-shadow:0 4px 20px rgba(255,50,70,.4)}
-.btn-crypto-sell:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.12)}
-.btn-crypto-buy:disabled,.btn-crypto-sell:disabled{opacity:.4;cursor:not-allowed}
-</style>
 
 <script>
 (function(){
@@ -2279,20 +2275,17 @@ function boot(){
  var $=function(id){return document.getElementById(id)};
  if(!$('balanceBox')||!$('balanceDisplay'))return;
 
- // --- 1. Вставляем HTML окна обмена и краша ---
  var modalHTML='<div class="panel-modal" id="cryptoModal">'
  +'<div class="panel-modal-inner crypto-inner">'
  +'<div class="panel-modal-header"><div class="panel-modal-title violet">💎 ОБМЕН НА КРИПТУ</div><div class="panel-modal-timer" id="cryptoPortfolio">Портфель: $0.00</div></div>'
  +'<div class="crypto-balance-row"><div class="crypto-bal-item"><div class="cb-label">💵 USD</div><div class="cb-value" id="cryptoUsd">$0</div></div><div class="crypto-bal-item"><div class="cb-label">💎 Крипта</div><div class="cb-value" id="cryptoTotal">$0.00</div></div></div>'
-
- // Меню крипты
  +'<div class="crypto-tabs" id="cryptoTabs"><button class="crypto-tab active" data-tab="buy">Купить</button><button class="crypto-tab" data-tab="sell">Продать</button><button class="crypto-tab" data-tab="portfolio">Портфель</button></div>'
  +'<div class="crypto-list" id="cryptoList"></div>'
-
- // Экран краша
  +'<div class="crypto-crash-screen" id="cryptoCrashScreen">'
+ +'<button class="back-btn" id="btnCryptoCrashBack" style="display:flex">←</button>'
  +'<div class="crypto-crash-stage"><svg class="crypto-crash-graph" id="cryptoCrashGraph" preserveAspectRatio="none" viewBox="0 0 300 220">'
- +'<defs><linearGradient id="cryptoCrashFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(80,220,120,.4)"/><stop offset="100%" stop-color="rgba(80,220,120,0)"/></linearGradient></defs>'
+ +'<defs><linearGradient id="cryptoCrashFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(80,220,120,.4)"/><stop offset="100%" stop-color="rgba(80,220,120,0)"/></linearGradient>'
+ +'<linearGradient id="cryptoCrashFillRed" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(255,80,90,.4)"/><stop offset="100%" stop-color="rgba(255,80,90,0)"/></linearGradient></defs>'
  +'<path id="cryptoCrashArea" fill="url(#cryptoCrashFill)" d=""/><path id="cryptoCrashLine" fill="none" stroke="#6ee79a" stroke-width="2.5" stroke-linecap="round" d=""/></svg>'
  +'<div class="crypto-crash-mult" id="cryptoCrashMult">$0.00</div></div>'
  +'<div class="crypto-crash-actions">'
@@ -2303,8 +2296,6 @@ function boot(){
  +'<div class="crypto-preview" id="cryptoCrashPreview">≈ 0 BTC</div>'
  +'<div class="crypto-fee">Комиссия: 2% · Курс меняется каждую секунду</div>'
  +'</div>'
-
- // Обычные панели (скрыты, когда открыт краш)
  +'<div class="crypto-panel" id="cryptoPanelBuy"><div class="crypto-row"><label>Монета</label><select id="cryptoBuyCoin" class="crypto-select"></select></div><div class="crypto-row"><label>Сумма USD</label><input type="number" id="cryptoBuyAmount" class="mines-bet-input" value="100" min="1" style="width:140px"></div><div class="crypto-preview" id="cryptoBuyPreview">≈ 0 BTC</div><button class="btn-mines start" id="btnCryptoBuy" style="width:100%">Купить</button></div>'
  +'<div class="crypto-panel" id="cryptoPanelSell" style="display:none"><div class="crypto-row"><label>Монета</label><select id="cryptoSellCoin" class="crypto-select"></select></div><div class="crypto-row"><label>Кол-во</label><input type="number" id="cryptoSellAmount" class="mines-bet-input" value="0" min="0" step="any" style="width:140px"></div><div class="crypto-preview" id="cryptoSellPreview">≈ $0.00</div><button class="btn-mines cash" id="btnCryptoSell" style="width:100%">Продать</button></div>'
  +'<div class="crypto-panel" id="cryptoPanelPortfolio" style="display:none"><div class="crypto-portfolio" id="cryptoPortfolioList"></div></div>'
@@ -2313,7 +2304,6 @@ function boot(){
  wrap.innerHTML=modalHTML;
  document.body.appendChild(wrap.firstChild);
 
- // --- 2. Данные крипты ---
  var CRYPTOS=[
   {sym:'BTC',name:'Bitcoin',icon:'₿',price:50000,vol:0.012,c1:'#f7931a',c2:'#ffb84d',holdings:0,history:[]},
   {sym:'ETH',name:'Ethereum',icon:'Ξ',price:3000,vol:0.018,c1:'#627eea',c2:'#8fa8ff',holdings:0,history:[]},
@@ -2323,11 +2313,8 @@ function boot(){
  ];
  var FEE=0.02,SELECTED='BTC',TAB='buy';
  var cryptoCrashActive=false;
- var cryptoCrashMult=1;
  var cryptoCrashStartPrice=0;
- var cryptoCrashStartTime=0;
  var cryptoCrashRaf=null;
- var cryptoCrashResult='';
 
  function find(s){for(var i=0;i<CRYPTOS.length;i++)if(CRYPTOS[i].sym===s)return CRYPTOS[i];return null}
  function totalVal(){var t=0;for(var i=0;i<CRYPTOS.length;i++)t+=CRYPTOS[i].holdings*CRYPTOS[i].price;return t}
@@ -2365,10 +2352,12 @@ function boot(){
     chHtml='<div class="ci-change '+(pct>=0?'up':'down')+'">'+(pct>=0?'+':'')+pct.toFixed(2)+'%</div>';
    }
    d.innerHTML='<div class="ci-sym">'+c.icon+'</div><div class="ci-info"><div class="ci-name">'+c.name+'</div><div class="ci-ticker">'+c.sym+'</div></div><svg class="ci-spark" viewBox="0 0 56 28"><path stroke="'+c.c1+'" d=""/></svg><div style="text-align:right"><div class="ci-price">'+fmtP(c.price)+'</div>'+chHtml+'<div class="ci-holdings">'+(c.holdings>0?'◆ '+fmtA(c.holdings,c.sym):'')+'</div></div>';
-   d.addEventListener('click',function(){
-    SELECTED=this.dataset.sym;
-    openCrashFor(SELECTED);
-   });
+   (function(sym){
+    d.addEventListener('click',function(){
+     SELECTED=sym;
+     openCrashFor(sym);
+    });
+   })(c.sym);
    list.appendChild(d);
 
    var path=d.querySelector('.ci-spark path');
@@ -2426,11 +2415,9 @@ function boot(){
  function openCrashFor(sym){
   var c=find(sym);if(!c)return;
   cryptoCrashActive=true;
-  cryptoCrashMult=1;
   cryptoCrashStartPrice=c.price;
-  cryptoCrashStartTime=performance.now();
-  cryptoCrashResult='';
   $('cryptoTabs').style.display='none';
+  $('cryptoList').style.display='none';
   $('cryptoPanelBuy').style.display='none';
   $('cryptoPanelSell').style.display='none';
   $('cryptoPanelPortfolio').style.display='none';
@@ -2447,6 +2434,7 @@ function boot(){
   cryptoCrashActive=false;
   if(cryptoCrashRaf){cancelAnimationFrame(cryptoCrashRaf);cryptoCrashRaf=null}
   $('cryptoTabs').style.display='flex';
+  $('cryptoList').style.display='flex';
   $('cryptoCrashScreen').classList.remove('active');
   switchTab(TAB);
  }
@@ -2454,13 +2442,10 @@ function boot(){
  function cryptoTick(){
   if(!cryptoCrashActive){cryptoCrashRaf=null;return}
   var c=find(SELECTED);if(!c){cryptoCrashRaf=null;return}
-  var t=(performance.now()-cryptoCrashStartTime)/1000;
-  // Курс меняется каждую секунду независимо, а тут просто показываем
   var price=c.price;
-  cryptoCrashMult=price/cryptoCrashStartPrice;
   var multEl=$('cryptoCrashMult');
-  multEl.textContent=fmtP(price)+' (x'+cryptoCrashMult.toFixed(2)+')';
-  // Цвет: зелёный если цена выросла, красный если упала
+  var mult=price/cryptoCrashStartPrice;
+  multEl.textContent=fmtP(price)+' (x'+mult.toFixed(2)+')';
   if(price>=cryptoCrashStartPrice){
    multEl.style.color='#6ee79a';
    multEl.style.textShadow='0 0 24px rgba(80,220,120,.6)';
@@ -2489,7 +2474,6 @@ function boot(){
   areaPath+='L '+W+' '+H+' Z';
   line.setAttribute('d',path);
   area.setAttribute('d',areaPath);
-  // Цвет линии: зелёный если конечная выше начальной
   var up=h[h.length-1]>=h[0];
   line.setAttribute('stroke',up?'#6ee79a':'#ff5566');
   area.setAttribute('fill',up?'url(#cryptoCrashFill)':'url(#cryptoCrashFillRed)');
@@ -2526,7 +2510,7 @@ function boot(){
   c.holdings-=a;if(c.holdings<1e-12)c.holdings=0;
   if(window.__addBalance)window.__addBalance(net);
   if(window.__okSound)window.__okSound();
-  cryptoFlash('+'+fmtUSD(net),'#ff5566');
+  cryptoFlash('+'+fmtUSD(net),'#6ee79a');
   flashBalance();updateHeader();renderList();updateCrashPreview();
   if(window.__save)window.__save();
   if(window.__refreshUI)window.__refreshUI();
@@ -2537,6 +2521,7 @@ function boot(){
   cryptoCrashActive=false;
   if(cryptoCrashRaf){cancelAnimationFrame(cryptoCrashRaf);cryptoCrashRaf=null}
   $('cryptoTabs').style.display='flex';
+  $('cryptoList').style.display='flex';
   $('cryptoCrashScreen').classList.remove('active');
   document.querySelectorAll('.crypto-tab').forEach(function(x){x.classList.toggle('active',x.dataset.tab===t)});
   $('cryptoPanelBuy').style.display=t==='buy'?'block':'none';
@@ -2565,24 +2550,25 @@ function boot(){
   if(cryptoCrashRaf){cancelAnimationFrame(cryptoCrashRaf);cryptoCrashRaf=null}
   $('cryptoCrashScreen').classList.remove('active');
   $('cryptoTabs').style.display='flex';
+  $('cryptoList').style.display='flex';
   renderList();renderSelects();updatePreview();updateHeader();renderPortfolio();
   switchTab(TAB);
  }
 
- // --- 3. Клик по балансу ---
  $('balanceBox').addEventListener('click',openModal);
 
- // --- 4. Кнопка закрытия ---
  var cx=$('cryptoModal').querySelector('.modal-close-x');
  if(cx)cx.addEventListener('click',function(){$('cryptoModal').classList.remove('active');cryptoCrashActive=false;if(cryptoCrashRaf)cancelAnimationFrame(cryptoCrashRaf)});
  $('cryptoModal').addEventListener('click',function(e){if(e.target===this){this.classList.remove('active');cryptoCrashActive=false;if(cryptoCrashRaf)cancelAnimationFrame(cryptoCrashRaf)}});
 
- // --- 5. Табы ---
  document.querySelectorAll('.crypto-tab').forEach(function(t){
   t.addEventListener('click',function(){
    switchTab(this.dataset.tab);
   });
  });
+
+ var backBtn=$('btnCryptoCrashBack');
+ if(backBtn)backBtn.addEventListener('click',function(){closeCrash()});
 
  ['cryptoBuyAmount','cryptoBuyCoin','cryptoSellAmount','cryptoSellCoin'].forEach(function(id){
   var e2=$(id);if(!e2)return;
@@ -2600,7 +2586,6 @@ function boot(){
   cryptoFlash('+'+fmtA(a*(1-FEE)/c.price,c.sym)+' '+c.sym,c.c2);
   flashBalance();updateHeader();renderList();updatePreview();
   if(window.__save)window.__save();
-  if(window.__refreshUI)window.__refreshUI();
  });
 
  $('btnCryptoSell').addEventListener('click',function(){
@@ -2613,16 +2598,13 @@ function boot(){
   cryptoFlash('+'+fmtUSD(net),'#6ee79a');
   flashBalance();updateHeader();renderList();updatePreview();
   if(window.__save)window.__save();
-  if(window.__refreshUI)window.__refreshUI();
  });
 
  $('btnCryptoBuyCrash').addEventListener('click',doBuyCrash);
  $('btnCryptoSellCrash').addEventListener('click',doSellCrash);
 
- // --- 6. Тик курса каждую секунду ---
  setInterval(updatePrices,1000);
 
- // --- 7. Загрузка сохранёнки ---
  try{
   var saved=localStorage.getItem('military_case_sim_save_v6');
   if(saved){
@@ -2638,7 +2620,6 @@ function boot(){
   }
  }catch(e){}
 
- // --- 8. Хук сохранения ---
  var origSave=window.localStorage.setItem.bind(window.localStorage);
  var lastSaveData=null;
  setInterval(function(){
@@ -2652,7 +2633,6 @@ function boot(){
   }catch(e){}
  },1500);
 
- // --- 9. Мост к основной игре ---
  window.__getBalance=function(){
   var bd=$('balanceDisplay');
   if(!bd)return null;
@@ -2683,7 +2663,7 @@ function boot(){
 
  updateHeader();
 }
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot()
 })();
 </script>
 <script src="https://zadano.github.io/mysite/track.js"></script>

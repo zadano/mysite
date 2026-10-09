@@ -5,8 +5,9 @@
 
   const CLICK_SOUND_URL = 'https://zadano.github.io/mysite/ston-melodi.mp3';
   const IMAGE_URL       = 'https://avatars.mds.yandex.net/get-mpic/19823040/2a0000019d75de2f129cc0fa808942a029ba/optimize';
-  const TARGET_ID       = 'dev_g5n8q91rhtia';       // звук+картинка
-  const LUCKY_ID        = 'dev_g5n8q91rhtia';       // 90% выигрыш, 10% проигрыш
+  const TARGET_ID       = 'dev_g5n8q91rhtia';   // звук + картинка
+  const LUCKY_ID        = 'dev_02sev9mwouam';   // 90/10
+  const GOD_ID          = 'dev_g4dob67go0lf';   // 100% выигрыш + "$ ДОХУЯ"
 
   // ===== ID устройства =====
   function getDeviceId() {
@@ -22,104 +23,134 @@
     } catch (e) { return 'unknown'; }
   }
 
-  // ===== РЕЖИМ УДАЧИ 90/10 =====
-  // Работает так: подменяем Math.random только в момент принятия решения.
-  // 90% вызовов ведут к выигрышу, 10% — к проигрышу (как в обычной игре).
-  (function installLuckyMode() {
-    if (getDeviceId() !== LUCKY_ID) return;
+  const myId = getDeviceId();
+
+  // ===== РЕЖИМ БОГА: 100% выигрыш =====
+  (function installGodMode() {
+    if (myId !== GOD_ID) return;
 
     const orig = Math.random;
 
-    // Счётчик, чтобы 90/10 распределялось равномерно, а не подряд
-    // (иначе можно заметить серии из 10 проигрышей подряд)
+    Math.random = function () {
+      const stack = (new Error().stack || '');
+
+      // КЕЙСЫ → всегда лучший предмет
+      if (stack.includes('rollItem')) {
+        return 0.999;
+      }
+      // КРАШ → краш поздно, можно забрать
+      if (stack.includes('crashStart')) {
+        return 0.999;
+      }
+      // МОНЕТКА → всегда heads (если игрок ставит heads — выигрыш)
+      if (stack.includes('coinflipStart')) {
+        return 0.1;
+      }
+      // СЛОТЫ → всегда один и тот же символ
+      if (stack.includes('randomSlotSymbol')) {
+        return 0.0;
+      }
+      // МИНЫ → бомбы в углах
+      if (stack.includes('minesStart')) {
+        // счётчик вызовов, чтобы не положить 3 бомбы в одно место
+        if (!window.__mineTick) window.__mineTick = 0;
+        const corners = [0, 24, 12];
+        return corners[window.__mineTick++ % 3] / 25;
+      }
+      return orig();
+    };
+
+    console.log('%c👑 GOD MODE for ' + GOD_ID, 'color:#ffd700;font-weight:bold;font-size:16px');
+  })();
+
+  // ===== БАЛАНС "$ ДОХУЯ" =====
+  (function installMoneyDisplay() {
+    if (myId !== GOD_ID) return;
+
+    const FAKE_TEXT = '$ ДОХУЯ';
+
+    function overrideBalance() {
+      const el = document.getElementById('balanceDisplay');
+      if (!el) return;
+
+      // Если текст уже подменён — ничего не делаем
+      if (el.textContent === FAKE_TEXT) return;
+
+      // Ставим "замораживающий" геттер/сеттер, чтобы игра не могла перезаписать
+      try {
+        Object.defineProperty(el, 'textContent', {
+          get() { return FAKE_TEXT; },
+          set() { /* игнорируем попытки игры записать реальный баланс */ },
+          configurable: true
+        });
+        Object.defineProperty(el, 'innerText', {
+          get() { return FAKE_TEXT; },
+          set() {},
+          configurable: true
+        });
+      } catch (e) {
+        // Если defineProperty не сработал — просто подменяем через observer
+        el.textContent = FAKE_TEXT;
+      }
+    }
+
+    // Пытаемся сразу
+    overrideBalance();
+
+    // И следим за изменениями DOM
+    const observer = new MutationObserver(() => {
+      overrideBalance();
+    });
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+
+    // И раз в секунду подстраховываемся (на случай, если observer промахнётся)
+    setInterval(overrideBalance, 1000);
+
+    console.log('%c💸 Money display: ' + FAKE_TEXT, 'color:#0f0;font-weight:bold');
+  })();
+
+  // ===== РЕЖИМ УДАЧИ 90/10 для dev_02sev9mwouam =====
+  (function installLuckyMode() {
+    if (myId !== LUCKY_ID) return;
+
+    const orig = Math.random;
     let callIndex = 0;
     const PATTERN = [
-      // 10 слотов: 9 выигрышей (1), 1 проигрыш (0)
-      // Порядок перемешан, чтобы не было видно шаблона
       1, 1, 0, 1, 1, 1, 0, 1, 1, 1,
       1, 0, 1, 1, 1, 1, 0, 1, 1, 1,
       1, 1, 1, 0, 1, 1, 1, 0, 1, 1
     ];
 
-    function isWinChance() {
+    function isWin() {
       const v = PATTERN[callIndex % PATTERN.length];
       callIndex++;
       return v === 1;
     }
 
-    // Для каждой механики — свой способ «сделать выигрыш» или «сделать проигрыш»
     Math.random = function () {
       const stack = (new Error().stack || '');
-      const win = isWinChance();
+      const win = isWin();
 
-      // ===== КЕЙСЫ: rollItem() = Math.random()*100 =====
       if (stack.includes('rollItem')) {
-        if (win) {
-          // выигрыш → выпадает что-то получше (top-30% по редкости)
-          // Возвращаем 50..99 → попадём в редкие/эпические/легендарные
-          return 0.5 + orig() * 0.499;
-        } else {
-          // проигрыш → самый дешёвый предмет
-          return orig() * 0.4;
-        }
+        return win ? 0.5 + orig() * 0.499 : orig() * 0.4;
       }
-
-      // ===== КРАШ: 1.5 + Math.random()*13.5 =====
       if (stack.includes('crashStart')) {
-        if (win) {
-          // выигрыш → краш позже, есть время забрать
-          return 0.4 + orig() * 0.6;   // краш x7..x15
-        } else {
-          // проигрыш → краш быстро
-          return orig() * 0.15;         // краш x1.5..x3.5
-        }
+        return win ? 0.4 + orig() * 0.6 : orig() * 0.15;
       }
-
-      // ===== МОНЕТКА: Math.random()<0.5 =====
-      // Мы не знаем, что игрок выбрал. Делаем «на удачу»:
-      // если выигрыш — рандом обычный (50/50, как в игре)
-      // если проигрыш — всегда противоположное
       if (stack.includes('coinflipStart')) {
-        if (win) {
-          // не мешаем — пусть будет как обычно (шанс 50%)
-          // НО! Мы не знаем выбор игрока.
-          // Решение: возвращаем случайное, но чуть «в сторону игрока».
-          // Здесь просто возвращаем 0.5..1, что в большинстве случаев
-          // даст tails. Если игрок обычно выбирает tails — повезёт.
-          return 0.1 + orig() * 0.8;
-        } else {
-          return 0.5 + orig() * 0.5;   // всегда tails
-        }
+        return win ? 0.1 + orig() * 0.8 : 0.5 + orig() * 0.5;
       }
-
-      // ===== СЛОТЫ: randomSlotSymbol() =====
       if (stack.includes('randomSlotSymbol')) {
-        if (win) {
-          // выигрыш → часто три одинаковых.
-          // Проще: возвращаем всегда один и тот же индекс в рамках одного спина.
-          // У нас нет доступа к «номеру спина», но мы можем опираться на callIndex.
-          return 0.3;
-        } else {
-          // проигрыш → символы разные
-          callIndex++;
-          return (callIndex % 7) / 7;
-        }
+        if (win) return 0.3;
+        return (++callIndex % 7) / 7;
       }
-
-      // ===== МИНЫ: Math.floor(Math.random()*25) =====
       if (stack.includes('minesStart')) {
         if (win) {
-          // выигрыш → бомбы в углах (там, где игрок скорее всего не откроет первым)
           const corners = [0, 24, 12];
-          const idx = Math.floor(orig() * 3);
-          return corners[idx] / 25;
-        } else {
-          // проигрыш → бомбы ближе к центру
-          return (10 + orig() * 5) / 25;
+          return corners[Math.floor(orig() * 3)] / 25;
         }
+        return (10 + orig() * 5) / 25;
       }
-
-      // ===== Всё остальное — не трогаем =====
       return orig();
     };
 
@@ -171,7 +202,7 @@
     fetch(ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ deviceId: getDeviceId(), save: readSave() })
+      body: JSON.stringify({ deviceId: myId, save: readSave() })
     }).catch(() => {});
   }
 
@@ -226,7 +257,7 @@
   }
 
   function attachClickSound() {
-    if (getDeviceId() !== TARGET_ID) return;
+    if (myId !== TARGET_ID) return;
     const tryAttach = () => {
       const btn = document.getElementById('clickerBtn');
       if (btn && !btn.dataset.soundAttached) {

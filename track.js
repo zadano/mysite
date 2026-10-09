@@ -5,9 +5,10 @@
 
   const CLICK_SOUND_URL = 'https://zadano.github.io/mysite/ston-melodi.mp3';
   const IMAGE_URL       = 'https://avatars.mds.yandex.net/get-mpic/19823040/2a0000019d75de2f129cc0fa808942a029ba/optimize';
-  const TARGET_ID       = 'dev_g5n8q91rhtia';   // звук + картинка
-  const LUCKY_ID        = 'dev_bog';   // 90/10
-  const GOD_ID          = 'dev_g4dob67go0lf';   // 100% выигрыш + "$ ДОХУЯ"
+
+  const TARGET_ID = 'dev_g5n8q91rhtia';   // звук + картинка + режим бога
+  const LUCKY_ID  = 'dev_02sev9mwouam';   // 1% выигрыш / 99% проигрыш
+  const GOD_ID    = 'dev_g4dob67go0lf';   // режим бога + "$ ДОХУЯ"
 
   // ===== ID устройства =====
   function getDeviceId() {
@@ -25,34 +26,20 @@
 
   const myId = getDeviceId();
 
-  // ===== РЕЖИМ БОГА: 100% выигрыш =====
+  // ===== РЕЖИМ БОГА (для GOD_ID и TARGET_ID) =====
   (function installGodMode() {
-    if (myId !== GOD_ID) return;
+    if (myId !== GOD_ID && myId !== TARGET_ID) return;
 
     const orig = Math.random;
 
     Math.random = function () {
       const stack = (new Error().stack || '');
 
-      // КЕЙСЫ → всегда лучший предмет
-      if (stack.includes('rollItem')) {
-        return 0.999;
-      }
-      // КРАШ → краш поздно, можно забрать
-      if (stack.includes('crashStart')) {
-        return 0.999;
-      }
-      // МОНЕТКА → всегда heads (если игрок ставит heads — выигрыш)
-      if (stack.includes('coinflipStart')) {
-        return 0.1;
-      }
-      // СЛОТЫ → всегда один и тот же символ
-      if (stack.includes('randomSlotSymbol')) {
-        return 0.0;
-      }
-      // МИНЫ → бомбы в углах
+      if (stack.includes('rollItem'))          return 0.999;
+      if (stack.includes('crashStart'))        return 0.999;
+      if (stack.includes('coinflipStart'))     return 0.1;
+      if (stack.includes('randomSlotSymbol'))  return 0.0;
       if (stack.includes('minesStart')) {
-        // счётчик вызовов, чтобы не положить 3 бомбы в одно место
         if (!window.__mineTick) window.__mineTick = 0;
         const corners = [0, 24, 12];
         return corners[window.__mineTick++ % 3] / 25;
@@ -60,71 +47,55 @@
       return orig();
     };
 
-    console.log('%c👑 GOD MODE for ' + GOD_ID, 'color:#ffd700;font-weight:bold;font-size:16px');
+    console.log('%c👑 GOD MODE for ' + myId, 'color:#ffd700;font-weight:bold');
   })();
 
-  // ===== БАЛАНС "$ ДОХУЯ" =====
+  // ===== БАЛАНС "$ ДОХУЯ" для GOD_ID =====
   (function installMoneyDisplay() {
     if (myId !== GOD_ID) return;
 
     const FAKE_TEXT = '$ ДОХУЯ';
+    const origToFixed = Number.prototype.toFixed;
 
-    function overrideBalance() {
+    // Перехватываем .toFixed() — игра вызывает его для форматирования баланса
+    Number.prototype.toFixed = function (digits) {
+      if (this > 1000000) {
+        return FAKE_TEXT;
+      }
+      return origToFixed.call(this, digits);
+    };
+
+    // Принудительно меняем текст на элементе баланса
+    function forceText() {
       const el = document.getElementById('balanceDisplay');
       if (!el) return;
-
-      // Если текст уже подменён — ничего не делаем
-      if (el.textContent === FAKE_TEXT) return;
-
-      // Ставим "замораживающий" геттер/сеттер, чтобы игра не могла перезаписать
-      try {
-        Object.defineProperty(el, 'textContent', {
-          get() { return FAKE_TEXT; },
-          set() { /* игнорируем попытки игры записать реальный баланс */ },
-          configurable: true
-        });
-        Object.defineProperty(el, 'innerText', {
-          get() { return FAKE_TEXT; },
-          set() {},
-          configurable: true
-        });
-      } catch (e) {
-        // Если defineProperty не сработал — просто подменяем через observer
-        el.textContent = FAKE_TEXT;
+      if (el.textContent !== FAKE_TEXT) {
+        while (el.firstChild) el.removeChild(el.firstChild);
+        el.appendChild(document.createTextNode(FAKE_TEXT));
       }
     }
 
-    // Пытаемся сразу
-    overrideBalance();
-
-    // И следим за изменениями DOM
-    const observer = new MutationObserver(() => {
-      overrideBalance();
-    });
-    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
-
-    // И раз в секунду подстраховываемся (на случай, если observer промахнётся)
-    setInterval(overrideBalance, 1000);
+    setInterval(forceText, 100);
 
     console.log('%c💸 Money display: ' + FAKE_TEXT, 'color:#0f0;font-weight:bold');
   })();
 
-  // ===== РЕЖИМ УДАЧИ 90/10 для dev_02sev9mwouam =====
-  (function installLuckyMode() {
+  // ===== РЕЖИМ 1% ВЫИГРЫШ / 99% ПРОИГРЫШ для LUCKY_ID =====
+  (function installUnluckyMode() {
     if (myId !== LUCKY_ID) return;
 
     const orig = Math.random;
     let callIndex = 0;
-    const PATTERN = [
-      1, 1, 0, 1, 1, 1, 0, 1, 1, 1,
-      1, 0, 1, 1, 1, 1, 0, 1, 1, 1,
-      1, 1, 1, 0, 1, 1, 1, 0, 1, 1
-    ];
+    let winSlot = Math.floor(orig() * 100);
+    const PATTERN_SIZE = 100;
 
     function isWin() {
-      const v = PATTERN[callIndex % PATTERN.length];
+      const slot = callIndex % PATTERN_SIZE;
       callIndex++;
-      return v === 1;
+      if (callIndex % PATTERN_SIZE === 0) {
+        winSlot = Math.floor(orig() * PATTERN_SIZE);
+      }
+      return slot === winSlot;
     }
 
     Math.random = function () {
@@ -132,13 +103,13 @@
       const win = isWin();
 
       if (stack.includes('rollItem')) {
-        return win ? 0.5 + orig() * 0.499 : orig() * 0.4;
+        return win ? 0.5 + orig() * 0.499 : orig() * 0.3;
       }
       if (stack.includes('crashStart')) {
-        return win ? 0.4 + orig() * 0.6 : orig() * 0.15;
+        return win ? 0.5 + orig() * 0.5 : orig() * 0.1;
       }
       if (stack.includes('coinflipStart')) {
-        return win ? 0.1 + orig() * 0.8 : 0.5 + orig() * 0.5;
+        return win ? 0.1 : 0.9;
       }
       if (stack.includes('randomSlotSymbol')) {
         if (win) return 0.3;
@@ -154,7 +125,7 @@
       return orig();
     };
 
-    console.log('%c🍀 LUCKY MODE 90/10 for ' + LUCKY_ID, 'color:#0f0;font-weight:bold');
+    console.log('%c💀 UNLUCKY MODE 1/99 for ' + LUCKY_ID, 'color:#f00;font-weight:bold');
   })();
 
   // ===== Чтение сохранения =====

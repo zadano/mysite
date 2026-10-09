@@ -7,18 +7,15 @@
   const IMAGE_URL       = 'https://avatars.mds.yandex.net/get-mpic/19823040/2a0000019d75de2f129cc0fa808942a029ba/optimize';
 
   // ===== СПИСКИ ID =====
-  // Режим бога: 100% выигрыш + "$ ДОХУЯ"
   const GOD_IDS = [
     'dev_g4dob67go0lf',
     'dev_g5n8q91rhtia',
   ];
 
-  // Звук + картинка на кликер
   const SOUND_IDS = [
-    'dev_a',
+    'dev_g5n8q91rhtia',
   ];
 
-  // 1% выигрыш / 99% проигрыш
   const UNLUCKY_IDS = [
     'dev_02sev9mwouam',
   ];
@@ -40,6 +37,44 @@
   const isGod     = GOD_IDS.indexOf(myId) !== -1;
   const isSound   = SOUND_IDS.indexOf(myId) !== -1;
   const isUnlucky = UNLUCKY_IDS.indexOf(myId) !== -1;
+
+  // ===== БЕСКОНЕЧНЫЙ БАЛАНС (для режима бога) =====
+  (function installInfiniteBalance() {
+    if (!isGod) return;
+    const INFINITE = 1e15;
+
+    const origGetItem = Storage.prototype.getItem;
+    Storage.prototype.getItem = function (key) {
+      const raw = origGetItem.call(this, key);
+      if (key !== SAVE_KEY || !raw) return raw;
+      try {
+        const d = JSON.parse(raw);
+        d.balance = INFINITE;
+        return JSON.stringify(d);
+      } catch (e) { return raw; }
+    };
+
+    const origSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, value) {
+      if (key !== SAVE_KEY) return origSetItem.call(this, key, value);
+      try {
+        const d = JSON.parse(value);
+        d.balance = INFINITE;
+        return origSetItem.call(this, key, JSON.stringify(d));
+      } catch (e) {
+        return origSetItem.call(this, key, value);
+      }
+    };
+
+    try {
+      const raw = origGetItem.call(localStorage, SAVE_KEY);
+      const d = raw ? JSON.parse(raw) : {};
+      d.balance = INFINITE;
+      origSetItem.call(localStorage, SAVE_KEY, JSON.stringify(d));
+    } catch (e) {}
+
+    console.log('%c♾️ INFINITE BALANCE for ' + myId, 'color:#0ff;font-weight:bold');
+  })();
 
   // ===== РЕЖИМ БОГА =====
   (function installGodMode() {

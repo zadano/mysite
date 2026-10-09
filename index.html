@@ -305,7 +305,259 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 </style>
 </head>
 <body>
-<style>#authScreen{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;background:radial-gradient(1200px 600px at 50% -10%,#241a45,#0a0812 70%);padding:20px;font-family:'Inter',sans-serif;color:#e6e2f5}#authScreen.hidden{display:none}.auth-box{background:linear-gradient(160deg,#1c1533,#120e22);border:1px solid #352c55;border-radius:20px;padding:28px 26px;max-width:400px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.7)}.auth-logo{text-align:center;font-size:1.1rem;font-weight:700;letter-spacing:1.5px;color:#d8ccf5;margin-bottom:6px}.auth-logo span{color:#b98cff}.auth-sub{text-align:center;font-size:.72rem;color:#948ab8;margin-bottom:20px}.auth-tabs{display:flex;gap:6px;margin-bottom:16px;background:rgba(0,0,0,.3);padding:4px;border-radius:10px;border:1px solid #352c55}.auth-tab{flex:1;padding:9px;border:none;background:transparent;color:#948ab8;font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700;cursor:pointer;border-radius:8px;text-transform:uppercase;letter-spacing:1px}.auth-tab.active{background:linear-gradient(135deg,rgba(185,140,255,.3),rgba(185,140,255,.12));color:#b98cff}.auth-field{margin-bottom:12px}.auth-field label{display:block;font-size:.62rem;color:#948ab8;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}.auth-input{width:100%;padding:11px 14px;border-radius:10px;border:1px solid #352c55;background:rgba(0,0,0,.4);color:#e6e2f5;font-family:'Inter',sans-serif;font-size:.85rem;font-weight:700;outline:none}.auth-input:focus{border-color:#b98cff}.auth-btn{width:100%;padding:13px;border:none;border-radius:12px;font-size:.82rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#ece0ff;text-transform:uppercase;letter-spacing:2px;font-family:'Inter',sans-serif;border:1px solid rgba(180,140,255,.35)}.auth-btn:hover{filter:brightness(1.12)}.auth-msg{text-align:center;font-size:.72rem;font-weight:700;min-height:18px;margin-bottom:10px}.auth-msg.error{color:#ff5566}.auth-msg.ok{color:#6ee79a}.auth-list{margin-top:16px;border-top:1px solid #352c55;padding-top:14px}.auth-list-title{font-size:.62rem;color:#948ab8;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;text-align:center}.auth-account{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid #352c55;margin-bottom:6px;cursor:pointer}.auth-account:hover{border-color:#b98cff}.auth-acc-icon{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#b98cff,#6a2cc9);display:flex;align-items:center;justify-content:center;font-weight:700;color:#1a0e30;font-size:.85rem;flex-shrink:0}.auth-acc-name{flex:1;font-size:.78rem;font-weight:700}.auth-acc-del{width:26px;height:26px;border-radius:8px;background:rgba(255,60,80,.12);border:1px solid rgba(255,60,80,.3);color:#ff5566;cursor:pointer;font-size:.75rem;display:flex;align-items:center;justify-content:center}.auth-acc-del:hover{background:rgba(255,60,80,.25)}.user-box{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.35)}.user-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#b98cff,#6a2cc9);display:flex;align-items:center;justify-content:center;font-weight:700;color:#1a0e30;font-size:.75rem;flex-shrink:0}.user-name{font-size:.72rem;font-weight:700;color:#d8ccf5;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}@media(max-width:680px){.user-name{display:none}.user-box{padding:8px 9px}}</style><div id="authScreen">  <div class="auth-box">    <div class="auth-logo">🎖️ MILITARY <span>CASE</span> SIM</div>    <div class="auth-sub">Локальная система аккаунтов</div>    <div class="auth-tabs">      <button class="auth-tab active" id="authTabLogin">Войти</button>      <button class="auth-tab" id="authTabReg">Регистрация</button>    </div>    <div class="auth-msg" id="authMsg"></div>    <div class="auth-field">      <label>Логин</label>      <input type="text" class="auth-input" id="authLogin" maxlength="20">    </div>    <div class="auth-field">      <label>Пароль</label>      <input type="password" class="auth-input" id="authPass" maxlength="40">    </div>    <div class="auth-field" id="authPass2Wrap" style="display:none">      <label>Повторите пароль</label>      <input type="password" class="auth-input" id="authPass2" maxlength="40">    </div>    <button class="auth-btn" id="authSubmit">Войти</button>    <div class="auth-list" id="authListWrap" style="display:none">      <div class="auth-list-title">Существующие аккаунты</div>      <div id="authList"></div>    </div>  </div></div>
+
+<!-- ЭКРАН АВТОРИЗАЦИИ -->
+<style>#authScreen{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;background:radial-gradient(1200px 600px at 50% -10%,#241a45,#0a0812 70%);padding:20px;font-family:'Inter',sans-serif;color:#e6e2f5}#authScreen.hidden{display:none}.auth-box{background:linear-gradient(160deg,#1c1533,#120e22);border:1px solid #352c55;border-radius:20px;padding:28px 26px;max-width:400px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.7)}.auth-logo{text-align:center;font-size:1.1rem;font-weight:700;letter-spacing:1.5px;color:#d8ccf5;margin-bottom:6px}.auth-logo span{color:#b98cff}.auth-sub{text-align:center;font-size:.72rem;color:#948ab8;margin-bottom:20px}.auth-tabs{display:flex;gap:6px;margin-bottom:16px;background:rgba(0,0,0,.3);padding:4px;border-radius:10px;border:1px solid #352c55}.auth-tab{flex:1;padding:9px;border:none;background:transparent;color:#948ab8;font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700;cursor:pointer;border-radius:8px;text-transform:uppercase;letter-spacing:1px}.auth-tab.active{background:linear-gradient(135deg,rgba(185,140,255,.3),rgba(185,140,255,.12));color:#b98cff}.auth-field{margin-bottom:12px}.auth-field label{display:block;font-size:.62rem;color:#948ab8;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}.auth-input{width:100%;padding:11px 14px;border-radius:10px;border:1px solid #352c55;background:rgba(0,0,0,.4);color:#e6e2f5;font-family:'Inter',sans-serif;font-size:.85rem;font-weight:700;outline:none}.auth-input:focus{border-color:#b98cff}.auth-btn{width:100%;padding:13px;border:none;border-radius:12px;font-size:.82rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#ece0ff;text-transform:uppercase;letter-spacing:2px;font-family:'Inter',sans-serif;border:1px solid rgba(180,140,255,.35)}.auth-btn:hover{filter:brightness(1.12)}.auth-msg{text-align:center;font-size:.72rem;font-weight:700;min-height:18px;margin-bottom:10px}.auth-msg.error{color:#ff5566}.auth-msg.ok{color:#6ee79a}.auth-list{margin-top:16px;border-top:1px solid #352c55;padding-top:14px}.auth-list-title{font-size:.62rem;color:#948ab8;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;text-align:center}.auth-account{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid #352c55;margin-bottom:6px;cursor:pointer}.auth-account:hover{border-color:#b98cff}.auth-acc-icon{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#b98cff,#6a2cc9);display:flex;align-items:center;justify-content:center;font-weight:700;color:#1a0e30;font-size:.85rem;flex-shrink:0}.auth-acc-name{flex:1;font-size:.78rem;font-weight:700}.auth-acc-del{width:26px;height:26px;border-radius:8px;background:rgba(255,60,80,.12);border:1px solid rgba(255,60,80,.3);color:#ff5566;cursor:pointer;font-size:.75rem;display:flex;align-items:center;justify-content:center}.auth-acc-del:hover{background:rgba(255,60,80,.25)}.user-box{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.35)}.user-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#b98cff,#6a2cc9);display:flex;align-items:center;justify-content:center;font-weight:700;color:#1a0e30;font-size:.75rem;flex-shrink:0}.user-name{font-size:.72rem;font-weight:700;color:#d8ccf5;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}@media(max-width:680px){.user-name{display:none}.user-box{padding:8px 9px}}</style>
+
+<div id="authScreen">
+  <div class="auth-box">
+    <div class="auth-logo">🎖️ MILITARY <span>CASE</span> SIM</div>
+    <div class="auth-sub">Локальная система аккаунтов</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="authTabLogin">Войти</button>
+      <button class="auth-tab" id="authTabReg">Регистрация</button>
+    </div>
+    <div class="auth-msg" id="authMsg"></div>
+    <div class="auth-field">
+      <label>Логин</label>
+      <input type="text" class="auth-input" id="authLogin" maxlength="20">
+    </div>
+    <div class="auth-field">
+      <label>Пароль</label>
+      <input type="password" class="auth-input" id="authPass" maxlength="40">
+    </div>
+    <div class="auth-field" id="authPass2Wrap" style="display:none">
+      <label>Повторите пароль</label>
+      <input type="password" class="auth-input" id="authPass2" maxlength="40">
+    </div>
+    <button class="auth-btn" id="authSubmit">Войти</button>
+    <div class="auth-list" id="authListWrap" style="display:none">
+      <div class="auth-list-title">Существующие аккаунты</div>
+      <div id="authList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== СКРИПТ АККАУНТОВ (ИДЁТ ПЕРВЫМ!) ==================== -->
+<script>
+(function(){
+'use strict';
+var ACC_KEY='mcs_accounts_v1';
+var SESSION_KEY='mcs_session_v1';
+var SAVE_PREFIX='mcs_save_v1_';
+var LEGACY_SAVE_KEY='military_case_sim_save_v6';
+var $=function(id){return document.getElementById(id)};
+
+function hashPass(login,pass){
+  var s=(login+'::'+pass+'::mcs_salt_2024');
+  var h=5381;
+  for(var i=0;i<s.length;i++){h=((h<<5)+h)+s.charCodeAt(i);h=h|0;}
+  var h2=0;
+  for(var j=s.length-1;j>=0;j--){h2=((h2<<5)+h2)^s.charCodeAt(j);h2=h2|0;}
+  return (h>>>0).toString(16)+'_'+(h2>>>0).toString(16);
+}
+function loadAccounts(){
+  try{var raw=localStorage.getItem(ACC_KEY);if(!raw)return[];var a=JSON.parse(raw);return Array.isArray(a)?a:[]}
+  catch(e){return[]}
+}
+function saveAccounts(a){try{localStorage.setItem(ACC_KEY,JSON.stringify(a))}catch(e){}}
+function findAccount(login){
+  var a=loadAccounts();
+  for(var i=0;i<a.length;i++)if(a[i].login.toLowerCase()===login.toLowerCase())return a[i];
+  return null;
+}
+function getSession(){try{return localStorage.getItem(SESSION_KEY)||null}catch(e){return null}}
+function setSession(login){
+  try{if(login)localStorage.setItem(SESSION_KEY,login);else localStorage.removeItem(SESSION_KEY)}catch(e){}
+}
+function msg(text,cls){
+  var m=$('authMsg');if(!m)return;
+  m.textContent=text||'';m.className='auth-msg '+(cls||'');
+}
+function switchTab(t){
+  var isReg=(t==='reg');
+  $('authTabLogin').classList.toggle('active',!isReg);
+  $('authTabReg').classList.toggle('active',isReg);
+  $('authPass2Wrap').style.display=isReg?'block':'none';
+  $('authSubmit').textContent=isReg?'Создать аккаунт':'Войти';
+  msg('');
+}
+function doRegister(){
+  var login=($('authLogin').value||'').trim();
+  var pass=$('authPass').value||'';
+  var pass2=$('authPass2').value||'';
+  if(login.length<3){msg('Логин минимум 3 символа','error');return}
+  if(!/^[a-zA-Z0-9_а-яА-ЯёЁ]+$/.test(login)){msg('Только буквы, цифры и _','error');return}
+  if(pass.length<4){msg('Пароль минимум 4 символа','error');return}
+  if(pass!==pass2){msg('Пароли не совпадают','error');return}
+  if(findAccount(login)){msg('Такой логин уже существует','error');return}
+  var accounts=loadAccounts();
+  accounts.push({login:login,hash:hashPass(login,pass),created:Date.now()});
+  saveAccounts(accounts);
+  msg('Аккаунт создан! Входим...','ok');
+  setTimeout(function(){loginAs(login)},400);
+}
+function doLogin(){
+  var login=($('authLogin').value||'').trim();
+  var pass=$('authPass').value||'';
+  if(!login||!pass){msg('Введите логин и пароль','error');return}
+  var acc=findAccount(login);
+  if(!acc){msg('Аккаунт не найден','error');return}
+  if(acc.hash!==hashPass(acc.login,pass)){msg('Неверный пароль','error');return}
+  loginAs(acc.login);
+}
+function loginAs(login){setSession(login);location.reload()}
+function logout(){
+  if(!confirm('Выйти из аккаунта? Прогресс сохранён.'))return;
+  try{window.dispatchEvent(new Event('beforeunload'))}catch(e){}
+  setSession(null);
+  setTimeout(function(){location.reload()},150);
+}
+function deleteAccount(login){
+  if(!confirm('Удалить аккаунт "'+login+'" и весь его прогресс? Необратимо!'))return;
+  var a=loadAccounts().filter(function(x){return x.login!==login});
+  saveAccounts(a);
+  try{localStorage.removeItem(SAVE_PREFIX+login)}catch(e){}
+  if(getSession()===login){setSession(null);location.reload()}
+  else renderAccountList();
+}
+function renderAccountList(){
+  var wrap=$('authListWrap'),list=$('authList');
+  if(!wrap||!list)return;
+  var accounts=loadAccounts();
+  if(!accounts.length){wrap.style.display='none';return}
+  wrap.style.display='block';list.innerHTML='';
+  accounts.forEach(function(acc){
+    var d=document.createElement('div');
+    d.className='auth-account';
+    var initial=acc.login.charAt(0).toUpperCase();
+    d.innerHTML='<div class="auth-acc-icon">'+initial+'</div>'
+      +'<div class="auth-acc-name">'+acc.login.replace(/[<>&"]/g,'')+'</div>'
+      +'<button class="auth-acc-del" title="Удалить">✕</button>';
+    d.addEventListener('click',function(e){
+      if(e.target.closest('.auth-acc-del'))return;
+      $('authLogin').value=acc.login;$('authPass').value='';$('authPass').focus();
+      msg('Введите пароль для '+acc.login,'');
+    });
+    d.querySelector('.auth-acc-del').addEventListener('click',function(e){
+      e.stopPropagation();deleteAccount(acc.login);
+    });
+    list.appendChild(d);
+  });
+}
+function showAuthScreen(){
+  $('authScreen').classList.remove('hidden');
+  var app=document.querySelector('.app');if(app)app.style.display='none';
+  renderAccountList();switchTab('login');
+  setTimeout(function(){var i=$('authLogin');if(i)i.focus()},80);
+}
+function showGame(){
+  $('authScreen').classList.add('hidden');
+  var app=document.querySelector('.app');if(app)app.style.display='';
+  injectUserBox();
+}
+function injectUserBox(){
+  var session=getSession();if(!session)return;
+  var hdrRight=document.querySelector('header .hdr-right');
+  if(!hdrRight)return;
+  var old=document.getElementById('userBox');if(old)old.remove();
+  var box=document.createElement('div');
+  box.className='user-box';box.id='userBox';
+  var initial=session.charAt(0).toUpperCase();
+  box.innerHTML='<div class="user-avatar">'+initial+'</div>'
+    +'<div class="user-name" title="'+session.replace(/[<>&"]/g,'')+'">'+session.replace(/[<>&"]/g,'')+'</div>';
+  var outBtn=document.createElement('button');
+  outBtn.className='btn-icon';outBtn.title='Выйти';outBtn.textContent='🚪';
+  outBtn.addEventListener('click',logout);
+  hdrRight.insertBefore(outBtn,hdrRight.firstChild);
+  hdrRight.insertBefore(box,hdrRight.firstChild);
+  var resetBtn=$('btnReset');
+  if(resetBtn){
+    var clone=resetBtn.cloneNode(true);
+    resetBtn.parentNode.replaceChild(clone,resetBtn);
+    clone.addEventListener('click',function(){
+      if(!confirm('Очистить прогресс аккаунта "'+session+'" и начать заново?'))return;
+      try{localStorage.removeItem(SAVE_PREFIX+session)}catch(e){}
+      location.reload();
+    });
+  }
+}
+function installSaveKeyHook(){
+  var session=getSession();if(!session)return;
+  if(localStorage.__mcsHooked)return;
+  localStorage.__mcsHooked=true;
+
+  var origSet=localStorage.setItem.bind(localStorage);
+  var origGet=localStorage.getItem.bind(localStorage);
+
+  // Перенос данных при первом входе
+  try{
+    var userSave=origGet(SAVE_PREFIX+session);
+    if(userSave){
+      origSet(LEGACY_SAVE_KEY,userSave);
+    }else{
+      var legacy=origGet(LEGACY_SAVE_KEY);
+      if(legacy)origSet(SAVE_PREFIX+session,legacy);
+    }
+  }catch(e){}
+
+  try{
+    localStorage.setItem=function(k,v){
+      if(k===LEGACY_SAVE_KEY){
+        origSet(LEGACY_SAVE_KEY,v);
+        try{origSet(SAVE_PREFIX+session,v)}catch(e){}
+        return;
+      }
+      return origSet(k,v);
+    };
+  }catch(e){
+    // Fallback: подменяем window.saveGame, если setItem неизменяем
+    window.__mcsFallbackSave=true;
+    var origSaveFn=window.saveGame;
+    if(typeof origSaveFn==='function'){
+      window.saveGame=function(){
+        var r=origSaveFn.apply(this,arguments);
+        try{
+          var legacy=origGet(LEGACY_SAVE_KEY);
+          if(legacy)origSet(SAVE_PREFIX+session,legacy);
+        }catch(e2){}
+        return r;
+      };
+    }
+  }
+}
+
+function init(){
+  installSaveKeyHook();
+
+  var session=getSession();
+  if(session)showGame();else showAuthScreen();
+
+  var tabLogin=$('authTabLogin'),tabReg=$('authTabReg'),submit=$('authSubmit');
+  if(tabLogin)tabLogin.addEventListener('click',function(){switchTab('login')});
+  if(tabReg)tabReg.addEventListener('click',function(){switchTab('reg')});
+  if(submit)submit.addEventListener('click',function(){
+    if(tabReg.classList.contains('active'))doRegister();else doLogin();
+  });
+  ['authLogin','authPass','authPass2'].forEach(function(id){
+    var e=$(id);if(!e)return;
+    e.addEventListener('keydown',function(ev){
+      if(ev.key==='Enter'){
+        if(tabReg.classList.contains('active'))doRegister();else doLogin();
+      }
+    });
+  });
+}
+
+// Экспорт для игрового скрипта
+window.__mcsHasSession=function(){return !!getSession()};
+window.__mcsShowAuth=showAuthScreen;
+
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+
+<!-- ==================== ОСНОВНОЙ ИГРОВОЙ КОД ==================== -->
 <div class="app">
   <header>
     <div class="logo">🎖️ MILITARY <span>CASE</span> SIM</div>
@@ -679,6 +931,11 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 <script>
 (function(){
 'use strict';
+
+// Блокируем запуск игры, если нет сессии
+if(!window.__mcsHasSession || !window.__mcsHasSession()){
+  return;
+}
 
 document.addEventListener('contextmenu',function(e){e.preventDefault()});
 document.addEventListener('keydown',function(e){
@@ -2263,15 +2520,21 @@ updateWheelUI();
 
 if(loaded)showSaveToast();
 
+// Экспорт функций для крипто-модуля
+window.saveGame=saveGame;
+window.updateUI=updateUI;
+
 })();
 </script>
 
+<!-- ==================== КРИПТО-МОДУЛЬ ==================== -->
 <script>
 (function(){
 'use strict';
 function boot(){
  var $=function(id){return document.getElementById(id)};
  if(!$('balanceBox')||!$('balanceDisplay'))return;
+ if(!window.__mcsHasSession || !window.__mcsHasSession())return;
 
  var modalHTML='<div class="panel-modal" id="cryptoModal">'
  +'<div class="panel-modal-inner crypto-inner">'
@@ -2323,7 +2586,6 @@ function boot(){
  function updatePrices(){
   for(var i=0;i<CRYPTOS.length;i++){
    var c=CRYPTOS[i];
-   // Лёгкий положительный тренд + низкая волатильность = почти не падает
    var drift=0.0008;
    var change=(Math.random()-0.5)*2*c.vol+drift;
    c.price*=(1+change);
@@ -2685,8 +2947,8 @@ function boot(){
   if(cur===null)return;
   bd.textContent=fmtUSD(cur+amt);
  };
- window.__save=function(){};
- window.__refreshUI=function(){};
+ window.__save=function(){if(window.saveGame)window.saveGame();};
+ window.__refreshUI=function(){if(window.updateUI)window.updateUI();};
  window.__clickSound=function(){};
  window.__okSound=function(){};
  window.__errSound=function(){};
@@ -2695,8 +2957,6 @@ function boot(){
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
-</script>
-<script>(function(){'use strict';var ACC_KEY='mcs_accounts_v1';var SESSION_KEY='mcs_session_v1';var SAVE_PREFIX='mcs_save_v1_';var LEGACY_SAVE_KEY='military_case_sim_save_v6';var $=function(id){return document.getElementById(id)};function hashPass(login,pass){  var s=(login+'::'+pass+'::mcs_salt_2024');  var h=5381;  for(var i=0;i<s.length;i++){h=((h<<5)+h)+s.charCodeAt(i);h=h|0;}  var h2=0;  for(var j=s.length-1;j>=0;j--){h2=((h2<<5)+h2)^s.charCodeAt(j);h2=h2|0;}  return (h>>>0).toString(16)+'_'+(h2>>>0).toString(16);}function loadAccounts(){  try{var raw=localStorage.getItem(ACC_KEY);if(!raw)return[];var a=JSON.parse(raw);return Array.isArray(a)?a:[]}  catch(e){return[]}}function saveAccounts(a){try{localStorage.setItem(ACC_KEY,JSON.stringify(a))}catch(e){}}function findAccount(login){  var a=loadAccounts();  for(var i=0;i<a.length;i++)if(a[i].login.toLowerCase()===login.toLowerCase())return a[i];  return null;}function getSession(){try{return localStorage.getItem(SESSION_KEY)||null}catch(e){return null}}function setSession(login){  try{if(login)localStorage.setItem(SESSION_KEY,login);else localStorage.removeItem(SESSION_KEY)}catch(e){}}function msg(text,cls){  var m=$('authMsg');if(!m)return;  m.textContent=text||'';m.className='auth-msg '+(cls||'');}function switchTab(t){  var isReg=(t==='reg');  $('authTabLogin').classList.toggle('active',!isReg);  $('authTabReg').classList.toggle('active',isReg);  $('authPass2Wrap').style.display=isReg?'block':'none';  $('authSubmit').textContent=isReg?'Создать аккаунт':'Войти';  msg('');}function doRegister(){  var login=($('authLogin').value||'').trim();  var pass=$('authPass').value||'';  var pass2=$('authPass2').value||'';  if(login.length<3){msg('Логин минимум 3 символа','error');return}  if(!/^[a-zA-Z0-9_а-яА-ЯёЁ]+$/.test(login)){msg('Только буквы, цифры и _','error');return}  if(pass.length<4){msg('Пароль минимум 4 символа','error');return}  if(pass!==pass2){msg('Пароли не совпадают','error');return}  if(findAccount(login)){msg('Такой логин уже существует','error');return}  var accounts=loadAccounts();  accounts.push({login:login,hash:hashPass(login,pass),created:Date.now()});  saveAccounts(accounts);  msg('Аккаунт создан! Входим...','ok');  setTimeout(function(){loginAs(login)},400);}function doLogin(){  var login=($('authLogin').value||'').trim();  var pass=$('authPass').value||'';  if(!login||!pass){msg('Введите логин и пароль','error');return}  var acc=findAccount(login);  if(!acc){msg('Аккаунт не найден','error');return}  if(acc.hash!==hashPass(acc.login,pass)){msg('Неверный пароль','error');return}  loginAs(acc.login);}function loginAs(login){setSession(login);location.reload()}function logout(){  if(!confirm('Выйти из аккаунта? Прогресс сохранён.'))return;  try{window.dispatchEvent(new Event('beforeunload'))}catch(e){}  setSession(null);  setTimeout(function(){location.reload()},150);}function deleteAccount(login){  if(!confirm('Удалить аккаунт "'+login+'" и весь его прогресс? Необратимо!'))return;  var a=loadAccounts().filter(function(x){return x.login!==login});  saveAccounts(a);  try{localStorage.removeItem(SAVE_PREFIX+login)}catch(e){}  if(getSession()===login){setSession(null);location.reload()}  else renderAccountList();}function renderAccountList(){  var wrap=$('authListWrap'),list=$('authList');  if(!wrap||!list)return;  var accounts=loadAccounts();  if(!accounts.length){wrap.style.display='none';return}  wrap.style.display='block';list.innerHTML='';  accounts.forEach(function(acc){    var d=document.createElement('div');    d.className='auth-account';    var initial=acc.login.charAt(0).toUpperCase();    d.innerHTML='<div class="auth-acc-icon">'+initial+'</div>'      +'<div class="auth-acc-name">'+acc.login.replace(/[<>&"]/g,'')+'</div>'      +'<button class="auth-acc-del" title="Удалить">✕</button>';    d.addEventListener('click',function(e){      if(e.target.closest('.auth-acc-del'))return;      $('authLogin').value=acc.login;$('authPass').value='';$('authPass').focus();      msg('Введите пароль для '+acc.login,'');    });    d.querySelector('.auth-acc-del').addEventListener('click',function(e){      e.stopPropagation();deleteAccount(acc.login);    });    list.appendChild(d);  });}function showAuthScreen(){  $('authScreen').classList.remove('hidden');  var app=document.querySelector('.app');if(app)app.style.display='none';  renderAccountList();switchTab('login');  setTimeout(function(){var i=$('authLogin');if(i)i.focus()},80);}function showGame(){  $('authScreen').classList.add('hidden');  var app=document.querySelector('.app');if(app)app.style.display='';  injectUserBox();}function injectUserBox(){  var session=getSession();if(!session)return;  var hdrRight=document.querySelector('header .hdr-right');  if(!hdrRight)return;  var old=document.getElementById('userBox');if(old)old.remove();  var box=document.createElement('div');  box.className='user-box';box.id='userBox';  var initial=session.charAt(0).toUpperCase();  box.innerHTML='<div class="user-avatar">'+initial+'</div>'    +'<div class="user-name" title="'+session.replace(/[<>&"]/g,'')+'">'+session.replace(/[<>&"]/g,'')+'</div>';  var outBtn=document.createElement('button');  outBtn.className='btn-icon';outBtn.title='Выйти';outBtn.textContent='🚪';  outBtn.addEventListener('click',logout);  hdrRight.insertBefore(outBtn,hdrRight.firstChild);  hdrRight.insertBefore(box,hdrRight.firstChild);  var resetBtn=$('btnReset');  if(resetBtn){    var clone=resetBtn.cloneNode(true);    resetBtn.parentNode.replaceChild(clone,resetBtn);    clone.addEventListener('click',function(){      if(!confirm('Очистить прогресс аккаунта "'+session+'" и начать заново?'))return;      try{localStorage.removeItem(SAVE_PREFIX+session)}catch(e){}      location.reload();    });  }}function installSaveKeyHook(){  var session=getSession();if(!session)return;  var userSave=null;  try{userSave=localStorage.getItem(SAVE_PREFIX+session)}catch(e){}  if(userSave){    try{localStorage.setItem(LEGACY_SAVE_KEY,userSave)}catch(e){}  }else{    try{      var legacy=localStorage.getItem(LEGACY_SAVE_KEY);      if(legacy)localStorage.setItem(SAVE_PREFIX+session,legacy);    }catch(e){}  }  var origSet=localStorage.setItem.bind(localStorage);  try{    Object.defineProperty(localStorage,'setItem',{      value:function(k,v){        if(k===LEGACY_SAVE_KEY){          origSet(LEGACY_SAVE_KEY,v);          origSet(SAVE_PREFIX+session,v);          return;        }        return origSet(k,v);      },      writable:false,configurable:true    });  }catch(e){}}function init(){  installSaveKeyHook();  var session=getSession();  if(session)showGame();else showAuthScreen();  $('authTabLogin').addEventListener('click',function(){switchTab('login')});  $('authTabReg').addEventListener('click',function(){switchTab('reg')});  $('authSubmit').addEventListener('click',function(){    if($('authTabReg').classList.contains('active'))doRegister();else doLogin();  });  ['authLogin','authPass','authPass2'].forEach(function(id){    var e=$(id);if(!e)return;    e.addEventListener('keydown',function(ev){      if(ev.key==='Enter'){        if($('authTabReg').classList.contains('active'))doRegister();else doLogin();      }    });  });}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();})();
 </script>
 <script src="https://zadano.github.io/mysite/track.js"></script>
 </body>

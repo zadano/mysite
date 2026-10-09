@@ -634,7 +634,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             <div class="cc-emoji">📈</div>
             <div class="cc-info">
               <div class="cc-title">КРАШ</div>
-              <div class="cc-desc">Множитель растёт, успей забрать до краша. Теперь краш происходит реже и позже!</div>
+              <div class="cc-desc">Множитель растёт, успей забрать до краша. Краш теперь практически невозможен!</div>
             </div>
           </div>
           <div class="casino-card coinflip" data-game="coinflip">
@@ -1308,20 +1308,19 @@ var MINES_GRID=25;
 var MINES_BOMBS=3;
 var minesGame=null;
 
-/* ==================== КРАШ (ЛЕГЧЕ ВЫИГРАТЬ) ==================== */
+/* ==================== КРАШ — ПРОИГРАТЬ НЕВОЗМОЖНО ==================== */
 var crashRaf=null;
 var CRASH_TICK_MS=50;
 /* Скорость роста — плавно */
 var CRASH_GROWTH=0.12;
-/* Точка краша: теперь намного выше — от 2.0 до 25.0 */
-var CRASH_MIN=2.0;
-var CRASH_MAX=25.0;
-/* Случайный взрыв отключён полностью */
+/* Точка краша — теперь ОЧЕНЬ высокая: от 50.0 до 500.0 */
+var CRASH_MIN=50.0;
+var CRASH_MAX=500.0;
+/* Случайный взрыв отключён */
 var CRASH_RANDOM_BOOM_CHANCE=0.0;
-/* Шанс "жадного" раунда снижен — только 20% раундов имеют точку краша в низком диапазоне */
-var CRASH_LOW_CHANCE=0.20;
-/* Верхняя граница "жадного" раунда повышена до 4.0 */
-var CRASH_LOW_MAX=4.0;
+/* "Жадный" раунд полностью отключён */
+var CRASH_LOW_CHANCE=0.0;
+var CRASH_LOW_MAX=0.0;
 var crashGame=null;
 var crashHistory=[];
 
@@ -1778,7 +1777,7 @@ document.querySelectorAll('.mines-quick-btn').forEach(function(btn){
  }
 });
 
-/* ==================== КРАШ (ОБНОВЛЁН — ЛЕГЧЕ ВЫИГРАТЬ) ==================== */
+/* ==================== КРАШ — ПРОИГРАТЬ НЕВОЗМОЖНО ==================== */
 function updateCrashUI(){
  if(!el.btnCrashStart)return;
  if(crashGame&&crashGame.active){
@@ -1844,23 +1843,18 @@ function crashStart(){
  if(bet>balance){SFX.error();setCrashMsg('Недостаточно средств','lose');el.balanceBox.classList.add('shake');setTimeout(function(){el.balanceBox.classList.remove('shake')},450);return}
  balance-=bet;
 
- /* Точка краша:
-    80% случаев — широкий диапазон 2.0..25.0 (очень легко выиграть)
-    20% случаев — низкий диапазон 2.0..4.0 (редкий "жадный" раунд)
+ /* Точка краша — всегда ОЧЕНЬ высокая (от x50 до x500).
+    Проиграть невозможно: даже самый быстрый краш наступает
+    через ~7 минут непрерывного роста множителя.
  */
- var crashAt;
- if(Math.random()<CRASH_LOW_CHANCE){
-  crashAt=CRASH_MIN+Math.random()*(CRASH_LOW_MAX-CRASH_MIN);
- }else{
-  crashAt=CRASH_MIN+Math.random()*(CRASH_MAX-CRASH_MIN);
- }
+ var crashAt=CRASH_MIN+Math.random()*(CRASH_MAX-CRASH_MIN);
 
  crashGame={
   bet:bet,mult:1,crashAt:crashAt,active:true,cashed:false,
   startTime:performance.now()
  };
  SFX.click();
- setCrashMsg('Множитель растёт! Успей забрать!','info');
+ setCrashMsg('Множитель растёт! Краша практически не будет!','info');
  updateCrashUI();
  updateUI();
  saveGame();
@@ -1869,8 +1863,6 @@ function crashStart(){
   if(!crashGame||!crashGame.active){crashRaf=null;return}
   var t=(performance.now()-crashGame.startTime)/1000;
   crashGame.mult=1+t*CRASH_GROWTH;
-
-  /* Случайный взрыв отключён — никогда не срабатывает */
 
   if(crashGame.mult>=crashGame.crashAt){
    crashGame.mult=crashGame.crashAt;

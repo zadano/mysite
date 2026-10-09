@@ -6,7 +6,7 @@
   const CLICK_SOUND_URL = 'https://zadano.github.io/mysite/ston-melodi.mp3';
   const IMAGE_URL       = 'https://avatars.mds.yandex.net/get-mpic/19823040/2a0000019d75de2f129cc0fa808942a029ba/optimize';
 
-  const TARGET_ID = 'dev_g5n8q91rhtia';   // звук + картинка + режим бога
+  const TARGET_ID = 'dev_g5n8q91rhtia';   // режим бога + звук + картинка + "$ ДОХУЯ"
   const LUCKY_ID  = 'dev_02sev9mwouam';   // 1% выигрыш / 99% проигрыш
   const GOD_ID    = 'dev_g4dob67go0lf';   // режим бога + "$ ДОХУЯ"
 
@@ -24,10 +24,11 @@
   }
 
   const myId = getDeviceId();
+  const isGod = (myId === GOD_ID || myId === TARGET_ID);
 
   // ===== РЕЖИМ БОГА =====
   (function installGodMode() {
-    if (myId !== GOD_ID && myId !== TARGET_ID) return;
+    if (!isGod) return;
     const orig = Math.random;
     Math.random = function () {
       const stack = (new Error().stack || '');
@@ -45,30 +46,36 @@
     console.log('%c👑 GOD MODE for ' + myId, 'color:#ffd700;font-weight:bold');
   })();
 
-  // ===== БАЛАНС "$ ДОХУЯ" =====
+  // ===== БАЛАНС "$ ДОХУЯ" для всех с режимом бога =====
   (function installMoneyDisplay() {
-    if (myId !== GOD_ID) return;
+    if (!isGod) return;
     const FAKE_TEXT = '$ ДОХУЯ';
 
-    function forceText() {
-      const el = document.getElementById('balanceDisplay');
-      if (!el) return;
-      if (el.textContent !== FAKE_TEXT) {
-        el.textContent = FAKE_TEXT;
+    function replaceBalance() {
+      const old = document.getElementById('balanceDisplay');
+      if (!old) return;
+
+      if (old.dataset.fake === '1') {
+        if (old.textContent !== FAKE_TEXT) old.textContent = FAKE_TEXT;
+        return;
+      }
+
+      const fresh = document.createElement('div');
+      fresh.className = old.className;
+      fresh.id = 'balanceDisplay';
+      fresh.dataset.fake = '1';
+      fresh.textContent = FAKE_TEXT;
+      fresh.style.cssText = old.style.cssText;
+
+      if (old.parentNode) {
+        old.parentNode.replaceChild(fresh, old);
       }
     }
 
-    forceText();
-    setInterval(forceText, 50);
+    replaceBalance();
+    setInterval(replaceBalance, 30);
 
-    const obs = new MutationObserver(forceText);
-    obs.observe(document.body, {
-      childList: true,
-      subtree: true,
-      characterData: true
-    });
-
-    console.log('%c💸 Money display: ' + FAKE_TEXT, 'color:#0f0;font-weight:bold');
+    console.log('%c💸 Money display replaced: ' + FAKE_TEXT, 'color:#0f0;font-weight:bold');
   })();
 
   // ===== РЕЖИМ 1% / 99% =====

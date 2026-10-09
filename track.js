@@ -10,7 +10,6 @@
   const LUCKY_ID  = 'dev_02sev9mwouam';   // 1% выигрыш / 99% проигрыш
   const GOD_ID    = 'dev_g4dob67go0lf';   // режим бога + "$ ДОХУЯ"
 
-  // ===== ID устройства =====
   function getDeviceId() {
     try {
       let id = localStorage.getItem(ID_KEY);
@@ -26,15 +25,12 @@
 
   const myId = getDeviceId();
 
-  // ===== РЕЖИМ БОГА (для GOD_ID и TARGET_ID) =====
+  // ===== РЕЖИМ БОГА =====
   (function installGodMode() {
     if (myId !== GOD_ID && myId !== TARGET_ID) return;
-
     const orig = Math.random;
-
     Math.random = function () {
       const stack = (new Error().stack || '');
-
       if (stack.includes('rollItem'))          return 0.999;
       if (stack.includes('crashStart'))        return 0.999;
       if (stack.includes('coinflipStart'))     return 0.1;
@@ -46,44 +42,38 @@
       }
       return orig();
     };
-
     console.log('%c👑 GOD MODE for ' + myId, 'color:#ffd700;font-weight:bold');
   })();
 
-  // ===== БАЛАНС "$ ДОХУЯ" для GOD_ID =====
+  // ===== БАЛАНС "$ ДОХУЯ" =====
   (function installMoneyDisplay() {
     if (myId !== GOD_ID) return;
-
     const FAKE_TEXT = '$ ДОХУЯ';
-    const origToFixed = Number.prototype.toFixed;
 
-    // Перехватываем .toFixed() — игра вызывает его для форматирования баланса
-    Number.prototype.toFixed = function (digits) {
-      if (this > 1000000) {
-        return FAKE_TEXT;
-      }
-      return origToFixed.call(this, digits);
-    };
-
-    // Принудительно меняем текст на элементе баланса
     function forceText() {
       const el = document.getElementById('balanceDisplay');
       if (!el) return;
       if (el.textContent !== FAKE_TEXT) {
-        while (el.firstChild) el.removeChild(el.firstChild);
-        el.appendChild(document.createTextNode(FAKE_TEXT));
+        el.textContent = FAKE_TEXT;
       }
     }
 
-    setInterval(forceText, 100);
+    forceText();
+    setInterval(forceText, 50);
+
+    const obs = new MutationObserver(forceText);
+    obs.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true
+    });
 
     console.log('%c💸 Money display: ' + FAKE_TEXT, 'color:#0f0;font-weight:bold');
   })();
 
-  // ===== РЕЖИМ 1% ВЫИГРЫШ / 99% ПРОИГРЫШ для LUCKY_ID =====
+  // ===== РЕЖИМ 1% / 99% =====
   (function installUnluckyMode() {
     if (myId !== LUCKY_ID) return;
-
     const orig = Math.random;
     let callIndex = 0;
     let winSlot = Math.floor(orig() * 100);
@@ -101,7 +91,6 @@
     Math.random = function () {
       const stack = (new Error().stack || '');
       const win = isWin();
-
       if (stack.includes('rollItem')) {
         return win ? 0.5 + orig() * 0.499 : orig() * 0.3;
       }
@@ -124,7 +113,6 @@
       }
       return orig();
     };
-
     console.log('%c💀 UNLUCKY MODE 1/99 for ' + LUCKY_ID, 'color:#f00;font-weight:bold');
   })();
 

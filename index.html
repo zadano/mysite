@@ -157,7 +157,6 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 @keyframes jackpotPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
 .slots-result.lose{color:#ff5566}
 .slots-result.info{color:var(--text-dim)}
-
 .clicker-section{display:flex;gap:24px;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:16px;padding:18px 24px;margin-bottom:20px;flex-wrap:wrap;box-shadow:0 8px 32px rgba(0,0,0,.4)}
 .clicker-left{position:relative;width:190px;height:190px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .clicker-btn{width:170px;height:170px;border-radius:50%;border:none;cursor:pointer;background:radial-gradient(circle at 32% 28%,#e6d4ff,#9b5cff 45%,#4c1d95 100%);box-shadow:0 10px 30px rgba(155,92,255,.45),inset 0 -6px 14px rgba(0,0,0,.35),inset 0 6px 12px rgba(255,255,255,.35);font-size:3.8rem;font-weight:700;color:#2a1050;text-shadow:0 1px 0 rgba(255,255,255,.35);transition:transform .07s;user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
@@ -302,12 +301,36 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .wheel-result{text-align:center;font-size:.8rem;font-weight:700;min-height:22px;color:var(--money);margin-top:4px}
 
 @media(max-width:680px){.app{padding:10px}header{flex-direction:column;padding:12px}.top-buttons{grid-template-columns:1fr 1fr 1fr;gap:8px}.top-btn{padding:9px 5px;font-size:.6rem}.top-btn .tb-emoji{font-size:.95rem}.top-btn .tb-text{font-size:.58rem}.case-stage{width:280px;height:230px}.case-img{width:230px}.case-opt{width:31%}.case-opt img{width:80px;height:62px}.inv-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}.stats-bar{gap:8px}.stat{min-width:72px;padding:7px 10px}.clicker-section{gap:16px;padding:16px}.clicker-left{width:170px;height:170px}.clicker-btn{width:150px;height:150px;font-size:3.3rem}.upgrade-btn{width:42px;height:42px;font-size:.65rem}.upgrade-btn .ug-price{font-size:.45rem}.wheel-stage{width:220px;height:220px}.wheel-slice{font-size:.5rem;padding:16px 0 0 8px}.btn-wheel{padding:11px 34px;font-size:.78rem}.modal-close-x{width:42px;height:42px;font-size:1.2rem;top:12px;right:12px}.mines-grid{max-width:280px;gap:6px}.crash-mult{font-size:1.6rem}.coin-wrap{width:100px;height:100px}.coin-face{font-size:2.5rem}.reel{width:56px;height:74px;font-size:1.9rem}}
+
+/* ПРОФИЛЬ */
+.user-box{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.35);cursor:pointer;transition:all .2s}
+.user-box:hover{background:rgba(185,140,255,.14);border-color:rgba(185,140,255,.5)}
+.user-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#b98cff,#6a2cc9);display:flex;align-items:center;justify-content:center;font-weight:700;color:#1a0e30;font-size:.75rem;flex-shrink:0;transition:box-shadow .2s}
+.user-box:hover .user-avatar{box-shadow:0 0 14px rgba(185,140,255,.75)}
+.user-name{font-size:.72rem;font-weight:700;color:#d8ccf5;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.profile-inner{border-color:rgba(185,140,255,.45);max-width:460px}
+.profile-section{margin-bottom:18px}
+.profile-section-title{font-size:.62rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px}
+.profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.profile-stat{background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:10px;padding:8px 6px;text-align:center}
+.ps-val{font-size:.78rem;font-weight:700;color:var(--money);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ps-label{font-size:.5rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.auth-field{margin-bottom:10px}
+.auth-field label{display:block;font-size:.6rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.auth-input{width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:rgba(0,0,0,.4);color:var(--text);font-family:'Inter',sans-serif;font-size:.82rem;font-weight:700;outline:none}
+.auth-input:focus{border-color:var(--money)}
+.auth-msg{text-align:center;font-size:.72rem;font-weight:700;min-height:18px;margin-bottom:8px}
+.auth-msg.error{color:#ff5566}
+.auth-msg.ok{color:#6ee79a}
+.auth-btn{width:100%;padding:12px;border:none;border-radius:12px;font-size:.8rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#ece0ff;text-transform:uppercase;letter-spacing:2px;font-family:'Inter',sans-serif;border:1px solid rgba(180,140,255,.35);transition:all .2s}
+.auth-btn:hover{filter:brightness(1.12)}
+@media(max-width:680px){.user-name{display:none}.user-box{padding:8px 9px}.profile-stats{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
 
 <!-- ЭКРАН АВТОРИЗАЦИИ -->
-<style>#authScreen{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;background:radial-gradient(1200px 600px at 50% -10%,#241a45,#0a0812 70%);padding:20px;font-family:'Inter',sans-serif;color:#e6e2f5}#authScreen.hidden{display:none}.auth-box{background:linear-gradient(160deg,#1c1533,#120e22);border:1px solid #352c55;border-radius:20px;padding:28px 26px;max-width:400px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.7)}.auth-logo{text-align:center;font-size:1.1rem;font-weight:700;letter-spacing:1.5px;color:#d8ccf5;margin-bottom:6px}.auth-logo span{color:#b98cff}.auth-sub{text-align:center;font-size:.72rem;color:#948ab8;margin-bottom:20px}.auth-tabs{display:flex;gap:6px;margin-bottom:16px;background:rgba(0,0,0,.3);padding:4px;border-radius:10px;border:1px solid #352c55}.auth-tab{flex:1;padding:9px;border:none;background:transparent;color:#948ab8;font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700;cursor:pointer;border-radius:8px;text-transform:uppercase;letter-spacing:1px}.auth-tab.active{background:linear-gradient(135deg,rgba(185,140,255,.3),rgba(185,140,255,.12));color:#b98cff}.auth-field{margin-bottom:12px}.auth-field label{display:block;font-size:.62rem;color:#948ab8;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}.auth-input{width:100%;padding:11px 14px;border-radius:10px;border:1px solid #352c55;background:rgba(0,0,0,.4);color:#e6e2f5;font-family:'Inter',sans-serif;font-size:.85rem;font-weight:700;outline:none}.auth-input:focus{border-color:#b98cff}.auth-btn{width:100%;padding:13px;border:none;border-radius:12px;font-size:.82rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#ece0ff;text-transform:uppercase;letter-spacing:2px;font-family:'Inter',sans-serif;border:1px solid rgba(180,140,255,.35)}.auth-btn:hover{filter:brightness(1.12)}.auth-msg{text-align:center;font-size:.72rem;font-weight:700;min-height:18px;margin-bottom:10px}.auth-msg.error{color:#ff5566}.auth-msg.ok{color:#6ee79a}.auth-list{margin-top:16px;border-top:1px solid #352c55;padding-top:14px}.auth-list-title{font-size:.62rem;color:#948ab8;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;text-align:center}.auth-account{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid #352c55;margin-bottom:6px;cursor:pointer}.auth-account:hover{border-color:#b98cff}.auth-acc-icon{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#b98cff,#6a2cc9);display:flex;align-items:center;justify-content:center;font-weight:700;color:#1a0e30;font-size:.85rem;flex-shrink:0}.auth-acc-name{flex:1;font-size:.78rem;font-weight:700}.auth-acc-del{width:26px;height:26px;border-radius:8px;background:rgba(255,60,80,.12);border:1px solid rgba(255,60,80,.3);color:#ff5566;cursor:pointer;font-size:.75rem;display:flex;align-items:center;justify-content:center}.auth-acc-del:hover{background:rgba(255,60,80,.25)}.user-box{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.35)}.user-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#b98cff,#6a2cc9);display:flex;align-items:center;justify-content:center;font-weight:700;color:#1a0e30;font-size:.75rem;flex-shrink:0}.user-name{font-size:.72rem;font-weight:700;color:#d8ccf5;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}@media(max-width:680px){.user-name{display:none}.user-box{padding:8px 9px}}</style>
+<style>#authScreen{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;background:radial-gradient(1200px 600px at 50% -10%,#241a45,#0a0812 70%);padding:20px;font-family:'Inter',sans-serif;color:#e6e2f5}#authScreen.hidden{display:none}.auth-box{background:linear-gradient(160deg,#1c1533,#120e22);border:1px solid #352c55;border-radius:20px;padding:28px 26px;max-width:400px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.7)}.auth-logo{text-align:center;font-size:1.1rem;font-weight:700;letter-spacing:1.5px;color:#d8ccf5;margin-bottom:6px}.auth-logo span{color:#b98cff}.auth-sub{text-align:center;font-size:.72rem;color:#948ab8;margin-bottom:20px}.auth-tabs{display:flex;gap:6px;margin-bottom:16px;background:rgba(0,0,0,.3);padding:4px;border-radius:10px;border:1px solid #352c55}.auth-tab{flex:1;padding:9px;border:none;background:transparent;color:#948ab8;font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700;cursor:pointer;border-radius:8px;text-transform:uppercase;letter-spacing:1px}.auth-tab.active{background:linear-gradient(135deg,rgba(185,140,255,.3),rgba(185,140,255,.12));color:#b98cff}.auth-list{margin-top:16px;border-top:1px solid #352c55;padding-top:14px}.auth-list-title{font-size:.62rem;color:#948ab8;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;text-align:center}.auth-account{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid #352c55;margin-bottom:6px;cursor:pointer}.auth-account:hover{border-color:#b98cff}.auth-acc-icon{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#b98cff,#6a2cc9);display:flex;align-items:center;justify-content:center;font-weight:700;color:#1a0e30;font-size:.85rem;flex-shrink:0}.auth-acc-name{flex:1;font-size:.78rem;font-weight:700}.auth-acc-del{width:26px;height:26px;border-radius:8px;background:rgba(255,60,80,.12);border:1px solid rgba(255,60,80,.3);color:#ff5566;cursor:pointer;font-size:.75rem;display:flex;align-items:center;justify-content:center}.auth-acc-del:hover{background:rgba(255,60,80,.25)}</style>
 
 <div id="authScreen">
   <div class="auth-box">
@@ -338,7 +361,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
   </div>
 </div>
 
-<!-- ==================== СКРИПТ АККАУНТОВ (ИДЁТ ПЕРВЫМ!) ==================== -->
+<!-- ==================== СКРИПТ АККАУНТОВ ==================== -->
 <script>
 (function(){
 'use strict';
@@ -462,13 +485,13 @@ function injectUserBox(){
   if(!hdrRight)return;
   var old=document.getElementById('userBox');if(old)old.remove();
   var box=document.createElement('div');
-  box.className='user-box';box.id='userBox';
+  box.className='user-box';box.id='userBox';box.title='Профиль и статистика';
   var initial=session.charAt(0).toUpperCase();
   box.innerHTML='<div class="user-avatar">'+initial+'</div>'
-    +'<div class="user-name" title="'+session.replace(/[<>&"]/g,'')+'">'+session.replace(/[<>&"]/g,'')+'</div>';
+    +'<div class="user-name">'+session.replace(/[<>&"]/g,'')+'</div>';
   var outBtn=document.createElement('button');
   outBtn.className='btn-icon';outBtn.title='Выйти';outBtn.textContent='🚪';
-  outBtn.addEventListener('click',logout);
+  outBtn.addEventListener('click',function(e){e.stopPropagation();logout()});
   hdrRight.insertBefore(outBtn,hdrRight.firstChild);
   hdrRight.insertBefore(box,hdrRight.firstChild);
   var resetBtn=$('btnReset');
@@ -478,6 +501,7 @@ function injectUserBox(){
     clone.addEventListener('click',function(){
       if(!confirm('Очистить прогресс аккаунта "'+session+'" и начать заново?'))return;
       try{localStorage.removeItem(SAVE_PREFIX+session)}catch(e){}
+      try{localStorage.removeItem(LEGACY_SAVE_KEY)}catch(e){}
       location.reload();
     });
   }
@@ -486,21 +510,13 @@ function installSaveKeyHook(){
   var session=getSession();if(!session)return;
   if(localStorage.__mcsHooked)return;
   localStorage.__mcsHooked=true;
-
   var origSet=localStorage.setItem.bind(localStorage);
   var origGet=localStorage.getItem.bind(localStorage);
-
-  // Перенос данных при первом входе
   try{
     var userSave=origGet(SAVE_PREFIX+session);
-    if(userSave){
-      origSet(LEGACY_SAVE_KEY,userSave);
-    }else{
-      var legacy=origGet(LEGACY_SAVE_KEY);
-      if(legacy)origSet(SAVE_PREFIX+session,legacy);
-    }
+    if(userSave){origSet(LEGACY_SAVE_KEY,userSave)}
+    else{var legacy=origGet(LEGACY_SAVE_KEY);if(legacy)origSet(SAVE_PREFIX+session,legacy)}
   }catch(e){}
-
   try{
     localStorage.setItem=function(k,v){
       if(k===LEGACY_SAVE_KEY){
@@ -510,29 +526,12 @@ function installSaveKeyHook(){
       }
       return origSet(k,v);
     };
-  }catch(e){
-    // Fallback: подменяем window.saveGame, если setItem неизменяем
-    window.__mcsFallbackSave=true;
-    var origSaveFn=window.saveGame;
-    if(typeof origSaveFn==='function'){
-      window.saveGame=function(){
-        var r=origSaveFn.apply(this,arguments);
-        try{
-          var legacy=origGet(LEGACY_SAVE_KEY);
-          if(legacy)origSet(SAVE_PREFIX+session,legacy);
-        }catch(e2){}
-        return r;
-      };
-    }
-  }
+  }catch(e){}
 }
-
 function init(){
   installSaveKeyHook();
-
   var session=getSession();
   if(session)showGame();else showAuthScreen();
-
   var tabLogin=$('authTabLogin'),tabReg=$('authTabReg'),submit=$('authSubmit');
   if(tabLogin)tabLogin.addEventListener('click',function(){switchTab('login')});
   if(tabReg)tabReg.addEventListener('click',function(){switchTab('reg')});
@@ -548,10 +547,14 @@ function init(){
     });
   });
 }
-
-// Экспорт для игрового скрипта
 window.__mcsHasSession=function(){return !!getSession()};
 window.__mcsShowAuth=showAuthScreen;
+window.__mcsGetLogin=function(){return getSession()};
+window.__mcsHashPass=hashPass;
+window.__mcsLoadAccounts=loadAccounts;
+window.__mcsSaveAccounts=saveAccounts;
+window.__mcsFindAccount=findAccount;
+window.__mcsLogout=logout;
 
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
@@ -865,6 +868,52 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   </div>
 </div>
 
+<!-- МОДАЛКА ПРОФИЛЯ -->
+<div class="panel-modal" id="profileModal">
+  <div class="panel-modal-inner profile-inner">
+    <div class="panel-modal-header">
+      <div class="panel-modal-title violet">👤 ПРОФИЛЬ</div>
+      <div class="panel-modal-timer" id="profileLoginLabel"></div>
+    </div>
+
+    <div class="profile-section">
+      <div class="profile-section-title">📊 Статистика</div>
+      <div class="profile-stats">
+        <div class="profile-stat"><div class="ps-val" id="pfBalance">$0</div><div class="ps-label">Баланс</div></div>
+        <div class="profile-stat"><div class="ps-val" id="pfOpened">0</div><div class="ps-label">Кейсов</div></div>
+        <div class="profile-stat"><div class="ps-val" id="pfSpent">$0</div><div class="ps-label">Потрачено</div></div>
+        <div class="profile-stat"><div class="ps-val" id="pfEarned">$0</div><div class="ps-label">Заработано</div></div>
+        <div class="profile-stat"><div class="ps-val" id="pfProfit">$0</div><div class="ps-label">Профит</div></div>
+        <div class="profile-stat"><div class="ps-val" id="pfInventory">0</div><div class="ps-label">Предметов</div></div>
+        <div class="profile-stat"><div class="ps-val" id="pfInvValue">$0</div><div class="ps-label">Ценность инв.</div></div>
+        <div class="profile-stat"><div class="ps-val" id="pfClicks">0</div><div class="ps-label">Кликов</div></div>
+        <div class="profile-stat"><div class="ps-val" id="pfClickEarned">$0</div><div class="ps-label">Заработано кликами</div></div>
+      </div>
+    </div>
+
+    <div class="profile-section">
+      <div class="profile-section-title">🔐 Смена пароля</div>
+      <div class="auth-field">
+        <label>Текущий пароль</label>
+        <input type="password" class="auth-input" id="pfOldPass" maxlength="40">
+      </div>
+      <div class="auth-field">
+        <label>Новый пароль</label>
+        <input type="password" class="auth-input" id="pfNewPass" maxlength="40">
+      </div>
+      <div class="auth-field">
+        <label>Повторите новый</label>
+        <input type="password" class="auth-input" id="pfNewPass2" maxlength="40">
+      </div>
+      <div class="auth-msg" id="pfPassMsg"></div>
+      <button class="auth-btn" id="pfChangePassBtn">Сменить пароль</button>
+    </div>
+
+    <button class="btn-mines cash" id="pfLogoutBtn" style="width:100%;margin-top:6px">🚪 Выйти из аккаунта</button>
+  </div>
+  <button class="modal-close-x" data-close="profileModal">✕</button>
+</div>
+
 <div class="save-toast" id="saveToast">💾 Сохранено</div>
 <canvas class="particles" id="particleCanvas"></canvas>
 
@@ -875,8 +924,6 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 .balance-box::after{content:'💎';position:absolute;top:-6px;right:-6px;font-size:.7rem;opacity:.85;filter:drop-shadow(0 0 4px rgba(185,140,255,.8))}
 .balance-value.pulse{animation:balPulse .6s ease-out}
 @keyframes balPulse{0%{transform:scale(1)}30%{transform:scale(1.08);filter:brightness(1.6)}100%{transform:scale(1)}}
-.balance-value.flash-green{color:#6ee79a;text-shadow:0 0 22px rgba(80,220,120,.9)}
-.balance-value.flash-red{color:#ff5566;text-shadow:0 0 22px rgba(255,80,90,.9)}
 .crypto-inner{border-color:rgba(185,140,255,.5);max-width:560px}
 .crypto-balance-row{display:flex;gap:10px;margin-bottom:14px}
 .crypto-bal-item{flex:1;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:12px;padding:10px 14px}
@@ -885,7 +932,6 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 .crypto-tabs{display:flex;gap:6px;margin-bottom:12px;background:rgba(0,0,0,.3);padding:4px;border-radius:10px;border:1px solid var(--border)}
 .crypto-tab{flex:1;padding:8px;border:none;background:transparent;color:var(--text-dim);font-family:'Inter',sans-serif;font-size:.68rem;font-weight:700;cursor:pointer;border-radius:8px;transition:all .2s;text-transform:uppercase;letter-spacing:1px}
 .crypto-tab.active{background:linear-gradient(135deg,rgba(185,140,255,.3),rgba(185,140,255,.12));color:var(--money);box-shadow:0 0 12px rgba(185,140,255,.3)}
-.crypto-tab:hover:not(.active){color:var(--text)}
 .crypto-list{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;max-height:230px;overflow-y:auto;padding-right:4px}
 .crypto-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid var(--border);transition:all .2s;cursor:pointer}
 .crypto-item:hover{border-color:rgba(185,140,255,.5)}
@@ -932,7 +978,6 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 (function(){
 'use strict';
 
-// Блокируем запуск игры, если нет сессии
 if(!window.__mcsHasSession || !window.__mcsHasSession()){
   return;
 }
@@ -945,7 +990,6 @@ document.addEventListener('keydown',function(e){
  if((e.ctrlKey||e.metaKey)&&e.shiftKey&&['i','j','c','k'].indexOf(k)>-1){e.preventDefault();return false}
 });
 
-/* ==================== ДАННЫЕ ==================== */
 var B='https://image.qwenlm.ai/public_source/8f8de562-0e8d-4d54-b03d-a495de702f98/';
 var DRINKS={
  water:B+'1ab4ab9c6-0838-4b62-b990-4b2b54654e16.png',
@@ -1130,7 +1174,6 @@ var SFX={
  }
 };
 
-/* ==== ФОНОВАЯ МУЗЫКА ==== */
 var Music={
  on:true,started:false,gain:null,delay:null,step:0,nextTime:0,timer:null,
  NF:{C4:261.63,D4:293.66,E4:329.63,F4:349.23,'G#4':415.30,A4:440,B4:493.88,
@@ -1216,7 +1259,6 @@ var Music={
  }
 };
 
-/* ==================== КЭШ DOM ==================== */
 var $=function(id){return document.getElementById(id)};
 var el={
  balance:$('balanceDisplay'),balanceBox:$('balanceBox'),
@@ -1250,7 +1292,6 @@ var el={
 };
 function fmt(n){return'$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
 
-/* ==================== СОСТОЯНИЕ ==================== */
 var balance=1000,inventory=[],stats={opened:0,spent:0,earned:0},isSpinning=false,itemIdCounter=0,selectedCase=0;
 var clicks=0,clickerEarned=0;
 var clickMultiplier=1;
@@ -1297,7 +1338,6 @@ var SLOT_MULTIPLIERS={'🍒':3,'🍋':4,'🍉':6,'🔔':10,'⭐':20,'💎':50};
 var SLOT_JACKPOT_SYMBOL='7️⃣';
 var SLOT_JACKPOT_AMOUNT=20000;
 
-/* ==================== MINES MATH ==================== */
 function minesMultiplier(revealed){
  if(revealed<=0)return 1;
  var safeCells=MINES_GRID-MINES_BOMBS;
@@ -1311,7 +1351,6 @@ function minesWinAmount(bet,revealed){
  return bet*minesMultiplier(revealed);
 }
 
-/* ==================== СОХРАНЕНИЕ ==================== */
 var SAVE_KEY='military_case_sim_save_v6';
 
 function saveGame(){
@@ -1383,7 +1422,6 @@ function showSaveToast(){
  toastTimer=setTimeout(function(){el.saveToast.classList.remove('show')},1200);
 }
 
-/* ==================== UI ==================== */
 function updateBalanceUI(){
  el.balance.textContent=fmt(balance);
  el.btnOpen.disabled=balance<CASES[selectedCase].price||isSpinning;
@@ -1438,7 +1476,6 @@ function updateUI(){
  updateWheelUI();
 }
 
-/* ==================== МОДАЛКИ ПАНЕЛЕЙ ==================== */
 function openPanelModal(id){
  SFX.init();SFX.click();
  document.querySelectorAll('.panel-modal').forEach(function(m){m.classList.remove('active')});
@@ -1454,15 +1491,21 @@ $('btnOpenCasino').addEventListener('click',function(){openPanelModal('casinoMod
 $('btnOpenWheel').addEventListener('click',function(){openPanelModal('wheelModal')});
 
 document.querySelectorAll('.modal-close-x').forEach(function(btn){
- btn.addEventListener('click',function(){closePanelModal(btn.dataset.close)});
+ btn.addEventListener('click',function(){
+   var id=btn.dataset.close;
+   if(id==='profileModal'){
+     document.getElementById('profileModal').classList.remove('active');
+   }else{
+     closePanelModal(id);
+   }
+ });
 });
 document.querySelectorAll('.panel-modal').forEach(function(modal){
  modal.addEventListener('click',function(e){
-  if(e.target===modal)closePanelModal(modal.id);
+  if(e.target===modal)modal.classList.remove('active');
  });
 });
 
-/* ==================== КАЗИНО: НАВИГАЦИЯ ==================== */
 function showCasinoScreen(name){
  ['casinoMenuScreen','casinoMinesScreen','casinoCrashScreen','casinoCoinflipScreen','casinoSlotsScreen'].forEach(function(id){
   $(id).classList.remove('active');
@@ -1519,7 +1562,6 @@ function updateCasinoBadge(){
  }
 }
 
-/* ==================== КЛИКЕР ==================== */
 $('clickerBtn').addEventListener('pointerdown',function(e){
  e.preventDefault();
  SFX.init();
@@ -1541,7 +1583,6 @@ $('clickerBtn').addEventListener('pointerdown',function(e){
  }
 });
 
-/* ==================== ЕЖЕДНЕВНЫЙ БОНУС ==================== */
 function dailyReady(){return Date.now()-lastDaily>=DAILY_COOLDOWN}
 function updateDailyUI(){
  if(!el.btnDaily||!el.dailyTimer)return;
@@ -1587,7 +1628,6 @@ function claimDaily(){
 }
 if(el.btnDaily)el.btnDaily.addEventListener('click',claimDaily);
 
-/* ==================== МИНЫ ==================== */
 function updateMinesUI(){
  if(!el.btnMinesStart)return;
  if(minesGame&&minesGame.active){
@@ -1724,7 +1764,6 @@ document.querySelectorAll('.mines-quick-btn').forEach(function(btn){
  }
 });
 
-/* ==================== КРАШ ==================== */
 var crashRaf=null;
 var CRASH_TICK_MS=50;
 var CRASH_GROWTH=0.15;
@@ -1872,7 +1911,6 @@ document.querySelectorAll('[data-crash-bet]').forEach(function(btn){
  });
 });
 
-/* ==================== ОРЁЛ / РЕШКА ==================== */
 function updateCoinflipUI(){
  document.querySelectorAll('.choice-btn').forEach(function(b){
   b.disabled=coinflipBusy;
@@ -1947,7 +1985,6 @@ document.querySelectorAll('[data-cf-bet]').forEach(function(btn){
  });
 });
 
-/* ==================== СЛОТЫ ==================== */
 function randomSlotSymbol(){
  return SLOT_SYMBOLS[Math.floor(Math.random()*SLOT_SYMBOLS.length)];
 }
@@ -2061,7 +2098,6 @@ document.querySelectorAll('[data-slots-bet]').forEach(function(btn){
  });
 });
 
-/* ==================== КОЛЕСО ФОРТУНЫ ==================== */
 function wheelReady(){return Date.now()-lastWheel>=WHEEL_COOLDOWN}
 function updateWheelUI(){
  if(!el.btnWheel||!el.wheelTimer)return;
@@ -2159,7 +2195,6 @@ setInterval(function(){
  }
 },1000);
 
-/* ==================== КЕЙСЫ ==================== */
 CASES.map(function(c){return c.closed}).concat(CASES.map(function(c){return c.open})).concat(Object.keys(DRINKS).map(function(k){return DRINKS[k]})).forEach(function(u){var im=new Image();im.src=u;im.decoding='async'});
 
 function renderCaseSelect(){
@@ -2251,7 +2286,6 @@ function finalizeItem(it,forced){
  return item;
 }
 
-/* ==================== РУЛЕТКА ==================== */
 var ITEM_W=128,WIN_IDX=50,SPIN_MS=5200;
 function cubicBezier(p1x,p1y,p2x,p2y){
  var cx=3*p1x,bx=3*(p2x-p1x)-cx,ax=1-cx-bx;
@@ -2364,7 +2398,6 @@ function startSpin(c){
  },SPIN_MS+400);
 }
 
-/* ==================== ИНВЕНТАРЬ ==================== */
 function renderInventory(){
  var frag=document.createDocumentFragment();
  el.invCount.textContent=inventory.length;
@@ -2413,7 +2446,6 @@ el.btnSellAll.addEventListener('click',function(){
  updateUI();saveGame();
 });
 
-/* ==================== МОДАЛКА ВЫИГРЫША ==================== */
 function showModal(item){
  var c=RARITY_COLORS[item.rarity];
  el.modalImg.src=item.img;
@@ -2433,7 +2465,6 @@ function showModal(item){
 $('btnCloseModal').addEventListener('click',function(){SFX.init();SFX.click();el.modalOverlay.classList.remove('active')});
 el.modalOverlay.addEventListener('click',function(e){if(e.target===el.modalOverlay)el.modalOverlay.classList.remove('active')});
 
-/* ==================== КНОПКИ ==================== */
 el.btnOpen.addEventListener('click',openCase);
 el.caseStage.addEventListener('click',function(){if(!isSpinning)openCase()});
 $('btnMute').addEventListener('click',function(){
@@ -2457,7 +2488,6 @@ document.addEventListener('pointerdown',function(){
  if(Music.on&&!Music.started)Music.init();
 },{once:true});
 
-/* ==================== ЧАСТИЦЫ ==================== */
 var canvas=$('particleCanvas'),ctx=canvas.getContext('2d');
 var particles=[],canvasDirty=false;
 function resizeCanvas(){canvas.width=innerWidth;canvas.height=innerHeight}
@@ -2489,13 +2519,11 @@ function spawnParticles(color,count){
  requestAnimationFrame(anim);
 })();
 
-/* ==================== АВТОСОХРАНЕНИЕ ==================== */
 setInterval(saveGame,5000);
 window.addEventListener('beforeunload',saveGame);
 window.addEventListener('pagehide',saveGame);
 document.addEventListener('visibilitychange',function(){if(document.hidden)saveGame()});
 
-/* ==================== СТАРТ ==================== */
 var loaded=loadGame();
 
 if(SFX.muted){
@@ -2520,9 +2548,91 @@ updateWheelUI();
 
 if(loaded)showSaveToast();
 
-// Экспорт функций для крипто-модуля
 window.saveGame=saveGame;
 window.updateUI=updateUI;
+window.__getBalance=function(){return balance};
+window.__addBalance=function(a){if(typeof a==='number'&&isFinite(a)){balance+=a;updateUI();saveGame()}};
+window.__spendBalance=function(a){if(typeof a!=='number'||!isFinite(a)||a<0||balance<a)return false;balance-=a;updateUI();saveGame();return true};
+window.__clickSound=function(){SFX.init();SFX.click()};
+window.__okSound=function(){SFX.init();SFX.coin()};
+window.__errSound=function(){SFX.init();SFX.error()};
+window.__save=saveGame;
+window.__refreshUI=updateUI;
+
+/* ==================== ПРОФИЛЬ: СТАТИСТИКА + СМЕНА ПАРОЛЯ ==================== */
+function fmtUSD(n){
+ if(typeof n!=='number'||!isFinite(n))n=0;
+ return '$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+}
+function getCurrentLogin(){
+ if(window.__mcsGetLogin)return window.__mcsGetLogin();
+ try{return localStorage.getItem('mcs_session_v1')||''}catch(e){return''}
+}
+function renderProfileStats(){
+ var login=getCurrentLogin();
+ var lbl=$('profileLoginLabel');
+ if(lbl)lbl.textContent='@'+login;
+
+ $('pfBalance').textContent=fmtUSD(balance);
+ $('pfOpened').textContent=stats.opened;
+ $('pfSpent').textContent=fmtUSD(stats.spent);
+ $('pfEarned').textContent=fmtUSD(stats.earned);
+ var profit=stats.earned-stats.spent;
+ $('pfProfit').textContent=(profit>=0?'+':'')+fmtUSD(profit);
+ $('pfProfit').style.color=profit>=0?'#6ee79a':'#ff5566';
+ var invValue=inventory.reduce(function(s,i){return s+(+i.price||0)},0);
+ $('pfInventory').textContent=inventory.length;
+ $('pfInvValue').textContent=fmtUSD(invValue);
+ $('pfClicks').textContent=clicks;
+ $('pfClickEarned').textContent=fmtUSD(clickerEarned);
+}
+function openProfile(){
+ SFX.init();SFX.click();
+ document.querySelectorAll('.panel-modal').forEach(function(m){m.classList.remove('active')});
+ $('profileModal').classList.add('active');
+ renderProfileStats();
+ $('pfOldPass').value='';$('pfNewPass').value='';$('pfNewPass2').value='';
+ $('pfPassMsg').textContent='';$('pfPassMsg').className='auth-msg';
+}
+var userBoxEl=$('userBox');
+if(userBoxEl){
+ userBoxEl.addEventListener('click',function(e){
+  if(e.target.closest('.btn-icon'))return;
+  openProfile();
+ });
+}
+$('pfChangePassBtn').addEventListener('click',function(){
+ var msg=$('pfPassMsg');
+ var login=getCurrentLogin();
+ var oldP=$('pfOldPass').value||'';
+ var newP=$('pfNewPass').value||'';
+ var newP2=$('pfNewPass2').value||'';
+ msg.className='auth-msg';
+ if(!login){msg.textContent='Ошибка: нет сессии';msg.classList.add('error');SFX.error();return}
+ var acc=window.__mcsFindAccount?window.__mcsFindAccount(login):null;
+ if(!acc){msg.textContent='Аккаунт не найден';msg.classList.add('error');SFX.error();return}
+ var hashFn=window.__mcsHashPass;
+ if(!hashFn){msg.textContent='Ошибка системы';msg.classList.add('error');return}
+ if(acc.hash!==hashFn(acc.login,oldP)){msg.textContent='Неверный текущий пароль';msg.classList.add('error');SFX.error();return}
+ if(newP.length<4){msg.textContent='Новый пароль минимум 4 символа';msg.classList.add('error');SFX.error();return}
+ if(newP!==newP2){msg.textContent='Пароли не совпадают';msg.classList.add('error');SFX.error();return}
+ var accounts=window.__mcsLoadAccounts();
+ for(var i=0;i<accounts.length;i++){
+  if(accounts[i].login===acc.login){accounts[i].hash=hashFn(acc.login,newP);break}
+ }
+ window.__mcsSaveAccounts(accounts);
+ msg.textContent='✅ Пароль изменён';msg.classList.add('ok');
+ SFX.upgrade();
+ $('pfOldPass').value='';$('pfNewPass').value='';$('pfNewPass2').value='';
+});
+$('pfLogoutBtn').addEventListener('click',function(){
+ $('profileModal').classList.remove('active');
+ if(window.__mcsLogout)window.__mcsLogout();
+});
+
+setInterval(function(){
+ if($('profileModal').classList.contains('active'))renderProfileStats();
+},2000);
 
 })();
 </script>
@@ -2666,7 +2776,7 @@ function boot(){
 
  function flashBalance(){
   var bd=$('balanceDisplay');if(!bd)return;
-  bd.classList.remove('pulse','flash-green','flash-red');
+  bd.classList.remove('pulse');
   void bd.offsetWidth;
   bd.classList.add('pulse');
  }
@@ -2924,34 +3034,6 @@ function boot(){
    origSave('military_case_sim_save_v6',JSON.stringify(d));
   }catch(e){}
  },1500);
-
- window.__getBalance=function(){
-  var bd=$('balanceDisplay');
-  if(!bd)return null;
-  var t=bd.textContent.replace(/[^0-9.\-]/g,'');
-  var v=parseFloat(t);
-  return isFinite(v)?v:null;
- };
- window.__spendBalance=function(amt){
-  var bd=$('balanceDisplay');
-  if(!bd)return false;
-  var cur=window.__getBalance();
-  if(cur===null||cur<amt)return false;
-  bd.textContent=fmtUSD(cur-amt);
-  return true;
- };
- window.__addBalance=function(amt){
-  var bd=$('balanceDisplay');
-  if(!bd)return;
-  var cur=window.__getBalance();
-  if(cur===null)return;
-  bd.textContent=fmtUSD(cur+amt);
- };
- window.__save=function(){if(window.saveGame)window.saveGame();};
- window.__refreshUI=function(){if(window.updateUI)window.updateUI();};
- window.__clickSound=function(){};
- window.__okSound=function(){};
- window.__errSound=function(){};
 
  updateHeader();
 }

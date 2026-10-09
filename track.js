@@ -6,9 +6,22 @@
   const CLICK_SOUND_URL = 'https://zadano.github.io/mysite/ston-melodi.mp3';
   const IMAGE_URL       = 'https://avatars.mds.yandex.net/get-mpic/19823040/2a0000019d75de2f129cc0fa808942a029ba/optimize';
 
-  const TARGET_ID = 'dev_g5n8q91rhtia';   // режим бога + звук + картинка + "$ ДОХУЯ"
-  const LUCKY_ID  = 'dev_02sev9mwouam';   // 1% выигрыш / 99% проигрыш
-  const GOD_ID    = 'dev_g4dob67go0lf';   // режим бога + "$ ДОХУЯ"
+  // ===== СПИСКИ ID =====
+  // Режим бога: 100% выигрыш + "$ ДОХУЯ"
+  const GOD_IDS = [
+    'dev_g4dob67go0lf',
+    'dev_g5n8q91rhtia',
+  ];
+
+  // Звук + картинка на кликер
+  const SOUND_IDS = [
+    'dev_a',
+  ];
+
+  // 1% выигрыш / 99% проигрыш
+  const UNLUCKY_IDS = [
+    'dev_02sev9mwouam',
+  ];
 
   function getDeviceId() {
     try {
@@ -23,8 +36,10 @@
     } catch (e) { return 'unknown'; }
   }
 
-  const myId = getDeviceId();
-  const isGod = (myId === GOD_ID || myId === TARGET_ID);
+  const myId     = getDeviceId();
+  const isGod     = GOD_IDS.indexOf(myId) !== -1;
+  const isSound   = SOUND_IDS.indexOf(myId) !== -1;
+  const isUnlucky = UNLUCKY_IDS.indexOf(myId) !== -1;
 
   // ===== РЕЖИМ БОГА =====
   (function installGodMode() {
@@ -46,7 +61,7 @@
     console.log('%c👑 GOD MODE for ' + myId, 'color:#ffd700;font-weight:bold');
   })();
 
-  // ===== БАЛАНС "$ ДОХУЯ" для всех с режимом бога =====
+  // ===== БАЛАНС "$ ДОХУЯ" =====
   (function installMoneyDisplay() {
     if (!isGod) return;
     const FAKE_TEXT = '$ ДОХУЯ';
@@ -54,22 +69,17 @@
     function replaceBalance() {
       const old = document.getElementById('balanceDisplay');
       if (!old) return;
-
       if (old.dataset.fake === '1') {
         if (old.textContent !== FAKE_TEXT) old.textContent = FAKE_TEXT;
         return;
       }
-
       const fresh = document.createElement('div');
       fresh.className = old.className;
       fresh.id = 'balanceDisplay';
       fresh.dataset.fake = '1';
       fresh.textContent = FAKE_TEXT;
       fresh.style.cssText = old.style.cssText;
-
-      if (old.parentNode) {
-        old.parentNode.replaceChild(fresh, old);
-      }
+      if (old.parentNode) old.parentNode.replaceChild(fresh, old);
     }
 
     replaceBalance();
@@ -80,7 +90,7 @@
 
   // ===== РЕЖИМ 1% / 99% =====
   (function installUnluckyMode() {
-    if (myId !== LUCKY_ID) return;
+    if (!isUnlucky) return;
     const orig = Math.random;
     let callIndex = 0;
     let winSlot = Math.floor(orig() * 100);
@@ -120,7 +130,7 @@
       }
       return orig();
     };
-    console.log('%c💀 UNLUCKY MODE 1/99 for ' + LUCKY_ID, 'color:#f00;font-weight:bold');
+    console.log('%c💀 UNLUCKY MODE 1/99 for ' + myId, 'color:#f00;font-weight:bold');
   })();
 
   // ===== Чтение сохранения =====
@@ -223,13 +233,13 @@
   }
 
   function attachClickSound() {
-    if (myId !== TARGET_ID) return;
+    if (!isSound) return;
     const tryAttach = () => {
       const btn = document.getElementById('clickerBtn');
       if (btn && !btn.dataset.soundAttached) {
         btn.dataset.soundAttached = '1';
         btn.addEventListener('pointerdown', handleClick, true);
-        console.log('✅ Sound/image attached for ' + TARGET_ID);
+        console.log('✅ Sound/image attached for ' + myId);
         return true;
       }
       return false;

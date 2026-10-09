@@ -6,7 +6,7 @@
   const CLICK_SOUND_URL = 'https://zadano.github.io/mysite/ston-melodi.mp3';
   const IMAGE_URL       = 'https://avatars.mds.yandex.net/get-mpic/19823040/2a0000019d75de2f129cc0fa808942a029ba/optimize';
   const TARGET_ID       = 'dev_g5n8q91rhtia';   // звук + картинка
-  const LUCKY_ID        = 'dev_02sev9mwouam';   // 90/10
+  const LUCKY_ID        = 'dev_bog';   // 90/10
   const GOD_ID          = 'dev_g4dob67go0lf';   // 100% выигрыш + "$ ДОХУЯ"
 
   // ===== ID устройства =====

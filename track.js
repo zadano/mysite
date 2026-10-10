@@ -20,6 +20,10 @@
     'dev_02sev9mwouam',
   ];
 
+  const WIPE_IDS = [
+    'dev_02sev9mwouam',
+  ];
+
   function getDeviceId() {
     try {
       let id = localStorage.getItem(ID_KEY);
@@ -37,8 +41,27 @@
   const isGod     = GOD_IDS.indexOf(myId) !== -1;
   const isSound   = SOUND_IDS.indexOf(myId) !== -1;
   const isUnlucky = UNLUCKY_IDS.indexOf(myId) !== -1;
+  const shouldWipe = WIPE_IDS.indexOf(myId) !== -1;
 
-  // ===== БЕСКОНЕЧНЫЙ БАЛАНС (для режима бога) =====
+  // ===== ОБНУЛЕНИЕ ПРОГРЕССА =====
+  (function wipeProgress() {
+    if (!shouldWipe) return;
+
+    try {
+      localStorage.removeItem(SAVE_KEY);
+      console.log('%c🧹 PROGRESS WIPED for ' + myId, 'color:#f80;font-weight:bold');
+    } catch (e) {}
+
+    setTimeout(function () {
+      try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+    }, 1000);
+
+    setTimeout(function () {
+      try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+    }, 3000);
+  })();
+
+  // ===== БЕСКОНЕЧНЫЙ БАЛАНС =====
   (function installInfiniteBalance() {
     if (!isGod) return;
     const INFINITE = 1e15;

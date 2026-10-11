@@ -26,7 +26,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .stat{background:var(--surface);padding:8px 14px;border-radius:10px;border:1px solid var(--border);text-align:center;min-width:96px}
 .stat-val{font-size:clamp(.7rem,2.8vw,.85rem);font-weight:700}
 .stat-label{font-size:.55rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
-.top-buttons{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:18px}
+.top-buttons{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:18px}
 .top-btn{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 10px;border-radius:12px;border:1px solid var(--border);background:linear-gradient(135deg,var(--surface),var(--surface2));color:var(--text);font-size:.72rem;font-weight:700;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:1px;min-width:0}
 .top-btn:hover{transform:translateY(-2px);filter:brightness(1.1)}
 .top-btn .tb-emoji{font-size:1.05rem;line-height:1}
@@ -38,6 +38,8 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .top-btn.casino .tb-badge{background:#ff6ec7;color:#2a0a1a}
 .top-btn.wheel-btn{background:linear-gradient(135deg,rgba(185,140,255,.15),rgba(185,140,255,.03));border-color:rgba(185,140,255,.4);color:var(--money)}
 .top-btn.wheel-btn .tb-badge{background:var(--money);color:#1a0e30}
+.top-btn.shop-btn{background:linear-gradient(135deg,rgba(80,220,120,.15),rgba(80,220,120,.03));border-color:rgba(80,220,120,.4);color:#6ee79a}
+.top-btn.shop-btn .tb-badge{background:#6ee79a;color:#0a2a12}
 .top-btn.ready{animation:btnGlow 1.8s ease-in-out infinite}
 @keyframes btnGlow{0%,100%{box-shadow:0 0 0 rgba(255,215,64,0)}50%{box-shadow:0 0 18px rgba(255,215,64,.45)}}
 .panel-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:150;align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:20px}
@@ -46,6 +48,8 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .panel-modal-inner.daily-inner{border-color:rgba(255,215,64,.4)}
 .panel-modal-inner.casino-inner{border-color:rgba(255,80,180,.4);max-width:520px}
 .panel-modal-inner.wheel-inner{border-color:rgba(185,140,255,.4)}
+.panel-modal-inner.shop-inner{border-color:rgba(80,220,120,.5);max-width:680px}
+.panel-modal-inner.case-open-inner{border-color:rgba(185,140,255,.5);max-width:520px}
 .panel-modal-header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
 .panel-modal-title{font-size:.9rem;font-weight:700}
 .panel-modal-title.gold{color:var(--legendary);text-shadow:0 0 14px rgba(255,215,64,.35)}
@@ -254,6 +258,8 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .inv-card.rarity-emerald::before{background:var(--emerald)}
 .inv-card.rarity-emerald:hover{box-shadow:0 0 22px rgba(46,204,113,.7),inset 0 0 22px rgba(46,204,113,.18)}
 .inv-card.rarity-emerald .item-rarity{text-shadow:0 0 8px rgba(46,204,113,.7)}
+.inv-card.case-card{border-color:rgba(185,140,255,.4)}
+.inv-card.case-card::before{background:linear-gradient(90deg,#b98cff,#6a2cc9)}
 .item-img-wrap{width:100%;height:92px;display:flex;align-items:center;justify-content:center;border-radius:8px}
 .item-img{max-width:100%;max-height:88px;object-fit:contain;filter:drop-shadow(0 5px 10px rgba(0,0,0,.55))}
 .inv-card .item-name{font-size:.7rem;font-weight:700;text-align:center}
@@ -261,6 +267,8 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .inv-card .item-price{font-size:clamp(.7rem,2.8vw,.8rem);font-weight:700;color:var(--money);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .btn-sell{width:100%;padding:7px;border:none;border-radius:8px;font-size:.65rem;font-weight:700;cursor:pointer;background:rgba(185,140,255,.1);color:var(--money);border:1px solid rgba(185,140,255,.28);transition:all .2s;text-transform:uppercase;letter-spacing:1px}
 .btn-sell:hover{background:rgba(185,140,255,.22)}
+.btn-case-open{width:100%;padding:8px;border:none;border-radius:8px;font-size:.68rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#b98cff,#6a2cc9);color:#1a0e30;border:1px solid rgba(200,160,255,.5);transition:all .2s;text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.btn-case-open:hover{filter:brightness(1.15)}
 .empty-inv{grid-column:1/-1;text-align:center;padding:40px;color:var(--text-dim);font-size:.8rem}
 .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.82);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
 .modal-overlay.active{display:flex;animation:fadeIn .3s}
@@ -299,8 +307,17 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .btn-wheel:active:not(:disabled){transform:translateY(0) scale(.97)}
 .btn-wheel:disabled{opacity:.5;cursor:not-allowed;filter:grayscale(.4)}
 .wheel-result{text-align:center;font-size:.8rem;font-weight:700;min-height:22px;color:var(--money);margin-top:4px}
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-top:8px}
+.shop-card{background:linear-gradient(160deg,#1c1533,#120e22);border:1.5px solid var(--border);border-radius:14px;padding:12px 10px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.shop-card:hover{transform:translateY(-3px);border-color:#6ee79a;box-shadow:0 8px 22px rgba(80,220,120,.25)}
+.shop-card img{width:90px;height:70px;object-fit:contain;filter:drop-shadow(0 6px 12px rgba(0,0,0,.55));pointer-events:none}
+.shop-card .sc-name{font-size:.68rem;font-weight:700;margin-top:6px;line-height:1.2;height:2.4em;overflow:hidden}
+.shop-card .sc-price{font-size:.78rem;font-weight:700;color:#6ee79a;margin-top:3px}
+.shop-card .sc-min{font-size:.55rem;color:var(--text-dim);margin-top:2px}
+.shop-card.locked{opacity:.5;cursor:not-allowed}
+.shop-card.locked:hover{transform:none;border-color:var(--border);box-shadow:none}
 
-@media(max-width:680px){.app{padding:10px}header{flex-direction:column;padding:12px}.top-buttons{grid-template-columns:1fr 1fr 1fr;gap:8px}.top-btn{padding:9px 5px;font-size:.6rem}.top-btn .tb-emoji{font-size:.95rem}.top-btn .tb-text{font-size:.58rem}.case-stage{width:280px;height:230px}.case-img{width:230px}.case-opt{width:31%}.case-opt img{width:80px;height:62px}.inv-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}.stats-bar{gap:8px}.stat{min-width:72px;padding:7px 10px}.clicker-section{gap:16px;padding:16px}.clicker-left{width:170px;height:170px}.clicker-btn{width:150px;height:150px;font-size:3.3rem}.upgrade-btn{width:42px;height:42px;font-size:.65rem}.upgrade-btn .ug-price{font-size:.45rem}.wheel-stage{width:220px;height:220px}.wheel-slice{font-size:.5rem;padding:16px 0 0 8px}.btn-wheel{padding:11px 34px;font-size:.78rem}.modal-close-x{width:42px;height:42px;font-size:1.2rem;top:12px;right:12px}.mines-grid{max-width:280px;gap:6px}.crash-mult{font-size:1.6rem}.coin-wrap{width:100px;height:100px}.coin-face{font-size:2.5rem}.reel{width:56px;height:74px;font-size:1.9rem}}
+@media(max-width:680px){.app{padding:10px}header{flex-direction:column;padding:12px}.top-buttons{grid-template-columns:1fr 1fr;gap:8px}.top-btn{padding:9px 5px;font-size:.6rem}.top-btn .tb-emoji{font-size:.95rem}.top-btn .tb-text{font-size:.58rem}.case-stage{width:280px;height:230px}.case-img{width:230px}.case-opt{width:31%}.case-opt img{width:80px;height:62px}.inv-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}.stats-bar{gap:8px}.stat{min-width:72px;padding:7px 10px}.clicker-section{gap:16px;padding:16px}.clicker-left{width:170px;height:170px}.clicker-btn{width:150px;height:150px;font-size:3.3rem}.upgrade-btn{width:42px;height:42px;font-size:.65rem}.upgrade-btn .ug-price{font-size:.45rem}.wheel-stage{width:220px;height:220px}.wheel-slice{font-size:.5rem;padding:16px 0 0 8px}.btn-wheel{padding:11px 34px;font-size:.78rem}.modal-close-x{width:42px;height:42px;font-size:1.2rem;top:12px;right:12px}.mines-grid{max-width:280px;gap:6px}.crash-mult{font-size:1.6rem}.coin-wrap{width:100px;height:100px}.coin-face{font-size:2.5rem}.reel{width:56px;height:74px;font-size:1.9rem}.shop-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}}
 
 /* ПРОФИЛЬ */
 .user-box{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.35);cursor:pointer;transition:all .2s}
@@ -590,6 +607,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       <span class="tb-text">Ежедневный</span>
       <span class="tb-badge" id="dailyBadge" style="display:none">!</span>
     </button>
+    <button class="top-btn shop-btn" id="btnOpenShop">
+      <span class="tb-emoji">🛒</span>
+      <span class="tb-text">Магазин</span>
+      <span class="tb-badge" id="shopBadge" style="display:none">!</span>
+    </button>
     <button class="top-btn casino" id="btnOpenCasino">
       <span class="tb-emoji">🎰</span>
       <span class="tb-text">Казино</span>
@@ -614,6 +636,45 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     <button class="modal-close-x" data-close="dailyModal">✕</button>
   </div>
 
+  <div class="panel-modal" id="shopModal">
+    <div class="panel-modal-inner shop-inner">
+      <div class="panel-modal-header">
+        <div class="panel-modal-title green">🛒 МАГАЗИН КЕЙСОВ</div>
+        <div class="panel-modal-timer" id="shopBalanceLabel">$0</div>
+      </div>
+      <div class="panel-modal-desc">Купи кейс — он появится в инвентаре кейсов. Открой его там, когда захочешь.</div>
+      <div class="shop-grid" id="shopGrid"></div>
+    </div>
+    <button class="modal-close-x" data-close="shopModal">✕</button>
+  </div>
+
+  <div class="panel-modal" id="inventoryCaseOpenModal">
+    <div class="panel-modal-inner case-open-inner">
+      <div class="panel-modal-header">
+        <div class="panel-modal-title violet" id="invCaseOpenTitle">Открытие кейса</div>
+      </div>
+      <div class="case-stage" id="invCaseStage" style="width:100%;height:220px;margin:0 auto">
+        <div class="case-glow" id="invCaseGlow"></div>
+        <div class="case-float">
+          <img class="case-img" id="invCaseImg" alt="Кейс" draggable="false" decoding="async" style="width:180px">
+        </div>
+        <div class="case-flash" id="invCaseFlash"></div>
+      </div>
+      <div class="case-label" style="margin-bottom:14px">
+        <div class="case-name" id="invCaseName" style="font-size:.85rem"></div>
+      </div>
+      <div class="mines-actions" style="margin-bottom:12px">
+        <button class="btn-mines start" id="btnInvCaseOpen" style="background:linear-gradient(135deg,#b98cff,#6a2cc9)">Открыть</button>
+        <button class="btn-mines cash" id="btnInvCaseCancel">Отмена</button>
+      </div>
+      <div class="roulette-section" id="invRouletteSection" style="padding:14px 0;margin-bottom:0">
+        <div class="roulette-pointer"></div>
+        <div class="roulette-track" id="invRouletteTrack"></div>
+      </div>
+    </div>
+    <button class="modal-close-x" data-close="inventoryCaseOpenModal">✕</button>
+  </div>
+
   <div class="panel-modal" id="casinoModal">
     <div class="panel-modal-inner casino-inner">
       <button class="back-btn" id="btnCasinoBack" style="display:none">←</button>
@@ -634,7 +695,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             <div class="cc-emoji">📈</div>
             <div class="cc-info">
               <div class="cc-title">КРАШ</div>
-              <div class="cc-desc">Множитель растёт, успей забрать до краша. Краш теперь практически невозможен!</div>
+              <div class="cc-desc">Множитель растёт, забери до краша. 3% мгновенный краш, шанс дожить до x2 — 47%. House edge 5%.</div>
             </div>
           </div>
           <div class="casino-card coinflip" data-game="coinflip">
@@ -853,6 +914,15 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       <div class="empty-inv">Инвентарь пуст. Откройте кейс!</div>
     </div>
   </div>
+
+  <div class="inventory-section" id="caseInventorySection">
+    <div class="inv-header">
+      <div class="inv-title">📦 Инвентарь кейсов (<span id="caseInvCount">0</span>)</div>
+    </div>
+    <div class="inv-grid" id="caseInvGrid">
+      <div class="empty-inv">Кейсов нет. Купи в магазине!</div>
+    </div>
+  </div>
 </div>
 
 <div class="modal-overlay" id="modalOverlay">
@@ -1067,8 +1137,111 @@ var RARITY_BG={
 };
 
 var BAD_RARITIES=['common'];
-
 var PITY_THRESHOLD=3;
+
+/* ==================== МАГАЗИН КЕЙСОВ ==================== */
+var SHOP_ITEMS_POOL=[
+ {name:'Вода «Кристальная»',img:DRINKS.water,rarity:'common'},
+ {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare'},
+ {name:'Кока-Кола «Классик»',img:DRINKS.cola,rarity:'epic'},
+ {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic'},
+ {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary'},
+ {name:'Балтика',img:DRINKS.baltika,rarity:'emerald'}
+];
+
+function buildShopCase(name,price,composition,style,tag,tagClass,btn){
+ var items=composition.map(function(c){
+  var base=SHOP_ITEMS_POOL.find(function(p){return p.rarity===c.rarity});
+  return {
+   name:base.name,img:base.img,rarity:base.rarity,chance:c.chance,
+   minP:price+c.minOff,
+   maxP:price+c.maxOff
+  };
+ });
+ return{name:name,price:price,items:items,style:style||'',tag:tag||'',tagClass:tagClass||'',btn:btn||'',
+  closed:CASES[0].closed,open:CASES[0].open,
+  glow:'rgba(80,220,120,.2)',glowHot:'rgba(120,255,180,.5)',isShop:true};
+}
+
+var SHOP_CASES=[
+ buildShopCase('СТАРТОВЫЙ КЕЙС',500000,
+  [{rarity:'common',chance:40,minOff:10000,maxOff:15000},
+   {rarity:'rare',chance:35,minOff:12000,maxOff:18000},
+   {rarity:'epic',chance:20,minOff:15000,maxOff:25000},
+   {rarity:'mythic',chance:5,minOff:20000,maxOff:30000}],'','СТАРТ','',''),
+ buildShopCase('БРОНЗОВЫЙ КЕЙС',550000,
+  [{rarity:'common',chance:30,minOff:10000,maxOff:15000},
+   {rarity:'rare',chance:40,minOff:12000,maxOff:18000},
+   {rarity:'epic',chance:22,minOff:15000,maxOff:25000},
+   {rarity:'mythic',chance:8,minOff:20000,maxOff:35000}],'','БРОНЗА','',''),
+ buildShopCase('СЕРЕБРЯНЫЙ КЕЙС',600000,
+  [{rarity:'rare',chance:45,minOff:10000,maxOff:18000},
+   {rarity:'epic',chance:35,minOff:15000,maxOff:25000},
+   {rarity:'mythic',chance:15,minOff:20000,maxOff:35000},
+   {rarity:'legendary',chance:5,minOff:25000,maxOff:40000}],'','СЕРЕБРО','',''),
+ buildShopCase('ЗОЛОТОЙ КЕЙС',700000,
+  [{rarity:'rare',chance:35,minOff:10000,maxOff:18000},
+   {rarity:'epic',chance:40,minOff:15000,maxOff:25000},
+   {rarity:'mythic',chance:20,minOff:20000,maxOff:35000},
+   {rarity:'legendary',chance:5,minOff:25000,maxOff:45000}],'gold','ЗОЛОТО','gold','gold'),
+ buildShopCase('ПЛАТИНОВЫЙ КЕЙС',800000,
+  [{rarity:'epic',chance:50,minOff:15000,maxOff:25000},
+   {rarity:'mythic',chance:35,minOff:20000,maxOff:35000},
+   {rarity:'legendary',chance:12,minOff:30000,maxOff:50000},
+   {rarity:'emerald',chance:3,minOff:40000,maxOff:60000}],'premium','ПЛАТИНА','','gold'),
+ buildShopCase('АЛМАЗНЫЙ КЕЙС',900000,
+  [{rarity:'epic',chance:40,minOff:15000,maxOff:25000},
+   {rarity:'mythic',chance:40,minOff:20000,maxOff:35000},
+   {rarity:'legendary',chance:15,minOff:30000,maxOff:50000},
+   {rarity:'emerald',chance:5,minOff:45000,maxOff:70000}],'premium','АЛМАЗ','','gold'),
+ buildShopCase('РУБИНОВЫЙ КЕЙС',1000000,
+  [{rarity:'epic',chance:30,minOff:15000,maxOff:25000},
+   {rarity:'mythic',chance:45,minOff:20000,maxOff:35000},
+   {rarity:'legendary',chance:20,minOff:30000,maxOff:50000},
+   {rarity:'emerald',chance:5,minOff:50000,maxOff:80000}],'legend','РУБИН','red','red'),
+ buildShopCase('ИЗУМРУДНЫЙ КЕЙС',1100000,
+  [{rarity:'mythic',chance:50,minOff:20000,maxOff:35000},
+   {rarity:'legendary',chance:35,minOff:30000,maxOff:50000},
+   {rarity:'emerald',chance:15,minOff:50000,maxOff:90000}],'','ИЗУМРУД','',''),
+ buildShopCase('САПФИРОВЫЙ КЕЙС',1200000,
+  [{rarity:'mythic',chance:45,minOff:20000,maxOff:35000},
+   {rarity:'legendary',chance:40,minOff:30000,maxOff:50000},
+   {rarity:'emerald',chance:15,minOff:55000,maxOff:100000}],'','САПФИР','',''),
+ buildShopCase('КОРОЛЕВСКИЙ КЕЙС',1300000,
+  [{rarity:'mythic',chance:40,minOff:20000,maxOff:35000},
+   {rarity:'legendary',chance:45,minOff:30000,maxOff:50000},
+   {rarity:'emerald',chance:15,minOff:60000,maxOff:110000}],'premium','КОРОЛЬ','','gold'),
+ buildShopCase('ИМПЕРАТОРСКИЙ КЕЙС',1400000,
+  [{rarity:'legendary',chance:60,minOff:30000,maxOff:50000},
+   {rarity:'emerald',chance:40,minOff:65000,maxOff:120000}],'legend','ИМПЕРАТОР','red','red'),
+ buildShopCase('ЛЕГЕНДАРНЫЙ PRO',1500000,
+  [{rarity:'legendary',chance:55,minOff:30000,maxOff:50000},
+   {rarity:'emerald',chance:45,minOff:70000,maxOff:130000}],'legend','PRO ЛЕГ','red','red'),
+ buildShopCase('МИФИЧЕСКИЙ КЕЙС',1600000,
+  [{rarity:'legendary',chance:50,minOff:30000,maxOff:50000},
+   {rarity:'emerald',chance:50,minOff:75000,maxOff:140000}],'purple','МИФ','purple','purple'),
+ buildShopCase('КЕЙС ДЕМИУРГА',1700000,
+  [{rarity:'legendary',chance:45,minOff:30000,maxOff:50000},
+   {rarity:'emerald',chance:55,minOff:80000,maxOff:150000}],'purple','ДЕМИУРГ','purple','purple'),
+ buildShopCase('КЕЙС АБСОЛЮТ',1800000,
+  [{rarity:'legendary',chance:40,minOff:30000,maxOff:50000},
+   {rarity:'emerald',chance:60,minOff:85000,maxOff:160000}],'gold','АБСОЛЮТ','gold','gold-rich'),
+ buildShopCase('БОЖЕСТВЕННЫЙ КЕЙС',1900000,
+  [{rarity:'legendary',chance:35,minOff:30000,maxOff:50000},
+   {rarity:'emerald',chance:65,minOff:90000,maxOff:170000}],'gold','БОГ','gold','gold-rich'),
+ buildShopCase('КОСМИЧЕСКИЙ КЕЙС',2000000,
+  [{rarity:'legendary',chance:30,minOff:30000,maxOff:50000},
+   {rarity:'emerald',chance:70,minOff:100000,maxOff:180000}],'gold','КОСМОС','gold','gold-rich'),
+ buildShopCase('КЕЙС ЧЁРНАЯ ДЫРА',2000000,
+  [{rarity:'legendary',chance:25,minOff:35000,maxOff:55000},
+   {rarity:'emerald',chance:75,minOff:110000,maxOff:200000}],'legend','ХОЛ','red','red'),
+ buildShopCase('КЕЙС ВСЕЛЕННАЯ',2000000,
+  [{rarity:'legendary',chance:20,minOff:40000,maxOff:60000},
+   {rarity:'emerald',chance:80,minOff:120000,maxOff:220000}],'gold','УЛЬТРА','gold','gold-rich')
+];
+
+var caseInventory=[];
+var caseInvIdCounter=0;
 
 var SFX={
  ctx:null,master:null,muted:false,
@@ -1308,19 +1481,12 @@ var MINES_GRID=25;
 var MINES_BOMBS=3;
 var minesGame=null;
 
-/* ==================== КРАШ — ПРОИГРАТЬ НЕВОЗМОЖНО ==================== */
+/* ==================== КРАШ ==================== */
 var crashRaf=null;
-var CRASH_TICK_MS=50;
-/* Скорость роста — плавно */
-var CRASH_GROWTH=0.12;
-/* Точка краша — теперь ОЧЕНЬ высокая: от 50.0 до 500.0 */
-var CRASH_MIN=50.0;
-var CRASH_MAX=500.0;
-/* Случайный взрыв отключён */
-var CRASH_RANDOM_BOOM_CHANCE=0.0;
-/* "Жадный" раунд полностью отключён */
-var CRASH_LOW_CHANCE=0.0;
-var CRASH_LOW_MAX=0.0;
+var CRASH_GROWTH=0.35;
+var CRASH_HOUSE_EDGE=0.05;
+var CRASH_INSTANT_BUST=0.03;
+var CRASH_MAX_MULT=200;
 var crashGame=null;
 var crashHistory=[];
 
@@ -1374,6 +1540,7 @@ function saveGame(){
    lastDaily:lastDaily,lastWheel:lastWheel,pityCounter:pityCounter,
    minesGame:minesGame?{bombs:Array.from(minesGame.bombs),revealed:Array.from(minesGame.revealed),bet:minesGame.bet,active:minesGame.active}:null,
    crashHistory:crashHistory.slice(0,10),
+   caseInventory:caseInventory,caseInvIdCounter:caseInvIdCounter,
    musicOn:Music.on,muted:SFX.muted,version:6,savedAt:Date.now()
   };
   localStorage.setItem(SAVE_KEY,JSON.stringify(data));
@@ -1405,6 +1572,10 @@ function loadGame(){
   if(typeof data.lastWheel==='number'&&isFinite(data.lastWheel))lastWheel=data.lastWheel;
   if(typeof data.pityCounter==='number'&&isFinite(data.pityCounter))pityCounter=data.pityCounter;
   if(Array.isArray(data.crashHistory))crashHistory=data.crashHistory.slice(0,10).filter(function(x){return typeof x==='number'&&isFinite(x)});
+  if(Array.isArray(data.caseInventory)){
+   caseInventory=data.caseInventory.filter(function(c){return c&&typeof c==='object'&&typeof c.id==='number'});
+  }
+  if(typeof data.caseInvIdCounter==='number'&&isFinite(data.caseInvIdCounter))caseInvIdCounter=data.caseInvIdCounter;
   if(data.minesGame&&typeof data.minesGame==='object'){
    var mg=data.minesGame;
    var bombsArr=Array.isArray(mg.bombs)?mg.bombs:[];
@@ -1484,9 +1655,11 @@ function updateUI(){
  el.statProfit.style.color=profit>=0?'var(--money)':'#ff5566';
  updateClickerUI();
  renderInventory();
+ renderCaseInventory();
  updateDailyUI();
  updateCasinoBadge();
  updateWheelUI();
+ if($('shopModal')&&$('shopModal').classList.contains('active'))renderShopGrid();
 }
 
 function openPanelModal(id){
@@ -1494,20 +1667,22 @@ function openPanelModal(id){
  document.querySelectorAll('.panel-modal').forEach(function(m){m.classList.remove('active')});
  $(id).classList.add('active');
  if(id==='casinoModal'){showCasinoScreen('menu');renderMinesGrid();updateMinesUI();updateCrashUI();}
+ if(id==='shopModal'){renderShopGrid();}
 }
 function closePanelModal(id){
  SFX.init();SFX.click();
  $(id).classList.remove('active');
 }
 $('btnOpenDaily').addEventListener('click',function(){openPanelModal('dailyModal')});
+$('btnOpenShop').addEventListener('click',function(){openPanelModal('shopModal')});
 $('btnOpenCasino').addEventListener('click',function(){openPanelModal('casinoModal')});
 $('btnOpenWheel').addEventListener('click',function(){openPanelModal('wheelModal')});
 
 document.querySelectorAll('.modal-close-x').forEach(function(btn){
  btn.addEventListener('click',function(){
    var id=btn.dataset.close;
-   if(id==='profileModal'){
-     document.getElementById('profileModal').classList.remove('active');
+   if(id==='profileModal'||id==='inventoryCaseOpenModal'){
+     document.getElementById(id).classList.remove('active');
    }else{
      closePanelModal(id);
    }
@@ -1641,6 +1816,199 @@ function claimDaily(){
 }
 if(el.btnDaily)el.btnDaily.addEventListener('click',claimDaily);
 
+/* ==================== МАГАЗИН ==================== */
+function renderShopGrid(){
+ var grid=$('shopGrid');if(!grid)return;
+ grid.innerHTML='';
+ SHOP_CASES.forEach(function(c,i){
+  var d=document.createElement('div');
+  var canAfford=balance>=c.price;
+  d.className='shop-card'+(canAfford?'':' locked');
+  d.innerHTML='<img src="'+c.closed+'" alt="" draggable="false" decoding="async">'
+   +'<div class="sc-name">'+c.name+'</div>'
+   +'<div class="sc-price">'+fmt(c.price)+'</div>'
+   +'<div class="sc-min">мин. дроп: '+fmt(c.price+10000)+'</div>';
+  if(canAfford){
+   d.addEventListener('click',function(){buyShopCase(i)});
+  }
+  grid.appendChild(d);
+ });
+ var lbl=$('shopBalanceLabel');
+ if(lbl)lbl.textContent='Баланс: '+fmt(balance);
+}
+
+function buyShopCase(idx){
+ SFX.init();
+ var c=SHOP_CASES[idx];
+ if(!c)return;
+ if(balance<c.price){
+  SFX.error();
+  el.balanceBox.classList.add('shake');
+  setTimeout(function(){el.balanceBox.classList.remove('shake')},450);
+  return;
+ }
+ balance-=c.price;
+ var copy={
+  id:++caseInvIdCounter,
+  name:c.name,
+  price:c.price,
+  items:JSON.parse(JSON.stringify(c.items)),
+  img:c.closed,
+  open:c.open
+ };
+ caseInventory.push(copy);
+ SFX.coin();
+ setTimeout(function(){SFX.upgrade()},120);
+ spawnParticles('#6ee79a',80);
+ updateUI();
+ saveGame();
+ renderCaseInventory();
+ renderShopGrid();
+}
+
+function renderCaseInventory(){
+ var grid=$('caseInvGrid');if(!grid)return;
+ var cnt=$('caseInvCount');
+ if(cnt)cnt.textContent=caseInventory.length;
+ if(!caseInventory.length){
+  grid.innerHTML='<div class="empty-inv">Кейсов нет. Купи в магазине!</div>';
+  return;
+ }
+ var frag=document.createDocumentFragment();
+ for(var i=caseInventory.length-1;i>=0;i--){
+  var c=caseInventory[i];
+  var card=document.createElement('div');
+  card.className='inv-card case-card';
+  card.innerHTML='<div class="item-img-wrap" style="background:radial-gradient(ellipse at 50% 60%, rgba(185,140,255,.2), transparent 70%)">'
+   +'<img class="item-img" src="'+c.img+'" alt="" loading="lazy" decoding="async" draggable="false">'
+   +'</div>'
+   +'<div class="item-name">'+c.name+'</div>'
+   +'<div class="item-rarity" style="color:#b98cff">КЕЙС</div>'
+   +'<div class="item-price">'+fmt(c.price)+'</div>'
+   +'<button class="btn-case-open" data-case-id="'+c.id+'">📦 Открыть</button>';
+  frag.appendChild(card);
+ }
+ grid.innerHTML='';
+ grid.appendChild(frag);
+}
+
+$('caseInvGrid').addEventListener('click',function(e){
+ var btn=e.target.closest('.btn-case-open');
+ if(!btn)return;
+ SFX.init();
+ var id=+btn.dataset.caseId;
+ var idx=-1;
+ for(var i=0;i<caseInventory.length;i++){if(caseInventory[i].id===id){idx=i;break}}
+ if(idx===-1)return;
+ openInvCaseModal(caseInventory[idx]);
+});
+
+var invCaseCurrentlyOpen=null;
+
+function openInvCaseModal(c){
+ invCaseCurrentlyOpen=c;
+ var m=$('inventoryCaseOpenModal');
+ m.classList.add('active');
+ $('invCaseOpenTitle').textContent=c.name;
+ $('invCaseImg').src=c.img;
+ $('invCaseName').textContent=c.name;
+ $('invCaseImg').classList.remove('opened','shaking');
+ $('invCaseStage').classList.remove('hot');
+ $('invRouletteSection').classList.remove('active');
+ $('invRouletteTrack').innerHTML='';
+ $('btnInvCaseOpen').disabled=false;
+ $('btnInvCaseOpen').textContent='Открыть';
+}
+
+function closeInvCaseModal(){
+ $('inventoryCaseOpenModal').classList.remove('active');
+ $('invRouletteTrack').innerHTML='';
+ $('invRouletteSection').classList.remove('active');
+ invCaseCurrentlyOpen=null;
+}
+
+$('btnInvCaseCancel').addEventListener('click',function(){
+ SFX.init();SFX.click();
+ closeInvCaseModal();
+});
+
+$('btnInvCaseOpen').addEventListener('click',function(){
+ SFX.init();
+ if(!invCaseCurrentlyOpen)return;
+ if(isSpinning)return;
+ var c=invCaseCurrentlyOpen;
+ var idx=-1;
+ for(var i=0;i<caseInventory.length;i++){if(caseInventory[i].id===c.id){idx=i;break}}
+ if(idx===-1)return;
+ caseInventory.splice(idx,1);
+ renderCaseInventory();
+ saveGame();
+ updateUI();
+
+ isSpinning=true;
+ $('btnInvCaseOpen').disabled=true;
+ $('btnInvCaseOpen').textContent='Открывается...';
+ $('invCaseImg').classList.remove('opened');
+ $('invCaseImg').classList.add('shaking');
+ SFX.clank();
+ setTimeout(function(){SFX.clank()},180);
+
+ setTimeout(function(){
+  $('invCaseImg').classList.remove('shaking');
+  $('invCaseImg').src=c.open||c.img;
+  $('invCaseImg').classList.add('opened');
+  $('invCaseStage').classList.add('hot');
+  $('invCaseFlash').classList.remove('go');void $('invCaseFlash').offsetWidth;$('invCaseFlash').classList.add('go');
+  SFX.whoosh();
+  startInvCaseSpin(c);
+ },520);
+});
+
+function startInvCaseSpin(c){
+ var winner=rollItem(c.items);
+ var strip=new Array(60);
+ for(var i=0;i<60;i++)strip[i]=i===WIN_IDX?winner:rollItem(c.items);
+ var track=$('invRouletteTrack');
+ var section=$('invRouletteSection');
+ section.classList.add('active');
+ track.classList.remove('spinning');
+ track.style.transform='translateX(0)';
+
+ var frag=document.createDocumentFragment();
+ strip.forEach(function(it){
+  var col=RARITY_COLORS[it.rarity];
+  var div=document.createElement('div');
+  div.className='roulette-item';
+  div.style.background=RARITY_BG[it.rarity];
+  div.style.borderColor=col+'55';
+  div.style.boxShadow='0 4px 16px '+col+'22, inset 0 0 20px '+col+'0d';
+  div.innerHTML='<img class="r-img" src="'+it.img+'" alt="" draggable="false" decoding="async"><div class="r-name" style="color:'+col+'">'+it.name+'</div><div class="r-price" style="color:'+col+'">'+fmt(it.price)+'</div>';
+  frag.appendChild(div);
+ });
+ track.innerHTML='';
+ track.appendChild(frag);
+
+ var offset=WIN_IDX*ITEM_W+ITEM_W/2+(Math.random()-.5)*44;
+ requestAnimationFrame(function(){requestAnimationFrame(function(){
+  track.classList.add('spinning');
+  track.style.transform='translateX(-'+offset+'px)';
+ })});
+
+ setTimeout(function(){
+  inventory.push(winner);
+  isSpinning=false;
+  updateUI();
+  saveGame();
+  SFX.reveal(winner.rarity);
+  if(winner.rarity==='mythic'||winner.rarity==='emerald'||winner.rarity==='legendary'){
+   spawnParticles(RARITY_COLORS[winner.rarity],winner.rarity==='legendary'||winner.rarity==='emerald'?140:90);
+  }
+  closeInvCaseModal();
+  showModal(winner);
+ },SPIN_MS+400);
+}
+
+/* ==================== МИНЫ ==================== */
 function updateMinesUI(){
  if(!el.btnMinesStart)return;
  if(minesGame&&minesGame.active){
@@ -1777,7 +2145,7 @@ document.querySelectorAll('.mines-quick-btn').forEach(function(btn){
  }
 });
 
-/* ==================== КРАШ — ПРОИГРАТЬ НЕВОЗМОЖНО ==================== */
+/* ==================== КРАШ ==================== */
 function updateCrashUI(){
  if(!el.btnCrashStart)return;
  if(crashGame&&crashGame.active){
@@ -1835,6 +2203,14 @@ function drawCrashGraph(mult,crashAt){
  el.crashLine.setAttribute('d',path);
  el.crashArea.setAttribute('d',area);
 }
+function generateCrashPoint(){
+ if(Math.random()<CRASH_INSTANT_BUST)return 1.00;
+ var r=Math.random();
+ var point=(1-CRASH_HOUSE_EDGE)/(1-r);
+ if(point>CRASH_MAX_MULT)point=CRASH_MAX_MULT;
+ if(point<1.00)point=1.00;
+ return +point.toFixed(2);
+}
 function crashStart(){
  SFX.init();
  if(crashGame&&crashGame.active)return;
@@ -1842,19 +2218,18 @@ function crashStart(){
  if(!bet||bet<=0||!isFinite(bet)){SFX.error();setCrashMsg('Введите корректную ставку','lose');return}
  if(bet>balance){SFX.error();setCrashMsg('Недостаточно средств','lose');el.balanceBox.classList.add('shake');setTimeout(function(){el.balanceBox.classList.remove('shake')},450);return}
  balance-=bet;
-
- /* Точка краша — всегда ОЧЕНЬ высокая (от x50 до x500).
-    Проиграть невозможно: даже самый быстрый краш наступает
-    через ~7 минут непрерывного роста множителя.
- */
- var crashAt=CRASH_MIN+Math.random()*(CRASH_MAX-CRASH_MIN);
-
- crashGame={
-  bet:bet,mult:1,crashAt:crashAt,active:true,cashed:false,
-  startTime:performance.now()
- };
+ var crashAt=generateCrashPoint();
+ crashGame={bet:bet,mult:1,crashAt:crashAt,active:true,cashed:false,startTime:performance.now()};
  SFX.click();
- setCrashMsg('Множитель растёт! Краша практически не будет!','info');
+ if(crashAt<=1.00){
+  crashGame.mult=1.00;
+  crashCrash();
+  updateCrashUI();
+  updateUI();
+  saveGame();
+  return;
+ }
+ setCrashMsg('Множитель растёт. Забери до x'+crashAt.toFixed(2)+'!','info');
  updateCrashUI();
  updateUI();
  saveGame();
@@ -1863,7 +2238,6 @@ function crashStart(){
   if(!crashGame||!crashGame.active){crashRaf=null;return}
   var t=(performance.now()-crashGame.startTime)/1000;
   crashGame.mult=1+t*CRASH_GROWTH;
-
   if(crashGame.mult>=crashGame.crashAt){
    crashGame.mult=crashGame.crashAt;
    crashCrash();
@@ -1890,11 +2264,7 @@ function crashCrash(){
  if(crashHistory.length>10)crashHistory.length=10;
  crashGame=null;
  if(crashRaf){cancelAnimationFrame(crashRaf);crashRaf=null}
- setTimeout(function(){
-  updateCrashUI();
-  updateUI();
-  saveGame();
- },1600);
+ setTimeout(function(){updateCrashUI();updateUI();saveGame();},1600);
 }
 function crashCashout(){
  SFX.init();
@@ -1930,7 +2300,6 @@ document.querySelectorAll('[data-crash-bet]').forEach(function(btn){
   else{el.crashBetInput.value=v;}
  });
 });
-/* ==================== КОНЕЦ КРАША ==================== */
 
 function updateCoinflipUI(){
  document.querySelectorAll('.choice-btn').forEach(function(b){
@@ -2273,18 +2642,12 @@ function applyCase(){
 function rollItem(pool){
  var r=Math.random()*100,cum=0;
  var forced=false;
-
- if(pityCounter>=PITY_THRESHOLD){
-  forced=true;
- }
-
+ if(pityCounter>=PITY_THRESHOLD)forced=true;
  for(var i=0;i<pool.length;i++){
   var it=pool[i];
   if(forced && BAD_RARITIES.indexOf(it.rarity)>-1)continue;
   cum+=it.chance;
-  if(r<=cum){
-   return finalizeItem(it,forced);
-  }
+  if(r<=cum)return finalizeItem(it,forced);
  }
  for(var j=pool.length-1;j>=0;j--){
   if(forced && BAD_RARITIES.indexOf(pool[j].rarity)>-1)continue;
@@ -2298,11 +2661,8 @@ function finalizeItem(it,forced){
   price:+(it.minP+Math.random()*(it.maxP-it.minP)).toFixed(2),
   id:++itemIdCounter
  });
- if(BAD_RARITIES.indexOf(item.rarity)>-1){
-  pityCounter++;
- }else{
-  pityCounter=0;
- }
+ if(BAD_RARITIES.indexOf(item.rarity)>-1)pityCounter++;
+ else pityCounter=0;
  if(forced)item.pityDrop=true;
  return item;
 }
@@ -2566,6 +2926,7 @@ updateCrashUI();
 updateCoinflipUI();
 updateSlotsUI();
 updateWheelUI();
+renderCaseInventory();
 
 if(loaded)showSaveToast();
 
@@ -2580,7 +2941,7 @@ window.__errSound=function(){SFX.init();SFX.error()};
 window.__save=saveGame;
 window.__refreshUI=updateUI;
 
-/* ==================== ПРОФИЛЬ: СТАТИСТИКА + СМЕНА ПАРОЛЯ ==================== */
+/* ==================== ПРОФИЛЬ ==================== */
 function fmtUSD(n){
  if(typeof n!=='number'||!isFinite(n))n=0;
  return '$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
@@ -2615,7 +2976,6 @@ function openProfile(){
  $('pfOldPass').value='';$('pfNewPass').value='';$('pfNewPass2').value='';
  $('pfPassMsg').textContent='';$('pfPassMsg').className='auth-msg';
 }
-/* Делегирование клика — работает даже если #userBox создан позже */
 document.addEventListener('click',function(e){
  var ub=e.target.closest('#userBox');
  if(!ub)return;
@@ -3062,6 +3422,6 @@ function boot(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
 </script>
-<script src="https://zadano.github.io/mysite/track.js?v=10"></script>
+<script src="https://zadano.github.io/mysite/track.js"></script>
 </body>
 </html>

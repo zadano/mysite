@@ -71,19 +71,26 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .pet-panel::before{content:'';position:absolute;inset:-50%;background:conic-gradient(from 0deg,transparent,rgba(255,159,67,.06),transparent,rgba(255,107,157,.06),transparent);animation:petSpin 8s linear infinite;pointer-events:none}
 @keyframes petSpin{to{transform:rotate(360deg)}}
 .pet-panel-inner{position:relative;z-index:1;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
-.pet-avatar-wrap{position:relative;width:130px;height:130px;flex-shrink:0;border-radius:50%;padding:5px;background:conic-gradient(from 0deg,#ff9f43,#ff6b9d,#b98cff,#6ee79a,#ffd740,#ff9f43);animation:petRainbow 4s linear infinite;box-shadow:0 0 30px rgba(255,159,67,.5)}
+.pet-avatar-wrap{position:relative;width:130px;height:130px;flex-shrink:0;border-radius:50%;padding:5px;background:conic-gradient(from 0deg,#ff9f43,#ff6b9d,#b98cff,#6ee79a,#ffd740,#ff9f43);animation:petRainbow 4s linear infinite;box-shadow:0 0 30px rgba(255,159,67,.5);transition:box-shadow .4s}
 @keyframes petRainbow{to{filter:hue-rotate(360deg)}}
+.pet-avatar-wrap.sad-glow{background:conic-gradient(from 0deg,#556677,#8899aa,#556677,#8899aa,#556677);animation:petSpin 6s linear infinite;box-shadow:0 0 30px rgba(100,120,150,.5)}
+.pet-avatar-wrap.happy-glow{box-shadow:0 0 45px rgba(255,215,64,.8),0 0 70px rgba(255,107,157,.5)}
 .pet-avatar-inner{width:100%;height:100%;border-radius:50%;background:#1c1533;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
-.pet-avatar-img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-.pet-avatar-img.sleeping{filter:grayscale(.5) brightness(.7)}
+.pet-avatar-img{width:100%;height:100%;object-fit:cover;border-radius:50%;transition:filter .3s}
+.pet-avatar-img.happy{animation:petHappy 0.6s ease-in-out infinite}
+.pet-avatar-img.sad{animation:petSad 2s ease-in-out infinite;filter:brightness(.85) saturate(.8)}
+@keyframes petHappy{0%,100%{transform:scale(1) rotate(0)}25%{transform:scale(1.06) rotate(-3deg)}75%{transform:scale(1.06) rotate(3deg)}}
+@keyframes petSad{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
 .pet-fire{position:absolute;top:-8px;right:-8px;font-size:2rem;filter:drop-shadow(0 0 10px #ff9f43);animation:fireFlicker .6s ease-in-out infinite alternate;z-index:5}
 @keyframes fireFlicker{from{transform:scale(1) rotate(-5deg)}to{transform:scale(1.15) rotate(5deg)}}
+.pet-hearts{position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);font-size:1.8rem;animation:heartsFloat 3s ease-out infinite;filter:drop-shadow(0 0 8px #ff6b9d);z-index:6}
+@keyframes heartsFloat{0%{opacity:0;transform:translateX(-50%) translateY(0) scale(.5)}30%{opacity:1;transform:translateX(-50%) translateY(-15px) scale(1.2)}100%{opacity:0;transform:translateX(-50%) translateY(-40px) scale(.8)}}
 .pet-info{flex:1;min-width:200px}
 .pet-name-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
 .pet-name{font-size:1rem;font-weight:700;color:var(--pet);text-shadow:0 0 12px rgba(255,159,67,.5)}
 .pet-name-edit{width:26px;height:26px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--text-dim);font-size:.75rem;cursor:pointer;transition:all .2s}
 .pet-name-edit:hover{background:rgba(255,159,67,.15);color:var(--pet);border-color:rgba(255,159,67,.5)}
-.pet-status{font-size:.68rem;color:var(--text-dim);margin-bottom:8px}
+.pet-status{font-size:.68rem;color:var(--text-dim);margin-bottom:8px;min-height:1.2em}
 .pet-status b{color:var(--pet)}
 .pet-hunger-bar{height:16px;border-radius:8px;background:rgba(0,0,0,.4);border:1px solid var(--border);overflow:hidden;margin-bottom:10px;position:relative}
 .pet-hunger-fill{height:100%;border-radius:7px;transition:width .5s ease,background .5s ease;background:linear-gradient(90deg,#ff5566,#ff9f43,#6ee79a)}
@@ -444,7 +451,6 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
   </div>
 </div>
 
-<!-- ==================== СКРИПТ АККАУНТОВ ==================== -->
 <script>
 (function(){
 'use strict';
@@ -643,7 +649,6 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 
-<!-- ==================== ОСНОВНОЙ ИГРОВОЙ КОД ==================== -->
 <div class="app">
   <header>
     <div class="logo">🎖️ MILITARY <span>CASE</span> SIM</div>
@@ -935,7 +940,6 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     <button class="modal-close-x" data-close="wheelModal">✕</button>
   </div>
 
-  <!-- ПИТОМЕЦ -->
   <section class="pet-panel" id="petPanel">
     <div class="pet-panel-inner" id="petPanelInner"></div>
   </section>
@@ -1114,7 +1118,10 @@ var DRINKS={
  baltika:'https://avatars.mds.yandex.net/i?id=a4bc94c05816f3beb255d53cf9086fbf4ad8535a-5218867-images-thumbs&n=13'
 };
 
-var PET_IMG='https://avatars.mds.yandex.net/i?id=0c80a9bda1b7afcd4ad05ee343904880e905e1aa-9386274-images-thumbs&n=13';
+/* ДВЕ КАРТИНКИ ПИТОМЦА: РАДОСТНЫЙ И ГРУСТНЫЙ */
+var PET_IMG_HAPPY='https://avatars.mds.yandex.net/i?id=0c80a9bda1b7afcd4ad05ee343904880e905e1aa-9386274-images-thumbs&n=13';
+var PET_IMG_SAD='https://avatars.mds.yandex.net/i?id=0c80a9bda1b7afcd4ad05ee343904880e905e1aa-9386274-images-thumbs&n=13';
+var PET_IMG=PET_IMG_HAPPY;
 
 var ITEMS1=[
  {name:'Вода «Кристальная»',img:DRINKS.water,rarity:'common',chance:22,minP:18000,maxP:20000},
@@ -1546,6 +1553,9 @@ var petFoodInventory={};
 var petFireAppearAt=0;
 var petLost=false;
 var petLostReason='';
+var petHappyUntil=0;
+var PET_HAPPY_DURATION=3000;
+var PET_SAD_THRESHOLD=40;
 var PET_GIFT_COOLDOWN=24*60*60*1000;
 var PET_FIRE_DELAY=24*60*60*1000;
 var PET_NAME_CHANGE_COST=1000000;
@@ -1607,14 +1617,12 @@ function updatePetHunger(){
  var decay=hoursSinceLastFeed*PET_HUNGER_PER_HOUR;
  pet.hunger=Math.max(0,100-decay);
 
- // Огонёк появляется через 1 день
  if(!pet.hasFire && now-pet.adoptedAt>=PET_FIRE_DELAY){
   pet.hasFire=true;
   pet.fireShownAt=now;
   saveGame();
  }
 
- // Огонёк гаснет, если не кормить 3 дня
  if(pet.hasFire){
   var hoursSinceFeed=(now-pet.lastFeed)/3600000;
   if(hoursSinceFeed>=72){
@@ -1623,7 +1631,6 @@ function updatePetHunger(){
   }
  }
 
- // Голод 0 — питомец убегает
  if(pet.hunger<=0){
   losePet('hunger');
   return;
@@ -1643,12 +1650,14 @@ function feedPet(foodId){
  pet.hunger=Math.min(100,pet.hunger+food.power);
  pet.lastFeed=Date.now();
  pet.totalFed++;
+ petHappyUntil=Date.now()+PET_HAPPY_DURATION;
  if(!pet.hasFire && Date.now()-pet.adoptedAt>=PET_FIRE_DELAY){
   pet.hasFire=true;
   pet.fireShownAt=Date.now();
  }
  SFX.pet();
- spawnParticles('#ff9f43',50);
+ spawnParticles('#ff9f43',60);
+ setTimeout(function(){spawnParticles('#ff6b9d',30)},150);
  updateUI();
  saveGame();
  renderPetPanel();
@@ -1715,23 +1724,39 @@ function renderPetPanel(){
  var canFeed=pet.hunger<100;
  var hoursLeft=(pet.hunger/100)*24;
 
+ var now=Date.now();
+ var isHappyNow=now<petHappyUntil;
+ var isSad=(pet.hunger<PET_SAD_THRESHOLD)&&!isHappyNow;
+ var petImg=isSad?PET_IMG_SAD:PET_IMG_HAPPY;
+ var moodClass=isSad?' sad':(isHappyNow?' happy':'');
+
+ var statusText;
+ if(isHappyNow){
+  statusText='😊 <b style="color:#6ee79a">Ням-ням! Питомец доволен!</b>';
+ }else if(isSad){
+  statusText='😢 <b style="color:#ff5566">Питомец голоден! Срочно покорми!</b>';
+ }else if(pet.hasFire){
+  statusText='🔥 Огонёк активен! Голод: '+hungerPct+'% (≈'+hoursLeft.toFixed(1)+'ч)';
+ }else{
+  statusText='⏳ Огонёк появится через '+formatTime(Math.max(0,petFireAppearAt-Date.now()));
+ }
+
+ var wrapClass='pet-avatar-wrap'+(isSad?' sad-glow':(isHappyNow?' happy-glow':''));
+
  inner.innerHTML=
-  '<div class="pet-avatar-wrap">'
+  '<div class="'+wrapClass+'">'
   +'<div class="pet-avatar-inner">'
-  +'<img class="pet-avatar-img'+(hungerPct<=20?' sleeping':'')+'" src="'+PET_IMG+'" alt="Питомец" draggable="false">'
+  +'<img class="pet-avatar-img'+moodClass+'" src="'+petImg+'" alt="Питомец" draggable="false">'
   +'</div>'
   +(pet.hasFire?'<div class="pet-fire">🔥</div>':'')
+  +(isHappyNow?'<div class="pet-hearts">💕</div>':'')
   +'</div>'
   +'<div class="pet-info">'
   +'<div class="pet-name-row">'
   +'<span class="pet-name">'+pet.name+'</span>'
   +'<button class="pet-name-edit" id="btnEditPetName" title="Сменить имя за '+fmt(PET_NAME_CHANGE_COST)+'">✏️</button>'
   +'</div>'
-  +'<div class="pet-status">'
-  +(pet.hasFire
-    ?'🔥 Огонёк активен! Голод: '+hungerPct+'% (≈'+hoursLeft.toFixed(1)+'ч)'
-    :'⏳ Огонёк появится через '+formatTime(Math.max(0,petFireAppearAt-Date.now())))
-  +'</div>'
+  +'<div class="pet-status">'+statusText+'</div>'
   +'<div class="pet-hunger-bar">'
   +'<div class="pet-hunger-fill" style="width:'+hungerPct+'%;background:linear-gradient(90deg,#ff5566,#ff9f43,'+hungerColor+')"></div>'
   +'<div class="pet-hunger-label">🍖 '+hungerPct+'%</div>'
@@ -1966,7 +1991,7 @@ function saveGame(){
    crashHistory:crashHistory.slice(0,10),
    caseInventory:caseInventory,caseInvIdCounter:caseInvIdCounter,
    pet:pet,petFoodInventory:petFoodInventory,petFireAppearAt:petFireAppearAt,
-   petLost:petLost,petLostReason:petLostReason,
+   petLost:petLost,petLostReason:petLostReason,petHappyUntil:petHappyUntil,
    musicOn:Music.on,muted:SFX.muted,version:6,savedAt:Date.now()
   };
   localStorage.setItem(SAVE_KEY,JSON.stringify(data));
@@ -2019,6 +2044,7 @@ function loadGame(){
   if(typeof data.petFireAppearAt==='number'&&isFinite(data.petFireAppearAt))petFireAppearAt=data.petFireAppearAt;
   if(typeof data.petLost==='boolean')petLost=data.petLost;
   if(typeof data.petLostReason==='string')petLostReason=data.petLostReason;
+  if(typeof data.petHappyUntil==='number'&&isFinite(data.petHappyUntil))petHappyUntil=data.petHappyUntil;
   if(data.minesGame&&typeof data.minesGame==='object'){
    var mg=data.minesGame;
    var bombsArr=Array.isArray(mg.bombs)?mg.bombs:[];
@@ -3027,7 +3053,7 @@ setInterval(function(){
   updateDailyUI();updateWheelUI();updateCasinoBadge();
   if(pet||petLost)renderPetPanel();
  }
-},1000);
+},500);
 
 CASES.map(function(c){return c.closed}).concat(CASES.map(function(c){return c.open})).concat(Object.keys(DRINKS).map(function(k){return DRINKS[k]})).forEach(function(u){var im=new Image();im.src=u;im.decoding='async'});
 

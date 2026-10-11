@@ -695,7 +695,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             <div class="cc-emoji">📈</div>
             <div class="cc-info">
               <div class="cc-title">КРАШ</div>
-              <div class="cc-desc">Множитель растёт, забери до краша. 3% мгновенный краш, шанс дожить до x2 — 47%. House edge 5%.</div>
+              <div class="cc-desc">Всего 1% мгновенных проигрышей, краш всегда на x15–x100. Почти невозможно проиграть!</div>
             </div>
           </div>
           <div class="casino-card coinflip" data-game="coinflip">
@@ -1481,12 +1481,12 @@ var MINES_GRID=25;
 var MINES_BOMBS=3;
 var minesGame=null;
 
-/* ==================== КРАШ ==================== */
+/* ==================== КРАШ — ПРОИГРАТЬ ПОЧТИ НЕВОЗМОЖНО ==================== */
 var crashRaf=null;
 var CRASH_GROWTH=0.35;
-var CRASH_HOUSE_EDGE=0.05;
-var CRASH_INSTANT_BUST=0.03;
-var CRASH_MAX_MULT=200;
+var CRASH_INSTANT_BUST=0.01;   /* всего 1% мгновенных проигрышей */
+var CRASH_MIN_MULT=15;         /* минимальный краш — x15 */
+var CRASH_MAX_MULT=100;        /* максимальный краш — x100 */
 var crashGame=null;
 var crashHistory=[];
 
@@ -2206,9 +2206,7 @@ function drawCrashGraph(mult,crashAt){
 function generateCrashPoint(){
  if(Math.random()<CRASH_INSTANT_BUST)return 1.00;
  var r=Math.random();
- var point=(1-CRASH_HOUSE_EDGE)/(1-r);
- if(point>CRASH_MAX_MULT)point=CRASH_MAX_MULT;
- if(point<1.00)point=1.00;
+ var point=CRASH_MIN_MULT+(CRASH_MAX_MULT-CRASH_MIN_MULT)*r;
  return +point.toFixed(2);
 }
 function crashStart(){
@@ -2229,7 +2227,7 @@ function crashStart(){
   saveGame();
   return;
  }
- setCrashMsg('Множитель растёт. Забери до x'+crashAt.toFixed(2)+'!','info');
+ setCrashMsg('Множитель растёт. Краш будет на x'+crashAt.toFixed(2)+' — успей забрать!','info');
  updateCrashUI();
  updateUI();
  saveGame();

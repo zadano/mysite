@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Военный Симулятор Кейсов</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}:root{--bg:#0a0812;--surface:#141024;--surface2:#1c1533;--border:#352c55;--text:#e6e2f5;--text-dim:#948ab8;--common:#b0b8c8;--rare:#ab47bc;--epic:#ff7043;--mythic:#e935ff;--legendary:#ffd740;--emerald:#2ecc71;--money:#b98cff}
+*{margin:0;padding:0;box-sizing:border-box}:root{--bg:#0a0812;--surface:#141024;--surface2:#1c1533;--border:#352c55;--text:#e6e2f5;--text-dim:#948ab8;--common:#b0b8c8;--rare:#ab47bc;--epic:#ff7043;--mythic:#e935ff;--legendary:#ffd740;--emerald:#2ecc71;--money:#b98cff;--pet:#ff9f43;--pet2:#ff6b9d}
 @font-face{font-family:'Inter';src:url('https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.woff2') format('woff2');font-weight:400}
 @font-face{font-family:'Inter';src:url('https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.woff2') format('woff2');font-weight:700}
 body{font-family:'Inter',sans-serif;background:radial-gradient(1200px 600px at 50% -10%,#241a45,#0a0812 70%);color:var(--text);min-height:100vh;overflow-x:hidden;font-size:14px}
@@ -50,12 +50,14 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .panel-modal-inner.wheel-inner{border-color:rgba(185,140,255,.4)}
 .panel-modal-inner.shop-inner{border-color:rgba(80,220,120,.5);max-width:680px}
 .panel-modal-inner.case-open-inner{border-color:rgba(185,140,255,.5);max-width:520px}
+.panel-modal-inner.pet-inner{border-color:rgba(255,159,67,.5);max-width:480px}
 .panel-modal-header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
 .panel-modal-title{font-size:.9rem;font-weight:700}
 .panel-modal-title.gold{color:var(--legendary);text-shadow:0 0 14px rgba(255,215,64,.35)}
 .panel-modal-title.green{color:#6ee79a;text-shadow:0 0 14px rgba(80,220,120,.35)}
 .panel-modal-title.violet{color:var(--money);text-shadow:0 0 14px rgba(185,140,255,.35)}
 .panel-modal-title.pink{color:#ff6ec7;text-shadow:0 0 14px rgba(255,110,199,.35)}
+.panel-modal-title.pet{color:var(--pet);text-shadow:0 0 14px rgba(255,159,67,.35)}
 .panel-modal-timer{font-size:.75rem;font-weight:700;color:var(--text-dim);white-space:nowrap}
 .panel-modal-desc{font-size:.72rem;color:var(--text-dim);line-height:1.4;margin-bottom:12px}
 .modal-close-x{position:fixed;top:18px;right:18px;width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#ff3344,#a01020);border:2px solid rgba(255,255,255,.25);color:#fff;font-size:1.35rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:200;box-shadow:0 6px 24px rgba(255,40,60,.6),inset 0 1px 0 rgba(255,255,255,.3);transition:all .2s;line-height:1;padding-bottom:3px}
@@ -63,6 +65,67 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .modal-close-x:active{transform:scale(.95)}
 .back-btn{position:absolute;top:14px;left:14px;width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text);font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:5}
 .back-btn:hover{background:rgba(255,255,255,.12)}
+
+/* ===== ПИТОМЕЦ ===== */
+.pet-panel{background:linear-gradient(135deg,var(--surface),var(--surface2));border:2px solid rgba(255,159,67,.4);border-radius:16px;padding:16px 20px;margin-bottom:20px;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.pet-panel::before{content:'';position:absolute;inset:-50%;background:conic-gradient(from 0deg,transparent,rgba(255,159,67,.06),transparent,rgba(255,107,157,.06),transparent);animation:petSpin 8s linear infinite;pointer-events:none}
+@keyframes petSpin{to{transform:rotate(360deg)}}
+.pet-panel-inner{position:relative;z-index:1;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.pet-avatar-wrap{position:relative;width:130px;height:130px;flex-shrink:0;border-radius:50%;padding:5px;background:conic-gradient(from 0deg,#ff9f43,#ff6b9d,#b98cff,#6ee79a,#ffd740,#ff9f43);animation:petRainbow 4s linear infinite;box-shadow:0 0 30px rgba(255,159,67,.5)}
+@keyframes petRainbow{to{filter:hue-rotate(360deg)}}
+.pet-avatar-inner{width:100%;height:100%;border-radius:50%;background:#1c1533;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.pet-avatar-img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.pet-avatar-img.sleeping{filter:grayscale(.5) brightness(.7)}
+.pet-fire{position:absolute;top:-8px;right:-8px;font-size:2rem;filter:drop-shadow(0 0 10px #ff9f43);animation:fireFlicker .6s ease-in-out infinite alternate;z-index:5}
+@keyframes fireFlicker{from{transform:scale(1) rotate(-5deg)}to{transform:scale(1.15) rotate(5deg)}}
+.pet-info{flex:1;min-width:200px}
+.pet-name-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.pet-name{font-size:1rem;font-weight:700;color:var(--pet);text-shadow:0 0 12px rgba(255,159,67,.5)}
+.pet-name-edit{width:26px;height:26px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--text-dim);font-size:.75rem;cursor:pointer;transition:all .2s}
+.pet-name-edit:hover{background:rgba(255,159,67,.15);color:var(--pet);border-color:rgba(255,159,67,.5)}
+.pet-status{font-size:.68rem;color:var(--text-dim);margin-bottom:8px}
+.pet-status b{color:var(--pet)}
+.pet-hunger-bar{height:16px;border-radius:8px;background:rgba(0,0,0,.4);border:1px solid var(--border);overflow:hidden;margin-bottom:10px;position:relative}
+.pet-hunger-fill{height:100%;border-radius:7px;transition:width .5s ease,background .5s ease;background:linear-gradient(90deg,#ff5566,#ff9f43,#6ee79a)}
+.pet-hunger-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.8);letter-spacing:1px}
+.pet-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-pet{padding:9px 18px;border:none;border-radius:10px;font-size:.7rem;font-weight:700;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:6px}
+.btn-pet.feed{background:linear-gradient(135deg,#ff9f43,#e67e22);color:#2a1a00;box-shadow:0 4px 16px rgba(255,159,67,.4)}
+.btn-pet.feed:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.12)}
+.btn-pet.feed:disabled{opacity:.4;cursor:not-allowed}
+.btn-pet.gift{background:linear-gradient(135deg,#6ee79a,#2ecc71);color:#0a2a12;box-shadow:0 4px 16px rgba(80,220,120,.4)}
+.btn-pet.gift:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.12)}
+.btn-pet.gift:disabled{opacity:.4;cursor:not-allowed}
+.btn-pet.adopt{background:linear-gradient(135deg,#b98cff,#6a2cc9);color:#1a0e30;box-shadow:0 4px 16px rgba(185,140,255,.4)}
+.btn-pet.adopt:hover{transform:translateY(-2px);filter:brightness(1.12)}
+.pet-no-pet{text-align:center;padding:10px 0}
+.pet-no-pet .pnp-emoji{font-size:3rem;margin-bottom:8px;filter:grayscale(.6);opacity:.6}
+.pet-no-pet .pnp-text{font-size:.75rem;color:var(--text-dim);margin-bottom:12px;line-height:1.4}
+.pet-empty-slot{width:130px;height:130px;border-radius:50%;border:2px dashed rgba(255,159,67,.4);display:flex;align-items:center;justify-content:center;font-size:3rem;opacity:.4;flex-shrink:0;background:rgba(0,0,0,.2)}
+
+/* Еда питомца в магазине */
+.shop-section-title{font-size:.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.5px;margin:16px 0 10px;display:flex;align-items:center;gap:8px}
+.shop-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.food-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.food-card{background:linear-gradient(160deg,#2a1f10,#1a1208);border:1.5px solid rgba(255,159,67,.3);border-radius:14px;padding:12px 10px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.food-card:hover{transform:translateY(-3px);border-color:var(--pet);box-shadow:0 8px 22px rgba(255,159,67,.25)}
+.food-card .fc-emoji{font-size:2rem;line-height:1;margin-bottom:6px}
+.food-card .fc-name{font-size:.68rem;font-weight:700;margin-bottom:4px;line-height:1.2;height:2.4em;overflow:hidden}
+.food-card .fc-price{font-size:.78rem;font-weight:700;color:var(--pet);margin-bottom:2px}
+.food-card .fc-power{font-size:.58rem;color:#6ee79a}
+
+/* Инвентарь еды */
+.food-inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.food-inv-card{background:linear-gradient(160deg,#2a1f10,#1a1208);border:1.5px solid rgba(255,159,67,.3);border-radius:12px;padding:12px 10px;text-align:center;transition:all .2s;position:relative;overflow:hidden;animation:cardIn .4s ease-out}
+.food-inv-card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(255,159,67,.25)}
+.food-inv-card .fic-emoji{font-size:2rem;line-height:1;margin-bottom:6px}
+.food-inv-card .fic-name{font-size:.68rem;font-weight:700;margin-bottom:4px;line-height:1.2;height:2.4em;overflow:hidden}
+.food-inv-card .fic-power{font-size:.6rem;color:#6ee79a;margin-bottom:4px}
+.food-inv-card .fic-count{font-size:.58rem;color:var(--text-dim);margin-bottom:8px}
+.btn-feed-pet{width:100%;padding:7px;border:none;border-radius:8px;font-size:.62rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#ff9f43,#e67e22);color:#2a1a00;transition:all .2s;text-transform:uppercase;letter-spacing:1px}
+.btn-feed-pet:hover:not(:disabled){filter:brightness(1.15)}
+.btn-feed-pet:disabled{opacity:.4;cursor:not-allowed}
+
 .casino-menu{display:grid;grid-template-columns:1fr;gap:10px;margin-top:8px}
 .casino-card{display:flex;align-items:center;gap:12px;padding:13px 15px;border-radius:14px;border:1px solid var(--border);background:linear-gradient(135deg,rgba(255,255,255,.04),rgba(255,255,255,.01));cursor:pointer;transition:all .25s;text-align:left}
 .casino-card:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(0,0,0,.4)}
@@ -317,7 +380,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .shop-card.locked{opacity:.5;cursor:not-allowed}
 .shop-card.locked:hover{transform:none;border-color:var(--border);box-shadow:none}
 
-@media(max-width:680px){.app{padding:10px}header{flex-direction:column;padding:12px}.top-buttons{grid-template-columns:1fr 1fr;gap:8px}.top-btn{padding:9px 5px;font-size:.6rem}.top-btn .tb-emoji{font-size:.95rem}.top-btn .tb-text{font-size:.58rem}.case-stage{width:280px;height:230px}.case-img{width:230px}.case-opt{width:31%}.case-opt img{width:80px;height:62px}.inv-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}.stats-bar{gap:8px}.stat{min-width:72px;padding:7px 10px}.clicker-section{gap:16px;padding:16px}.clicker-left{width:170px;height:170px}.clicker-btn{width:150px;height:150px;font-size:3.3rem}.upgrade-btn{width:42px;height:42px;font-size:.65rem}.upgrade-btn .ug-price{font-size:.45rem}.wheel-stage{width:220px;height:220px}.wheel-slice{font-size:.5rem;padding:16px 0 0 8px}.btn-wheel{padding:11px 34px;font-size:.78rem}.modal-close-x{width:42px;height:42px;font-size:1.2rem;top:12px;right:12px}.mines-grid{max-width:280px;gap:6px}.crash-mult{font-size:1.6rem}.coin-wrap{width:100px;height:100px}.coin-face{font-size:2.5rem}.reel{width:56px;height:74px;font-size:1.9rem}.shop-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}}
+@media(max-width:680px){.app{padding:10px}header{flex-direction:column;padding:12px}.top-buttons{grid-template-columns:1fr 1fr;gap:8px}.top-btn{padding:9px 5px;font-size:.6rem}.top-btn .tb-emoji{font-size:.95rem}.top-btn .tb-text{font-size:.58rem}.case-stage{width:280px;height:230px}.case-img{width:230px}.case-opt{width:31%}.case-opt img{width:80px;height:62px}.inv-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}.stats-bar{gap:8px}.stat{min-width:72px;padding:7px 10px}.clicker-section{gap:16px;padding:16px}.clicker-left{width:170px;height:170px}.clicker-btn{width:150px;height:150px;font-size:3.3rem}.upgrade-btn{width:42px;height:42px;font-size:.65rem}.upgrade-btn .ug-price{font-size:.45rem}.wheel-stage{width:220px;height:220px}.wheel-slice{font-size:.5rem;padding:16px 0 0 8px}.btn-wheel{padding:11px 34px;font-size:.78rem}.modal-close-x{width:42px;height:42px;font-size:1.2rem;top:12px;right:12px}.mines-grid{max-width:280px;gap:6px}.crash-mult{font-size:1.6rem}.coin-wrap{width:100px;height:100px}.coin-face{font-size:2.5rem}.reel{width:56px;height:74px;font-size:1.9rem}.shop-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}.pet-panel-inner{flex-direction:column;align-items:center;text-align:center}.pet-avatar-wrap{width:110px;height:110px}.pet-info{min-width:0;width:100%}.pet-actions{justify-content:center}.food-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}.food-inv-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}}
 
 /* ПРОФИЛЬ */
 .user-box{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.35);cursor:pointer;transition:all .2s}
@@ -342,6 +405,9 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .auth-btn{width:100%;padding:12px;border:none;border-radius:12px;font-size:.8rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#ece0ff;text-transform:uppercase;letter-spacing:2px;font-family:'Inter',sans-serif;border:1px solid rgba(180,140,255,.35);transition:all .2s}
 .auth-btn:hover{filter:brightness(1.12)}
 @media(max-width:680px){.user-name{display:none}.user-box{padding:8px 9px}.profile-stats{grid-template-columns:repeat(2,1fr)}}
+
+/* Модалка еды питомца */
+.pet-food-inner{border-color:rgba(255,159,67,.5);max-width:560px}
 </style>
 </head>
 <body>
@@ -639,11 +705,14 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   <div class="panel-modal" id="shopModal">
     <div class="panel-modal-inner shop-inner">
       <div class="panel-modal-header">
-        <div class="panel-modal-title green">🛒 МАГАЗИН КЕЙСОВ</div>
+        <div class="panel-modal-title green">🛒 МАГАЗИН</div>
         <div class="panel-modal-timer" id="shopBalanceLabel">$0</div>
       </div>
-      <div class="panel-modal-desc">Купи кейс — он появится в инвентаре кейсов. Открой его там, когда захочешь.</div>
+      <div class="panel-modal-desc">Купи кейс или еду для питомца</div>
+      <div class="shop-section-title">📦 КЕЙСЫ</div>
       <div class="shop-grid" id="shopGrid"></div>
+      <div class="shop-section-title">🍖 ЕДА ДЛЯ ПИТОМЦА</div>
+      <div class="food-grid" id="foodGrid"></div>
     </div>
     <button class="modal-close-x" data-close="shopModal">✕</button>
   </div>
@@ -866,6 +935,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     <button class="modal-close-x" data-close="wheelModal">✕</button>
   </div>
 
+  <!-- ПИТОМЕЦ -->
+  <section class="pet-panel" id="petPanel">
+    <div class="pet-panel-inner" id="petPanelInner"></div>
+  </section>
+
   <section class="clicker-section">
     <div class="clicker-left" id="clickerArea">
       <button class="clicker-btn" id="clickerBtn" aria-label="Кликнуть">$</button>
@@ -905,6 +979,15 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     <div class="roulette-track" id="rouletteTrack"></div>
   </div>
 
+  <div class="inventory-section" id="foodInventorySection">
+    <div class="inv-header">
+      <div class="inv-title">🍖 Еда питомца (<span id="foodInvCount">0</span>)</div>
+    </div>
+    <div class="food-inv-grid" id="foodInvGrid">
+      <div class="empty-inv">Еды нет. Купи в магазине!</div>
+    </div>
+  </div>
+
   <div class="inventory-section">
     <div class="inv-header">
       <div class="inv-title">🎒 Инвентарь (<span id="invCount">0</span>) <span class="inv-total" id="invTotal"></span></div>
@@ -938,7 +1021,6 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   </div>
 </div>
 
-<!-- МОДАЛКА ПРОФИЛЯ -->
 <div class="panel-modal" id="profileModal">
   <div class="panel-modal-inner profile-inner">
     <div class="panel-modal-header">
@@ -984,65 +1066,27 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   <button class="modal-close-x" data-close="profileModal">✕</button>
 </div>
 
+<div class="panel-modal" id="petNameModal">
+  <div class="panel-modal-inner pet-inner">
+    <div class="panel-modal-header">
+      <div class="panel-modal-title pet">✏️ СМЕНА ИМЕНИ</div>
+    </div>
+    <div class="panel-modal-desc">Стоимость смены имени: <b style="color:var(--pet)">$1,000,000</b></div>
+    <div class="auth-field">
+      <label>Новое имя питомца</label>
+      <input type="text" class="auth-input" id="petNewNameInput" maxlength="16" placeholder="Введите имя">
+    </div>
+    <div class="auth-msg" id="petNameMsg"></div>
+    <div class="mines-actions">
+      <button class="btn-pet feed" id="btnPetNameConfirm" style="flex:1">✅ Сменить ($1,000,000)</button>
+      <button class="btn-mines cash" id="btnPetNameCancel" style="flex:1">Отмена</button>
+    </div>
+  </div>
+  <button class="modal-close-x" data-close="petNameModal">✕</button>
+</div>
+
 <div class="save-toast" id="saveToast">💾 Сохранено</div>
 <canvas class="particles" id="particleCanvas"></canvas>
-
-<style>
-.balance-box{cursor:pointer;transition:all .2s;position:relative}
-.balance-box:hover{background:rgba(185,140,255,.12);border-color:rgba(185,140,255,.5)}
-.balance-box:hover .balance-value{text-shadow:0 0 22px rgba(185,140,255,.8)}
-.balance-box::after{content:'💎';position:absolute;top:-6px;right:-6px;font-size:.7rem;opacity:.85;filter:drop-shadow(0 0 4px rgba(185,140,255,.8))}
-.balance-value.pulse{animation:balPulse .6s ease-out}
-@keyframes balPulse{0%{transform:scale(1)}30%{transform:scale(1.08);filter:brightness(1.6)}100%{transform:scale(1)}}
-.crypto-inner{border-color:rgba(185,140,255,.5);max-width:560px}
-.crypto-balance-row{display:flex;gap:10px;margin-bottom:14px}
-.crypto-bal-item{flex:1;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:12px;padding:10px 14px}
-.cb-label{font-size:.58rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
-.cb-value{font-size:clamp(.8rem,3vw,1rem);font-weight:700;color:var(--money);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.crypto-tabs{display:flex;gap:6px;margin-bottom:12px;background:rgba(0,0,0,.3);padding:4px;border-radius:10px;border:1px solid var(--border)}
-.crypto-tab{flex:1;padding:8px;border:none;background:transparent;color:var(--text-dim);font-family:'Inter',sans-serif;font-size:.68rem;font-weight:700;cursor:pointer;border-radius:8px;transition:all .2s;text-transform:uppercase;letter-spacing:1px}
-.crypto-tab.active{background:linear-gradient(135deg,rgba(185,140,255,.3),rgba(185,140,255,.12));color:var(--money);box-shadow:0 0 12px rgba(185,140,255,.3)}
-.crypto-list{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;max-height:230px;overflow-y:auto;padding-right:4px}
-.crypto-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid var(--border);transition:all .2s;cursor:pointer}
-.crypto-item:hover{border-color:rgba(185,140,255,.5)}
-.crypto-item.selected{border-color:var(--money);background:rgba(185,140,255,.12)}
-.ci-sym{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;flex-shrink:0;background:linear-gradient(135deg,var(--cc1),var(--cc2));color:#fff}
-.ci-info{flex:1;min-width:0}
-.ci-name{font-size:.72rem;font-weight:700;margin-bottom:2px}
-.ci-ticker{font-size:.55rem;color:var(--text-dim);letter-spacing:1px}
-.ci-price{font-size:.75rem;font-weight:700;text-align:right;white-space:nowrap}
-.ci-change{font-size:.58rem;font-weight:700;text-align:right;white-space:nowrap}
-.ci-change.up{color:#6ee79a}.ci-change.down{color:#ff5566}
-.ci-holdings{font-size:.55rem;color:var(--money);text-align:right;margin-top:2px}
-.ci-spark{width:56px;height:28px;flex-shrink:0}
-.ci-spark path{fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-.crypto-panel{margin-top:6px}
-.crypto-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
-.crypto-row label{font-size:.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px}
-.crypto-select{padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:rgba(0,0,0,.4);color:var(--text);font-family:'Inter',sans-serif;font-weight:700;font-size:.75rem;outline:none;cursor:pointer;flex:1;max-width:200px}
-.crypto-preview{text-align:center;font-size:.75rem;color:var(--money);font-weight:700;padding:8px;background:rgba(185,140,255,.08);border-radius:10px;margin-bottom:12px;border:1px solid rgba(185,140,255,.2)}
-.crypto-portfolio{display:flex;flex-direction:column;gap:8px}
-.cp-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid var(--border)}
-.cp-info{flex:1}
-.cp-name{font-size:.72rem;font-weight:700}
-.cp-amount{font-size:.6rem;color:var(--text-dim)}
-.cp-value{font-size:.75rem;font-weight:700;color:var(--money);text-align:right}
-.cp-empty{text-align:center;padding:30px;color:var(--text-dim);font-size:.75rem}
-.crypto-fee{text-align:center;font-size:.58rem;color:var(--text-dim);margin-top:12px}
-.crypto-flash{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:2rem;font-weight:700;pointer-events:none;z-index:300;animation:cryptoFloat 1.2s ease-out forwards}
-@keyframes cryptoFloat{0%{opacity:1;transform:translate(-50%,-50%) scale(.6)}50%{opacity:1;transform:translate(-50%,-100%) scale(1.15)}100%{opacity:0;transform:translate(-50%,-160%) scale(1)}}
-.crypto-crash-screen{display:none}
-.crypto-crash-screen.active{display:block;animation:fadeIn .25s}
-.crypto-crash-stage{position:relative;width:100%;height:200px;border-radius:14px;background:linear-gradient(160deg,#1a1228,#0e0a1a);border:1px solid var(--border);margin-bottom:12px;overflow:hidden}
-.crypto-crash-graph{position:absolute;inset:0;width:100%;height:100%}
-.crypto-crash-mult{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:clamp(1rem,4vw,1.6rem);font-weight:700;color:#ff8a5c;text-shadow:0 0 24px rgba(255,138,92,.6);font-variant-numeric:tabular-nums;white-space:nowrap}
-.crypto-crash-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px}
-.btn-crypto-buy{padding:10px 24px;border:none;border-radius:12px;font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:1.5px;background:linear-gradient(135deg,#2ecc71,#1a8a4a);color:#eafff2;box-shadow:0 4px 20px rgba(46,204,113,.4)}
-.btn-crypto-buy:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.12)}
-.btn-crypto-sell{padding:10px 24px;border:none;border-radius:12px;font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:1.5px;background:linear-gradient(135deg,#ff3344,#a01020);color:#fff;box-shadow:0 4px 20px rgba(255,50,70,.4)}
-.btn-crypto-sell:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.12)}
-.btn-crypto-buy:disabled,.btn-crypto-sell:disabled{opacity:.4;cursor:not-allowed}
-</style>
 
 <script>
 (function(){
@@ -1069,6 +1113,8 @@ var DRINKS={
  chekushka:B+'1941f0033-4f3a-4fd9-872a-a0f11a6fddce.png',
  baltika:'https://avatars.mds.yandex.net/i?id=a4bc94c05816f3beb255d53cf9086fbf4ad8535a-5218867-images-thumbs&n=13'
 };
+
+var PET_IMG='https://avatars.mds.yandex.net/i?id=0c80a9bda1b7afcd4ad05ee343904880e905e1aa-9386274-images-thumbs&n=13';
 
 var ITEMS1=[
  {name:'Вода «Кристальная»',img:DRINKS.water,rarity:'common',chance:22,minP:18000,maxP:20000},
@@ -1138,6 +1184,18 @@ var RARITY_BG={
 
 var BAD_RARITIES=['common'];
 var PITY_THRESHOLD=3;
+
+/* ==================== ЕДА ПИТОМЦА ==================== */
+var PET_FOOD=[
+ {id:'bread',emoji:'🍞',name:'Хлеб',price:150000,power:20},
+ {id:'meat',emoji:'🍖',name:'Мясо',price:300000,power:40},
+ {id:'fish',emoji:'🐟',name:'Рыба',price:500000,power:60},
+ {id:'chicken',emoji:'🍗',name:'Курица',price:750000,power:80},
+ {id:'steak',emoji:'🥩',name:'Стейк',price:1000000,power:100},
+ {id:'sushi',emoji:'🍣',name:'Суши',price:1250000,power:120},
+ {id:'cake',emoji:'🍰',name:'Тортик',price:1500000,power:150},
+ {id:'lobster',emoji:'🦞',name:'Лобстер',price:2000000,power:200}
+];
 
 /* ==================== МАГАЗИН КЕЙСОВ ==================== */
 var SHOP_ITEMS_POOL=[
@@ -1344,6 +1402,11 @@ var SFX={
    var f=[523,659,784,1046];for(var i=0;i<f.length;i++)this.tone(f[i]*2,0.5,'sine',0.08,0.2+i*0.09);
    this.noise(1.0,0.18,2000,1,0.1,6000);
   }
+ },
+ pet:function(){
+  this.tone(800,0.1,'sine',0.15);
+  this.tone(1000,0.12,'sine',0.12,0.08);
+  this.tone(1200,0.15,'sine',0.1,0.16);
  }
 };
 
@@ -1477,16 +1540,377 @@ var WHEEL_COOLDOWN=24*60*60*1000;
 
 var pityCounter=0;
 
+/* ==================== ПИТОМЕЦ ==================== */
+var pet=null;
+var petFoodInventory={};
+var petFireAppearAt=0;
+var petLost=false;
+var petLostReason='';
+var PET_GIFT_COOLDOWN=24*60*60*1000;
+var PET_FIRE_DELAY=24*60*60*1000;
+var PET_NAME_CHANGE_COST=1000000;
+var PET_RESTORE_COST=10000000;
+var PET_HUNGER_PER_HOUR=100/24;
+
+var PET_NAMES=['Барсик','Мурзик','Рекс','Бублик','Пушок','Снежок','Тимка','Лео','Макс','Симба','Рыжик','Васька','Дымка','Клёпа','Зефир'];
+
+function createPet(){
+ if(pet)return;
+ pet={
+  name:PET_NAMES[Math.floor(Math.random()*PET_NAMES.length)],
+  hunger:100,
+  lastFeed:Date.now(),
+  createdAt:Date.now(),
+  adoptedAt:Date.now(),
+  hasFire:false,
+  fireShownAt:0,
+  lastGift:0,
+  totalFed:0
+ };
+ petLost=false;
+ petLostReason='';
+ petFireAppearAt=Date.now()+PET_FIRE_DELAY;
+ saveGame();
+ renderPetPanel();
+ SFX.pet();
+ spawnParticles('#ff9f43',60);
+}
+
+function losePet(reason){
+ petLost=true;
+ petLostReason=reason;
+ pet=null;
+ petFireAppearAt=0;
+ saveGame();
+ renderPetPanel();
+}
+
+function restorePet(){
+ if(balance<PET_RESTORE_COST){
+  SFX.error();
+  el.balanceBox.classList.add('shake');
+  setTimeout(function(){el.balanceBox.classList.remove('shake')},450);
+  return;
+ }
+ balance-=PET_RESTORE_COST;
+ createPet();
+ SFX.upgrade();
+ spawnParticles('#ff9f43',120);
+ updateUI();
+ saveGame();
+}
+
+function updatePetHunger(){
+ if(!pet)return;
+ var now=Date.now();
+ var hoursSinceLastFeed=(now-pet.lastFeed)/3600000;
+ var decay=hoursSinceLastFeed*PET_HUNGER_PER_HOUR;
+ pet.hunger=Math.max(0,100-decay);
+
+ // Огонёк появляется через 1 день
+ if(!pet.hasFire && now-pet.adoptedAt>=PET_FIRE_DELAY){
+  pet.hasFire=true;
+  pet.fireShownAt=now;
+  saveGame();
+ }
+
+ // Огонёк гаснет, если не кормить 3 дня
+ if(pet.hasFire){
+  var hoursSinceFeed=(now-pet.lastFeed)/3600000;
+  if(hoursSinceFeed>=72){
+   losePet('fire');
+   return;
+  }
+ }
+
+ // Голод 0 — питомец убегает
+ if(pet.hunger<=0){
+  losePet('hunger');
+  return;
+ }
+}
+
+function feedPet(foodId){
+ if(!pet||petLost)return;
+ var food=PET_FOOD.find(function(f){return f.id===foodId});
+ if(!food)return;
+ if(!petFoodInventory[foodId]||petFoodInventory[foodId]<=0)return;
+ if(pet.hunger>=100)return;
+ petFoodInventory[foodId]--;
+ if(petFoodInventory[foodId]<=0)delete petFoodInventory[foodId];
+ updatePetHunger();
+ if(petLost)return;
+ pet.hunger=Math.min(100,pet.hunger+food.power);
+ pet.lastFeed=Date.now();
+ pet.totalFed++;
+ if(!pet.hasFire && Date.now()-pet.adoptedAt>=PET_FIRE_DELAY){
+  pet.hasFire=true;
+  pet.fireShownAt=Date.now();
+ }
+ SFX.pet();
+ spawnParticles('#ff9f43',50);
+ updateUI();
+ saveGame();
+ renderPetPanel();
+ renderFoodInventory();
+}
+
+function givePetGift(){
+ if(!pet||!pet.hasFire||petLost)return;
+ if(Date.now()-pet.lastGift<PET_GIFT_COOLDOWN)return;
+ pet.lastGift=Date.now();
+ var gifts=[SHOP_CASES[12],SHOP_CASES[13],SHOP_CASES[14],SHOP_CASES[15],SHOP_CASES[16],SHOP_CASES[17],SHOP_CASES[18],SHOP_CASES[19]];
+ var gift=gifts[Math.floor(Math.random()*gifts.length)];
+ var copy={
+  id:++caseInvIdCounter,
+  name:gift.name,
+  price:gift.price,
+  items:JSON.parse(JSON.stringify(gift.items)),
+  img:gift.closed,
+  open:gift.open
+ };
+ caseInventory.push(copy);
+ SFX.upgrade();
+ spawnParticles('#6ee79a',100);
+ renderCaseInventory();
+ updateUI();
+ saveGame();
+ showModal({name:gift.name,img:gift.closed,rarity:'emerald',price:gift.price});
+}
+
+function renderPetPanel(){
+ var inner=$('petPanelInner');
+ if(!inner)return;
+
+ if(petLost){
+  inner.innerHTML='<div class="pet-no-pet">'
+   +'<div class="pnp-emoji">💔</div>'
+   +'<div class="pnp-text">Ваш питомец пропал!<br>'
+   +(petLostReason==='hunger'?'Он убежал от голода.':'Огонёк угас, и он ушёл.')
+   +'<br><br>Восстановить его можно за <b style="color:var(--pet)">'+fmt(PET_RESTORE_COST)+'</b></div>'
+   +'<button class="btn-pet adopt" id="btnRestorePet" style="background:linear-gradient(135deg,#ff5566,#a01020);color:#fff">💔 ВОССТАНОВИТЬ ПИТОМЦА ('+fmt(PET_RESTORE_COST)+')</button>'
+   +'</div>';
+  var rb=$('btnRestorePet');
+  if(rb)rb.addEventListener('click',function(){restorePet();});
+  return;
+ }
+
+ if(!pet){
+  inner.innerHTML='<div class="pet-no-pet">'
+   +'<div class="pnp-emoji">🐾</div>'
+   +'<div class="pnp-text">У вас нет питомца.<br>Заведите друга!</div>'
+   +'<button class="btn-pet adopt" id="btnAdoptPet">🐾 ПОЛУЧИТЬ ПИТОМЦА</button>'
+   +'</div>';
+  var ab=$('btnAdoptPet');
+  if(ab)ab.addEventListener('click',function(){createPet();});
+  return;
+ }
+
+ updatePetHunger();
+ if(petLost||!pet){renderPetPanel();return;}
+
+ var hungerPct=Math.round(pet.hunger);
+ var hungerColor=hungerPct>60?'#6ee79a':hungerPct>30?'#ffd740':'#ff5566';
+ var giftReady=pet.hasFire&&Date.now()-pet.lastGift>=PET_GIFT_COOLDOWN;
+ var canFeed=pet.hunger<100;
+ var hoursLeft=(pet.hunger/100)*24;
+
+ inner.innerHTML=
+  '<div class="pet-avatar-wrap">'
+  +'<div class="pet-avatar-inner">'
+  +'<img class="pet-avatar-img'+(hungerPct<=20?' sleeping':'')+'" src="'+PET_IMG+'" alt="Питомец" draggable="false">'
+  +'</div>'
+  +(pet.hasFire?'<div class="pet-fire">🔥</div>':'')
+  +'</div>'
+  +'<div class="pet-info">'
+  +'<div class="pet-name-row">'
+  +'<span class="pet-name">'+pet.name+'</span>'
+  +'<button class="pet-name-edit" id="btnEditPetName" title="Сменить имя за '+fmt(PET_NAME_CHANGE_COST)+'">✏️</button>'
+  +'</div>'
+  +'<div class="pet-status">'
+  +(pet.hasFire
+    ?'🔥 Огонёк активен! Голод: '+hungerPct+'% (≈'+hoursLeft.toFixed(1)+'ч)'
+    :'⏳ Огонёк появится через '+formatTime(Math.max(0,petFireAppearAt-Date.now())))
+  +'</div>'
+  +'<div class="pet-hunger-bar">'
+  +'<div class="pet-hunger-fill" style="width:'+hungerPct+'%;background:linear-gradient(90deg,#ff5566,#ff9f43,'+hungerColor+')"></div>'
+  +'<div class="pet-hunger-label">🍖 '+hungerPct+'%</div>'
+  +'</div>'
+  +'<div class="pet-actions">'
+  +'<button class="btn-pet feed" id="btnFeedPet"'+(canFeed?'':' disabled')+'>🍖 КОРМИТЬ</button>'
+  +(pet.hasFire?'<button class="btn-pet gift" id="btnPetGift"'+(giftReady?'':' disabled')+'>🎁 '+(giftReady?'ПОДАРОК':'ЖДАТЬ')+'</button>':'')
+  +'</div>'
+  +'</div>';
+
+ var feedBtn=$('btnFeedPet');
+ if(feedBtn)feedBtn.addEventListener('click',function(){openPetFoodModal();});
+ var giftBtn=$('btnPetGift');
+ if(giftBtn)giftBtn.addEventListener('click',givePetGift);
+ var nameBtn=$('btnEditPetName');
+ if(nameBtn)nameBtn.addEventListener('click',openPetNameModal);
+}
+
+function renderFoodInventory(){
+ var grid=$('foodInvGrid');
+ if(!grid)return;
+ var cnt=$('foodInvCount');
+ var ids=Object.keys(petFoodInventory).filter(function(k){return petFoodInventory[k]>0});
+ if(cnt)cnt.textContent=ids.reduce(function(s,k){return s+petFoodInventory[k]},0);
+ if(!ids.length){
+  grid.innerHTML='<div class="empty-inv">Еды нет. Купи в магазине!</div>';
+  return;
+ }
+ grid.innerHTML='';
+ ids.forEach(function(fid){
+  var food=PET_FOOD.find(function(f){return f.id===fid});
+  if(!food)return;
+  var count=petFoodInventory[fid];
+  var card=document.createElement('div');
+  card.className='food-inv-card';
+  var canFeed=pet&&!petLost&&pet.hunger<100;
+  card.innerHTML='<div class="fic-emoji">'+food.emoji+'</div>'
+   +'<div class="fic-name">'+food.name+'</div>'
+   +'<div class="fic-power">+'+food.power+' сил</div>'
+   +'<div class="fic-count">x'+count+'</div>'
+   +'<button class="btn-feed-pet" data-food="'+food.id+'"'+(canFeed?'':' disabled')+'>🍖 Кормить</button>';
+  grid.appendChild(card);
+ });
+ grid.querySelectorAll('.btn-feed-pet').forEach(function(btn){
+  btn.addEventListener('click',function(){
+   var fid=btn.dataset.food;
+   feedPet(fid);
+  });
+ });
+}
+
+function openPetFoodModal(){
+ if(!pet||petLost)return;
+ SFX.click();
+ var modal=document.createElement('div');
+ modal.className='panel-modal active';
+ modal.id='petFoodModal';
+ modal.innerHTML='<div class="panel-modal-inner pet-food-inner">'
+  +'<div class="panel-modal-header"><div class="panel-modal-title pet">🍖 ЕДА ПИТОМЦА</div></div>'
+  +'<div class="panel-modal-desc">Выбери еду для '+pet.name+'. Голод: '+Math.round(pet.hunger)+'%</div>'
+  +'<div class="food-inv-grid" id="petFoodModalGrid"></div>'
+  +'</div>'
+  +'<button class="modal-close-x" data-close="petFoodModal">✕</button>';
+ document.body.appendChild(modal);
+ renderFoodModalGrid();
+ var closeBtn=modal.querySelector('.modal-close-x');
+ if(closeBtn)closeBtn.addEventListener('click',function(){modal.remove()});
+ modal.addEventListener('click',function(e){if(e.target===modal)modal.remove()});
+}
+
+function renderFoodModalGrid(){
+ var grid=$('petFoodModalGrid');
+ if(!grid)return;
+ var ids=Object.keys(petFoodInventory).filter(function(k){return petFoodInventory[k]>0});
+ if(!ids.length){
+  grid.innerHTML='<div class="empty-inv">У вас нет еды. Купите в магазине!</div>';
+  return;
+ }
+ grid.innerHTML='';
+ ids.forEach(function(fid){
+  var food=PET_FOOD.find(function(f){return f.id===fid});
+  if(!food)return;
+  var card=document.createElement('div');
+  card.className='food-inv-card';
+  var canFeed=pet&&!petLost&&pet.hunger<100;
+  card.innerHTML='<div class="fic-emoji">'+food.emoji+'</div>'
+   +'<div class="fic-name">'+food.name+'</div>'
+   +'<div class="fic-power">+'+food.power+' сил</div>'
+   +'<div class="fic-count">x'+petFoodInventory[fid]+'</div>'
+   +'<button class="btn-feed-pet" data-food="'+food.id+'"'+(canFeed?'':' disabled')+'>🍖 Кормить</button>';
+  grid.appendChild(card);
+ });
+ grid.querySelectorAll('.btn-feed-pet').forEach(function(btn){
+  btn.addEventListener('click',function(){
+   var fid=btn.dataset.food;
+   feedPet(fid);
+   var modal=$('petFoodModal');
+   if(modal)modal.remove();
+  });
+ });
+}
+
+function openPetNameModal(){
+ if(!pet||petLost)return;
+ SFX.click();
+ $('petNameModal').classList.add('active');
+ $('petNewNameInput').value=pet.name;
+ $('petNameMsg').textContent='';
+ $('petNameMsg').className='auth-msg';
+}
+
+$('btnPetNameConfirm').addEventListener('click',function(){
+ if(!pet||petLost)return;
+ var newName=($('petNewNameInput').value||'').trim();
+ var msg=$('petNameMsg');
+ if(newName.length<2){msg.textContent='Имя минимум 2 символа';msg.className='auth-msg error';return}
+ if(newName===pet.name){msg.textContent='Это уже его имя';msg.className='auth-msg error';return}
+ if(balance<PET_NAME_CHANGE_COST){msg.textContent='Недостаточно средств';msg.className='auth-msg error';SFX.error();return}
+ balance-=PET_NAME_CHANGE_COST;
+ pet.name=newName;
+ SFX.upgrade();
+ updateUI();
+ saveGame();
+ renderPetPanel();
+ msg.textContent='✅ Имя изменено!';msg.className='auth-msg ok';
+ setTimeout(function(){$('petNameModal').classList.remove('active')},800);
+});
+$('btnPetNameCancel').addEventListener('click',function(){SFX.click();$('petNameModal').classList.remove('active')});
+$('petNameModal').querySelector('.modal-close-x').addEventListener('click',function(){$('petNameModal').classList.remove('active')});
+
+function buyFood(foodId){
+ SFX.click();
+ var food=PET_FOOD.find(function(f){return f.id===foodId});
+ if(!food)return;
+ if(balance<food.price){
+  SFX.error();
+  el.balanceBox.classList.add('shake');
+  setTimeout(function(){el.balanceBox.classList.remove('shake')},450);
+  return;
+ }
+ balance-=food.price;
+ petFoodInventory[foodId]=(petFoodInventory[foodId]||0)+1;
+ SFX.coin();
+ setTimeout(function(){SFX.upgrade()},120);
+ spawnParticles('#ff9f43',50);
+ updateUI();
+ saveGame();
+ renderFoodInventory();
+ renderFoodGrid();
+}
+
+function renderFoodGrid(){
+ var grid=$('foodGrid');
+ if(!grid)return;
+ grid.innerHTML='';
+ PET_FOOD.forEach(function(food){
+  var d=document.createElement('div');
+  var canAfford=balance>=food.price;
+  d.className='food-card'+(canAfford?'':' locked');
+  d.innerHTML='<div class="fc-emoji">'+food.emoji+'</div>'
+   +'<div class="fc-name">'+food.name+'</div>'
+   +'<div class="fc-price">'+fmt(food.price)+'</div>'
+   +'<div class="fc-power">+'+food.power+' сил</div>';
+  if(canAfford)d.addEventListener('click',function(){buyFood(food.id)});
+  grid.appendChild(d);
+ });
+}
+
+/* ==================== КОНЕЦ ПИТОМЦА ==================== */
+
 var MINES_GRID=25;
 var MINES_BOMBS=3;
 var minesGame=null;
 
-/* ==================== КРАШ — ПРОИГРАТЬ ПОЧТИ НЕВОЗМОЖНО ==================== */
 var crashRaf=null;
 var CRASH_GROWTH=0.35;
-var CRASH_INSTANT_BUST=0.01;   /* всего 1% мгновенных проигрышей */
-var CRASH_MIN_MULT=15;         /* минимальный краш — x15 */
-var CRASH_MAX_MULT=100;        /* максимальный краш — x100 */
+var CRASH_INSTANT_BUST=0.01;
+var CRASH_MIN_MULT=15;
+var CRASH_MAX_MULT=100;
 var crashGame=null;
 var crashHistory=[];
 
@@ -1541,6 +1965,8 @@ function saveGame(){
    minesGame:minesGame?{bombs:Array.from(minesGame.bombs),revealed:Array.from(minesGame.revealed),bet:minesGame.bet,active:minesGame.active}:null,
    crashHistory:crashHistory.slice(0,10),
    caseInventory:caseInventory,caseInvIdCounter:caseInvIdCounter,
+   pet:pet,petFoodInventory:petFoodInventory,petFireAppearAt:petFireAppearAt,
+   petLost:petLost,petLostReason:petLostReason,
    musicOn:Music.on,muted:SFX.muted,version:6,savedAt:Date.now()
   };
   localStorage.setItem(SAVE_KEY,JSON.stringify(data));
@@ -1576,6 +2002,23 @@ function loadGame(){
    caseInventory=data.caseInventory.filter(function(c){return c&&typeof c==='object'&&typeof c.id==='number'});
   }
   if(typeof data.caseInvIdCounter==='number'&&isFinite(data.caseInvIdCounter))caseInvIdCounter=data.caseInvIdCounter;
+  if(data.pet&&typeof data.pet==='object'){
+   pet=data.pet;
+   if(typeof pet.name!=='string')pet.name='Барсик';
+   if(typeof pet.hunger!=='number')pet.hunger=100;
+   if(typeof pet.lastFeed!=='number')pet.lastFeed=Date.now();
+   if(typeof pet.createdAt!=='number')pet.createdAt=Date.now();
+   if(typeof pet.adoptedAt!=='number')pet.adoptedAt=Date.now();
+   if(typeof pet.hasFire!=='boolean')pet.hasFire=false;
+   if(typeof pet.lastGift!=='number')pet.lastGift=0;
+   if(typeof pet.totalFed!=='number')pet.totalFed=0;
+  }
+  if(data.petFoodInventory&&typeof data.petFoodInventory==='object'){
+   petFoodInventory=data.petFoodInventory;
+  }
+  if(typeof data.petFireAppearAt==='number'&&isFinite(data.petFireAppearAt))petFireAppearAt=data.petFireAppearAt;
+  if(typeof data.petLost==='boolean')petLost=data.petLost;
+  if(typeof data.petLostReason==='string')petLostReason=data.petLostReason;
   if(data.minesGame&&typeof data.minesGame==='object'){
    var mg=data.minesGame;
    var bombsArr=Array.isArray(mg.bombs)?mg.bombs:[];
@@ -1656,10 +2099,12 @@ function updateUI(){
  updateClickerUI();
  renderInventory();
  renderCaseInventory();
+ renderFoodInventory();
  updateDailyUI();
  updateCasinoBadge();
  updateWheelUI();
- if($('shopModal')&&$('shopModal').classList.contains('active'))renderShopGrid();
+ if($('shopModal')&&$('shopModal').classList.contains('active')){renderShopGrid();renderFoodGrid();}
+ if(pet||petLost)renderPetPanel();
 }
 
 function openPanelModal(id){
@@ -1667,7 +2112,7 @@ function openPanelModal(id){
  document.querySelectorAll('.panel-modal').forEach(function(m){m.classList.remove('active')});
  $(id).classList.add('active');
  if(id==='casinoModal'){showCasinoScreen('menu');renderMinesGrid();updateMinesUI();updateCrashUI();}
- if(id==='shopModal'){renderShopGrid();}
+ if(id==='shopModal'){renderShopGrid();renderFoodGrid();}
 }
 function closePanelModal(id){
  SFX.init();SFX.click();
@@ -1681,7 +2126,7 @@ $('btnOpenWheel').addEventListener('click',function(){openPanelModal('wheelModal
 document.querySelectorAll('.modal-close-x').forEach(function(btn){
  btn.addEventListener('click',function(){
    var id=btn.dataset.close;
-   if(id==='profileModal'||id==='inventoryCaseOpenModal'){
+   if(id==='profileModal'||id==='inventoryCaseOpenModal'||id==='petNameModal'){
      document.getElementById(id).classList.remove('active');
    }else{
      closePanelModal(id);
@@ -2580,6 +3025,7 @@ if(el.btnWheel)el.btnWheel.addEventListener('click',spinWheel);
 setInterval(function(){
  if(document.visibilityState==='visible'){
   updateDailyUI();updateWheelUI();updateCasinoBadge();
+  if(pet||petLost)renderPetPanel();
  }
 },1000);
 
@@ -2925,6 +3371,9 @@ updateCoinflipUI();
 updateSlotsUI();
 updateWheelUI();
 renderCaseInventory();
+renderFoodInventory();
+renderFoodGrid();
+renderPetPanel();
 
 if(loaded)showSaveToast();
 
@@ -2938,6 +3387,9 @@ window.__okSound=function(){SFX.init();SFX.coin()};
 window.__errSound=function(){SFX.init();SFX.error()};
 window.__save=saveGame;
 window.__refreshUI=updateUI;
+window.__buyFood=buyFood;
+window.__feedPet=feedPet;
+window.__PET_FOOD=PET_FOOD;
 
 /* ==================== ПРОФИЛЬ ==================== */
 function fmtUSD(n){
@@ -3014,410 +3466,6 @@ setInterval(function(){
  if($('profileModal').classList.contains('active'))renderProfileStats();
 },2000);
 
-})();
-</script>
-
-<!-- ==================== КРИПТО-МОДУЛЬ ==================== -->
-<script>
-(function(){
-'use strict';
-function boot(){
- var $=function(id){return document.getElementById(id)};
- if(!$('balanceBox')||!$('balanceDisplay'))return;
- if(!window.__mcsHasSession || !window.__mcsHasSession())return;
-
- var modalHTML='<div class="panel-modal" id="cryptoModal">'
- +'<div class="panel-modal-inner crypto-inner">'
- +'<div class="panel-modal-header"><div class="panel-modal-title violet">💎 ОБМЕН НА КРИПТУ</div><div class="panel-modal-timer" id="cryptoPortfolio">Портфель: $0.00</div></div>'
- +'<div class="crypto-balance-row"><div class="crypto-bal-item"><div class="cb-label">💵 USD</div><div class="cb-value" id="cryptoUsd">$0</div></div><div class="crypto-bal-item"><div class="cb-label">💎 Крипта</div><div class="cb-value" id="cryptoTotal">$0.00</div></div></div>'
- +'<div class="crypto-tabs" id="cryptoTabs"><button class="crypto-tab active" data-tab="buy">Купить</button><button class="crypto-tab" data-tab="sell">Продать</button><button class="crypto-tab" data-tab="portfolio">Портфель</button></div>'
- +'<div class="crypto-list" id="cryptoList"></div>'
- +'<div class="crypto-crash-screen" id="cryptoCrashScreen">'
- +'<button class="back-btn" id="btnCryptoCrashBack" style="display:flex">←</button>'
- +'<div class="crypto-crash-stage"><svg class="crypto-crash-graph" id="cryptoCrashGraph" preserveAspectRatio="none" viewBox="0 0 300 220">'
- +'<defs><linearGradient id="cryptoCrashFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(80,220,120,.4)"/><stop offset="100%" stop-color="rgba(80,220,120,0)"/></linearGradient>'
- +'<linearGradient id="cryptoCrashFillRed" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(255,80,90,.4)"/><stop offset="100%" stop-color="rgba(255,80,90,0)"/></linearGradient></defs>'
- +'<path id="cryptoCrashArea" fill="url(#cryptoCrashFill)" d=""/><path id="cryptoCrashLine" fill="none" stroke="#6ee79a" stroke-width="2.5" stroke-linecap="round" d=""/></svg>'
- +'<div class="crypto-crash-mult" id="cryptoCrashMult">$0.00</div></div>'
- +'<div class="crypto-crash-actions">'
- +'<button class="btn-crypto-buy" id="btnCryptoBuyCrash">🟢 КУПИТЬ</button>'
- +'<button class="btn-crypto-sell" id="btnCryptoSellCrash">🔴 ПРОДАТЬ</button>'
- +'</div>'
- +'<div class="crypto-row" style="margin-top:10px"><label>Кол-во / USD</label><input type="number" id="cryptoCrashAmount" class="mines-bet-input" value="100" min="0" step="any" style="width:140px"></div>'
- +'<div class="crypto-preview" id="cryptoCrashPreview">≈ 0 BTC</div>'
- +'<div class="crypto-fee">Комиссия: 2% · Курс меняется каждую секунду</div>'
- +'</div>'
- +'<div class="crypto-panel" id="cryptoPanelBuy"><div class="crypto-row"><label>Монета</label><select id="cryptoBuyCoin" class="crypto-select"></select></div><div class="crypto-row"><label>Сумма USD</label><input type="number" id="cryptoBuyAmount" class="mines-bet-input" value="100" min="1" style="width:140px"></div><div class="crypto-preview" id="cryptoBuyPreview">≈ 0 BTC</div><button class="btn-mines start" id="btnCryptoBuy" style="width:100%">Купить</button></div>'
- +'<div class="crypto-panel" id="cryptoPanelSell" style="display:none"><div class="crypto-row"><label>Монета</label><select id="cryptoSellCoin" class="crypto-select"></select></div><div class="crypto-row"><label>Кол-во</label><input type="number" id="cryptoSellAmount" class="mines-bet-input" value="0" min="0" step="any" style="width:140px"></div><div class="crypto-preview" id="cryptoSellPreview">≈ $0.00</div><button class="btn-mines cash" id="btnCryptoSell" style="width:100%">Продать</button></div>'
- +'<div class="crypto-panel" id="cryptoPanelPortfolio" style="display:none"><div class="crypto-portfolio" id="cryptoPortfolioList"></div><button class="btn-mines cash" id="btnCryptoWithdrawAll" style="width:100%;margin-top:12px">💰 Вывести всё в USD</button></div>'
- +'</div><button class="modal-close-x" data-close="cryptoModal">✕</button></div>';
- var wrap=document.createElement('div');
- wrap.innerHTML=modalHTML;
- document.body.appendChild(wrap.firstChild);
-
- var CRYPTOS=[
-  {sym:'BTC',name:'Bitcoin',icon:'₿',price:50000,vol:0.004,c1:'#f7931a',c2:'#ffb84d',holdings:0,history:[]},
-  {sym:'ETH',name:'Ethereum',icon:'Ξ',price:3000,vol:0.006,c1:'#627eea',c2:'#8fa8ff',holdings:0,history:[]},
-  {sym:'USDT',name:'Tether',icon:'₮',price:1,vol:0.0003,c1:'#26a17b',c2:'#4ed9a8',holdings:0,history:[]},
-  {sym:'SOL',name:'Solana',icon:'◎',price:150,vol:0.009,c1:'#9945ff',c2:'#c88cff',holdings:0,history:[]},
-  {sym:'DOGE',name:'Dogecoin',icon:'Ð',price:0.15,vol:0.015,c1:'#c2a633',c2:'#e6cc5c',holdings:0,history:[]}
- ];
- var FEE=0.02,SELECTED='BTC',TAB='buy';
- var cryptoCrashActive=false;
- var cryptoCrashStartPrice=0;
- var cryptoCrashRaf=null;
-
- function find(s){for(var i=0;i<CRYPTOS.length;i++)if(CRYPTOS[i].sym===s)return CRYPTOS[i];return null}
- function totalVal(){var t=0;for(var i=0;i<CRYPTOS.length;i++)t+=CRYPTOS[i].holdings*CRYPTOS[i].price;return t}
- function fmtP(p){if(p>=1000)return '$'+p.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');if(p>=1)return '$'+p.toFixed(3);if(p>=0.01)return '$'+p.toFixed(4);return '$'+p.toFixed(6)}
- function fmtA(a,s){if(s==='USDT'||s==='DOGE')return a.toFixed(2);if(a===0)return '0';if(a<0.0001)return a.toExponential(4);return a.toFixed(8)}
- function fmtUSD(n){return'$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
-
- function updatePrices(){
-  for(var i=0;i<CRYPTOS.length;i++){
-   var c=CRYPTOS[i];
-   var drift=0.0008;
-   var change=(Math.random()-0.5)*2*c.vol+drift;
-   c.price*=(1+change);
-   if(c.price<0.0001)c.price=0.0001;
-   c.history.push(c.price);
-   if(c.history.length>40)c.history.shift();
-  }
-  if($('cryptoModal').classList.contains('active')){
-   if(!cryptoCrashActive){renderList();renderSelects();updatePreview();}
-   updateHeader();
-  }
- }
-
- function renderList(){
-  var list=$('cryptoList');if(!list)return;
-  list.innerHTML='';
-  for(var i=0;i<CRYPTOS.length;i++){
-   var c=CRYPTOS[i];
-   var d=document.createElement('div');
-   d.className='crypto-item'+(c.sym===SELECTED?' selected':'');
-   d.dataset.sym=c.sym;
-   d.style.setProperty('--cc1',c.c1);d.style.setProperty('--cc2',c.c2);
-   var chHtml='';
-   var prev=c.history[c.history.length-2],cur=c.price;
-   if(prev){
-    var pct=(cur-prev)/prev*100;
-    chHtml='<div class="ci-change '+(pct>=0?'up':'down')+'">'+(pct>=0?'+':'')+pct.toFixed(2)+'%</div>';
-   }
-   d.innerHTML='<div class="ci-sym">'+c.icon+'</div><div class="ci-info"><div class="ci-name">'+c.name+'</div><div class="ci-ticker">'+c.sym+'</div></div><svg class="ci-spark" viewBox="0 0 56 28"><path stroke="'+c.c1+'" d=""/></svg><div style="text-align:right"><div class="ci-price">'+fmtP(c.price)+'</div>'+chHtml+'<div class="ci-holdings">'+(c.holdings>0?'◆ '+fmtA(c.holdings,c.sym):'')+'</div></div>';
-   (function(sym){
-    d.addEventListener('click',function(){
-     SELECTED=sym;
-     openCrashFor(sym);
-    });
-   })(c.sym);
-   list.appendChild(d);
-
-   var path=d.querySelector('.ci-spark path');
-   if(path&&c.history.length>1){
-    var h=c.history,mn=Math.min.apply(null,h),mx=Math.max.apply(null,h),r=mx-mn||1,pd='';
-    for(var k=0;k<h.length;k++)pd+=(k===0?'M':'L')+((k/(h.length-1))*56).toFixed(1)+' '+(28-((h[k]-mn)/r)*24-2).toFixed(1)+' ';
-    path.setAttribute('d',pd);
-   }
-  }
- }
-
- function renderSelects(){
-  var bs=$('cryptoBuyCoin'),ss=$('cryptoSellCoin');if(!bs||!ss)return;
-  [bs,ss].forEach(function(sel){
-   var cur=sel.value;sel.innerHTML='';
-   for(var i=0;i<CRYPTOS.length;i++){
-    var o=document.createElement('option');o.value=CRYPTOS[i].sym;o.textContent=CRYPTOS[i].icon+' '+CRYPTOS[i].name;sel.appendChild(o);
-   }
-   if(cur)sel.value=cur;else sel.value=SELECTED;
-  });
- }
-
- function updatePreview(){
-  if(cryptoCrashActive)return;
-  var ba=parseFloat($('cryptoBuyAmount').value)||0;
-  var bc=find($('cryptoBuyCoin').value)||find(SELECTED);
-  if(bc)$('cryptoBuyPreview').textContent='≈ '+fmtA(ba*(1-FEE)/bc.price,bc.sym)+' '+bc.sym+' (после 2%)';
-  var sa=parseFloat($('cryptoSellAmount').value)||0;
-  var sc=find($('cryptoSellCoin').value);
-  if(sc)$('cryptoSellPreview').textContent='≈ '+fmtUSD(sa*sc.price*(1-FEE))+' (после 2%)';
- }
-
- function updateHeader(){
-  var pv=$('cryptoPortfolio');if(pv)pv.textContent='Портфель: '+fmtUSD(totalVal());
-  var ct=$('cryptoTotal');
-  if(ct){var v=totalVal();ct.textContent=fmtUSD(v);}
-  var cu=$('cryptoUsd');
-  if(cu){
-   var b=window.__getBalance?window.__getBalance():null;
-   if(b!==null)cu.textContent=fmtUSD(b);
-  }
- }
-
- function flashBalance(){
-  var bd=$('balanceDisplay');if(!bd)return;
-  bd.classList.remove('pulse');
-  void bd.offsetWidth;
-  bd.classList.add('pulse');
- }
-
- function cryptoFlash(text,color){
-  var f=document.createElement('div');f.className='crypto-flash';f.textContent=text;f.style.color=color||'var(--money)';f.style.textShadow='0 0 30px '+color;document.body.appendChild(f);setTimeout(function(){f.remove()},1300);
- }
-
- function openCrashFor(sym){
-  var c=find(sym);if(!c)return;
-  cryptoCrashActive=true;
-  cryptoCrashStartPrice=c.price;
-  $('cryptoTabs').style.display='none';
-  $('cryptoList').style.display='none';
-  $('cryptoPanelBuy').style.display='none';
-  $('cryptoPanelSell').style.display='none';
-  $('cryptoPanelPortfolio').style.display='none';
-  $('cryptoCrashScreen').classList.add('active');
-  $('cryptoCrashMult').className='crypto-crash-mult';
-  $('cryptoCrashMult').textContent=fmtP(c.price);
-  $('cryptoCrashAmount').value=c.holdings>0?c.holdings:100;
-  updateCrashPreview();
-  if(cryptoCrashRaf)cancelAnimationFrame(cryptoCrashRaf);
-  cryptoCrashRaf=requestAnimationFrame(cryptoTick);
- }
-
- function closeCrash(){
-  cryptoCrashActive=false;
-  if(cryptoCrashRaf){cancelAnimationFrame(cryptoCrashRaf);cryptoCrashRaf=null}
-  $('cryptoTabs').style.display='flex';
-  $('cryptoList').style.display='flex';
-  $('cryptoCrashScreen').classList.remove('active');
-  switchTab(TAB);
- }
-
- function cryptoTick(){
-  if(!cryptoCrashActive){cryptoCrashRaf=null;return}
-  var c=find(SELECTED);if(!c){cryptoCrashRaf=null;return}
-  var price=c.price;
-  var multEl=$('cryptoCrashMult');
-  var mult=price/cryptoCrashStartPrice;
-  multEl.textContent=fmtP(price)+' (x'+mult.toFixed(2)+')';
-  if(price>=cryptoCrashStartPrice){
-   multEl.style.color='#6ee79a';
-   multEl.style.textShadow='0 0 24px rgba(80,220,120,.6)';
-  }else{
-   multEl.style.color='#ff5566';
-   multEl.style.textShadow='0 0 24px rgba(255,80,90,.6)';
-  }
-  drawCryptoCrashGraph(c);
-  updateCrashPreview();
-  cryptoCrashRaf=requestAnimationFrame(cryptoTick);
- }
-
- function drawCryptoCrashGraph(c){
-  var line=$('cryptoCrashLine'),area=$('cryptoCrashArea');if(!line||!area)return;
-  var W=300,H=220;
-  var h=c.history;
-  if(h.length<2)return;
-  var mn=Math.min.apply(null,h),mx=Math.max.apply(null,h),r=mx-mn||1;
-  var path='M 0 '+H+' ',areaPath='M 0 '+H+' ';
-  for(var i=0;i<h.length;i++){
-   var x=(i/(h.length-1))*W;
-   var y=H-((h[i]-mn)/r)*H*0.85;
-   path+='L '+x.toFixed(1)+' '+y.toFixed(1)+' ';
-   areaPath+='L '+x.toFixed(1)+' '+y.toFixed(1)+' ';
-  }
-  areaPath+='L '+W+' '+H+' Z';
-  line.setAttribute('d',path);
-  area.setAttribute('d',areaPath);
-  var up=h[h.length-1]>=h[0];
-  line.setAttribute('stroke',up?'#6ee79a':'#ff5566');
-  area.setAttribute('fill',up?'url(#cryptoCrashFill)':'url(#cryptoCrashFillRed)');
- }
-
- function updateCrashPreview(){
-  var c=find(SELECTED);if(!c)return;
-  var a=parseFloat($('cryptoCrashAmount').value)||0;
-  $('cryptoCrashPreview').textContent='≈ '+fmtA(a*(1-FEE)/c.price,c.sym)+' '+c.sym+' купить / '+fmtA(a,c.sym)+' '+c.sym+' продать';
- }
-
- function doBuyCrash(){
-  var c=find(SELECTED);if(!c)return;
-  var a=parseFloat($('cryptoCrashAmount').value);
-  if(!a||a<=0){if(window.__errSound)window.__errSound();return;}
-  if(!window.__spendBalance||!window.__spendBalance(a)){if(window.__errSound)window.__errSound();return;}
-  var bought=a*(1-FEE)/c.price;
-  c.holdings+=bought;
-  if(window.__okSound)window.__okSound();
-  cryptoFlash('+'+fmtA(bought,c.sym)+' '+c.sym,'#6ee79a');
-  flashBalance();updateHeader();renderList();updateCrashPreview();
-  if(window.__save)window.__save();
-  if(window.__refreshUI)window.__refreshUI();
- }
-
- function doSellCrash(){
-  var c=find(SELECTED);
-  if(!c){if(window.__errSound)window.__errSound();return;}
-  var a=parseFloat($('cryptoCrashAmount').value);
-  if(!a||a<=0){if(window.__errSound)window.__errSound();return;}
-  var owned=c.holdings;
-  if(owned<=0){
-   if(window.__errSound)window.__errSound();
-   cryptoFlash('Нет '+c.sym+' для продажи','#ff5566');
-   return;
-  }
-  if(a>owned)a=owned;
-  var net=a*c.price*(1-FEE);
-  c.holdings-=a;
-  if(c.holdings<1e-12)c.holdings=0;
-  if(window.__addBalance)window.__addBalance(net);
-  if(window.__okSound)window.__okSound();
-  cryptoFlash('+'+fmtUSD(net),'#6ee79a');
-  flashBalance();updateHeader();renderList();updateCrashPreview();
-  if(window.__save)window.__save();
-  if(window.__refreshUI)window.__refreshUI();
- }
-
- function withdrawAllCrypto(){
-  var total=0;
-  for(var i=0;i<CRYPTOS.length;i++){
-   var c=CRYPTOS[i];
-   if(c.holdings>0){
-    total+=c.holdings*c.price*(1-FEE);
-    c.holdings=0;
-   }
-  }
-  if(total<=0){
-   if(window.__errSound)window.__errSound();
-   cryptoFlash('Портфель пуст','#ff5566');
-   return;
-  }
-  if(window.__addBalance)window.__addBalance(total);
-  if(window.__okSound)window.__okSound();
-  cryptoFlash('+'+fmtUSD(total),'#6ee79a');
-  flashBalance();updateHeader();renderList();renderPortfolio();
-  if(window.__save)window.__save();
-  if(window.__refreshUI)window.__refreshUI();
- }
-
- function switchTab(t){
-  TAB=t;
-  cryptoCrashActive=false;
-  if(cryptoCrashRaf){cancelAnimationFrame(cryptoCrashRaf);cryptoCrashRaf=null}
-  $('cryptoTabs').style.display='flex';
-  $('cryptoList').style.display='flex';
-  $('cryptoCrashScreen').classList.remove('active');
-  document.querySelectorAll('.crypto-tab').forEach(function(x){x.classList.toggle('active',x.dataset.tab===t)});
-  $('cryptoPanelBuy').style.display=t==='buy'?'block':'none';
-  $('cryptoPanelSell').style.display=t==='sell'?'block':'none';
-  $('cryptoPanelPortfolio').style.display=t==='portfolio'?'block':'none';
-  if(t==='portfolio')renderPortfolio();
- }
-
- function renderPortfolio(){
-  var list=$('cryptoPortfolioList');if(!list)return;
-  var items=CRYPTOS.filter(function(c){return c.holdings>0});
-  if(!items.length){list.innerHTML='<div class="cp-empty">Портфель пуст</div>';return;}
-  list.innerHTML='';
-  items.forEach(function(c){
-   var d=document.createElement('div');d.className='cp-item';
-   d.innerHTML='<div class="ci-sym" style="--cc1:'+c.c1+';--cc2:'+c.c2+'">'+c.icon+'</div><div class="cp-info"><div class="cp-name">'+c.name+'</div><div class="cp-amount">'+fmtA(c.holdings,c.sym)+' '+c.sym+'</div></div><div class="cp-value">'+fmtUSD(c.holdings*c.price)+'</div>';
-   list.appendChild(d);
-  });
- }
-
- function openModal(){
-  if(window.__clickSound)window.__clickSound();
-  document.querySelectorAll('.panel-modal').forEach(function(m){m.classList.remove('active')});
-  $('cryptoModal').classList.add('active');
-  cryptoCrashActive=false;
-  if(cryptoCrashRaf){cancelAnimationFrame(cryptoCrashRaf);cryptoCrashRaf=null}
-  $('cryptoCrashScreen').classList.remove('active');
-  $('cryptoTabs').style.display='flex';
-  $('cryptoList').style.display='flex';
-  renderList();renderSelects();updatePreview();updateHeader();renderPortfolio();
-  switchTab(TAB);
- }
-
- $('balanceBox').addEventListener('click',openModal);
-
- var cx=$('cryptoModal').querySelector('.modal-close-x');
- if(cx)cx.addEventListener('click',function(){$('cryptoModal').classList.remove('active');cryptoCrashActive=false;if(cryptoCrashRaf)cancelAnimationFrame(cryptoCrashRaf)});
- $('cryptoModal').addEventListener('click',function(e){if(e.target===this){this.classList.remove('active');cryptoCrashActive=false;if(cryptoCrashRaf)cancelAnimationFrame(cryptoCrashRaf)}});
-
- document.querySelectorAll('.crypto-tab').forEach(function(t){
-  t.addEventListener('click',function(){
-   switchTab(this.dataset.tab);
-  });
- });
-
- var backBtn=$('btnCryptoCrashBack');
- if(backBtn)backBtn.addEventListener('click',function(){closeCrash()});
-
- ['cryptoBuyAmount','cryptoBuyCoin','cryptoSellAmount','cryptoSellCoin'].forEach(function(id){
-  var e2=$(id);if(!e2)return;
-  e2.addEventListener('input',updatePreview);
-  e2.addEventListener('change',updatePreview);
- });
- $('cryptoCrashAmount').addEventListener('input',updateCrashPreview);
-
- $('btnCryptoBuy').addEventListener('click',function(){
-  var c=find($('cryptoBuyCoin').value);var a=parseFloat($('cryptoBuyAmount').value);
-  if(!c||!a||a<=0)return;
-  if(!window.__spendBalance||!window.__spendBalance(a)){if(window.__errSound)window.__errSound();return;}
-  c.holdings+=a*(1-FEE)/c.price;
-  if(window.__okSound)window.__okSound();
-  cryptoFlash('+'+fmtA(a*(1-FEE)/c.price,c.sym)+' '+c.sym,c.c2);
-  flashBalance();updateHeader();renderList();updatePreview();
-  if(window.__save)window.__save();
- });
-
- $('btnCryptoSell').addEventListener('click',function(){
-  var c=find($('cryptoSellCoin').value);var a=parseFloat($('cryptoSellAmount').value);
-  if(!c||!a||a<=0||a>c.holdings+1e-12)return;
-  var net=a*c.price*(1-FEE);
-  c.holdings-=a;if(c.holdings<1e-12)c.holdings=0;
-  if(window.__addBalance)window.__addBalance(net);
-  if(window.__okSound)window.__okSound();
-  cryptoFlash('+'+fmtUSD(net),'#6ee79a');
-  flashBalance();updateHeader();renderList();updatePreview();
-  if(window.__save)window.__save();
- });
-
- $('btnCryptoBuyCrash').addEventListener('click',doBuyCrash);
- $('btnCryptoSellCrash').addEventListener('click',doSellCrash);
- $('btnCryptoWithdrawAll').addEventListener('click',withdrawAllCrypto);
-
- setInterval(updatePrices,1000);
-
- try{
-  var saved=localStorage.getItem('military_case_sim_save_v6');
-  if(saved){
-   var d=JSON.parse(saved);
-   if(d&&Array.isArray(d.crypto)){
-    d.crypto.forEach(function(s){
-     var c=find(s.sym);if(!c)return;
-     if(typeof s.price==='number'&&s.price>0)c.price=s.price;
-     if(typeof s.holdings==='number'&&s.holdings>=0)c.holdings=s.holdings;
-     if(Array.isArray(s.history))c.history=s.history.filter(function(x){return typeof x==='number'&&x>0}).slice(-40);
-    });
-   }
-  }
- }catch(e){}
-
- var origSave=window.localStorage.setItem.bind(window.localStorage);
- var lastSaveData=null;
- setInterval(function(){
-  try{
-   var raw=localStorage.getItem('military_case_sim_save_v6');
-   if(!raw||raw===lastSaveData)return;
-   lastSaveData=raw;
-   var d=JSON.parse(raw);
-   d.crypto=CRYPTOS.map(function(c){return{sym:c.sym,price:c.price,holdings:c.holdings,history:c.history.slice(-40)}});
-   origSave('military_case_sim_save_v6',JSON.stringify(d));
-  }catch(e){}
- },1500);
-
- updateHeader();
-}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
 </script>
 <script src="https://zadano.github.io/mysite/track.js"></script>

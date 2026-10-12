@@ -10,21 +10,21 @@
 @font-face{font-family:'Inter';src:url('https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.woff2') format('woff2');font-weight:700}
 body{font-family:'Inter',sans-serif;background:radial-gradient(1200px 600px at 50% -10%,#241a45,#0a0812 70%);color:var(--text);min-height:100vh;overflow-x:hidden;font-size:14px}
 .app{max-width:1020px;margin:0 auto;padding:20px}
-header{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:14px 20px;background:linear-gradient(135deg,var(--surface),var(--surface2));border-radius:16px;border:1px solid var(--border);margin-bottom:18px;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+header{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:14px 20px;background:linear-gradient(135deg,var(--surface),var(--surface2));border-radius:16px;border:1px solid var(--border);margin-bottom:18px;box-shadow:0 8px 32px rgba(0,0,0,.5);flex-wrap:wrap}
 .logo{font-size:1.05rem;font-weight:700;letter-spacing:1.5px;color:#d8ccf5;text-shadow:0 0 20px rgba(176,128,255,.35)}
 .logo span{color:var(--money)}
-.hdr-right{display:flex;align-items:center;gap:8px}
-.balance-box{display:flex;align-items:center;background:rgba(0,0,0,.35);padding:8px 16px;border-radius:12px;border:1px solid var(--border)}
+.hdr-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.balance-box{display:flex;align-items:center;background:rgba(0,0,0,.35);padding:8px 16px;border-radius:12px;border:1px solid var(--border);max-width:100%;overflow:hidden}
 .balance-label{font-size:.6rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px}
-.balance-value{font-size:clamp(.85rem,3.5vw,1.1rem);font-weight:700;color:var(--money);text-shadow:0 0 18px rgba(185,140,255,.45);white-space:nowrap}
+.balance-value{font-size:clamp(.85rem,3.5vw,1.1rem);font-weight:700;color:var(--money);text-shadow:0 0 18px rgba(185,140,255,.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .balance-value.shake{animation:balShake .4s}
 @keyframes balShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-.btn-icon{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:rgba(0,0,0,.35);color:var(--text);font-size:.95rem;cursor:pointer;transition:all .2s}
+.btn-icon{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:rgba(0,0,0,.35);color:var(--text);font-size:.95rem;cursor:pointer;transition:all .2s;flex-shrink:0}
 .btn-icon:hover{background:rgba(255,255,255,.07)}
 .btn-icon.off{opacity:.4;filter:grayscale(1)}
 .stats-bar{display:flex;gap:12px;justify-content:center;margin-bottom:18px;flex-wrap:wrap}
-.stat{background:var(--surface);padding:8px 14px;border-radius:10px;border:1px solid var(--border);text-align:center;min-width:96px}
-.stat-val{font-size:clamp(.7rem,2.8vw,.85rem);font-weight:700}
+.stat{background:var(--surface);padding:8px 14px;border-radius:10px;border:1px solid var(--border);text-align:center;min-width:96px;max-width:100%;overflow:hidden}
+.stat-val{font-size:clamp(.7rem,2.8vw,.85rem);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .stat-label{font-size:.55rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
 .top-buttons{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:18px}
 .top-btn{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 10px;border-radius:12px;border:1px solid var(--border);background:linear-gradient(135deg,var(--surface),var(--surface2));color:var(--text);font-size:.72rem;font-weight:700;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:1px;min-width:0}
@@ -108,9 +108,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .pet-no-pet{text-align:center;padding:10px 0}
 .pet-no-pet .pnp-emoji{font-size:3rem;margin-bottom:8px;filter:grayscale(.6);opacity:.6}
 .pet-no-pet .pnp-text{font-size:.75rem;color:var(--text-dim);margin-bottom:12px;line-height:1.4}
-.pet-empty-slot{width:130px;height:130px;border-radius:50%;border:2px dashed rgba(255,159,67,.4);display:flex;align-items:center;justify-content:center;font-size:3rem;opacity:.4;flex-shrink:0;background:rgba(0,0,0,.2)}
 
-/* Еда питомца в магазине */
 .shop-section-title{font-size:.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.5px;margin:16px 0 10px;display:flex;align-items:center;gap:8px}
 .shop-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
 .food-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
@@ -121,7 +119,6 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .food-card .fc-price{font-size:.78rem;font-weight:700;color:var(--pet);margin-bottom:2px}
 .food-card .fc-power{font-size:.58rem;color:#6ee79a}
 
-/* Инвентарь еды */
 .food-inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
 .food-inv-card{background:linear-gradient(160deg,#2a1f10,#1a1208);border:1.5px solid rgba(255,159,67,.3);border-radius:12px;padding:12px 10px;text-align:center;transition:all .2s;position:relative;overflow:hidden;animation:cardIn .4s ease-out}
 .food-inv-card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(255,159,67,.25)}
@@ -205,7 +202,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .coin-face{position:absolute;inset:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:3rem;backface-visibility:hidden;border:4px solid #c9a227;box-shadow:0 8px 30px rgba(0,0,0,.6),inset 0 0 30px rgba(255,215,64,.2)}
 .coin-front{background:radial-gradient(circle at 35% 30%,#ffe680,#c9a227 60%,#8a6a10);color:#3a2a00}
 .coin-back{background:radial-gradient(circle at 35% 30%,#e0e6f0,#98a4b8 60%,#5a6478);color:#1a1f2a;transform:rotateY(180deg)}
-.coinflip-choice{display:flex;gap:12px;justify-content:center;margin-bottom:12px}
+.coinflip-choice{display:flex;gap:12px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
 .choice-btn{padding:11px 22px;border-radius:12px;border:2px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:1.5px;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:90px}
 .choice-btn .ch-emoji{font-size:1.3rem}
 .choice-btn:hover{border-color:var(--legendary)}
@@ -249,12 +246,12 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .upgrade-btn .ug-price{display:block;color:var(--money);font-size:.5rem;margin-top:1px}
 .upgrade-btn.owned{background:linear-gradient(135deg,rgba(80,220,120,.2),rgba(80,220,120,.06));border-color:rgba(80,220,120,.5);color:#9affb5;cursor:default}
 .upgrade-btn.owned .ug-price{color:#9affb5}
-.case-select{display:flex;gap:16px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
-.case-opt{width:200px;background:var(--surface);border:2px solid var(--border);border-radius:14px;padding:14px;cursor:pointer;text-align:center;transition:all .25s;position:relative;overflow:hidden}
+.case-select{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;justify-content:center;margin-bottom:20px;max-width:100%}
+.case-opt{background:var(--surface);border:2px solid var(--border);border-radius:14px;padding:14px 10px;cursor:pointer;text-align:center;transition:all .25s;position:relative;overflow:hidden;min-width:0}
 .case-opt:hover{transform:translateY(-3px)}
-.case-opt img{width:125px;height:95px;object-fit:contain;filter:drop-shadow(0 8px 14px rgba(0,0,0,.55));pointer-events:none}
-.co-name{font-size:.72rem;font-weight:700;margin-top:6px}
-.co-price{font-size:clamp(.7rem,2.8vw,.85rem);font-weight:700;color:var(--money);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.case-opt img{width:100%;max-width:125px;height:95px;object-fit:contain;filter:drop-shadow(0 8px 14px rgba(0,0,0,.55));pointer-events:none}
+.co-name{font-size:.72rem;font-weight:700;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.co-price{font-size:clamp(.65rem,2.5vw,.8rem);font-weight:700;color:var(--money);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .co-tag{position:absolute;top:8px;right:-28px;transform:rotate(35deg);font-size:.5rem;font-weight:700;letter-spacing:1px;padding:3px 28px;background:linear-gradient(135deg,#ffd740,#b8860b);color:#241a00}
 .co-tag.red{background:linear-gradient(135deg,#ff5040,#7a1408);color:#fff}
 .co-tag.purple{background:linear-gradient(135deg,#c86bff,#6a1b9a);color:#fff}
@@ -269,7 +266,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .case-opt.purple .co-price{color:#c86bff}
 .case-opt.gold .co-price{color:#ffea00}
 .case-section{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:26px}
-.case-stage{position:relative;width:360px;height:280px;display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none}
+.case-stage{position:relative;width:360px;max-width:100%;height:280px;display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none}
 .case-glow{position:absolute;width:110%;height:90%;top:55%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,var(--glow,rgba(150,90,255,.16)),transparent 65%);pointer-events:none;transition:background .5s}
 .case-stage.hot .case-glow{background:radial-gradient(ellipse,var(--glowHot,rgba(200,140,255,.4)),transparent 65%)}
 .case-float{animation:caseFloat 3.6s ease-in-out infinite;position:relative;z-index:2;will-change:transform}
@@ -340,13 +337,13 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .btn-case-open{width:100%;padding:8px;border:none;border-radius:8px;font-size:.68rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#b98cff,#6a2cc9);color:#1a0e30;border:1px solid rgba(200,160,255,.5);transition:all .2s;text-transform:uppercase;letter-spacing:1px;margin-top:4px}
 .btn-case-open:hover{filter:brightness(1.15)}
 .empty-inv{grid-column:1/-1;text-align:center;padding:40px;color:var(--text-dim);font-size:.8rem}
-.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.82);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.82);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:20px}
 .modal-overlay.active{display:flex;animation:fadeIn .3s}
-.modal{background:linear-gradient(160deg,#1c1533,#120e22);border-radius:24px;padding:34px 30px;text-align:center;max-width:420px;width:92%;border:1px solid var(--border);position:relative;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.7)}
+.modal{background:linear-gradient(160deg,#1c1533,#120e22);border-radius:24px;padding:34px 30px;text-align:center;max-width:420px;width:100%;border:1px solid var(--border);position:relative;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.7)}
 .modal::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(from 0deg,transparent,rgba(150,90,255,.1),transparent,rgba(255,215,64,.05),transparent);animation:modalSpin 5s linear infinite}
 .modal-content{position:relative;z-index:1}
 .won-label{font-size:.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:3px;margin-bottom:8px}
-.won-img-wrap{width:250px;height:170px;margin:8px auto;display:flex;align-items:center;justify-content:center;border-radius:16px}
+.won-img-wrap{width:250px;max-width:100%;height:170px;margin:8px auto;display:flex;align-items:center;justify-content:center;border-radius:16px}
 .won-img{max-width:92%;max-height:150px;object-fit:contain;filter:drop-shadow(0 12px 28px rgba(0,0,0,.7));animation:wonPop .5s cubic-bezier(.2,1.6,.4,1)}
 @keyframes wonPop{0%{transform:scale(.5);opacity:0}100%{transform:scale(1);opacity:1}}
 .won-name{font-size:1.05rem;font-weight:700;margin-bottom:4px}
@@ -361,7 +358,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .save-toast{position:fixed;bottom:20px;left:20px;padding:10px 18px;background:rgba(30,20,55,.95);border:1px solid var(--border);border-radius:10px;color:var(--text-dim);font-size:.75rem;opacity:0;transition:opacity .3s;z-index:200;pointer-events:none}
 .save-toast.show{opacity:1}
 .wheel-container{display:flex;flex-direction:column;align-items:center;gap:14px}
-.wheel-stage{position:relative;width:280px;height:280px;margin:0 auto 6px;display:flex;align-items:center;justify-content:center}
+.wheel-stage{position:relative;width:280px;height:280px;max-width:100%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center}
 .wheel-pointer-fixed{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-top:24px solid #ffd740;filter:drop-shadow(0 0 10px rgba(255,215,64,.9));z-index:20}
 .wheel{position:relative;width:100%;height:100%;border-radius:50%;border:8px solid #3a2c5c;box-shadow:0 0 50px rgba(185,140,255,.35),inset 0 0 40px rgba(0,0,0,.7),0 0 0 3px rgba(255,215,64,.15);overflow:hidden;background:#120e22;transform:rotate(0deg);will-change:transform}
 .wheel::after{content:'';position:absolute;top:50%;left:50%;width:44px;height:44px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe680,#c9a227 60%,#8a6a10);border:3px solid #3a2c5c;box-shadow:0 0 16px rgba(255,215,64,.6),inset 0 2px 6px rgba(0,0,0,.4);z-index:5}
@@ -387,10 +384,9 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .shop-card.locked{opacity:.5;cursor:not-allowed}
 .shop-card.locked:hover{transform:none;border-color:var(--border);box-shadow:none}
 
-@media(max-width:680px){.app{padding:10px}header{flex-direction:column;padding:12px}.top-buttons{grid-template-columns:1fr 1fr;gap:8px}.top-btn{padding:9px 5px;font-size:.6rem}.top-btn .tb-emoji{font-size:.95rem}.top-btn .tb-text{font-size:.58rem}.case-stage{width:280px;height:230px}.case-img{width:230px}.case-opt{width:31%}.case-opt img{width:80px;height:62px}.inv-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}.stats-bar{gap:8px}.stat{min-width:72px;padding:7px 10px}.clicker-section{gap:16px;padding:16px}.clicker-left{width:170px;height:170px}.clicker-btn{width:150px;height:150px;font-size:3.3rem}.upgrade-btn{width:42px;height:42px;font-size:.65rem}.upgrade-btn .ug-price{font-size:.45rem}.wheel-stage{width:220px;height:220px}.wheel-slice{font-size:.5rem;padding:16px 0 0 8px}.btn-wheel{padding:11px 34px;font-size:.78rem}.modal-close-x{width:42px;height:42px;font-size:1.2rem;top:12px;right:12px}.mines-grid{max-width:280px;gap:6px}.crash-mult{font-size:1.6rem}.coin-wrap{width:100px;height:100px}.coin-face{font-size:2.5rem}.reel{width:56px;height:74px;font-size:1.9rem}.shop-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}.pet-panel-inner{flex-direction:column;align-items:center;text-align:center}.pet-avatar-wrap{width:110px;height:110px}.pet-info{min-width:0;width:100%}.pet-actions{justify-content:center}.food-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}.food-inv-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}}
+@media(max-width:680px){.app{padding:10px}header{flex-direction:column;padding:12px}.hdr-right{width:100%;justify-content:center}.top-buttons{grid-template-columns:1fr 1fr;gap:8px}.top-btn{padding:9px 5px;font-size:.6rem}.top-btn .tb-emoji{font-size:.95rem}.top-btn .tb-text{font-size:.58rem}.case-stage{width:280px;height:230px}.case-img{width:230px}.case-select{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}.case-opt img{width:80px;height:62px}.inv-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}.stats-bar{gap:8px}.stat{min-width:72px;padding:7px 10px}.clicker-section{gap:16px;padding:16px}.clicker-left{width:170px;height:170px}.clicker-btn{width:150px;height:150px;font-size:3.3rem}.upgrade-btn{width:42px;height:42px;font-size:.65rem}.upgrade-btn .ug-price{font-size:.45rem}.wheel-stage{width:220px;height:220px}.wheel-slice{font-size:.5rem;padding:16px 0 0 8px}.btn-wheel{padding:11px 34px;font-size:.78rem}.modal-close-x{width:42px;height:42px;font-size:1.2rem;top:12px;right:12px}.mines-grid{max-width:280px;gap:6px}.crash-mult{font-size:1.6rem}.coin-wrap{width:100px;height:100px}.coin-face{font-size:2.5rem}.reel{width:56px;height:74px;font-size:1.9rem}.shop-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}.pet-panel-inner{flex-direction:column;align-items:center;text-align:center}.pet-avatar-wrap{width:110px;height:110px}.pet-info{min-width:0;width:100%}.pet-actions{justify-content:center}.food-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}.food-inv-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}}
 
-/* ПРОФИЛЬ */
-.user-box{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.35);cursor:pointer;transition:all .2s}
+.user-box{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.35);cursor:pointer;transition:all .2s;max-width:100%}
 .user-box:hover{background:rgba(185,140,255,.14);border-color:rgba(185,140,255,.5)}
 .user-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#b98cff,#6a2cc9);display:flex;align-items:center;justify-content:center;font-weight:700;color:#1a0e30;font-size:.75rem;flex-shrink:0;transition:box-shadow .2s}
 .user-box:hover .user-avatar{box-shadow:0 0 14px rgba(185,140,255,.75)}
@@ -412,14 +408,11 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .auth-btn{width:100%;padding:12px;border:none;border-radius:12px;font-size:.8rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#ece0ff;text-transform:uppercase;letter-spacing:2px;font-family:'Inter',sans-serif;border:1px solid rgba(180,140,255,.35);transition:all .2s}
 .auth-btn:hover{filter:brightness(1.12)}
 @media(max-width:680px){.user-name{display:none}.user-box{padding:8px 9px}.profile-stats{grid-template-columns:repeat(2,1fr)}}
-
-/* Модалка еды питомца */
 .pet-food-inner{border-color:rgba(255,159,67,.5);max-width:560px}
 </style>
 </head>
 <body>
 
-<!-- ЭКРАН АВТОРИЗАЦИИ -->
 <style>#authScreen{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;background:radial-gradient(1200px 600px at 50% -10%,#241a45,#0a0812 70%);padding:20px;font-family:'Inter',sans-serif;color:#e6e2f5}#authScreen.hidden{display:none}.auth-box{background:linear-gradient(160deg,#1c1533,#120e22);border:1px solid #352c55;border-radius:20px;padding:28px 26px;max-width:400px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.7)}.auth-logo{text-align:center;font-size:1.1rem;font-weight:700;letter-spacing:1.5px;color:#d8ccf5;margin-bottom:6px}.auth-logo span{color:#b98cff}.auth-sub{text-align:center;font-size:.72rem;color:#948ab8;margin-bottom:20px}.auth-tabs{display:flex;gap:6px;margin-bottom:16px;background:rgba(0,0,0,.3);padding:4px;border-radius:10px;border:1px solid #352c55}.auth-tab{flex:1;padding:9px;border:none;background:transparent;color:#948ab8;font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700;cursor:pointer;border-radius:8px;text-transform:uppercase;letter-spacing:1px}.auth-tab.active{background:linear-gradient(135deg,rgba(185,140,255,.3),rgba(185,140,255,.12));color:#b98cff}.auth-list{margin-top:16px;border-top:1px solid #352c55;padding-top:14px}.auth-list-title{font-size:.62rem;color:#948ab8;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;text-align:center}.auth-account{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid #352c55;margin-bottom:6px;cursor:pointer}.auth-account:hover{border-color:#b98cff}.auth-acc-icon{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#b98cff,#6a2cc9);display:flex;align-items:center;justify-content:center;font-weight:700;color:#1a0e30;font-size:.85rem;flex-shrink:0}.auth-acc-name{flex:1;font-size:.78rem;font-weight:700}.auth-acc-del{width:26px;height:26px;border-radius:8px;background:rgba(255,60,80,.12);border:1px solid rgba(255,60,80,.3);color:#ff5566;cursor:pointer;font-size:.75rem;display:flex;align-items:center;justify-content:center}.auth-acc-del:hover{background:rgba(255,60,80,.25)}</style>
 
 <div id="authScreen">
@@ -769,7 +762,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             <div class="cc-emoji">📈</div>
             <div class="cc-info">
               <div class="cc-title">КРАШ</div>
-              <div class="cc-desc">Всего 1% мгновенных проигрышей, краш всегда на x15–x100. Почти невозможно проиграть!</div>
+              <div class="cc-desc">10% шанс мгновенного краха. Забирай вовремя — не жадничай!</div>
             </div>
           </div>
           <div class="casino-card coinflip" data-game="coinflip">
@@ -1118,61 +1111,60 @@ var DRINKS={
  baltika:'https://avatars.mds.yandex.net/i?id=a4bc94c05816f3beb255d53cf9086fbf4ad8535a-5218867-images-thumbs&n=13'
 };
 
-/* ДВЕ КАРТИНКИ ПИТОМЦА: РАДОСТНЫЙ И ГРУСТНЫЙ */
 var PET_IMG_HAPPY='https://avatars.mds.yandex.net/i?id=0c80a9bda1b7afcd4ad05ee343904880e905e1aa-9386274-images-thumbs&n=13';
 var PET_IMG_SAD='https://avatars.mds.yandex.net/i?id=0c80a9bda1b7afcd4ad05ee343904880e905e1aa-9386274-images-thumbs&n=13';
 var PET_IMG=PET_IMG_HAPPY;
 
 var ITEMS1=[
- {name:'Вода «Кристальная»',img:DRINKS.water,rarity:'common',chance:22,minP:18000,maxP:20000},
- {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:5,minP:45000,maxP:45000},
- {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare',chance:28,minP:7000,maxP:18000},
- {name:'Кока-Кола «Классик»',img:DRINKS.cola,rarity:'epic',chance:25,minP:10000,maxP:15000},
- {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:15,minP:7000,maxP:18000},
- {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:5,minP:4000,maxP:8000}
+ {name:'Вода «Кристальная»',img:DRINKS.water,rarity:'common',chance:22,minP:131000,maxP:141000},
+ {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:5,minP:161000,maxP:181000},
+ {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare',chance:28,minP:131000,maxP:151000},
+ {name:'Кока-Кола «Классик»',img:DRINKS.cola,rarity:'epic',chance:25,minP:141000,maxP:171000},
+ {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:15,minP:151000,maxP:191000},
+ {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:5,minP:181000,maxP:201000}
 ];
 
 var ITEMS2=[
- {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare',chance:15,minP:7000,maxP:18000},
- {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:10,minP:20000,maxP:26000},
- {name:'Кока-Кола «Классик»',img:DRINKS.cola,rarity:'epic',chance:30,minP:10000,maxP:15000},
- {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:25,minP:7000,maxP:18000},
- {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:20,minP:15000,maxP:20000}
+ {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare',chance:15,minP:134000,maxP:154000},
+ {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:10,minP:174000,maxP:194000},
+ {name:'Кока-Кола «Классик»',img:DRINKS.cola,rarity:'epic',chance:30,minP:144000,maxP:174000},
+ {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:25,minP:154000,maxP:194000},
+ {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:20,minP:184000,maxP:214000}
 ];
 
 var ITEMS3=[
- {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare',chance:15,minP:7000,maxP:18000},
- {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:5,minP:45000,maxP:45000},
- {name:'Кока-Кола «Классик»',img:DRINKS.cola,rarity:'epic',chance:30,minP:10000,maxP:15000},
- {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:25,minP:7000,maxP:18000},
- {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:25,minP:16000,maxP:30000}
+ {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare',chance:15,minP:136500,maxP:156500},
+ {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:5,minP:176500,maxP:196500},
+ {name:'Кока-Кола «Классик»',img:DRINKS.cola,rarity:'epic',chance:30,minP:146500,maxP:176500},
+ {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:25,minP:156500,maxP:196500},
+ {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:25,minP:186500,maxP:216500}
 ];
 
 var ITEMS4=[
- {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:30,minP:7000,maxP:18000},
- {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:5,minP:50000,maxP:60000},
- {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:65,minP:20000,maxP:45000}
+ {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:30,minP:146000,maxP:186000},
+ {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:5,minP:186000,maxP:206000},
+ {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:65,minP:166000,maxP:226000}
 ];
 
 var ITEMS5=[
- {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:40,minP:50000,maxP:60000},
- {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:60,minP:25000,maxP:55000}
+ {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:40,minP:185000,maxP:215000},
+ {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:60,minP:195000,maxP:245000}
 ];
 
 var CASES=[
- {name:'ВОЕННЫЙ КЕЙС «АРСЕНАЛ»',price:16100,items:ITEMS1,style:'',tag:'',
+ {name:'ВОЕННЫЙ КЕЙС «АРСЕНАЛ»',price:116100,items:ITEMS1,style:'',tag:'',
   closed:B+'16dafe585-34b6-4419-accd-af7a43735438.png',open:B+'1e9f060dd-721e-41d8-b579-e04878a14069.png',
   glow:'rgba(150,90,255,.16)',glowHot:'rgba(200,140,255,.4)'},
- {name:'ЭЛИТНЫЙ КЕЙС «ЗОЛОТОЙ РЕЗЕРВ»',price:14000,items:ITEMS2,style:'premium',tag:'ЭЛИТА',
+ {name:'ЭЛИТНЫЙ КЕЙС «ЗОЛОТОЙ РЕЗЕРВ»',price:114000,items:ITEMS2,style:'premium',tag:'ЭЛИТА',
   closed:B+'13ac61578-00a6-4576-b737-0fca1c16db43.png',open:B+'1354898f2-b861-4ba6-8e7b-8a12b72aad4c.png',
   glow:'rgba(255,215,64,.16)',glowHot:'rgba(255,215,64,.38)'},
- {name:'ЛЕГЕНДАРНЫЙ КЕЙС «КРАСНЫЙ КОД»',price:16500,items:ITEMS3,style:'legend',tag:'ЛЕГЕНДА',tagClass:'red',btn:'red',
+ {name:'ЛЕГЕНДАРНЫЙ КЕЙС «КРАСНЫЙ КОД»',price:116500,items:ITEMS3,style:'legend',tag:'ЛЕГЕНДА',tagClass:'red',btn:'red',
   closed:B+'1427a1edd-b40a-4bc4-8ea3-0f33ecee82f8.png',open:B+'1c9230175-f5d5-4ace-be30-eb59599eafcc.png',
   glow:'rgba(255,70,50,.17)',glowHot:'rgba(255,90,60,.42)'},
- {name:'ФИОЛЕТОВЫЙ КЕЙС «МУРМУР»',price:26000,items:ITEMS4,style:'purple',tag:'МУР',tagClass:'purple',btn:'purple',
+ {name:'ФИОЛЕТОВЫЙ КЕЙС «МУРМУР»',price:126000,items:ITEMS4,style:'purple',tag:'МУР',tagClass:'purple',btn:'purple',
   closed:B+'16dafe585-34b6-4419-accd-af7a43735438.png',open:B+'1e9f060dd-721e-41d8-b579-e04878a14069.png',
   glow:'rgba(185,80,255,.2)',glowHot:'rgba(220,120,255,.5)'},
- {name:'КЕЙС «БОГАЧ»',price:35000,items:ITEMS5,style:'gold',tag:'БОГАЧ',tagClass:'gold',btn:'gold-rich',
+ {name:'КЕЙС «БОГАЧ»',price:135000,items:ITEMS5,style:'gold',tag:'БОГАЧ',tagClass:'gold',btn:'gold-rich',
   closed:B+'13ac61578-00a6-4576-b737-0fca1c16db43.png',open:B+'1354898f2-b861-4ba6-8e7b-8a12b72aad4c.png',
   glow:'rgba(255,215,64,.3)',glowHot:'rgba(255,234,0,.6)'}
 ];
@@ -1192,7 +1184,6 @@ var RARITY_BG={
 var BAD_RARITIES=['common'];
 var PITY_THRESHOLD=3;
 
-/* ==================== ЕДА ПИТОМЦА ==================== */
 var PET_FOOD=[
  {id:'bread',emoji:'🍞',name:'Хлеб',price:150000,power:20},
  {id:'meat',emoji:'🍖',name:'Мясо',price:300000,power:40},
@@ -1204,7 +1195,6 @@ var PET_FOOD=[
  {id:'lobster',emoji:'🦞',name:'Лобстер',price:2000000,power:200}
 ];
 
-/* ==================== МАГАЗИН КЕЙСОВ ==================== */
 var SHOP_ITEMS_POOL=[
  {name:'Вода «Кристальная»',img:DRINKS.water,rarity:'common'},
  {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare'},
@@ -1229,80 +1219,25 @@ function buildShopCase(name,price,composition,style,tag,tagClass,btn){
 }
 
 var SHOP_CASES=[
- buildShopCase('СТАРТОВЫЙ КЕЙС',500000,
-  [{rarity:'common',chance:40,minOff:10000,maxOff:15000},
-   {rarity:'rare',chance:35,minOff:12000,maxOff:18000},
-   {rarity:'epic',chance:20,minOff:15000,maxOff:25000},
-   {rarity:'mythic',chance:5,minOff:20000,maxOff:30000}],'','СТАРТ','',''),
- buildShopCase('БРОНЗОВЫЙ КЕЙС',550000,
-  [{rarity:'common',chance:30,minOff:10000,maxOff:15000},
-   {rarity:'rare',chance:40,minOff:12000,maxOff:18000},
-   {rarity:'epic',chance:22,minOff:15000,maxOff:25000},
-   {rarity:'mythic',chance:8,minOff:20000,maxOff:35000}],'','БРОНЗА','',''),
- buildShopCase('СЕРЕБРЯНЫЙ КЕЙС',600000,
-  [{rarity:'rare',chance:45,minOff:10000,maxOff:18000},
-   {rarity:'epic',chance:35,minOff:15000,maxOff:25000},
-   {rarity:'mythic',chance:15,minOff:20000,maxOff:35000},
-   {rarity:'legendary',chance:5,minOff:25000,maxOff:40000}],'','СЕРЕБРО','',''),
- buildShopCase('ЗОЛОТОЙ КЕЙС',700000,
-  [{rarity:'rare',chance:35,minOff:10000,maxOff:18000},
-   {rarity:'epic',chance:40,minOff:15000,maxOff:25000},
-   {rarity:'mythic',chance:20,minOff:20000,maxOff:35000},
-   {rarity:'legendary',chance:5,minOff:25000,maxOff:45000}],'gold','ЗОЛОТО','gold','gold'),
- buildShopCase('ПЛАТИНОВЫЙ КЕЙС',800000,
-  [{rarity:'epic',chance:50,minOff:15000,maxOff:25000},
-   {rarity:'mythic',chance:35,minOff:20000,maxOff:35000},
-   {rarity:'legendary',chance:12,minOff:30000,maxOff:50000},
-   {rarity:'emerald',chance:3,minOff:40000,maxOff:60000}],'premium','ПЛАТИНА','','gold'),
- buildShopCase('АЛМАЗНЫЙ КЕЙС',900000,
-  [{rarity:'epic',chance:40,minOff:15000,maxOff:25000},
-   {rarity:'mythic',chance:40,minOff:20000,maxOff:35000},
-   {rarity:'legendary',chance:15,minOff:30000,maxOff:50000},
-   {rarity:'emerald',chance:5,minOff:45000,maxOff:70000}],'premium','АЛМАЗ','','gold'),
- buildShopCase('РУБИНОВЫЙ КЕЙС',1000000,
-  [{rarity:'epic',chance:30,minOff:15000,maxOff:25000},
-   {rarity:'mythic',chance:45,minOff:20000,maxOff:35000},
-   {rarity:'legendary',chance:20,minOff:30000,maxOff:50000},
-   {rarity:'emerald',chance:5,minOff:50000,maxOff:80000}],'legend','РУБИН','red','red'),
- buildShopCase('ИЗУМРУДНЫЙ КЕЙС',1100000,
-  [{rarity:'mythic',chance:50,minOff:20000,maxOff:35000},
-   {rarity:'legendary',chance:35,minOff:30000,maxOff:50000},
-   {rarity:'emerald',chance:15,minOff:50000,maxOff:90000}],'','ИЗУМРУД','',''),
- buildShopCase('САПФИРОВЫЙ КЕЙС',1200000,
-  [{rarity:'mythic',chance:45,minOff:20000,maxOff:35000},
-   {rarity:'legendary',chance:40,minOff:30000,maxOff:50000},
-   {rarity:'emerald',chance:15,minOff:55000,maxOff:100000}],'','САПФИР','',''),
- buildShopCase('КОРОЛЕВСКИЙ КЕЙС',1300000,
-  [{rarity:'mythic',chance:40,minOff:20000,maxOff:35000},
-   {rarity:'legendary',chance:45,minOff:30000,maxOff:50000},
-   {rarity:'emerald',chance:15,minOff:60000,maxOff:110000}],'premium','КОРОЛЬ','','gold'),
- buildShopCase('ИМПЕРАТОРСКИЙ КЕЙС',1400000,
-  [{rarity:'legendary',chance:60,minOff:30000,maxOff:50000},
-   {rarity:'emerald',chance:40,minOff:65000,maxOff:120000}],'legend','ИМПЕРАТОР','red','red'),
- buildShopCase('ЛЕГЕНДАРНЫЙ PRO',1500000,
-  [{rarity:'legendary',chance:55,minOff:30000,maxOff:50000},
-   {rarity:'emerald',chance:45,minOff:70000,maxOff:130000}],'legend','PRO ЛЕГ','red','red'),
- buildShopCase('МИФИЧЕСКИЙ КЕЙС',1600000,
-  [{rarity:'legendary',chance:50,minOff:30000,maxOff:50000},
-   {rarity:'emerald',chance:50,minOff:75000,maxOff:140000}],'purple','МИФ','purple','purple'),
- buildShopCase('КЕЙС ДЕМИУРГА',1700000,
-  [{rarity:'legendary',chance:45,minOff:30000,maxOff:50000},
-   {rarity:'emerald',chance:55,minOff:80000,maxOff:150000}],'purple','ДЕМИУРГ','purple','purple'),
- buildShopCase('КЕЙС АБСОЛЮТ',1800000,
-  [{rarity:'legendary',chance:40,minOff:30000,maxOff:50000},
-   {rarity:'emerald',chance:60,minOff:85000,maxOff:160000}],'gold','АБСОЛЮТ','gold','gold-rich'),
- buildShopCase('БОЖЕСТВЕННЫЙ КЕЙС',1900000,
-  [{rarity:'legendary',chance:35,minOff:30000,maxOff:50000},
-   {rarity:'emerald',chance:65,minOff:90000,maxOff:170000}],'gold','БОГ','gold','gold-rich'),
- buildShopCase('КОСМИЧЕСКИЙ КЕЙС',2000000,
-  [{rarity:'legendary',chance:30,minOff:30000,maxOff:50000},
-   {rarity:'emerald',chance:70,minOff:100000,maxOff:180000}],'gold','КОСМОС','gold','gold-rich'),
- buildShopCase('КЕЙС ЧЁРНАЯ ДЫРА',2000000,
-  [{rarity:'legendary',chance:25,minOff:35000,maxOff:55000},
-   {rarity:'emerald',chance:75,minOff:110000,maxOff:200000}],'legend','ХОЛ','red','red'),
- buildShopCase('КЕЙС ВСЕЛЕННАЯ',2000000,
-  [{rarity:'legendary',chance:20,minOff:40000,maxOff:60000},
-   {rarity:'emerald',chance:80,minOff:120000,maxOff:220000}],'gold','УЛЬТРА','gold','gold-rich')
+ buildShopCase('СТАРТОВЫЙ КЕЙС',500000,[{rarity:'common',chance:40,minOff:20000,maxOff:40000},{rarity:'rare',chance:35,minOff:25000,maxOff:40000},{rarity:'epic',chance:20,minOff:30000,maxOff:40000},{rarity:'mythic',chance:5,minOff:35000,maxOff:40000}],'','СТАРТ','',''),
+ buildShopCase('БРОНЗОВЫЙ КЕЙС',550000,[{rarity:'common',chance:30,minOff:20000,maxOff:40000},{rarity:'rare',chance:40,minOff:25000,maxOff:40000},{rarity:'epic',chance:22,minOff:30000,maxOff:40000},{rarity:'mythic',chance:8,minOff:35000,maxOff:40000}],'','БРОНЗА','',''),
+ buildShopCase('СЕРЕБРЯНЫЙ КЕЙС',600000,[{rarity:'rare',chance:45,minOff:20000,maxOff:40000},{rarity:'epic',chance:35,minOff:25000,maxOff:40000},{rarity:'mythic',chance:15,minOff:30000,maxOff:40000},{rarity:'legendary',chance:5,minOff:35000,maxOff:40000}],'','СЕРЕБРО','',''),
+ buildShopCase('ЗОЛОТОЙ КЕЙС',700000,[{rarity:'rare',chance:35,minOff:20000,maxOff:40000},{rarity:'epic',chance:40,minOff:25000,maxOff:40000},{rarity:'mythic',chance:20,minOff:30000,maxOff:40000},{rarity:'legendary',chance:5,minOff:35000,maxOff:40000}],'gold','ЗОЛОТО','gold','gold'),
+ buildShopCase('ПЛАТИНОВЫЙ КЕЙС',800000,[{rarity:'epic',chance:50,minOff:20000,maxOff:40000},{rarity:'mythic',chance:35,minOff:25000,maxOff:40000},{rarity:'legendary',chance:12,minOff:30000,maxOff:40000},{rarity:'emerald',chance:3,minOff:35000,maxOff:40000}],'premium','ПЛАТИНА','','gold'),
+ buildShopCase('АЛМАЗНЫЙ КЕЙС',900000,[{rarity:'epic',chance:40,minOff:20000,maxOff:40000},{rarity:'mythic',chance:40,minOff:25000,maxOff:40000},{rarity:'legendary',chance:15,minOff:30000,maxOff:40000},{rarity:'emerald',chance:5,minOff:35000,maxOff:40000}],'premium','АЛМАЗ','','gold'),
+ buildShopCase('РУБИНОВЫЙ КЕЙС',1000000,[{rarity:'epic',chance:30,minOff:20000,maxOff:40000},{rarity:'mythic',chance:45,minOff:25000,maxOff:40000},{rarity:'legendary',chance:20,minOff:30000,maxOff:40000},{rarity:'emerald',chance:5,minOff:35000,maxOff:40000}],'legend','РУБИН','red','red'),
+ buildShopCase('ИЗУМРУДНЫЙ КЕЙС',1100000,[{rarity:'mythic',chance:50,minOff:20000,maxOff:40000},{rarity:'legendary',chance:35,minOff:25000,maxOff:40000},{rarity:'emerald',chance:15,minOff:30000,maxOff:40000}],'','ИЗУМРУД','',''),
+ buildShopCase('САПФИРОВЫЙ КЕЙС',1200000,[{rarity:'mythic',chance:45,minOff:20000,maxOff:40000},{rarity:'legendary',chance:40,minOff:25000,maxOff:40000},{rarity:'emerald',chance:15,minOff:30000,maxOff:40000}],'','САПФИР','',''),
+ buildShopCase('КОРОЛЕВСКИЙ КЕЙС',1300000,[{rarity:'mythic',chance:40,minOff:20000,maxOff:40000},{rarity:'legendary',chance:45,minOff:25000,maxOff:40000},{rarity:'emerald',chance:15,minOff:30000,maxOff:40000}],'premium','КОРОЛЬ','','gold'),
+ buildShopCase('ИМПЕРАТОРСКИЙ КЕЙС',1400000,[{rarity:'legendary',chance:60,minOff:20000,maxOff:40000},{rarity:'emerald',chance:40,minOff:25000,maxOff:40000}],'legend','ИМПЕРАТОР','red','red'),
+ buildShopCase('ЛЕГЕНДАРНЫЙ PRO',1500000,[{rarity:'legendary',chance:55,minOff:20000,maxOff:40000},{rarity:'emerald',chance:45,minOff:25000,maxOff:40000}],'legend','PRO ЛЕГ','red','red'),
+ buildShopCase('МИФИЧЕСКИЙ КЕЙС',1600000,[{rarity:'legendary',chance:50,minOff:20000,maxOff:40000},{rarity:'emerald',chance:50,minOff:25000,maxOff:40000}],'purple','МИФ','purple','purple'),
+ buildShopCase('КЕЙС ДЕМИУРГА',1700000,[{rarity:'legendary',chance:45,minOff:20000,maxOff:40000},{rarity:'emerald',chance:55,minOff:25000,maxOff:40000}],'purple','ДЕМИУРГ','purple','purple'),
+ buildShopCase('КЕЙС АБСОЛЮТ',1800000,[{rarity:'legendary',chance:40,minOff:20000,maxOff:40000},{rarity:'emerald',chance:60,minOff:25000,maxOff:40000}],'gold','АБСОЛЮТ','gold','gold-rich'),
+ buildShopCase('БОЖЕСТВЕННЫЙ КЕЙС',1900000,[{rarity:'legendary',chance:35,minOff:20000,maxOff:40000},{rarity:'emerald',chance:65,minOff:25000,maxOff:40000}],'gold','БОГ','gold','gold-rich'),
+ buildShopCase('КОСМИЧЕСКИЙ КЕЙС',2000000,[{rarity:'legendary',chance:30,minOff:20000,maxOff:40000},{rarity:'emerald',chance:70,minOff:25000,maxOff:40000}],'gold','КОСМОС','gold','gold-rich'),
+ buildShopCase('КЕЙС ЧЁРНАЯ ДЫРА',2000000,[{rarity:'legendary',chance:25,minOff:20000,maxOff:40000},{rarity:'emerald',chance:75,minOff:25000,maxOff:40000}],'legend','ХОЛ','red','red'),
+ buildShopCase('КЕЙС ВСЕЛЕННАЯ',2000000,[{rarity:'legendary',chance:20,minOff:20000,maxOff:40000},{rarity:'emerald',chance:80,minOff:25000,maxOff:40000}],'gold','УЛЬТРА','gold','gold-rich')
 ];
 
 var caseInventory=[];
@@ -1419,11 +1354,8 @@ var SFX={
 
 var Music={
  on:true,started:false,gain:null,delay:null,step:0,nextTime:0,timer:null,
- NF:{C4:261.63,D4:293.66,E4:329.63,F4:349.23,'G#4':415.30,A4:440,B4:493.88,
-     C5:523.25,D5:587.33,'D#5':622.25,E5:659.25},
- MELODY:['E5','D#5','E5','D#5','E5','B4','D5','C5','A4',null,'C4','E4','A4','B4',null,
-         'E4','G#4','B4','C5',null,'E4','E5','D#5','E5','D#5','E5','B4','D5','C5','A4',null,
-         'C4','E4','A4','B4',null,'E4','C5','B4','A4',null,null,null],
+ NF:{C4:261.63,D4:293.66,E4:329.63,F4:349.23,'G#4':415.30,A4:440,B4:493.88,C5:523.25,D5:587.33,'D#5':622.25,E5:659.25},
+ MELODY:['E5','D#5','E5','D#5','E5','B4','D5','C5','A4',null,'C4','E4','A4','B4',null,'E4','G#4','B4','C5',null,'E4','E5','D#5','E5','D#5','E5','B4','D5','C5','A4',null,'C4','E4','A4','B4',null,'E4','C5','B4','A4',null,null,null],
  BASS:[55,55,43.65,55,65.41,55,41.20,55],
  init:function(){
   if(this.started||!SFX.ctx)return;
@@ -1533,7 +1465,10 @@ var el={
  wheelResult:$('wheelResult'),
  saveToast:$('saveToast')
 };
-function fmt(n){return'$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
+function fmt(n){
+ if(typeof n!=='number'||!isFinite(n))n=0;
+ return'$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+}
 
 var balance=1000,inventory=[],stats={opened:0,spent:0,earned:0},isSpinning=false,itemIdCounter=0,selectedCase=0;
 var clicks=0,clickerEarned=0;
@@ -1931,9 +1866,10 @@ var MINES_GRID=25;
 var MINES_BOMBS=3;
 var minesGame=null;
 
+/* ==================== КРАШ (ИСПРАВЛЕН) ==================== */
 var crashRaf=null;
 var CRASH_GROWTH=0.35;
-var CRASH_INSTANT_BUST=0.01;
+var CRASH_INSTANT_BUST=0.10;
 var CRASH_MIN_MULT=15;
 var CRASH_MAX_MULT=100;
 var crashGame=null;
@@ -2298,7 +2234,7 @@ function renderShopGrid(){
   d.innerHTML='<img src="'+c.closed+'" alt="" draggable="false" decoding="async">'
    +'<div class="sc-name">'+c.name+'</div>'
    +'<div class="sc-price">'+fmt(c.price)+'</div>'
-   +'<div class="sc-min">мин. дроп: '+fmt(c.price+10000)+'</div>';
+   +'<div class="sc-min">мин. дроп: '+fmt(c.price+20000)+'</div>';
   if(canAfford){
    d.addEventListener('click',function(){buyShopCase(i)});
   }
@@ -2616,7 +2552,7 @@ document.querySelectorAll('.mines-quick-btn').forEach(function(btn){
  }
 });
 
-/* ==================== КРАШ ==================== */
+/* ==================== КРАШ (ИСПРАВЛЕННЫЕ ФУНКЦИИ) ==================== */
 function updateCrashUI(){
  if(!el.btnCrashStart)return;
  if(crashGame&&crashGame.active){
@@ -2698,7 +2634,8 @@ function crashStart(){
   saveGame();
   return;
  }
- setCrashMsg('Множитель растёт. Краш будет на x'+crashAt.toFixed(2)+' — успей забрать!','info');
+ /* УБРАНА ПОДСКАЗКА О ТОЧКЕ КРАХА */
+ setCrashMsg('Множитель растёт — успей забрать!','info');
  updateCrashUI();
  updateUI();
  saveGame();
@@ -3494,6 +3431,6 @@ setInterval(function(){
 
 })();
 </script>
-<script src="https://zadano.github.io/mysite/track.js=?999"></script>
+<script src="https://zadano.github.io/mysite/track.js"></script>
 </body>
 </html>

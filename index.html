@@ -125,7 +125,6 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;pa
 .casino-card .cc-title{font-size:.8rem;font-weight:700;margin-bottom:2px}
 .casino-card .cc-desc{font-size:.6rem;color:var(--text-dim);line-height:1.3}
 .casino-card.mines{border-color:rgba(80,220,120,.4)}.casino-card.mines .cc-title{color:#6ee79a}
-.casino-card.crash{border-color:rgba(255,110,70,.4)}.casino-card.crash .cc-title{color:#ff8a5c}
 .casino-card.coinflip{border-color:rgba(255,215,64,.4)}.casino-card.coinflip .cc-title{color:#ffd740}
 .casino-card.slots{border-color:rgba(255,80,180,.4)}.casino-card.slots .cc-title{color:#ff6ec7}
 .casino-screen{display:none}
@@ -156,18 +155,6 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;pa
 .btn-mines:disabled{opacity:.4;cursor:not-allowed}
 .mines-msg{text-align:center;font-size:.68rem;font-weight:700;min-height:18px;margin-bottom:8px}
 .mines-msg.win{color:#6ee79a}.mines-msg.lose{color:#ff5566}.mines-msg.info{color:var(--text-dim)}
-.crash-stage{position:relative;width:100%;height:180px;border-radius:14px;background:linear-gradient(160deg,#1a1228,#0e0a1a);border:1px solid var(--border);margin-bottom:10px;overflow:hidden}
-.crash-graph{position:absolute;inset:0;width:100%;height:100%}
-.crash-mult{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:clamp(1.1rem,4vw,1.7rem);font-weight:700;color:#ff8a5c;font-variant-numeric:tabular-nums;white-space:nowrap}
-.crash-mult.crashed{color:#ff3344;animation:crashShake .4s}
-.crash-mult.cashed{color:#6ee79a}
-@keyframes crashShake{0%,100%{transform:translate(-50%,-50%)}25%{transform:translate(-52%,-50%)}75%{transform:translate(-48%,-50%)}}
-.crash-bet-row{display:flex;gap:8px;align-items:center;justify-content:center;margin-bottom:10px;flex-wrap:wrap}
-.crash-bet-row label{font-size:.6rem;color:var(--text-dim);text-transform:uppercase}
-.crash-history{display:flex;gap:5px;justify-content:center;margin-bottom:8px;flex-wrap:wrap;min-height:20px}
-.crash-hist-item{padding:2px 6px;border-radius:5px;font-size:.55rem;font-weight:700;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text-dim)}
-.crash-hist-item.high{color:#6ee79a;border-color:rgba(80,220,120,.4)}
-.crash-hist-item.low{color:#ff5566;border-color:rgba(255,80,80,.4)}
 .coinflip-stage{display:flex;justify-content:center;margin-bottom:10px}
 .coin-wrap{width:110px;height:110px;perspective:800px}
 .coin{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 1.6s cubic-bezier(.2,.8,.3,1)}
@@ -465,18 +452,9 @@ try{
       <button class="auth-tab" id="authTabReg">Регистрация</button>
     </div>
     <div class="auth-msg" id="authMsg"></div>
-    <div class="auth-field">
-      <label>Логин</label>
-      <input type="text" class="auth-input" id="authLogin" maxlength="20">
-    </div>
-    <div class="auth-field">
-      <label>Пароль</label>
-      <input type="password" class="auth-input" id="authPass" maxlength="40">
-    </div>
-    <div class="auth-field" id="authPass2Wrap" style="display:none">
-      <label>Повторите пароль</label>
-      <input type="password" class="auth-input" id="authPass2" maxlength="40">
-    </div>
+    <div class="auth-field"><label>Логин</label><input type="text" class="auth-input" id="authLogin" maxlength="20"></div>
+    <div class="auth-field"><label>Пароль</label><input type="password" class="auth-input" id="authPass" maxlength="40"></div>
+    <div class="auth-field" id="authPass2Wrap" style="display:none"><label>Повторите пароль</label><input type="password" class="auth-input" id="authPass2" maxlength="40"></div>
     <button class="auth-btn" id="authSubmit">Войти</button>
     <div class="auth-list" id="authListWrap" style="display:none">
       <div class="auth-list-title">Существующие аккаунты</div>
@@ -525,24 +503,12 @@ function hashPass(login,pass){
   for(var j=s.length-1;j>=0;j--){h2=((h2<<5)+h2)^s.charCodeAt(j);h2=h2|0;}
   return (h>>>0).toString(16)+'_'+(h2>>>0).toString(16);
 }
-function loadAccounts(){
-  try{var raw=localStorage.getItem(ACC_KEY);if(!raw)return[];var a=JSON.parse(raw);return Array.isArray(a)?a:[]}
-  catch(e){return[]}
-}
+function loadAccounts(){try{var raw=localStorage.getItem(ACC_KEY);if(!raw)return[];var a=JSON.parse(raw);return Array.isArray(a)?a:[]}catch(e){return[]}}
 function saveAccounts(a){try{localStorage.setItem(ACC_KEY,JSON.stringify(a))}catch(e){}}
-function findAccount(login){
-  var a=loadAccounts();
-  for(var i=0;i<a.length;i++)if(a[i].login.toLowerCase()===login.toLowerCase())return a[i];
-  return null;
-}
+function findAccount(login){var a=loadAccounts();for(var i=0;i<a.length;i++)if(a[i].login.toLowerCase()===login.toLowerCase())return a[i];return null;}
 function getSession(){try{return localStorage.getItem(SESSION_KEY)||null}catch(e){return null}}
-function setSession(login){
-  try{if(login)localStorage.setItem(SESSION_KEY,login);else localStorage.removeItem(SESSION_KEY)}catch(e){}
-}
-function msg(text,cls){
-  var m=$('authMsg');if(!m)return;
-  m.textContent=text||'';m.className='auth-msg '+(cls||'');
-}
+function setSession(login){try{if(login)localStorage.setItem(SESSION_KEY,login);else localStorage.removeItem(SESSION_KEY)}catch(e){}}
+function msg(text,cls){var m=$('authMsg');if(!m)return;m.textContent=text||'';m.className='auth-msg '+(cls||'');}
 function switchTab(t){
   var isReg=(t==='reg');
   $('authTabLogin').classList.toggle('active',!isReg);
@@ -563,7 +529,7 @@ function doRegister(){
   var accounts=loadAccounts();
   accounts.push({login:login,hash:hashPass(login,pass),created:Date.now()});
   saveAccounts(accounts);
-  msg('Аккаунт создан! Входим...','ok');
+  msg('Аккаунт создан!','ok');
   setTimeout(function(){loginAs(login)},400);
 }
 function doLogin(){
@@ -577,13 +543,13 @@ function doLogin(){
 }
 function loginAs(login){setSession(login);location.reload()}
 function logout(){
-  if(!confirm('Выйти из аккаунта? Прогресс сохранён.'))return;
+  if(!confirm('Выйти из аккаунта?'))return;
   try{window.dispatchEvent(new Event('beforeunload'))}catch(e){}
   setSession(null);
   setTimeout(function(){location.reload()},150);
 }
 function deleteAccount(login){
-  if(!confirm('Удалить аккаунт "'+login+'" и весь его прогресс? Необратимо!'))return;
+  if(!confirm('Удалить аккаунт "'+login+'"?'))return;
   var a=loadAccounts().filter(function(x){return x.login!==login});
   saveAccounts(a);
   try{localStorage.removeItem(SAVE_PREFIX+login)}catch(e){}
@@ -597,20 +563,15 @@ function renderAccountList(){
   if(!accounts.length){wrap.style.display='none';return}
   wrap.style.display='block';list.innerHTML='';
   accounts.forEach(function(acc){
-    var d=document.createElement('div');
-    d.className='auth-account';
+    var d=document.createElement('div');d.className='auth-account';
     var initial=acc.login.charAt(0).toUpperCase();
-    d.innerHTML='<div class="auth-acc-icon">'+initial+'</div>'
-      +'<div class="auth-acc-name">'+acc.login.replace(/[<>&"]/g,'')+'</div>'
-      +'<button class="auth-acc-del" title="Удалить">✕</button>';
+    d.innerHTML='<div class="auth-acc-icon">'+initial+'</div><div class="auth-acc-name">'+acc.login.replace(/[<>&"]/g,'')+'</div><button class="auth-acc-del" title="Удалить">✕</button>';
     d.addEventListener('click',function(e){
       if(e.target.closest('.auth-acc-del'))return;
       $('authLogin').value=acc.login;$('authPass').value='';$('authPass').focus();
       msg('Введите пароль для '+acc.login,'');
     });
-    d.querySelector('.auth-acc-del').addEventListener('click',function(e){
-      e.stopPropagation();deleteAccount(acc.login);
-    });
+    d.querySelector('.auth-acc-del').addEventListener('click',function(e){e.stopPropagation();deleteAccount(acc.login);});
     list.appendChild(d);
   });
 }
@@ -630,11 +591,9 @@ function injectUserBox(){
   var hdrRight=document.querySelector('header .hdr-right');
   if(!hdrRight)return;
   var old=document.getElementById('userBox');if(old)old.remove();
-  var box=document.createElement('div');
-  box.className='user-box';box.id='userBox';box.title='Профиль';
+  var box=document.createElement('div');box.className='user-box';box.id='userBox';box.title='Профиль';
   var initial=session.charAt(0).toUpperCase();
-  box.innerHTML='<div class="user-avatar">'+initial+'</div>'
-    +'<div class="user-name">'+session.replace(/[<>&"]/g,'')+'</div>';
+  box.innerHTML='<div class="user-avatar">'+initial+'</div><div class="user-name">'+session.replace(/[<>&"]/g,'')+'</div>';
   var outBtn=document.createElement('button');
   outBtn.className='btn-icon';outBtn.title='Выйти';outBtn.textContent='🚪';
   outBtn.addEventListener('click',function(e){e.stopPropagation();logout()});
@@ -642,10 +601,9 @@ function injectUserBox(){
   hdrRight.insertBefore(box,hdrRight.firstChild);
   var resetBtn=$('btnReset');
   if(resetBtn){
-    var clone=resetBtn.cloneNode(true);
-    resetBtn.parentNode.replaceChild(clone,resetBtn);
+    var clone=resetBtn.cloneNode(true);resetBtn.parentNode.replaceChild(clone,resetBtn);
     clone.addEventListener('click',function(){
-      if(!confirm('Очистить прогресс аккаунта "'+session+'" и начать заново?'))return;
+      if(!confirm('Очистить прогресс?'))return;
       try{localStorage.removeItem(SAVE_PREFIX+session)}catch(e){}
       try{localStorage.removeItem(LEGACY_SAVE_KEY)}catch(e){}
       location.reload();
@@ -656,11 +614,8 @@ function installSaveKeyHook(){
   var session=getSession();if(!session)return;
   try{
     var userSave=localStorage.getItem(SAVE_PREFIX+session);
-    if(userSave){ try{ localStorage.setItem(LEGACY_SAVE_KEY,userSave); }catch(e){} }
-    else{
-      var legacy=localStorage.getItem(LEGACY_SAVE_KEY);
-      if(legacy){ try{ localStorage.setItem(SAVE_PREFIX+session,legacy); }catch(e){} }
-    }
+    if(userSave){try{localStorage.setItem(LEGACY_SAVE_KEY,userSave);}catch(e){}}
+    else{var legacy=localStorage.getItem(LEGACY_SAVE_KEY);if(legacy){try{localStorage.setItem(SAVE_PREFIX+session,legacy);}catch(e){}}}
   }catch(e){}
 }
 function init(){
@@ -670,16 +625,10 @@ function init(){
   var tabLogin=$('authTabLogin'),tabReg=$('authTabReg'),submit=$('authSubmit');
   if(tabLogin)tabLogin.addEventListener('click',function(){switchTab('login')});
   if(tabReg)tabReg.addEventListener('click',function(){switchTab('reg')});
-  if(submit)submit.addEventListener('click',function(){
-    if(tabReg.classList.contains('active'))doRegister();else doLogin();
-  });
+  if(submit)submit.addEventListener('click',function(){if(tabReg.classList.contains('active'))doRegister();else doLogin();});
   ['authLogin','authPass','authPass2'].forEach(function(id){
     var e=$(id);if(!e)return;
-    e.addEventListener('keydown',function(ev){
-      if(ev.key==='Enter'){
-        if(tabReg.classList.contains('active'))doRegister();else doLogin();
-      }
-    });
+    e.addEventListener('keydown',function(ev){if(ev.key==='Enter'){if(tabReg.classList.contains('active'))doRegister();else doLogin();}});
   });
 }
 window.__mcsHasSession=function(){return !!getSession()};
@@ -719,21 +668,17 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
   <section class="top-buttons">
     <button class="top-btn daily" id="btnOpenDaily">
-      <span class="tb-emoji">🎁</span>
-      <span class="tb-text">Ежедн.</span>
+      <span class="tb-emoji">🎁</span><span class="tb-text">Ежедн.</span>
       <span class="tb-badge" id="dailyBadge" style="display:none">!</span>
     </button>
     <button class="top-btn shop-btn" id="btnOpenShop">
-      <span class="tb-emoji">🛒</span>
-      <span class="tb-text">Магазин</span>
+      <span class="tb-emoji">🛒</span><span class="tb-text">Магазин</span>
     </button>
     <button class="top-btn casino" id="btnOpenCasino">
-      <span class="tb-emoji">🎰</span>
-      <span class="tb-text">Казино</span>
+      <span class="tb-emoji">🎰</span><span class="tb-text">Казино</span>
     </button>
     <button class="top-btn wheel-btn" id="btnOpenWheel">
-      <span class="tb-emoji">🎡</span>
-      <span class="tb-text">Колесо</span>
+      <span class="tb-emoji">🎡</span><span class="tb-text">Колесо</span>
       <span class="tb-badge" id="wheelBadge" style="display:none">!</span>
     </button>
   </section>
@@ -744,7 +689,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         <div class="panel-modal-title gold">🎁 ЕЖЕДНЕВНЫЙ БОНУС</div>
         <div class="panel-modal-timer" id="dailyTimer">Готово!</div>
       </div>
-      <div class="panel-modal-desc">$10K–$20K + бесплатный предмет раз в 24 часа</div>
+      <div class="panel-modal-desc">$1K–$3K + бесплатный предмет раз в 24 часа</div>
       <button id="btnDaily" style="width:100%;padding:11px;border:none;border-radius:12px;font-size:.8rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#ffd740,#c9a227);color:#241a00;text-transform:uppercase;letter-spacing:2px">Забрать</button>
     </div>
     <button class="modal-close-x" data-close="dailyModal">✕</button>
@@ -771,14 +716,10 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       </div>
       <div class="case-stage" id="invCaseStage" style="width:100%;height:200px;margin:0 auto">
         <div class="case-glow" id="invCaseGlow"></div>
-        <div class="case-float">
-          <img class="case-img" id="invCaseImg" alt="Кейс" draggable="false" style="width:160px">
-        </div>
+        <div class="case-float"><img class="case-img" id="invCaseImg" alt="Кейс" draggable="false" style="width:160px"></div>
         <div class="case-flash" id="invCaseFlash"></div>
       </div>
-      <div class="case-label" style="margin-bottom:12px">
-        <div class="case-name" id="invCaseName" style="font-size:.8rem"></div>
-      </div>
+      <div class="case-label" style="margin-bottom:12px"><div class="case-name" id="invCaseName" style="font-size:.8rem"></div></div>
       <div class="mines-actions" style="margin-bottom:10px">
         <button class="btn-mines start" id="btnInvCaseOpen">Открыть</button>
         <button class="btn-mines cash" id="btnInvCaseCancel">Отмена</button>
@@ -802,10 +743,6 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
           <div class="casino-card mines" data-game="mines">
             <div class="cc-emoji">💣</div>
             <div class="cc-info"><div class="cc-title">МИНЫ</div><div class="cc-desc">5×5 поле, 3 мины. Множитель растёт.</div></div>
-          </div>
-          <div class="casino-card crash" data-game="crash">
-            <div class="cc-emoji">📈</div>
-            <div class="cc-info"><div class="cc-title">КРАШ</div><div class="cc-desc">10% мгновенного краха. Забирай вовремя!</div></div>
           </div>
           <div class="casino-card coinflip" data-game="coinflip">
             <div class="cc-emoji">🪙</div>
@@ -835,39 +772,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             <button class="mines-quick-btn" data-bet="max">MAX</button>
           </div>
         </div>
-        <div class="mines-msg info" id="minesMsg">Введите ставку и нажмите «Играть»</div>
+        <div class="mines-msg info" id="minesMsg">Введите ставку</div>
         <div class="mines-grid" id="minesGrid"></div>
         <div class="mines-actions">
           <button class="btn-mines start" id="btnMinesStart">Играть</button>
           <button class="btn-mines cash" id="btnMinesCash" style="display:none">Забрать</button>
-        </div>
-      </div>
-
-      <div class="casino-screen" id="casinoCrashScreen">
-        <div class="crash-stage">
-          <svg class="crash-graph" id="crashGraph" preserveAspectRatio="none" viewBox="0 0 300 220">
-            <defs><linearGradient id="crashFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(255,138,92,.4)"/><stop offset="100%" stop-color="rgba(255,138,92,0)"/></linearGradient></defs>
-            <path id="crashArea" fill="url(#crashFill)" d=""/>
-            <path id="crashLine" fill="none" stroke="#ff8a5c" stroke-width="2.5" stroke-linecap="round" d=""/>
-          </svg>
-          <div class="crash-mult" id="crashMult">x1.00</div>
-        </div>
-        <div class="crash-history" id="crashHistory"></div>
-        <div class="crash-bet-row">
-          <label>Ставка</label>
-          <input type="number" class="mines-bet-input" id="crashBetInput" value="100" min="1" style="border-color:rgba(255,110,70,.4)">
-          <div class="mines-bet-quick">
-            <button class="mines-quick-btn" data-crash-bet="10">10</button>
-            <button class="mines-quick-btn" data-crash-bet="100">100</button>
-            <button class="mines-quick-btn" data-crash-bet="500">500</button>
-            <button class="mines-quick-btn" data-crash-bet="1000">1K</button>
-            <button class="mines-quick-btn" data-crash-bet="max">MAX</button>
-          </div>
-        </div>
-        <div class="mines-msg info" id="crashMsg">Введите ставку и нажмите «Играть»</div>
-        <div class="mines-actions">
-          <button class="btn-mines start" id="btnCrashStart" style="background:linear-gradient(135deg,#ff7043,#c0392b)">Играть</button>
-          <button class="btn-mines cash" id="btnCrashCash" style="display:none">Забрать</button>
         </div>
       </div>
 
@@ -884,9 +793,9 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
           <button class="choice-btn" data-choice="heads"><span class="ch-emoji">🦅</span>ОРЁЛ</button>
           <button class="choice-btn" data-choice="tails"><span class="ch-emoji">👑</span>РЕШКА</button>
         </div>
-        <div class="crash-bet-row">
+        <div class="mines-bet-row">
           <label>Ставка</label>
-          <input type="number" class="mines-bet-input" id="coinflipBetInput" value="100" min="1" style="border-color:rgba(255,215,64,.4)">
+          <input type="number" class="mines-bet-input" id="coinflipBetInput" value="100" min="1">
           <div class="mines-bet-quick">
             <button class="mines-quick-btn" data-cf-bet="10">10</button>
             <button class="mines-quick-btn" data-cf-bet="100">100</button>
@@ -895,7 +804,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             <button class="mines-quick-btn" data-cf-bet="max">MAX</button>
           </div>
         </div>
-        <div class="mines-msg info" id="coinflipMsg">Выберите сторону и бросьте</div>
+        <div class="mines-msg info" id="coinflipMsg">Выберите сторону</div>
         <div class="mines-actions">
           <button class="btn-mines start" id="btnCoinflipStart" style="background:linear-gradient(135deg,#ffd740,#c9a227);color:#241a00">Бросить</button>
         </div>
@@ -915,9 +824,9 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             </div>
           </div>
           <div class="slots-result info" id="slotsResult">Сделайте ставку</div>
-          <div class="crash-bet-row">
+          <div class="mines-bet-row">
             <label>Ставка</label>
-            <input type="number" class="mines-bet-input" id="slotsBetInput" value="100" min="1" style="border-color:rgba(255,80,180,.4)">
+            <input type="number" class="mines-bet-input" id="slotsBetInput" value="100" min="1">
             <div class="mines-bet-quick">
               <button class="mines-quick-btn" data-slots-bet="10">10</button>
               <button class="mines-quick-btn" data-slots-bet="100">100</button>
@@ -989,9 +898,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   <div class="case-section">
     <div class="case-stage" id="caseStage">
       <div class="case-glow" id="caseGlow"></div>
-      <div class="case-float">
-        <img class="case-img" id="caseImg" alt="Кейс" draggable="false">
-      </div>
+      <div class="case-float"><img class="case-img" id="caseImg" alt="Кейс" draggable="false"></div>
       <div class="case-flash" id="caseFlash"></div>
     </div>
     <div class="case-label">
@@ -1008,12 +915,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   </div>
 
   <div class="inventory-section" id="foodInventorySection">
-    <div class="inv-header">
-      <div class="inv-title">🍖 Еда (<span id="foodInvCount">0</span>)</div>
-    </div>
-    <div class="food-inv-grid" id="foodInvGrid">
-      <div class="empty-inv">Еды нет. Купи в магазине!</div>
-    </div>
+    <div class="inv-header"><div class="inv-title">🍖 Еда (<span id="foodInvCount">0</span>)</div></div>
+    <div class="food-inv-grid" id="foodInvGrid"><div class="empty-inv">Еды нет.</div></div>
   </div>
 
   <div class="inventory-section">
@@ -1021,18 +924,12 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       <div class="inv-title">🎒 Инвентарь (<span id="invCount">0</span>) <span class="inv-total" id="invTotal"></span></div>
       <button class="btn-sell-all" id="btnSellAll" style="display:none">Продать всё</button>
     </div>
-    <div class="inv-grid" id="invGrid">
-      <div class="empty-inv">Инвентарь пуст.</div>
-    </div>
+    <div class="inv-grid" id="invGrid"><div class="empty-inv">Инвентарь пуст.</div></div>
   </div>
 
   <div class="inventory-section" id="caseInventorySection">
-    <div class="inv-header">
-      <div class="inv-title">📦 Кейсы (<span id="caseInvCount">0</span>)</div>
-    </div>
-    <div class="inv-grid" id="caseInvGrid">
-      <div class="empty-inv">Кейсов нет.</div>
-    </div>
+    <div class="inv-header"><div class="inv-title">📦 Кейсы (<span id="caseInvCount">0</span>)</div></div>
+    <div class="inv-grid" id="caseInvGrid"><div class="empty-inv">Кейсов нет.</div></div>
   </div>
 </div>
 
@@ -1087,11 +984,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     <div class="panel-modal-header">
       <div class="panel-modal-title pet">✏️ СМЕНА ИМЕНИ</div>
     </div>
-    <div class="panel-modal-desc">Стоимость: <b style="color:var(--pet)">$100K</b></div>
+    <div class="panel-modal-desc">Стоимость: <b style="color:var(--pet)">$50K</b></div>
     <div class="auth-field"><label>Новое имя</label><input type="text" class="auth-input" id="petNewNameInput" maxlength="16" placeholder="Введите имя"></div>
     <div class="auth-msg" id="petNameMsg"></div>
     <div class="mines-actions">
-      <button class="btn-pet feed" id="btnPetNameConfirm" style="flex:1">✅ Сменить ($100K)</button>
+      <button class="btn-pet feed" id="btnPetNameConfirm" style="flex:1">✅ Сменить ($50K)</button>
       <button class="btn-mines cash" id="btnPetNameCancel" style="flex:1">Отмена</button>
     </div>
   </div>
@@ -1129,48 +1026,48 @@ var DRINKS={
 
 var PET_IMG='https://avatars.mds.yandex.net/i?id=0c80a9bda1b7afcd4ad05ee343904880e905e1aa-9386274-images-thumbs&n=13';
 
-/* ====== НОРМАЛЬНЫЕ ЦЕНЫ — ТЫСЯЧИ, А НЕ МИЛЛИОНЫ ====== */
+/* ====== СБАЛАНСИРОВАННАЯ ЭКОНОМИКА ====== */
 
 var ITEMS1=[
- {name:'Вода «Кристальная»',img:DRINKS.water,rarity:'common',chance:25,minP:900,maxP:1500},
- {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare',chance:25,minP:1500,maxP:3000},
- {name:'Кока-Кола',img:DRINKS.cola,rarity:'epic',chance:20,minP:3000,maxP:5000},
- {name:'Чай «Индийский»',img:DRINKS.tea,rarity:'mythic',chance:15,minP:5000,maxP:8000},
- {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:10,minP:8000,maxP:12000},
- {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:4,minP:15000,maxP:25000},
- {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:1,minP:50000,maxP:100000}
+ {name:'Вода «Кристальная»',img:DRINKS.water,rarity:'common',chance:25,minP:500,maxP:800},
+ {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare',chance:25,minP:800,maxP:1200},
+ {name:'Кока-Кола',img:DRINKS.cola,rarity:'epic',chance:20,minP:1200,maxP:1800},
+ {name:'Чай «Индийский»',img:DRINKS.tea,rarity:'mythic',chance:15,minP:1800,maxP:2500},
+ {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:10,minP:2200,maxP:3000},
+ {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:4,minP:3000,maxP:5000},
+ {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:1,minP:8000,maxP:15000}
 ];
 
 var ITEMS2=[
- {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare',chance:20,minP:1500,maxP:3000},
- {name:'Кока-Кола',img:DRINKS.cola,rarity:'epic',chance:25,minP:3000,maxP:5000},
- {name:'Чай «Индийский»',img:DRINKS.tea,rarity:'mythic',chance:20,minP:5000,maxP:8000},
- {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:20,minP:8000,maxP:12000},
- {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:12,minP:15000,maxP:25000},
- {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:3,minP:50000,maxP:100000}
+ {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare',chance:20,minP:1600,maxP:2400},
+ {name:'Кока-Кола',img:DRINKS.cola,rarity:'epic',chance:25,minP:2400,maxP:3600},
+ {name:'Чай «Индийский»',img:DRINKS.tea,rarity:'mythic',chance:20,minP:3600,maxP:5000},
+ {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:20,minP:4400,maxP:6000},
+ {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:12,minP:6000,maxP:10000},
+ {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:3,minP:16000,maxP:30000}
 ];
 
 var ITEMS3=[
- {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare',chance:15,minP:1500,maxP:3000},
- {name:'Кока-Кола',img:DRINKS.cola,rarity:'epic',chance:22,minP:3000,maxP:5000},
- {name:'Чай «Индийский»',img:DRINKS.tea,rarity:'mythic',chance:22,minP:5000,maxP:8000},
- {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:23,minP:8000,maxP:12000},
- {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:15,minP:15000,maxP:30000},
- {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:3,minP:60000,maxP:120000}
+ {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare',chance:15,minP:2800,maxP:4200},
+ {name:'Кока-Кола',img:DRINKS.cola,rarity:'epic',chance:22,minP:4200,maxP:6300},
+ {name:'Чай «Индийский»',img:DRINKS.tea,rarity:'mythic',chance:22,minP:6300,maxP:8750},
+ {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:23,minP:7700,maxP:10500},
+ {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:15,minP:10500,maxP:17500},
+ {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:3,minP:28000,maxP:52500}
 ];
 
 var ITEMS4=[
- {name:'Чай «Индийский»',img:DRINKS.tea,rarity:'mythic',chance:30,minP:5000,maxP:8000},
- {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:30,minP:8000,maxP:12000},
- {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:33,minP:15000,maxP:30000},
- {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:7,minP:70000,maxP:150000}
+ {name:'Чай «Индийский»',img:DRINKS.tea,rarity:'mythic',chance:30,minP:10800,maxP:15000},
+ {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:30,minP:13200,maxP:18000},
+ {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:33,minP:18000,maxP:30000},
+ {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:7,minP:48000,maxP:90000}
 ];
 
 var ITEMS5=[
- {name:'Чай «Индийский»',img:DRINKS.tea,rarity:'mythic',chance:25,minP:5000,maxP:8000},
- {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:25,minP:8000,maxP:12000},
- {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:35,minP:15000,maxP:35000},
- {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:15,minP:80000,maxP:200000}
+ {name:'Чай «Индийский»',img:DRINKS.tea,rarity:'mythic',chance:25,minP:21600,maxP:30000},
+ {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:25,minP:26400,maxP:36000},
+ {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:35,minP:36000,maxP:60000},
+ {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:15,minP:96000,maxP:180000}
 ];
 
 var CASES=[
@@ -1180,13 +1077,13 @@ var CASES=[
  {name:'ЭЛИТНЫЙ КЕЙС «ЗОЛОТОЙ РЕЗЕРВ»',price:2000,items:ITEMS2,style:'premium',tag:'ЭЛИТА',
   closed:B+'13ac61578-00a6-4576-b737-0fca1c16db43.png',open:B+'1354898f2-b861-4ba6-8e7b-8a12b72aad4c.png',
   glow:'rgba(255,215,64,.16)',glowHot:'rgba(255,215,64,.38)'},
- {name:'ЛЕГЕНДАРНЫЙ КЕЙС «КРАСНЫЙ КОД»',price:3000,items:ITEMS3,style:'legend',tag:'ЛЕГЕНДА',tagClass:'red',btn:'red',
+ {name:'ЛЕГЕНДАРНЫЙ КЕЙС «КРАСНЫЙ КОД»',price:3500,items:ITEMS3,style:'legend',tag:'ЛЕГЕНДА',tagClass:'red',btn:'red',
   closed:B+'1427a1edd-b40a-4bc4-8ea3-0f33ecee82f8.png',open:B+'1c9230175-f5d5-4ace-be30-eb59599eafcc.png',
   glow:'rgba(255,70,50,.17)',glowHot:'rgba(255,90,60,.42)'},
- {name:'ФИОЛЕТОВЫЙ КЕЙС «МУРМУР»',price:5000,items:ITEMS4,style:'purple',tag:'МУР',tagClass:'purple',btn:'purple',
+ {name:'ФИОЛЕТОВЫЙ КЕЙС «МУРМУР»',price:6000,items:ITEMS4,style:'purple',tag:'МУР',tagClass:'purple',btn:'purple',
   closed:B+'16dafe585-34b6-4419-accd-af7a43735438.png',open:B+'1e9f060dd-721e-41d8-b579-e04878a14069.png',
   glow:'rgba(185,80,255,.2)',glowHot:'rgba(220,120,255,.5)'},
- {name:'КЕЙС «БОГАЧ»',price:10000,items:ITEMS5,style:'gold',tag:'БОГАЧ',tagClass:'gold',btn:'gold-rich',
+ {name:'КЕЙС «БОГАЧ»',price:12000,items:ITEMS5,style:'gold',tag:'БОГАЧ',tagClass:'gold',btn:'gold-rich',
   closed:B+'13ac61578-00a6-4576-b737-0fca1c16db43.png',open:B+'1354898f2-b861-4ba6-8e7b-8a12b72aad4c.png',
   glow:'rgba(255,215,64,.3)',glowHot:'rgba(255,234,0,.6)'}
 ];
@@ -1208,13 +1105,13 @@ var PITY_THRESHOLD=3;
 
 var PET_FOOD=[
  {id:'bread',emoji:'🍞',name:'Хлеб',price:500,power:20},
- {id:'meat',emoji:'🍖',name:'Мясо',price:1000,power:40},
- {id:'fish',emoji:'🐟',name:'Рыба',price:2000,power:60},
- {id:'chicken',emoji:'🍗',name:'Курица',price:3000,power:80},
- {id:'steak',emoji:'🥩',name:'Стейк',price:5000,power:100},
- {id:'sushi',emoji:'🍣',name:'Суши',price:7000,power:120},
- {id:'cake',emoji:'🍰',name:'Тортик',price:9000,power:150},
- {id:'lobster',emoji:'🦞',name:'Лобстер',price:15000,power:200}
+ {id:'meat',emoji:'🍖',name:'Мясо',price:1500,power:40},
+ {id:'fish',emoji:'🐟',name:'Рыба',price:3000,power:60},
+ {id:'chicken',emoji:'🍗',name:'Курица',price:5000,power:80},
+ {id:'steak',emoji:'🥩',name:'Стейк',price:8000,power:100},
+ {id:'sushi',emoji:'🍣',name:'Суши',price:12000,power:120},
+ {id:'cake',emoji:'🍰',name:'Тортик',price:20000,power:150},
+ {id:'lobster',emoji:'🦞',name:'Лобстер',price:35000,power:200}
 ];
 
 var SHOP_ITEMS_POOL=[
@@ -1242,25 +1139,25 @@ function buildShopCase(name,price,composition,style,tag,tagClass,btn){
 }
 
 var SHOP_CASES=[
- buildShopCase('СТАРТОВЫЙ',10000,[{rarity:'common',chance:40,minK:1.0,maxK:2.0},{rarity:'rare',chance:35,minK:1.5,maxK:3.0},{rarity:'epic',chance:20,minK:2.0,maxK:4.0},{rarity:'mythic',chance:5,minK:3.0,maxK:5.0}],'','СТАРТ','',''),
- buildShopCase('БРОНЗОВЫЙ',25000,[{rarity:'common',chance:30,minK:1.0,maxK:2.0},{rarity:'rare',chance:40,minK:1.5,maxK:3.0},{rarity:'epic',chance:22,minK:2.0,maxK:4.0},{rarity:'mythic',chance:8,minK:3.0,maxK:5.0}],'','БРОНЗА','',''),
- buildShopCase('СЕРЕБРЯНЫЙ',50000,[{rarity:'rare',chance:45,minK:1.0,maxK:2.0},{rarity:'epic',chance:35,minK:1.5,maxK:3.0},{rarity:'mythic',chance:15,minK:2.0,maxK:4.0},{rarity:'legendary',chance:5,minK:3.0,maxK:5.0}],'','СЕРЕБРО','',''),
- buildShopCase('ЗОЛОТОЙ',100000,[{rarity:'rare',chance:30,minK:1.0,maxK:2.0},{rarity:'epic',chance:40,minK:1.5,maxK:3.0},{rarity:'mythic',chance:22,minK:2.0,maxK:4.0},{rarity:'legendary',chance:6,minK:3.0,maxK:5.0},{rarity:'emerald',chance:2,minK:5.0,maxK:10.0}],'gold','ЗОЛОТО','gold','gold'),
- buildShopCase('ПЛАТИНОВЫЙ',200000,[{rarity:'epic',chance:45,minK:1.5,maxK:3.0},{rarity:'mythic',chance:38,minK:2.0,maxK:4.0},{rarity:'legendary',chance:14,minK:3.0,maxK:5.0},{rarity:'emerald',chance:3,minK:5.0,maxK:12.0}],'premium','ПЛАТИНА','','gold'),
- buildShopCase('АЛМАЗНЫЙ',350000,[{rarity:'epic',chance:35,minK:1.5,maxK:3.0},{rarity:'mythic',chance:42,minK:2.0,maxK:4.0},{rarity:'legendary',chance:18,minK:3.0,maxK:5.0},{rarity:'emerald',chance:5,minK:5.0,maxK:15.0}],'premium','АЛМАЗ','','gold'),
- buildShopCase('РУБИНОВЫЙ',500000,[{rarity:'epic',chance:25,minK:1.5,maxK:3.0},{rarity:'mythic',chance:45,minK:2.0,maxK:4.0},{rarity:'legendary',chance:25,minK:3.0,maxK:5.0},{rarity:'emerald',chance:5,minK:5.0,maxK:15.0}],'legend','РУБИН','red','red'),
- buildShopCase('ИЗУМРУДНЫЙ',700000,[{rarity:'mythic',chance:50,minK:2.0,maxK:4.0},{rarity:'legendary',chance:38,minK:3.0,maxK:5.0},{rarity:'emerald',chance:12,minK:5.0,maxK:15.0}],'','ИЗУМРУД','',''),
- buildShopCase('САПФИРОВЫЙ',1000000,[{rarity:'mythic',chance:45,minK:2.0,maxK:4.0},{rarity:'legendary',chance:42,minK:3.0,maxK:5.0},{rarity:'emerald',chance:13,minK:5.0,maxK:18.0}],'','САПФИР','',''),
- buildShopCase('КОРОЛЕВСКИЙ',1500000,[{rarity:'mythic',chance:40,minK:2.0,maxK:4.0},{rarity:'legendary',chance:45,minK:3.0,maxK:5.0},{rarity:'emerald',chance:15,minK:5.0,maxK:20.0}],'premium','КОРОЛЬ','','gold'),
- buildShopCase('ИМПЕРАТОРСКИЙ',2000000,[{rarity:'legendary',chance:90,minK:2.0,maxK:4.0},{rarity:'emerald',chance:10,minK:5.0,maxK:20.0}],'legend','ИМПЕРАТОР','red','red'),
- buildShopCase('ЛЕГЕНДАРНЫЙ PRO',3000000,[{rarity:'legendary',chance:88,minK:2.0,maxK:4.0},{rarity:'emerald',chance:12,minK:5.0,maxK:20.0}],'legend','PRO','red','red'),
- buildShopCase('МИФИЧЕСКИЙ',5000000,[{rarity:'legendary',chance:85,minK:2.0,maxK:4.0},{rarity:'emerald',chance:15,minK:5.0,maxK:25.0}],'purple','МИФ','purple','purple'),
- buildShopCase('КЕЙС ДЕМИУРГА',7500000,[{rarity:'legendary',chance:80,minK:2.0,maxK:4.0},{rarity:'emerald',chance:20,minK:5.0,maxK:25.0}],'purple','ДЕМИУРГ','purple','purple'),
- buildShopCase('КЕЙС АБСОЛЮТ',10000000,[{rarity:'legendary',chance:75,minK:2.0,maxK:4.0},{rarity:'emerald',chance:25,minK:5.0,maxK:30.0}],'gold','АБСОЛЮТ','gold','gold-rich'),
- buildShopCase('БОЖЕСТВЕННЫЙ',15000000,[{rarity:'legendary',chance:70,minK:2.0,maxK:4.0},{rarity:'emerald',chance:30,minK:5.0,maxK:30.0}],'gold','БОГ','gold','gold-rich'),
- buildShopCase('КОСМИЧЕСКИЙ',20000000,[{rarity:'legendary',chance:65,minK:2.0,maxK:4.0},{rarity:'emerald',chance:35,minK:5.0,maxK:35.0}],'gold','КОСМОС','gold','gold-rich'),
- buildShopCase('ЧЁРНАЯ ДЫРА',30000000,[{rarity:'legendary',chance:60,minK:2.0,maxK:4.0},{rarity:'emerald',chance:40,minK:5.0,maxK:40.0}],'legend','ХОЛ','red','red'),
- buildShopCase('ВСЕЛЕННАЯ',50000000,[{rarity:'legendary',chance:50,minK:2.0,maxK:4.0},{rarity:'emerald',chance:50,minK:5.0,maxK:50.0}],'gold','УЛЬТРА','gold','gold-rich')
+ buildShopCase('СТАРТОВЫЙ',5000,[{rarity:'common',chance:40,minK:0.5,maxK:0.8},{rarity:'rare',chance:35,minK:0.8,maxK:1.2},{rarity:'epic',chance:20,minK:1.2,maxK:1.8},{rarity:'mythic',chance:5,minK:1.8,maxK:2.5}],'','СТАРТ','',''),
+ buildShopCase('БРОНЗОВЫЙ',10000,[{rarity:'common',chance:30,minK:0.5,maxK:0.8},{rarity:'rare',chance:40,minK:0.8,maxK:1.2},{rarity:'epic',chance:22,minK:1.2,maxK:1.8},{rarity:'mythic',chance:8,minK:1.8,maxK:2.5}],'','БРОНЗА','',''),
+ buildShopCase('СЕРЕБРЯНЫЙ',20000,[{rarity:'rare',chance:45,minK:0.8,maxK:1.2},{rarity:'epic',chance:35,minK:1.2,maxK:1.8},{rarity:'mythic',chance:15,minK:1.8,maxK:2.5},{rarity:'legendary',chance:5,minK:3,maxK:5}],'','СЕРЕБРО','',''),
+ buildShopCase('ЗОЛОТОЙ',50000,[{rarity:'rare',chance:30,minK:0.8,maxK:1.2},{rarity:'epic',chance:40,minK:1.2,maxK:1.8},{rarity:'mythic',chance:22,minK:1.8,maxK:2.5},{rarity:'legendary',chance:6,minK:3,maxK:5},{rarity:'emerald',chance:2,minK:8,maxK:15}],'gold','ЗОЛОТО','gold','gold'),
+ buildShopCase('ПЛАТИНОВЫЙ',100000,[{rarity:'epic',chance:45,minK:1.2,maxK:1.8},{rarity:'mythic',chance:38,minK:1.8,maxK:2.5},{rarity:'legendary',chance:14,minK:3,maxK:5},{rarity:'emerald',chance:3,minK:8,maxK:15}],'premium','ПЛАТИНА','','gold'),
+ buildShopCase('АЛМАЗНЫЙ',200000,[{rarity:'epic',chance:35,minK:1.2,maxK:1.8},{rarity:'mythic',chance:42,minK:1.8,maxK:2.5},{rarity:'legendary',chance:18,minK:3,maxK:5},{rarity:'emerald',chance:5,minK:8,maxK:15}],'premium','АЛМАЗ','','gold'),
+ buildShopCase('РУБИНОВЫЙ',400000,[{rarity:'epic',chance:25,minK:1.2,maxK:1.8},{rarity:'mythic',chance:45,minK:1.8,maxK:2.5},{rarity:'legendary',chance:25,minK:3,maxK:5},{rarity:'emerald',chance:5,minK:8,maxK:15}],'legend','РУБИН','red','red'),
+ buildShopCase('ИЗУМРУДНЫЙ',700000,[{rarity:'mythic',chance:50,minK:1.8,maxK:2.5},{rarity:'legendary',chance:38,minK:3,maxK:5},{rarity:'emerald',chance:12,minK:8,maxK:15}],'','ИЗУМРУД','',''),
+ buildShopCase('САПФИРОВЫЙ',1000000,[{rarity:'mythic',chance:45,minK:1.8,maxK:2.5},{rarity:'legendary',chance:42,minK:3,maxK:5},{rarity:'emerald',chance:13,minK:8,maxK:15}],'','САПФИР','',''),
+ buildShopCase('КОРОЛЕВСКИЙ',1500000,[{rarity:'mythic',chance:40,minK:1.8,maxK:2.5},{rarity:'legendary',chance:45,minK:3,maxK:5},{rarity:'emerald',chance:15,minK:8,maxK:15}],'premium','КОРОЛЬ','','gold'),
+ buildShopCase('ИМПЕРАТОРСКИЙ',2000000,[{rarity:'legendary',chance:90,minK:3,maxK:5},{rarity:'emerald',chance:10,minK:8,maxK:15}],'legend','ИМПЕРАТОР','red','red'),
+ buildShopCase('ЛЕГЕНДАРНЫЙ PRO',3000000,[{rarity:'legendary',chance:88,minK:3,maxK:5},{rarity:'emerald',chance:12,minK:8,maxK:15}],'legend','PRO','red','red'),
+ buildShopCase('МИФИЧЕСКИЙ',5000000,[{rarity:'legendary',chance:85,minK:3,maxK:5},{rarity:'emerald',chance:15,minK:8,maxK:15}],'purple','МИФ','purple','purple'),
+ buildShopCase('КЕЙС ДЕМИУРГА',7500000,[{rarity:'legendary',chance:80,minK:3,maxK:5},{rarity:'emerald',chance:20,minK:8,maxK:15}],'purple','ДЕМИУРГ','purple','purple'),
+ buildShopCase('КЕЙС АБСОЛЮТ',10000000,[{rarity:'legendary',chance:75,minK:3,maxK:5},{rarity:'emerald',chance:25,minK:8,maxK:15}],'gold','АБСОЛЮТ','gold','gold-rich'),
+ buildShopCase('БОЖЕСТВЕННЫЙ',15000000,[{rarity:'legendary',chance:70,minK:3,maxK:5},{rarity:'emerald',chance:30,minK:8,maxK:15}],'gold','БОГ','gold','gold-rich'),
+ buildShopCase('КОСМИЧЕСКИЙ',20000000,[{rarity:'legendary',chance:65,minK:3,maxK:5},{rarity:'emerald',chance:35,minK:8,maxK:15}],'gold','КОСМОС','gold','gold-rich'),
+ buildShopCase('ЧЁРНАЯ ДЫРА',30000000,[{rarity:'legendary',chance:60,minK:3,maxK:5},{rarity:'emerald',chance:40,minK:8,maxK:15}],'legend','ХОЛ','red','red'),
+ buildShopCase('ВСЕЛЕННАЯ',50000000,[{rarity:'legendary',chance:50,minK:3,maxK:5},{rarity:'emerald',chance:50,minK:8,maxK:15}],'gold','УЛЬТРА','gold','gold-rich')
 ];
 
 var caseInventory=[];
@@ -1328,9 +1225,6 @@ var SFX={
  wheelTick:function(){this.noise(0.02,0.2,3000,5);this.tone(1400,0.02,'square',0.05)},
  mineSafe:function(){this.tone(880,0.1,'sine',0.2);this.tone(1320,0.15,'sine',0.18,0.06)},
  mineBomb:function(){this.tone(120,0.4,'sawtooth',0.3,0,40);this.noise(0.5,0.4,600,2,0,80)},
- crashTick:function(m){var f=400+m*30;this.tone(f,0.04,'square',0.06)},
- crashWin:function(){var a=[659,784,988,1318];for(var i=0;i<a.length;i++)this.tone(a[i],0.3,'triangle',0.22,i*0.08)},
- crashLose:function(){this.tone(300,0.5,'sawtooth',0.25,0,60)},
  coinFlipSpin:function(){this.noise(1.2,0.2,1500,2,0,3000);this.tone(700,1.0,'sine',0.1,0,1200)},
  coinFlipWin:function(){this.tone(880,0.15,'triangle',0.25);this.tone(1320,0.3,'triangle',0.22,0.1);this.tone(1760,0.4,'sine',0.15,0.2)},
  coinFlipLose:function(){this.tone(400,0.3,'sawtooth',0.2,0,150)},
@@ -1344,7 +1238,7 @@ var SFX={
   else if(r==='epic'){var b=[440,554,659,880];for(var i=0;i<b.length;i++)this.tone(b[i],0.35,'sawtooth',0.14,i*0.08);this.tone(110,0.5,'sine',0.35)}
   else if(r==='mythic'){this.tone(100,0.6,'sine',0.38);var c=[494,622,740,988];for(var i=0;i<c.length;i++)this.tone(c[i],0.4,'triangle',0.18,i*0.08);this.tone(1480,0.5,'sine',0.1,0.35)}
   else if(r==='emerald'){this.tone(200,0.5,'sine',0.3);var d=[392,494,587,784];for(var i=0;i<d.length;i++)this.tone(d[i],0.35,'triangle',0.2,i*0.08);this.tone(1174,0.4,'sine',0.12,0.3)}
-  else{this.tone(90,0.7,'sine',0.4);var e=[523,659,784,1046,1318,1568];for(var i=0;i<e.length;i++)this.tone(e[i],0.45,'triangle',0.2,i*0.09);this.tone(1046,0.5,'sine',0.08,0.3)}
+  else{this.tone(90,0.7,'sine',0.4);var e=[523,659,784,1046,1318,1568];for(var i=0;i<e.length;i++)this.tone(e[i],0.45,'triangle',0.2,i*0.09)}
  },
  pet:function(){this.tone(800,0.1,'sine',0.15);this.tone(1000,0.12,'sine',0.12,0.08);this.tone(1200,0.15,'sine',0.1,0.16)}
 };
@@ -1372,10 +1266,7 @@ var Music={
  schedule:function(){
   var ctx=SFX.ctx;if(!ctx)return;
   var spb=0.32;
-  while(this.nextTime<ctx.currentTime+0.45){
-   this.playStep(this.step,this.nextTime,spb);
-   this.nextTime+=spb;this.step++;
-  }
+  while(this.nextTime<ctx.currentTime+0.45){this.playStep(this.step,this.nextTime,spb);this.nextTime+=spb;this.step++;}
  },
  playStep:function(s,t,spb){
   var m=this.MELODY[s%this.MELODY.length];
@@ -1394,8 +1285,7 @@ var Music={
   g.gain.exponentialRampToValueAtTime(0.0001,t+1.15);
   o1.connect(g);o2.connect(g2);g2.connect(g);
   g.connect(this.gain);g.connect(this.delay);
-  o1.start(t);o2.start(t);
-  o1.stop(t+1.25);o2.stop(t+1.25);
+  o1.start(t);o2.start(t);o1.stop(t+1.25);o2.stop(t+1.25);
  },
  pad:function(freqs,t,dur){
   var ctx=SFX.ctx;
@@ -1430,7 +1320,6 @@ var Music={
 
 var $=function(id){return document.getElementById(id)};
 
-/* ====== КРАСИВОЕ СОКРАЩЕНИЕ ЧИСЕЛ: 1.5K, 2.3M, 1.2B ====== */
 function fmtShort(n){
  if(typeof n!=='number'||!isFinite(n))n=0;
  var neg=n<0?'-':'';
@@ -1458,14 +1347,10 @@ var el={
  dailyTimer:$('dailyTimer'),btnDaily:$('btnDaily'),dailyBadge:$('dailyBadge'),
  casinoBadge:$('casinoBadge'),casinoTitle:$('casinoTitle'),btnCasinoBack:$('btnCasinoBack'),
  casinoMenuScreen:$('casinoMenuScreen'),casinoMinesScreen:$('casinoMinesScreen'),
- casinoCrashScreen:$('casinoCrashScreen'),casinoCoinflipScreen:$('casinoCoinflipScreen'),
- casinoSlotsScreen:$('casinoSlotsScreen'),
+ casinoCoinflipScreen:$('casinoCoinflipScreen'),casinoSlotsScreen:$('casinoSlotsScreen'),
  minesGrid:$('minesGrid'),minesMsg:$('minesMsg'),minesBetInput:$('minesBetInput'),
  btnMinesStart:$('btnMinesStart'),btnMinesCash:$('btnMinesCash'),
  minesBombsLabel:$('minesBombsLabel'),minesMultLabel:$('minesMultLabel'),minesWinLabel:$('minesWinLabel'),
- crashGraph:$('crashGraph'),crashLine:$('crashLine'),crashArea:$('crashArea'),crashMult:$('crashMult'),
- crashHistory:$('crashHistory'),crashBetInput:$('crashBetInput'),crashMsg:$('crashMsg'),
- btnCrashStart:$('btnCrashStart'),btnCrashCash:$('btnCrashCash'),
  coin:$('coin'),coinflipBetInput:$('coinflipBetInput'),coinflipMsg:$('coinflipMsg'),
  btnCoinflipStart:$('btnCoinflipStart'),
  reel0:$('reel0'),reel1:$('reel1'),reel2:$('reel2'),
@@ -1481,8 +1366,8 @@ var clickMultiplier=1;
 var lastDaily=0;
 var lastWheel=0;
 var CLICK_BASE=0.5;
-var DAILY_MIN=10000;
-var DAILY_MAX=20000;
+var DAILY_MIN=1000;
+var DAILY_MAX=3000;
 var DAILY_COOLDOWN=24*60*60*1000;
 var WHEEL_COOLDOWN=24*60*60*1000;
 var pityCounter=0;
@@ -1497,23 +1382,18 @@ var PET_HAPPY_DURATION=3000;
 var PET_SAD_THRESHOLD=40;
 var PET_GIFT_COOLDOWN=24*60*60*1000;
 var PET_FIRE_DELAY=24*60*60*1000;
-var PET_NAME_CHANGE_COST=100000;
-var PET_RESTORE_COST=500000;
+var PET_NAME_CHANGE_COST=50000;
+var PET_RESTORE_COST=250000;
 var PET_HUNGER_PER_HOUR=100/24;
 
 var PET_NAMES=['Барсик','Мурзик','Рекс','Бублик','Пушок','Снежок','Тимка','Лео','Макс','Симба','Рыжик','Васька','Дымка','Клёпа','Зефир'];
 
 function createPet(){
  if(pet)return;
- pet={
-  name:PET_NAMES[Math.floor(Math.random()*PET_NAMES.length)],
-  hunger:100,lastFeed:Date.now(),createdAt:Date.now(),adoptedAt:Date.now(),
-  hasFire:false,fireShownAt:0,lastGift:0,totalFed:0
- };
+ pet={name:PET_NAMES[Math.floor(Math.random()*PET_NAMES.length)],hunger:100,lastFeed:Date.now(),createdAt:Date.now(),adoptedAt:Date.now(),hasFire:false,fireShownAt:0,lastGift:0,totalFed:0};
  petLost=false;petLostReason='';
  petFireAppearAt=Date.now()+PET_FIRE_DELAY;
- saveGame();renderPetPanel();
- SFX.pet();spawnParticles('#ff9f43',60);
+ saveGame();renderPetPanel();SFX.pet();spawnParticles('#ff9f43',60);
 }
 function losePet(reason){petLost=true;petLostReason=reason;pet=null;petFireAppearAt=0;saveGame();renderPetPanel();}
 function restorePet(){
@@ -1581,7 +1461,6 @@ function renderPetPanel(){
  var hungerColor=hungerPct>60?'#6ee79a':hungerPct>30?'#ffd740':'#ff5566';
  var giftReady=pet.hasFire&&Date.now()-pet.lastGift>=PET_GIFT_COOLDOWN;
  var canFeed=pet.hunger<100;
- var hoursLeft=(pet.hunger/100)*24;
  var now=Date.now();
  var isHappyNow=now<petHappyUntil;
  var isSad=(pet.hunger<PET_SAD_THRESHOLD)&&!isHappyNow;
@@ -1629,9 +1508,7 @@ function renderFoodInventory(){
    +'<button class="btn-feed-pet" data-food="'+food.id+'"'+(canFeed?'':' disabled')+'>Кормить</button>';
   grid.appendChild(card);
  });
- grid.querySelectorAll('.btn-feed-pet').forEach(function(btn){
-  btn.addEventListener('click',function(){feedPet(btn.dataset.food)});
- });
+ grid.querySelectorAll('.btn-feed-pet').forEach(function(btn){btn.addEventListener('click',function(){feedPet(btn.dataset.food)});});
 }
 function openPetFoodModal(){
  if(!pet||petLost)return;SFX.click();
@@ -1658,9 +1535,7 @@ function openPetFoodModal(){
     +'<button class="btn-feed-pet" data-food="'+food.id+'"'+(canFeed?'':' disabled')+'>Кормить</button>';
    grid.appendChild(card);
   });
-  grid.querySelectorAll('.btn-feed-pet').forEach(function(btn){
-   btn.addEventListener('click',function(){feedPet(btn.dataset.food);modal.remove();});
-  });
+  grid.querySelectorAll('.btn-feed-pet').forEach(function(btn){btn.addEventListener('click',function(){feedPet(btn.dataset.food);modal.remove();});});
  }
  var closeBtn=modal.querySelector('.modal-close-x');if(closeBtn)closeBtn.addEventListener('click',function(){modal.remove()});
  modal.addEventListener('click',function(e){if(e.target===modal)modal.remove()});
@@ -1708,8 +1583,6 @@ function renderFoodGrid(){
 }
 
 var MINES_GRID=25,MINES_BOMBS=3,minesGame=null;
-var crashRaf=null,CRASH_GROWTH=0.35,CRASH_INSTANT_BUST=0.10,CRASH_MIN_MULT=15,CRASH_MAX_MULT=100;
-var crashGame=null,crashHistory=[];
 var coinflipChoice=null,coinflipBusy=false;
 var slotsBusy=false;
 var UPGRADES=[{mult:2,price:1000},{mult:3,price:3000},{mult:5,price:10000}];
@@ -1740,7 +1613,6 @@ function saveGame(){
    selectedCase:selectedCase,itemIdCounter:itemIdCounter,clickMultiplier:clickMultiplier,
    lastDaily:lastDaily,lastWheel:lastWheel,pityCounter:pityCounter,
    minesGame:minesGame?{bombs:Array.from(minesGame.bombs),revealed:Array.from(minesGame.revealed),bet:minesGame.bet,active:minesGame.active}:null,
-   crashHistory:crashHistory.slice(0,10),
    caseInventory:caseInventory,caseInvIdCounter:caseInvIdCounter,
    pet:pet,petFoodInventory:petFoodInventory,petFireAppearAt:petFireAppearAt,
    petLost:petLost,petLostReason:petLostReason,petHappyUntil:petHappyUntil,
@@ -1772,7 +1644,6 @@ function loadGame(){
   if(typeof data.lastDaily==='number'&&isFinite(data.lastDaily))lastDaily=data.lastDaily;
   if(typeof data.lastWheel==='number'&&isFinite(data.lastWheel))lastWheel=data.lastWheel;
   if(typeof data.pityCounter==='number'&&isFinite(data.pityCounter))pityCounter=data.pityCounter;
-  if(Array.isArray(data.crashHistory))crashHistory=data.crashHistory.slice(0,10).filter(function(x){return typeof x==='number'&&isFinite(x)});
   if(Array.isArray(data.caseInventory))caseInventory=data.caseInventory.filter(function(c){return c&&typeof c==='object'&&typeof c.id==='number'});
   if(typeof data.caseInvIdCounter==='number'&&isFinite(data.caseInvIdCounter))caseInvIdCounter=data.caseInvIdCounter;
   if(data.pet&&typeof data.pet==='object'){
@@ -1863,7 +1734,7 @@ function openPanelModal(id){
  SFX.init();SFX.click();
  document.querySelectorAll('.panel-modal').forEach(function(m){m.classList.remove('active')});
  $(id).classList.add('active');
- if(id==='casinoModal'){showCasinoScreen('menu');renderMinesGrid();updateMinesUI();updateCrashUI();}
+ if(id==='casinoModal'){showCasinoScreen('menu');renderMinesGrid();updateMinesUI();}
  if(id==='shopModal'){renderShopGrid();renderFoodGrid();}
 }
 function closePanelModal(id){SFX.init();SFX.click();$(id).classList.remove('active');}
@@ -1884,17 +1755,15 @@ document.querySelectorAll('.panel-modal').forEach(function(modal){
 });
 
 function showCasinoScreen(name){
- ['casinoMenuScreen','casinoMinesScreen','casinoCrashScreen','casinoCoinflipScreen','casinoSlotsScreen'].forEach(function(id){$(id).classList.remove('active');});
+ ['casinoMenuScreen','casinoMinesScreen','casinoCoinflipScreen','casinoSlotsScreen'].forEach(function(id){$(id).classList.remove('active');});
  if(name==='menu'){el.casinoMenuScreen.classList.add('active');el.btnCasinoBack.style.display='none';el.casinoTitle.textContent='🎰 КАЗИНО';}
  else if(name==='mines'){el.casinoMinesScreen.classList.add('active');el.btnCasinoBack.style.display='flex';el.casinoTitle.textContent='💣 МИНЫ';renderMinesGrid();updateMinesUI();}
- else if(name==='crash'){el.casinoCrashScreen.classList.add('active');el.btnCasinoBack.style.display='flex';el.casinoTitle.textContent='📈 КРАШ';updateCrashUI();}
  else if(name==='coinflip'){el.casinoCoinflipScreen.classList.add('active');el.btnCasinoBack.style.display='flex';el.casinoTitle.textContent='🪙 ОРЁЛ / РЕШКА';updateCoinflipUI();}
  else if(name==='slots'){el.casinoSlotsScreen.classList.add('active');el.btnCasinoBack.style.display='flex';el.casinoTitle.textContent='🎰 СЛОТЫ';updateSlotsUI();}
 }
 el.btnCasinoBack.addEventListener('click',function(){
  SFX.init();SFX.click();
  if(minesGame&&minesGame.active)return;
- if(crashGame&&crashGame.active)return;
  if(coinflipBusy)return;
  if(slotsBusy)return;
  showCasinoScreen('menu');
@@ -2123,10 +1992,7 @@ function updateMinesUI(){
   el.minesWinLabel.textContent='$0';
  }
 }
-function setMinesMsg(text,cls){
- if(!el.minesMsg)return;
- el.minesMsg.textContent=text;el.minesMsg.className='mines-msg '+(cls||'info');
-}
+function setMinesMsg(text,cls){if(!el.minesMsg)return;el.minesMsg.textContent=text;el.minesMsg.className='mines-msg '+(cls||'info');}
 function renderMinesGrid(){
  if(!el.minesGrid)return;el.minesGrid.innerHTML='';
  for(var i=0;i<MINES_GRID;i++){
@@ -2195,119 +2061,6 @@ document.querySelectorAll('.mines-quick-btn').forEach(function(btn){
   SFX.init();SFX.click();
   var v=btn.dataset.bet;
   if(v==='max')el.minesBetInput.value=Math.floor(balance);else el.minesBetInput.value=v;
- });
-});
-
-function updateCrashUI(){
- if(!el.btnCrashStart)return;
- if(crashGame&&crashGame.active){
-  el.btnCrashStart.style.display='none';
-  el.btnCrashCash.style.display='inline-block';
-  el.crashBetInput.disabled=true;
-  document.querySelectorAll('[data-crash-bet]').forEach(function(b){b.disabled=true});
-  el.crashMult.textContent='x'+crashGame.mult.toFixed(2);
-  el.crashMult.className='crash-mult';
- }else{
-  el.btnCrashStart.style.display='inline-block';
-  el.btnCrashCash.style.display='none';
-  el.btnCrashStart.disabled=false;
-  el.crashBetInput.disabled=false;
-  document.querySelectorAll('[data-crash-bet]').forEach(function(b){b.disabled=false});
-  el.crashMult.textContent='x1.00';
-  el.crashMult.className='crash-mult';
-  el.crashLine.setAttribute('d','');el.crashArea.setAttribute('d','');
- }
- renderCrashHistory();
-}
-function renderCrashHistory(){
- if(!el.crashHistory)return;el.crashHistory.innerHTML='';
- crashHistory.slice(0,8).forEach(function(h){
-  var d=document.createElement('div');
-  d.className='crash-hist-item '+(h>=2?'high':'low');
-  d.textContent='x'+h.toFixed(2);
-  el.crashHistory.appendChild(d);
- });
-}
-function setCrashMsg(text,cls){if(!el.crashMsg)return;el.crashMsg.textContent=text;el.crashMsg.className='mines-msg '+(cls||'info');}
-function drawCrashGraph(mult,crashAt){
- if(!el.crashLine||!el.crashArea)return;
- var W=300,H=220,progress=Math.min(mult/crashAt,1),pts=40;
- var path='M 0 '+H+' ',area='M 0 '+H+' ';
- for(var i=0;i<=pts;i++){
-  var t=i/pts,tt=t*progress,x=t*W,y=H-(tt*H*0.85);
-  path+='L '+x.toFixed(1)+' '+y.toFixed(1)+' ';
-  area+='L '+x.toFixed(1)+' '+y.toFixed(1)+' ';
- }
- area+='L '+W+' '+H+' Z';
- el.crashLine.setAttribute('d',path);el.crashArea.setAttribute('d',area);
-}
-function generateCrashPoint(){
- if(Math.random()<CRASH_INSTANT_BUST)return 1.00;
- var r=Math.random();
- return +(CRASH_MIN_MULT+(CRASH_MAX_MULT-CRASH_MIN_MULT)*r).toFixed(2);
-}
-function crashStart(){
- SFX.init();
- if(crashGame&&crashGame.active)return;
- var bet=parseFloat(el.crashBetInput.value);
- if(!bet||bet<=0||!isFinite(bet)){SFX.error();setCrashMsg('Некорректная ставка','lose');return}
- if(bet>balance){SFX.error();setCrashMsg('Мало средств','lose');el.balanceBox.classList.add('shake');setTimeout(function(){el.balanceBox.classList.remove('shake')},450);return}
- balance-=bet;
- var crashAt=generateCrashPoint();
- crashGame={bet:bet,mult:1,crashAt:crashAt,active:true,cashed:false,startTime:performance.now()};
- SFX.click();
- if(crashAt<=1.00){crashGame.mult=1.00;crashCrash();updateCrashUI();updateUI();saveGame();return;}
- setCrashMsg('Множитель растёт!','info');
- updateCrashUI();updateUI();saveGame();
- var lastTickMult=1;
- function tick(){
-  if(!crashGame||!crashGame.active){crashRaf=null;return}
-  var t=(performance.now()-crashGame.startTime)/1000;
-  crashGame.mult=1+t*CRASH_GROWTH;
-  if(crashGame.mult>=crashGame.crashAt){crashGame.mult=crashGame.crashAt;crashCrash();return;}
-  el.crashMult.textContent='x'+crashGame.mult.toFixed(2);
-  drawCrashGraph(crashGame.mult,crashGame.crashAt);
-  if(Math.floor(crashGame.mult*10)>Math.floor(lastTickMult*10)){SFX.crashTick(crashGame.mult);lastTickMult=crashGame.mult;}
-  crashRaf=requestAnimationFrame(tick);
- }
- crashRaf=requestAnimationFrame(tick);
-}
-function crashCrash(){
- if(!crashGame)return;
- crashGame.active=false;
- SFX.crashLose();
- el.crashMult.textContent='x'+crashGame.mult.toFixed(2);
- el.crashMult.className='crash-mult crashed';
- setCrashMsg('💥 КРАШ на x'+crashGame.mult.toFixed(2)+'! Потеряно '+fmt(crashGame.bet),'lose');
- crashHistory.unshift(crashGame.mult);
- if(crashHistory.length>10)crashHistory.length=10;
- crashGame=null;
- if(crashRaf){cancelAnimationFrame(crashRaf);crashRaf=null}
- setTimeout(function(){updateCrashUI();updateUI();saveGame();},1600);
-}
-function crashCashout(){
- SFX.init();
- if(!crashGame||!crashGame.active)return;
- var win=crashGame.bet*crashGame.mult;
- balance+=win;stats.earned+=win;
- crashGame.active=false;crashGame.cashed=true;
- var finalMult=crashGame.mult;
- crashHistory.unshift(finalMult);
- if(crashHistory.length>10)crashHistory.length=10;
- if(crashRaf){cancelAnimationFrame(crashRaf);crashRaf=null}
- SFX.crashWin();spawnParticles('#6ee79a',70);
- el.crashMult.className='crash-mult cashed';
- setCrashMsg('✅ Забрано x'+finalMult.toFixed(2)+' = '+fmt(win)+'!','win');
- crashGame=null;
- setTimeout(function(){updateCrashUI();updateUI();saveGame();setCrashMsg('Введите ставку','info');},1500);
-}
-if(el.btnCrashStart)el.btnCrashStart.addEventListener('click',crashStart);
-if(el.btnCrashCash)el.btnCrashCash.addEventListener('click',crashCashout);
-document.querySelectorAll('[data-crash-bet]').forEach(function(btn){
- btn.addEventListener('click',function(){
-  SFX.init();SFX.click();
-  var v=btn.dataset.crashBet;
-  if(v==='max')el.crashBetInput.value=Math.floor(balance);else el.crashBetInput.value=v;
  });
 });
 
@@ -2749,7 +2502,7 @@ if(SFX.muted){$('btnMute').textContent='🔇';$('btnMute').classList.add('off');
 if(!Music.on)$('btnMusic').classList.add('off');
 el.clicksCount.textContent=clicks;
 el.clickerEarned.textContent=fmt(clickerEarned);
-applyCase();updateDailyUI();updateCasinoBadge();updateMinesUI();renderMinesGrid();updateCrashUI();updateCoinflipUI();updateSlotsUI();updateWheelUI();
+applyCase();updateDailyUI();updateCasinoBadge();updateMinesUI();renderMinesGrid();updateCoinflipUI();updateSlotsUI();updateWheelUI();
 renderCaseInventory();renderFoodInventory();renderFoodGrid();renderPetPanel();
 if(loaded)showSaveToast();
 

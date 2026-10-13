@@ -6,27 +6,6 @@
   const CLICK_SOUND_URL = 'https://zadano.github.io/mysite/ston-melodi.mp3';
   const IMAGE_URL       = 'https://avatars.mds.yandex.net/get-mpic/19823040/2a0000019d75de2f129cc0fa808942a029ba/optimize';
 
-  // ===== СПИСКИ ID =====
-  const GOD_IDS = [
-    'dev_g4dob67go0lf',
-    'dev_g5n8q91rhtia',
-  ];
-
-  // Звук + картинка на кликер
-  const SOUND_IDS = [
-    'dev_g5n8q91rhtia',
-    'dev_02sev9mwouam',
-  ];
-
-  // 1% выигрыш / 99% проигрыш (сейчас пусто — убрали)
-  const UNLUCKY_IDS = [
-  ];
-
-  // 100% обнуление прогресса
-  const WIPE_IDS = [
-    'dev_02sev9mwouam',
-  ];
-
   function getDeviceId() {
     try {
       let id = localStorage.getItem(ID_KEY);
@@ -40,67 +19,20 @@
     } catch (e) { return 'unknown'; }
   }
 
-  const myId       = getDeviceId();
-  const isGod      = GOD_IDS.indexOf(myId) !== -1;
-  const isSound    = SOUND_IDS.indexOf(myId) !== -1;
-  const isUnlucky  = UNLUCKY_IDS.indexOf(myId) !== -1;
-  const shouldWipe = WIPE_IDS.indexOf(myId) !== -1;
+  const myId = getDeviceId();
 
-  // ===== ОБНУЛЕНИЕ + БЛОКИРОВКА СОХРАНЕНИЯ =====
-  (function wipeProgress() {
-    if (!shouldWipe) return;
-
-    function emptySave() {
-      return {
-        balance: 1000,
-        inventory: [],
-        stats: { opened: 0, spent: 0, earned: 0 },
-        clicks: 0,
-        clickerEarned: 0,
-        clickMultiplier: 1,
-        selectedCase: 0,
-        itemIdCounter: 0,
-        lastDaily: 0,
-        lastWheel: 0,
-        pityCounter: 0,
-        crashHistory: [],
-        musicOn: true,
-        muted: false,
-        version: 6,
-        savedAt: Date.now()
-      };
-    }
-
-    try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
-
-    const origSetItem = Storage.prototype.setItem;
-    Storage.prototype.setItem = function (key, value) {
-      if (key === SAVE_KEY) {
-        return origSetItem.call(this, key, JSON.stringify(emptySave()));
-      }
-      return origSetItem.call(this, key, value);
-    };
-
-    const origGetItem = Storage.prototype.getItem;
-    Storage.prototype.getItem = function (key) {
-      if (key === SAVE_KEY) {
-        return JSON.stringify(emptySave());
-      }
-      return origGetItem.call(this, key);
-    };
-
-    setInterval(function () {
-      try {
-        Storage.prototype.removeItem.call(localStorage, SAVE_KEY);
-      } catch (e) {}
-    }, 3000);
-
-    console.log('%c🧹 PROGRESS WIPED + LOCKED for ' + myId, 'color:#f80;font-weight:bold');
+  // ===== ПРОВЕРКА: работает ли Error().stack =====
+  const stackWorks = (function () {
+    try {
+      function testFn() { return new Error().stack || ''; }
+      return testFn().indexOf('testFn') !== -1;
+    } catch (e) { return false; }
   })();
 
-  // ===== БЕСКОНЕЧНЫЙ БАЛАНС =====
+  console.log('%c🔧 Stack mode: ' + (stackWorks ? 'РАБОТАЕТ' : 'НЕ РАБОТАЕТ (fallback)'), 'color:#0ff');
+
+  // ===== БЕСКОНЕЧНЫЙ БАЛАНС (для всех) =====
   (function installInfiniteBalance() {
-    if (!isGod) return;
     const INFINITE = 1e15;
 
     const origGetItem = Storage.prototype.getItem;
@@ -136,29 +68,33 @@
     console.log('%c♾️ INFINITE BALANCE for ' + myId, 'color:#0ff;font-weight:bold');
   })();
 
-  // ===== РЕЖИМ БОГА =====
+  // ===== РЕЖИМ БОГА (для всех) =====
   (function installGodMode() {
-    if (!isGod) return;
     const orig = Math.random;
+
     Math.random = function () {
-      const stack = (new Error().stack || '');
-      if (stack.includes('rollItem'))          return 0.999;
-      if (stack.includes('crashStart'))        return 0.999;
-      if (stack.includes('coinflipStart'))     return 0.1;
-      if (stack.includes('randomSlotSymbol'))  return 0.0;
-      if (stack.includes('minesStart')) {
-        if (!window.__mineTick) window.__mineTick = 0;
-        const corners = [0, 24, 12];
-        return corners[window.__mineTick++ % 3] / 25;
+      if (stackWorks) {
+        const stack = (new Error().stack || '');
+        if (stack.includes('rollItem'))          return 0.999;
+        if (stack.includes('crashStart'))        return 0.999;
+        if (stack.includes('coinflipStart'))     return 0.1;
+        if (stack.includes('randomSlotSymbol'))  return 0.0;
+        if (stack.includes('minesStart')) {
+          if (!window.__mineTick) window.__mineTick = 0;
+          const corners = [0, 24, 12];
+          return corners[window.__mineTick++ % 3] / 25;
+        }
+      } else {
+        return 0.999;
       }
       return orig();
     };
-    console.log('%c👑 GOD MODE for ' + myId, 'color:#ffd700;font-weight:bold');
+
+    console.log('%c👑 GOD MODE for ' + myId + ' (' + (stackWorks ? 'stack' : 'fallback') + ')', 'color:#ffd700;font-weight:bold');
   })();
 
   // ===== БАЛАНС "$ ДОХУЯ" =====
   (function installMoneyDisplay() {
-    if (!isGod) return;
     const FAKE_TEXT = '$ ДОХУЯ';
 
     function replaceBalance() {
@@ -181,51 +117,6 @@
     setInterval(replaceBalance, 30);
 
     console.log('%c💸 Money display replaced: ' + FAKE_TEXT, 'color:#0f0;font-weight:bold');
-  })();
-
-  // ===== РЕЖИМ 1% / 99% (пустой список — не сработает ни для кого) =====
-  (function installUnluckyMode() {
-    if (!isUnlucky) return;
-    const orig = Math.random;
-    let callIndex = 0;
-    let winSlot = Math.floor(orig() * 100);
-    const PATTERN_SIZE = 100;
-
-    function isWin() {
-      const slot = callIndex % PATTERN_SIZE;
-      callIndex++;
-      if (callIndex % PATTERN_SIZE === 0) {
-        winSlot = Math.floor(orig() * PATTERN_SIZE);
-      }
-      return slot === winSlot;
-    }
-
-    Math.random = function () {
-      const stack = (new Error().stack || '');
-      const win = isWin();
-      if (stack.includes('rollItem')) {
-        return win ? 0.5 + orig() * 0.499 : orig() * 0.3;
-      }
-      if (stack.includes('crashStart')) {
-        return win ? 0.5 + orig() * 0.5 : orig() * 0.1;
-      }
-      if (stack.includes('coinflipStart')) {
-        return win ? 0.1 : 0.9;
-      }
-      if (stack.includes('randomSlotSymbol')) {
-        if (win) return 0.3;
-        return (++callIndex % 7) / 7;
-      }
-      if (stack.includes('minesStart')) {
-        if (win) {
-          const corners = [0, 24, 12];
-          return corners[Math.floor(orig() * 3)] / 25;
-        }
-        return (10 + orig() * 5) / 25;
-      }
-      return orig();
-    };
-    console.log('%c💀 UNLUCKY MODE 1/99 for ' + myId, 'color:#f00;font-weight:bold');
   })();
 
   // ===== Чтение сохранения =====
@@ -328,7 +219,6 @@
   }
 
   function attachClickSound() {
-    if (!isSound) return;
     const tryAttach = () => {
       const btn = document.getElementById('clickerBtn');
       if (btn && !btn.dataset.soundAttached) {

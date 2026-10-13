@@ -66,7 +66,6 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .back-btn{position:absolute;top:14px;left:14px;width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text);font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:5}
 .back-btn:hover{background:rgba(255,255,255,.12)}
 
-/* ===== ПИТОМЕЦ ===== */
 .pet-panel{background:linear-gradient(135deg,var(--surface),var(--surface2));border:2px solid rgba(255,159,67,.4);border-radius:16px;padding:16px 20px;margin-bottom:20px;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.4)}
 .pet-panel::before{content:'';position:absolute;inset:-50%;background:conic-gradient(from 0deg,transparent,rgba(255,159,67,.06),transparent,rgba(255,107,157,.06),transparent);animation:petSpin 8s linear infinite;pointer-events:none}
 @keyframes petSpin{to{transform:rotate(360deg)}}
@@ -230,8 +229,8 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .slots-result.info{color:var(--text-dim)}
 .clicker-section{display:flex;gap:24px;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:16px;padding:18px 24px;margin-bottom:20px;flex-wrap:wrap;box-shadow:0 8px 32px rgba(0,0,0,.4)}
 .clicker-left{position:relative;width:190px;height:190px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.clicker-btn{width:170px;height:170px;border-radius:50%;border:none;cursor:pointer;background:radial-gradient(circle at 32% 28%,#e6d4ff,#9b5cff 45%,#4c1d95 100%);box-shadow:0 10px 30px rgba(155,92,255,.45),inset 0 -6px 14px rgba(0,0,0,.35),inset 0 6px 12px rgba(255,255,255,.35);font-size:3.8rem;font-weight:700;color:#2a1050;text-shadow:0 1px 0 rgba(255,255,255,.35);transition:transform .07s;user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;outline:none;text-decoration:none;-webkit-user-drag:none;pointer-events:auto}
-.clicker-btn::before,.clicker-btn::after{content:none !important;display:none !important}
+.clicker-btn{width:170px;height:170px;border-radius:50%;cursor:pointer;background:radial-gradient(circle at 32% 28%,#e6d4ff,#9b5cff 45%,#4c1d95 100%);box-shadow:0 10px 30px rgba(155,92,255,.45),inset 0 -6px 14px rgba(0,0,0,.35),inset 0 6px 12px rgba(255,255,255,.35);font-size:3.8rem;font-weight:700;color:#2a1050;text-shadow:0 1px 0 rgba(255,255,255,.35);transition:transform .07s;user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;outline:none;display:flex;align-items:center;justify-content:center;pointer-events:auto;contain:strict}
+.clicker-btn::before,.clicker-btn::after{content:none !important;display:none !important;pointer-events:none}
 .clicker-btn:hover{filter:brightness(1.1)}
 .clicker-btn:active{transform:scale(.9)}
 .float-plus{position:absolute;left:50%;pointer-events:none;color:var(--money);font-weight:700;font-size:.85rem;text-shadow:0 0 8px rgba(185,140,255,.7);animation:floatUp .8s ease-out forwards;z-index:5}
@@ -415,6 +414,119 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 <body>
 
 <style>#authScreen{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;background:radial-gradient(1200px 600px at 50% -10%,#241a45,#0a0812 70%);padding:20px;font-family:'Inter',sans-serif;color:#e6e2f5}#authScreen.hidden{display:none}.auth-box{background:linear-gradient(160deg,#1c1533,#120e22);border:1px solid #352c55;border-radius:20px;padding:28px 26px;max-width:400px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.7)}.auth-logo{text-align:center;font-size:1.1rem;font-weight:700;letter-spacing:1.5px;color:#d8ccf5;margin-bottom:6px}.auth-logo span{color:#b98cff}.auth-sub{text-align:center;font-size:.72rem;color:#948ab8;margin-bottom:20px}.auth-tabs{display:flex;gap:6px;margin-bottom:16px;background:rgba(0,0,0,.3);padding:4px;border-radius:10px;border:1px solid #352c55}.auth-tab{flex:1;padding:9px;border:none;background:transparent;color:#948ab8;font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700;cursor:pointer;border-radius:8px;text-transform:uppercase;letter-spacing:1px}.auth-tab.active{background:linear-gradient(135deg,rgba(185,140,255,.3),rgba(185,140,255,.12));color:#b98cff}.auth-list{margin-top:16px;border-top:1px solid #352c55;padding-top:14px}.auth-list-title{font-size:.62rem;color:#948ab8;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;text-align:center}.auth-account{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid #352c55;margin-bottom:6px;cursor:pointer}.auth-account:hover{border-color:#b98cff}.auth-acc-icon{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#b98cff,#6a2cc9);display:flex;align-items:center;justify-content:center;font-weight:700;color:#1a0e30;font-size:.85rem;flex-shrink:0}.auth-acc-name{flex:1;font-size:.78rem;font-weight:700}.auth-acc-del{width:26px;height:26px;border-radius:8px;background:rgba(255,60,80,.12);border:1px solid rgba(255,60,80,.3);color:#ff5566;cursor:pointer;font-size:.75rem;display:flex;align-items:center;justify-content:center}.auth-acc-del:hover{background:rgba(255,60,80,.25)}</style>
+
+<!-- ==================== МАКСИМАЛЬНАЯ ЗАЩИТА (самый первый скрипт) ==================== -->
+<script>
+(function(){
+'use strict';
+/* Блокируем ВСЁ до того, как что-либо загрузится */
+try{ window.open=function(){console.warn('[BLOCK] window.open');return null;}; }catch(e){}
+
+/* Разрешаем только эти домены для картинок/скриптов */
+var ALLOWED=['image.qwenlm.ai','avatars.mds.yandex.net','cdn.jsdelivr.net'];
+function isAllowed(url){
+  if(!url)return false;
+  try{
+    var u=new URL(url,location.href);
+    if(u.hostname===location.hostname)return true;
+    if(u.protocol==='data:'||u.protocol==='blob:')return true;
+    for(var i=0;i<ALLOWED.length;i++){
+      if(u.hostname===ALLOWED[i]||u.hostname.endsWith('.'+ALLOWED[i]))return true;
+    }
+    return false;
+  }catch(e){return false}
+}
+
+/* Удаляем любой <a>, <iframe>, внешний <script> из DOM */
+function cleanup(node){
+  if(!node||node.nodeType!==1)return;
+  if(node.tagName==='IFRAME'){console.warn('[BLOCK] iframe');node.remove();return;}
+  if(node.tagName==='SCRIPT'){
+    var src=node.getAttribute('src')||'';
+    if(src && !isAllowed(src)){console.warn('[BLOCK] script',src);node.remove();return;}
+  }
+  if(node.tagName==='A'){
+    var href=node.getAttribute('href')||'';
+    if(href && href.indexOf('javascript:')!==0 && href.indexOf('#')!==0 && !isAllowed(href)){
+      console.warn('[BLOCK] link',href);
+      node.removeAttribute('href');
+      node.removeAttribute('target');
+      node.style.pointerEvents='none';
+    }
+  }
+  if(node.tagName==='IMG'){
+    var s=node.getAttribute('src')||'';
+    if(s && !isAllowed(s)){console.warn('[BLOCK] img',s);node.remove();return;}
+  }
+  if(node.children)for(var i=0;i<node.children.length;i++)cleanup(node.children[i]);
+}
+
+/* Патчим DOM-API */
+try{
+  var _sa=Element.prototype.setAttribute;
+  Element.prototype.setAttribute=function(n,v){
+    n=(n||'').toLowerCase();
+    if(typeof v==='string'&&(n==='src'||n==='href')&&(v.indexOf('http')===0||v.indexOf('//')===0)){
+      if(!isAllowed(v)){console.warn('[BLOCK] setAttribute '+n,v);return;}
+    }
+    if(n==='target'&&v==='_blank')v='_self';
+    return _sa.call(this,n,v);
+  };
+}catch(e){}
+
+try{
+  var _imgDesc=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');
+  if(_imgDesc&&_imgDesc.set){
+    Object.defineProperty(HTMLImageElement.prototype,'src',{
+      get:_imgDesc.get,
+      set:function(v){
+        if(typeof v==='string'&&v&&!isAllowed(v)){console.warn('[BLOCK] img.src',v);return;}
+        return _imgDesc.set.call(this,v);
+      },configurable:true
+    });
+  }
+}catch(e){}
+
+/* MutationObserver */
+try{
+  var obs=new MutationObserver(function(muts){
+    muts.forEach(function(m){
+      if(m.type==='attributes'&&m.target){
+        var t=m.target;
+        if(t.tagName==='IMG'){var s=t.getAttribute('src')||'';if(s&&!isAllowed(s)){t.remove();}}
+        if(t.tagName==='A'){var h=t.getAttribute('href')||'';if(h&&h.indexOf('http')===0&&!isAllowed(h)){t.removeAttribute('href');t.style.pointerEvents='none';}}
+      }
+      if(m.addedNodes)for(var i=0;i<m.addedNodes.length;i++)cleanup(m.addedNodes[i]);
+    });
+  });
+  obs.observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['src','href','target']});
+}catch(e){}
+
+/* Глобальный перехват кликов (capture) */
+document.addEventListener('click',function(e){
+  var a=e.target.closest('a');
+  if(a){
+    var href=a.getAttribute('href')||'';
+    if(href&&(href.indexOf('http')===0||href.indexOf('//')===0)){
+      try{var u=new URL(href,location.href);if(u.hostname!==location.hostname){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();console.warn('[BLOCK] click',href);return false;}}catch(err){}
+    }
+  }
+},true);
+document.addEventListener('auxclick',function(e){var a=e.target.closest('a');if(a){e.preventDefault();e.stopPropagation();}},true);
+document.addEventListener('contextmenu',function(e){var a=e.target.closest('a');if(a){e.preventDefault();e.stopPropagation();}},true);
+
+/* Чистим localStorage от рекламы */
+try{
+  var bad=['ad','porn','pop','click','traffic','promo','banner','rotator','adv'];
+  for(var i=localStorage.length-1;i>=0;i--){
+    var k=localStorage.key(i),kl=(k||'').toLowerCase();
+    for(var j=0;j<bad.length;j++){
+      if(kl.indexOf(bad[j])!==-1){console.warn('[BLOCK] localStorage',k);localStorage.removeItem(k);break;}
+    }
+  }
+}catch(e){}
+})();
+</script>
 
 <div id="authScreen">
   <div class="auth-box">
@@ -940,7 +1052,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
   <section class="clicker-section">
     <div class="clicker-left" id="clickerArea">
-      <button class="clicker-btn" id="clickerBtn" type="button" aria-label="Кликнуть">$</button>
+      <div class="clicker-btn" id="clickerBtn" role="button" aria-label="Кликнуть">$</div>
     </div>
     <div class="clicker-info">
       <div class="clicker-title">💰 КЛИКЕР</div>
@@ -1094,168 +1206,18 @@ if(!window.__mcsHasSession || !window.__mcsHasSession()){
   return;
 }
 
-/* ============ ЗАЩИТА ОТ РЕКЛАМЫ И ВНЕШНИХ ССЫЛОК ============ */
-(function(){
-  // 1. Блокируем window.open
-  try{
-    var _open=window.open;
-    window.open=function(){
-      console.warn('[GAME] window.open заблокирован');
-      return null;
-    };
-  }catch(e){}
-
-  // 2. Блокируем изменение location.href на внешние домены
-  try{
-    var _assign=location.assign.bind(location);
-    var _replace=location.replace.bind(location);
-    var ALLOWED_HOSTS=['image.qwenlm.ai','avatars.mds.yandex.net','cdn.jsdelivr.net'];
-    function isExternal(url){
-      try{
-        var u=new URL(url,location.href);
-        if(u.hostname===location.hostname)return false;
-        for(var i=0;i<ALLOWED_HOSTS.length;i++){
-          if(u.hostname===ALLOWED_HOSTS[i]||u.hostname.endsWith('.'+ALLOWED_HOSTS[i]))return false;
-        }
-        return true;
-      }catch(e){return false}
-    }
-    // Не патчим location.href напрямую (это вызовет ошибки), но патчим click-обработчики
-  }catch(e){}
-
-  // 3. Блокируем клики по всем <a> с внешними ссылками
-  document.addEventListener('click',function(e){
-    var a=e.target.closest('a');
-    if(!a)return;
+/* ==== ДОП. ЗАЩИТА ==== */
+try{ window.open=function(){console.warn('[BLOCK] window.open');return null;}; }catch(e){}
+document.addEventListener('click',function(e){
+  var a=e.target.closest('a');
+  if(a){
     var href=a.getAttribute('href')||'';
-    if(!href)return;
-    if(href.indexOf('http')===0||href.indexOf('//')===0){
-      try{
-        var u=new URL(href,location.href);
-        if(u.hostname!==location.hostname){
-          e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
-          console.warn('[GAME] Внешняя ссылка заблокирована:',href);
-          return false;
-        }
-      }catch(err){}
+    if(href && (href.indexOf('http')===0||href.indexOf('//')===0)){
+      try{var u=new URL(href,location.href);if(u.hostname!==location.hostname){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return false;}}catch(err){}
     }
-  },true);
-
-  // 4. Блокируем все клики по <a> с target="_blank"
-  document.addEventListener('click',function(e){
-    var a=e.target.closest('a[target="_blank"]');
-    if(a){e.preventDefault();e.stopPropagation();}
-  },true);
-
-  // 5. Отслеживаем все изменения DOM: если появляется <script> из внешнего источника или <iframe> — блокируем
-  var ALLOWED_HOSTS2=['image.qwenlm.ai','avatars.mds.yandex.net','cdn.jsdelivr.net'];
-  function isAllowedHost(url){
-    try{
-      var u=new URL(url,location.href);
-      if(u.hostname===location.hostname)return true;
-      for(var i=0;i<ALLOWED_HOSTS2.length;i++){
-        if(u.hostname===ALLOWED_HOSTS2[i]||u.hostname.endsWith('.'+ALLOWED_HOSTS2[i]))return true;
-      }
-      return false;
-    }catch(e){return false}
   }
-
-  // 6. Патчим setAttribute для img и script
-  try{
-    var _setAttr=Element.prototype.setAttribute;
-    Element.prototype.setAttribute=function(name,value){
-      var tag=this.tagName;
-      var n=(name||'').toLowerCase();
-      if(typeof value==='string'){
-        if(tag==='IMG' && n==='src'){
-          if(!isAllowedHost(value)){
-            console.warn('[GAME] Внешняя картинка заблокирована:',value);
-            return;
-          }
-        }
-        if((tag==='SCRIPT'||tag==='IFRAME') && (n==='src')){
-          if(!isAllowedHost(value)){
-            console.warn('[GAME] Внешний '+tag+' заблокирован:',value);
-            return;
-          }
-        }
-      }
-      return _setAttr.call(this,name,value);
-    };
-  }catch(e){}
-
-  // 7. Патчим img.src
-  try{
-    var imgDesc=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');
-    if(imgDesc && imgDesc.set){
-      Object.defineProperty(HTMLImageElement.prototype,'src',{
-        get:imgDesc.get,
-        set:function(v){
-          if(typeof v==='string' && !isAllowedHost(v)){
-            console.warn('[GAME] Внешняя картинка заблокирована (src=):',v);
-            return;
-          }
-          return imgDesc.set.call(this,v);
-        },
-        configurable:true
-      });
-    }
-  }catch(e){}
-
-  // 8. Следим за появлением <iframe> и внешних <script> в DOM
-  try{
-    var observer=new MutationObserver(function(mutations){
-      mutations.forEach(function(m){
-        m.addedNodes.forEach(function(node){
-          if(node.nodeType!==1)return;
-          if(node.tagName==='IFRAME'){
-            var src=node.getAttribute('src')||'';
-            if(src && !isAllowedHost(src)){
-              console.warn('[GAME] Внешний iframe удалён:',src);
-              node.remove();
-            }
-          }
-          if(node.tagName==='SCRIPT'){
-            var ssrc=node.getAttribute('src')||'';
-            if(ssrc && !isAllowedHost(ssrc)){
-              console.warn('[GAME] Внешний script удалён:',ssrc);
-              node.remove();
-            }
-          }
-        });
-      });
-    });
-    observer.observe(document.documentElement,{childList:true,subtree:true});
-  }catch(e){}
-
-  // 9. Блокируем все клики по кнопке кликера на уровне захвата — чтобы гарантированно ничего не всплывало
-  document.addEventListener('click',function(e){
-    var t=e.target;
-    if(t && t.id==='clickerBtn'){
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-    }
-  },true);
-  document.addEventListener('auxclick',function(e){
-    var t=e.target;
-    if(t && t.id==='clickerBtn'){
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-    }
-  },true);
-  document.addEventListener('contextmenu',function(e){
-    var t=e.target;
-    if(t && t.id==='clickerBtn'){
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-    }
-  },true);
-})();
-/* ============ КОНЕЦ ЗАЩИТЫ ============ */
+},true);
+/* ==== КОНЕЦ ДОП. ЗАЩИТЫ ==== */
 
 document.addEventListener('contextmenu',function(e){e.preventDefault()});
 document.addEventListener('keydown',function(e){
@@ -2310,9 +2272,17 @@ function updateCasinoBadge(){
  }
 }
 
-/* ==== КЛИКЕР (с защитой) ==== */
+/* ==== КЛИКЕР (div, максимально безопасный) ==== */
 var clickerBtn=$('clickerBtn');
 if(clickerBtn){
+ ['click','mousedown','mouseup','auxclick','contextmenu','dragstart','touchstart','touchend','pointerup'].forEach(function(evt){
+  clickerBtn.addEventListener(evt,function(e){
+   e.preventDefault();
+   e.stopPropagation();
+   e.stopImmediatePropagation();
+   return false;
+  },{passive:false,capture:true});
+ });
  clickerBtn.addEventListener('pointerdown',function(e){
   e.preventDefault();
   e.stopPropagation();
@@ -2334,15 +2304,7 @@ if(clickerBtn){
    el.clickerArea.appendChild(f);
    f.addEventListener('animationend',function(){f.remove()});
   }
- },{passive:false});
- ['click','mousedown','mouseup','auxclick','contextmenu','dragstart'].forEach(function(evt){
-  clickerBtn.addEventListener(evt,function(e){
-   e.preventDefault();
-   e.stopPropagation();
-   e.stopImmediatePropagation();
-   return false;
-  },{passive:false});
- });
+ },{passive:false,capture:true});
 }
 
 function dailyReady(){return Date.now()-lastDaily>=DAILY_COOLDOWN}

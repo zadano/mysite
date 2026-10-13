@@ -321,10 +321,25 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .inv-card.rarity-epic{border-color:rgba(255,112,67,.3)}.inv-card.rarity-epic::before{background:var(--epic)}
 .inv-card.rarity-mythic{border-color:rgba(233,53,255,.35)}.inv-card.rarity-mythic::before{background:var(--mythic)}
 .inv-card.rarity-legendary{border-color:rgba(255,215,64,.4)}.inv-card.rarity-legendary::before{background:var(--legendary)}
-.inv-card.rarity-emerald{border:2px solid #2ecc71;box-shadow:0 0 14px rgba(46,204,113,.45),inset 0 0 18px rgba(46,204,113,.12)}
+.inv-card.rarity-emerald{border:2px solid #2ecc71;box-shadow:0 0 14px rgba(46,204,113,.45),inset 0 0 18px rgba(46,204,113,.12);position:relative}
 .inv-card.rarity-emerald::before{background:var(--emerald)}
 .inv-card.rarity-emerald:hover{box-shadow:0 0 22px rgba(46,204,113,.7),inset 0 0 22px rgba(46,204,113,.18)}
 .inv-card.rarity-emerald .item-rarity{text-shadow:0 0 8px rgba(46,204,113,.7)}
+.inv-card.rarity-emerald::after{
+ content:'';
+ position:absolute;
+ inset:-2px;
+ border-radius:12px;
+ background:linear-gradient(45deg,#2ecc71,#6ee79a,#2ecc71,#0d2417);
+ z-index:-1;
+ opacity:.6;
+ animation:emeraldPulse 2s ease-in-out infinite;
+ filter:blur(8px);
+}
+@keyframes emeraldPulse{0%,100%{opacity:.4}50%{opacity:.9}}
+.inv-card.rarity-emerald .item-name{
+ text-shadow:0 0 8px rgba(46,204,113,.9),0 0 16px rgba(46,204,113,.5);
+}
 .inv-card.case-card{border-color:rgba(185,140,255,.4)}
 .inv-card.case-card::before{background:linear-gradient(90deg,#b98cff,#6a2cc9)}
 .item-img-wrap{width:100%;height:92px;display:flex;align-items:center;justify-content:center;border-radius:8px}
@@ -415,12 +430,10 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 
 <style>#authScreen{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;background:radial-gradient(1200px 600px at 50% -10%,#241a45,#0a0812 70%);padding:20px;font-family:'Inter',sans-serif;color:#e6e2f5}#authScreen.hidden{display:none}.auth-box{background:linear-gradient(160deg,#1c1533,#120e22);border:1px solid #352c55;border-radius:20px;padding:28px 26px;max-width:400px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.7)}.auth-logo{text-align:center;font-size:1.1rem;font-weight:700;letter-spacing:1.5px;color:#d8ccf5;margin-bottom:6px}.auth-logo span{color:#b98cff}.auth-sub{text-align:center;font-size:.72rem;color:#948ab8;margin-bottom:20px}.auth-tabs{display:flex;gap:6px;margin-bottom:16px;background:rgba(0,0,0,.3);padding:4px;border-radius:10px;border:1px solid #352c55}.auth-tab{flex:1;padding:9px;border:none;background:transparent;color:#948ab8;font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700;cursor:pointer;border-radius:8px;text-transform:uppercase;letter-spacing:1px}.auth-tab.active{background:linear-gradient(135deg,rgba(185,140,255,.3),rgba(185,140,255,.12));color:#b98cff}.auth-list{margin-top:16px;border-top:1px solid #352c55;padding-top:14px}.auth-list-title{font-size:.62rem;color:#948ab8;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;text-align:center}.auth-account{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid #352c55;margin-bottom:6px;cursor:pointer}.auth-account:hover{border-color:#b98cff}.auth-acc-icon{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#b98cff,#6a2cc9);display:flex;align-items:center;justify-content:center;font-weight:700;color:#1a0e30;font-size:.85rem;flex-shrink:0}.auth-acc-name{flex:1;font-size:.78rem;font-weight:700}.auth-acc-del{width:26px;height:26px;border-radius:8px;background:rgba(255,60,80,.12);border:1px solid rgba(255,60,80,.3);color:#ff5566;cursor:pointer;font-size:.75rem;display:flex;align-items:center;justify-content:center}.auth-acc-del:hover{background:rgba(255,60,80,.25)}</style>
 
-<!-- ==================== МАКСИМАЛЬНАЯ ЗАЩИТА (самый первый скрипт) ==================== -->
 <script>
 (function(){
 'use strict';
-try{ window.open=function(){console.warn('[BLOCK] window.open');return null;}; }catch(e){}
-
+try{ window.open=function(){return null;}; }catch(e){}
 var ALLOWED=['image.qwenlm.ai','avatars.mds.yandex.net','cdn.jsdelivr.net'];
 function isAllowed(url){
   if(!url)return false;
@@ -434,7 +447,6 @@ function isAllowed(url){
     return false;
   }catch(e){return false}
 }
-
 function cleanup(node){
   if(!node||node.nodeType!==1)return;
   if(node.tagName==='IFRAME'){node.remove();return;}
@@ -445,9 +457,7 @@ function cleanup(node){
   if(node.tagName==='A'){
     var href=node.getAttribute('href')||'';
     if(href && href.indexOf('javascript:')!==0 && href.indexOf('#')!==0 && !isAllowed(href)){
-      node.removeAttribute('href');
-      node.removeAttribute('target');
-      node.style.pointerEvents='none';
+      node.removeAttribute('href');node.removeAttribute('target');node.style.pointerEvents='none';
     }
   }
   if(node.tagName==='IMG'){
@@ -456,7 +466,6 @@ function cleanup(node){
   }
   if(node.children)for(var i=0;i<node.children.length;i++)cleanup(node.children[i]);
 }
-
 try{
   var _sa=Element.prototype.setAttribute;
   Element.prototype.setAttribute=function(n,v){
@@ -468,7 +477,6 @@ try{
     return _sa.call(this,n,v);
   };
 }catch(e){}
-
 try{
   var _imgDesc=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');
   if(_imgDesc&&_imgDesc.set){
@@ -481,7 +489,6 @@ try{
     });
   }
 }catch(e){}
-
 try{
   var obs=new MutationObserver(function(muts){
     muts.forEach(function(m){
@@ -495,7 +502,6 @@ try{
   });
   obs.observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['src','href','target']});
 }catch(e){}
-
 document.addEventListener('click',function(e){
   var a=e.target.closest('a');
   if(a){
@@ -507,14 +513,11 @@ document.addEventListener('click',function(e){
 },true);
 document.addEventListener('auxclick',function(e){var a=e.target.closest('a');if(a){e.preventDefault();e.stopPropagation();}},true);
 document.addEventListener('contextmenu',function(e){var a=e.target.closest('a');if(a){e.preventDefault();e.stopPropagation();}},true);
-
 try{
   var bad=['ad','porn','pop','click','traffic','promo','banner','rotator','adv'];
   for(var i=localStorage.length-1;i>=0;i--){
     var k=localStorage.key(i),kl=(k||'').toLowerCase();
-    for(var j=0;j<bad.length;j++){
-      if(kl.indexOf(bad[j])!==-1){localStorage.removeItem(k);break;}
-    }
+    for(var j=0;j<bad.length;j++){if(kl.indexOf(bad[j])!==-1){localStorage.removeItem(k);break;}}
   }
 }catch(e){}
 })();
@@ -549,20 +552,16 @@ try{
   </div>
 </div>
 
-<!-- ==================== НАДЁЖНОЕ СОХРАНЕНИЕ — УСТАНОВКА ХУКА СРАЗУ ==================== -->
 <script>
 (function(){
 'use strict';
-/* Ставим хук на localStorage ДО загрузки игрового скрипта */
 try{
   var SAVE_KEY='military_case_sim_save_v6';
   var SAVE_PREFIX='mcs_save_v1_';
   var SESSION_KEY='mcs_session_v1';
   var _origSet=localStorage.setItem.bind(localStorage);
-
   localStorage.setItem=function(k,v){
     try{ _origSet(k,v); }catch(e){ return; }
-    // Автоматически дублируем ключи игры
     if(k===SAVE_KEY){
       var sess=null;
       try{ sess=localStorage.getItem(SESSION_KEY); }catch(e){}
@@ -723,7 +722,6 @@ function injectUserBox(){
 }
 function installSaveKeyHook(){
   var session=getSession();if(!session)return;
-  // Загружаем сохранение аккаунта в оба ключа
   try{
     var userSave=localStorage.getItem(SAVE_PREFIX+session);
     if(userSave){
@@ -818,7 +816,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         <div class="panel-modal-title gold">🎁 ЕЖЕДНЕВНЫЙ БОНУС</div>
         <div class="panel-modal-timer" id="dailyTimer">Готово!</div>
       </div>
-      <div class="panel-modal-desc">$500 + бесплатный предмет из «Арсенала» раз в 24 часа</div>
+      <div class="panel-modal-desc">$10,000–$20,000 + бесплатный предмет из «Арсенала» раз в 24 часа</div>
       <button class="btn-daily" id="btnDaily" style="width:100%;padding:12px;border:none;border-radius:12px;font-size:.85rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#ffd740,#c9a227);color:#241a00;text-transform:uppercase;letter-spacing:2px;transition:all .25s">Забрать</button>
     </div>
     <button class="modal-close-x" data-close="dailyModal">✕</button>
@@ -1233,7 +1231,9 @@ var DRINKS={
  compote:B+'1b5bbbc83-4eb2-4e1b-88b8-a5cfe1d3f3ed.png',
  cola:B+'1070744d0-f791-4b8e-8222-51fd97865621.png',
  kvass:B+'163d4a4b0-9ca6-409c-8003-9d7f56169754.png',
- chekushka:B+'1941f0033-4f3a-4fd9-872a-a0f11a6fddce.png'
+ chekushka:B+'1941f0033-4f3a-4fd9-872a-a0f11a6fddce.png',
+ baltika:'https://avatars.mds.yandex.net/i?id=da65d23873d99bfc873d47ce3f6d2ede39dba674-4580514-images-thumbs&n=13',
+ tea:'https://avatars.mds.yandex.net/i?id=f920164e96e656af5198e7ea60e21731329649ca-11423820-images-thumbs&n=13'
 };
 
 var PET_IMG_HAPPY='https://avatars.mds.yandex.net/i?id=0c80a9bda1b7afcd4ad05ee343904880e905e1aa-9386274-images-thumbs&n=13';
@@ -1241,34 +1241,44 @@ var PET_IMG_SAD='https://avatars.mds.yandex.net/i?id=0c80a9bda1b7afcd4ad05ee3439
 var PET_IMG=PET_IMG_HAPPY;
 
 var ITEMS1=[
- {name:'Вода «Кристальная»',img:DRINKS.water,rarity:'common',chance:27,minP:131000,maxP:141000},
- {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare',chance:28,minP:131000,maxP:151000},
- {name:'Кока-Кола «Классик»',img:DRINKS.cola,rarity:'epic',chance:25,minP:141000,maxP:171000},
- {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:15,minP:151000,maxP:191000},
- {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:5,minP:181000,maxP:201000}
+ {name:'Вода «Кристальная»',img:DRINKS.water,rarity:'common',chance:20,minP:131000,maxP:141000},
+ {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare',chance:25,minP:131000,maxP:151000},
+ {name:'Кока-Кола «Классик»',img:DRINKS.cola,rarity:'epic',chance:22,minP:141000,maxP:171000},
+ {name:'Чай «Индийский»',img:DRINKS.tea,rarity:'mythic',chance:18,minP:161000,maxP:181000},
+ {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:10,minP:171000,maxP:191000},
+ {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:5,minP:181000,maxP:201000},
+ {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:5,minP:450000,maxP:550000}
 ];
 
 var ITEMS2=[
- {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare',chance:20,minP:134000,maxP:154000},
- {name:'Кока-Кола «Классик»',img:DRINKS.cola,rarity:'epic',chance:35,minP:144000,maxP:174000},
- {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:25,minP:154000,maxP:194000},
- {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:20,minP:184000,maxP:214000}
+ {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare',chance:12,minP:134000,maxP:154000},
+ {name:'Кока-Кола «Классик»',img:DRINKS.cola,rarity:'epic',chance:28,minP:144000,maxP:174000},
+ {name:'Чай «Индийский»',img:DRINKS.tea,rarity:'mythic',chance:18,minP:164000,maxP:184000},
+ {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:20,minP:174000,maxP:194000},
+ {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:20,minP:184000,maxP:214000},
+ {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:12,minP:500000,maxP:600000}
 ];
 
 var ITEMS3=[
- {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare',chance:15,minP:136500,maxP:156500},
- {name:'Кока-Кола «Классик»',img:DRINKS.cola,rarity:'epic',chance:35,minP:146500,maxP:176500},
- {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:25,minP:156500,maxP:196500},
- {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:25,minP:186500,maxP:216500}
+ {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare',chance:12,minP:136500,maxP:156500},
+ {name:'Кока-Кола «Классик»',img:DRINKS.cola,rarity:'epic',chance:28,minP:146500,maxP:176500},
+ {name:'Чай «Индийский»',img:DRINKS.tea,rarity:'mythic',chance:18,minP:166500,maxP:186500},
+ {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:22,minP:176500,maxP:196500},
+ {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:25,minP:186500,maxP:216500},
+ {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:5,minP:550000,maxP:700000}
 ];
 
 var ITEMS4=[
- {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:35,minP:146000,maxP:186000},
- {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:65,minP:166000,maxP:226000}
+ {name:'Чай «Индийский»',img:DRINKS.tea,rarity:'mythic',chance:25,minP:166000,maxP:196000},
+ {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:20,minP:176000,maxP:206000},
+ {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:50,minP:176000,maxP:236000},
+ {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:5,minP:600000,maxP:800000}
 ];
 
 var ITEMS5=[
- {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:100,minP:195000,maxP:245000}
+ {name:'Чай «Индийский»',img:DRINKS.tea,rarity:'mythic',chance:15,minP:186000,maxP:226000},
+ {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:50,minP:195000,maxP:245000},
+ {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:35,minP:700000,maxP:1000000}
 ];
 
 var CASES=[
@@ -1319,8 +1329,10 @@ var SHOP_ITEMS_POOL=[
  {name:'Вода «Кристальная»',img:DRINKS.water,rarity:'common'},
  {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare'},
  {name:'Кока-Кола «Классик»',img:DRINKS.cola,rarity:'epic'},
+ {name:'Чай «Индийский»',img:DRINKS.tea,rarity:'mythic'},
  {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic'},
- {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary'}
+ {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary'},
+ {name:'Балтика',img:DRINKS.baltika,rarity:'emerald'}
 ];
 
 function buildShopCase(name,price,composition,style,tag,tagClass,btn){
@@ -1342,21 +1354,21 @@ var SHOP_CASES=[
  buildShopCase('БРОНЗОВЫЙ КЕЙС',550000,[{rarity:'common',chance:30,minOff:20000,maxOff:40000},{rarity:'rare',chance:40,minOff:25000,maxOff:40000},{rarity:'epic',chance:22,minOff:30000,maxOff:40000},{rarity:'mythic',chance:8,minOff:35000,maxOff:40000}],'','БРОНЗА','',''),
  buildShopCase('СЕРЕБРЯНЫЙ КЕЙС',600000,[{rarity:'rare',chance:45,minOff:20000,maxOff:40000},{rarity:'epic',chance:35,minOff:25000,maxOff:40000},{rarity:'mythic',chance:15,minOff:30000,maxOff:40000},{rarity:'legendary',chance:5,minOff:35000,maxOff:40000}],'','СЕРЕБРО','',''),
  buildShopCase('ЗОЛОТОЙ КЕЙС',700000,[{rarity:'rare',chance:35,minOff:20000,maxOff:40000},{rarity:'epic',chance:40,minOff:25000,maxOff:40000},{rarity:'mythic',chance:20,minOff:30000,maxOff:40000},{rarity:'legendary',chance:5,minOff:35000,maxOff:40000}],'gold','ЗОЛОТО','gold','gold'),
- buildShopCase('ПЛАТИНОВЫЙ КЕЙС',800000,[{rarity:'epic',chance:50,minOff:20000,maxOff:40000},{rarity:'mythic',chance:35,minOff:25000,maxOff:40000},{rarity:'legendary',chance:15,minOff:30000,maxOff:40000}],'premium','ПЛАТИНА','','gold'),
- buildShopCase('АЛМАЗНЫЙ КЕЙС',900000,[{rarity:'epic',chance:40,minOff:20000,maxOff:40000},{rarity:'mythic',chance:40,minOff:25000,maxOff:40000},{rarity:'legendary',chance:20,minOff:30000,maxOff:40000}],'premium','АЛМАЗ','','gold'),
- buildShopCase('РУБИНОВЫЙ КЕЙС',1000000,[{rarity:'epic',chance:30,minOff:20000,maxOff:40000},{rarity:'mythic',chance:45,minOff:25000,maxOff:40000},{rarity:'legendary',chance:25,minOff:30000,maxOff:40000}],'legend','РУБИН','red','red'),
- buildShopCase('ИЗУМРУДНЫЙ КЕЙС',1100000,[{rarity:'mythic',chance:50,minOff:20000,maxOff:40000},{rarity:'legendary',chance:50,minOff:30000,maxOff:40000}],'','ИЗУМРУД','',''),
- buildShopCase('САПФИРОВЫЙ КЕЙС',1200000,[{rarity:'mythic',chance:45,minOff:20000,maxOff:40000},{rarity:'legendary',chance:55,minOff:30000,maxOff:40000}],'','САПФИР','',''),
- buildShopCase('КОРОЛЕВСКИЙ КЕЙС',1300000,[{rarity:'mythic',chance:40,minOff:20000,maxOff:40000},{rarity:'legendary',chance:60,minOff:30000,maxOff:40000}],'premium','КОРОЛЬ','','gold'),
- buildShopCase('ИМПЕРАТОРСКИЙ КЕЙС',1400000,[{rarity:'legendary',chance:100,minOff:30000,maxOff:40000}],'legend','ИМПЕРАТОР','red','red'),
- buildShopCase('ЛЕГЕНДАРНЫЙ PRO',1500000,[{rarity:'legendary',chance:100,minOff:30000,maxOff:40000}],'legend','PRO ЛЕГ','red','red'),
- buildShopCase('МИФИЧЕСКИЙ КЕЙС',1600000,[{rarity:'legendary',chance:100,minOff:30000,maxOff:40000}],'purple','МИФ','purple','purple'),
- buildShopCase('КЕЙС ДЕМИУРГА',1700000,[{rarity:'legendary',chance:100,minOff:30000,maxOff:40000}],'purple','ДЕМИУРГ','purple','purple'),
- buildShopCase('КЕЙС АБСОЛЮТ',1800000,[{rarity:'legendary',chance:100,minOff:30000,maxOff:40000}],'gold','АБСОЛЮТ','gold','gold-rich'),
- buildShopCase('БОЖЕСТВЕННЫЙ КЕЙС',1900000,[{rarity:'legendary',chance:100,minOff:30000,maxOff:40000}],'gold','БОГ','gold','gold-rich'),
- buildShopCase('КОСМИЧЕСКИЙ КЕЙС',2000000,[{rarity:'legendary',chance:100,minOff:30000,maxOff:40000}],'gold','КОСМОС','gold','gold-rich'),
- buildShopCase('КЕЙС ЧЁРНАЯ ДЫРА',2000000,[{rarity:'legendary',chance:100,minOff:35000,maxOff:40000}],'legend','ХОЛ','red','red'),
- buildShopCase('КЕЙС ВСЕЛЕННАЯ',2000000,[{rarity:'legendary',chance:100,minOff:35000,maxOff:40000}],'gold','УЛЬТРА','gold','gold-rich')
+ buildShopCase('ПЛАТИНОВЫЙ КЕЙС',800000,[{rarity:'epic',chance:50,minOff:20000,maxOff:40000},{rarity:'mythic',chance:35,minOff:25000,maxOff:40000},{rarity:'legendary',chance:12,minOff:30000,maxOff:40000},{rarity:'emerald',chance:3,minOff:40000,maxOff:60000}],'premium','ПЛАТИНА','','gold'),
+ buildShopCase('АЛМАЗНЫЙ КЕЙС',900000,[{rarity:'epic',chance:40,minOff:20000,maxOff:40000},{rarity:'mythic',chance:40,minOff:25000,maxOff:40000},{rarity:'legendary',chance:15,minOff:30000,maxOff:40000},{rarity:'emerald',chance:5,minOff:45000,maxOff:70000}],'premium','АЛМАЗ','','gold'),
+ buildShopCase('РУБИНОВЫЙ КЕЙС',1000000,[{rarity:'epic',chance:30,minOff:20000,maxOff:40000},{rarity:'mythic',chance:45,minOff:25000,maxOff:40000},{rarity:'legendary',chance:20,minOff:30000,maxOff:40000},{rarity:'emerald',chance:5,minOff:50000,maxOff:80000}],'legend','РУБИН','red','red'),
+ buildShopCase('ИЗУМРУДНЫЙ КЕЙС',1100000,[{rarity:'mythic',chance:50,minOff:20000,maxOff:40000},{rarity:'legendary',chance:35,minOff:30000,maxOff:40000},{rarity:'emerald',chance:15,minOff:50000,maxOff:90000}],'','ИЗУМРУД','',''),
+ buildShopCase('САПФИРОВЫЙ КЕЙС',1200000,[{rarity:'mythic',chance:45,minOff:20000,maxOff:40000},{rarity:'legendary',chance:40,minOff:30000,maxOff:40000},{rarity:'emerald',chance:15,minOff:55000,maxOff:100000}],'','САПФИР','',''),
+ buildShopCase('КОРОЛЕВСКИЙ КЕЙС',1300000,[{rarity:'mythic',chance:40,minOff:20000,maxOff:40000},{rarity:'legendary',chance:45,minOff:30000,maxOff:40000},{rarity:'emerald',chance:15,minOff:60000,maxOff:110000}],'premium','КОРОЛЬ','','gold'),
+ buildShopCase('ИМПЕРАТОРСКИЙ КЕЙС',1400000,[{rarity:'legendary',chance:95,minOff:30000,maxOff:40000},{rarity:'emerald',chance:5,minOff:40000,maxOff:50000}],'legend','ИМПЕРАТОР','red','red'),
+ buildShopCase('ЛЕГЕНДАРНЫЙ PRO',1500000,[{rarity:'legendary',chance:93,minOff:30000,maxOff:40000},{rarity:'emerald',chance:7,minOff:40000,maxOff:50000}],'legend','PRO ЛЕГ','red','red'),
+ buildShopCase('МИФИЧЕСКИЙ КЕЙС',1600000,[{rarity:'legendary',chance:90,minOff:30000,maxOff:40000},{rarity:'emerald',chance:10,minOff:45000,maxOff:60000}],'purple','МИФ','purple','purple'),
+ buildShopCase('КЕЙС ДЕМИУРГА',1700000,[{rarity:'legendary',chance:88,minOff:30000,maxOff:40000},{rarity:'emerald',chance:12,minOff:50000,maxOff:70000}],'purple','ДЕМИУРГ','purple','purple'),
+ buildShopCase('КЕЙС АБСОЛЮТ',1800000,[{rarity:'legendary',chance:85,minOff:30000,maxOff:40000},{rarity:'emerald',chance:15,minOff:55000,maxOff:80000}],'gold','АБСОЛЮТ','gold','gold-rich'),
+ buildShopCase('БОЖЕСТВЕННЫЙ КЕЙС',1900000,[{rarity:'legendary',chance:83,minOff:30000,maxOff:40000},{rarity:'emerald',chance:17,minOff:60000,maxOff:90000}],'gold','БОГ','gold','gold-rich'),
+ buildShopCase('КОСМИЧЕСКИЙ КЕЙС',2000000,[{rarity:'legendary',chance:80,minOff:30000,maxOff:40000},{rarity:'emerald',chance:20,minOff:65000,maxOff:100000}],'gold','КОСМОС','gold','gold-rich'),
+ buildShopCase('КЕЙС ЧЁРНАЯ ДЫРА',2000000,[{rarity:'legendary',chance:75,minOff:35000,maxOff:55000},{rarity:'emerald',chance:25,minOff:70000,maxOff:120000}],'legend','ХОЛ','red','red'),
+ buildShopCase('КЕЙС ВСЕЛЕННАЯ',2000000,[{rarity:'legendary',chance:70,minOff:35000,maxOff:60000},{rarity:'emerald',chance:30,minOff:80000,maxOff:140000}],'gold','УЛЬТРА','gold','gold-rich')
 ];
 
 var caseInventory=[];
@@ -1595,7 +1607,8 @@ var clickMultiplier=1;
 var lastDaily=0;
 var lastWheel=0;
 var CLICK_BASE=0.5;
-var DAILY_REWARD=500;
+var DAILY_MIN=10000;
+var DAILY_MAX=20000;
 var DAILY_COOLDOWN=24*60*60*1000;
 var WHEEL_COOLDOWN=24*60*60*1000;
 
@@ -2050,9 +2063,7 @@ function saveGame(){
   try{ localStorage.setItem(SAVE_KEY,str); }catch(e1){}
   try{
    var session=localStorage.getItem('mcs_session_v1');
-   if(session){
-    localStorage.setItem('mcs_save_v1_'+session,str);
-   }
+   if(session){ localStorage.setItem('mcs_save_v1_'+session,str); }
   }catch(e2){}
   _lastSaveError=false;
   return true;
@@ -2065,9 +2076,7 @@ function loadGame(){
   if(!raw){
    try{
     var session=localStorage.getItem('mcs_session_v1');
-    if(session){
-     raw=localStorage.getItem('mcs_save_v1_'+session);
-    }
+    if(session){ raw=localStorage.getItem('mcs_save_v1_'+session); }
    }catch(e){}
   }
   if(!raw)return false;
@@ -2360,8 +2369,9 @@ function claimDaily(){
  SFX.init();
  if(!dailyReady()){SFX.error();return}
  lastDaily=Date.now();
- balance+=DAILY_REWARD;
- stats.earned+=DAILY_REWARD;
+ var reward=Math.floor(DAILY_MIN+Math.random()*(DAILY_MAX-DAILY_MIN+1));
+ balance+=reward;
+ stats.earned+=reward;
  var item=rollItem(ITEMS1);
  inventory.push(item);
  SFX.coin();
@@ -2369,6 +2379,7 @@ function claimDaily(){
  if(item.rarity==='mythic'||item.rarity==='emerald'||item.rarity==='legendary')spawnParticles(RARITY_COLORS[item.rarity],item.rarity==='legendary'||item.rarity==='emerald'?140:90);
  updateUI();
  saveGame();
+ item.bonusMoney=reward;
  showModal(item);
 }
 if(el.btnDaily)el.btnDaily.addEventListener('click',claimDaily);
@@ -2994,11 +3005,8 @@ function slotsSpin(){
    reels.forEach(function(r){r.classList.remove('spinning')});
 
    var win=0;
-   if(isJackpot){
-    win=SLOT_JACKPOT_AMOUNT;
-   }else if(s0===s1&&s1===s2&&SLOT_MULTIPLIERS[s0]){
-    win=bet*SLOT_MULTIPLIERS[s0];
-   }
+   if(isJackpot){ win=SLOT_JACKPOT_AMOUNT; }
+   else if(s0===s1&&s1===s2&&SLOT_MULTIPLIERS[s0]){ win=bet*SLOT_MULTIPLIERS[s0]; }
 
    if(win>0){
     balance+=win;
@@ -3348,6 +3356,7 @@ function renderInventory(){
   var c=RARITY_COLORS[item.rarity];
   var card=document.createElement('div');
   card.className='inv-card rarity-'+item.rarity;
+  if(item.rarity==='emerald')card.classList.add('emerald-aura');
   card.innerHTML='<div class="item-img-wrap" style="background:radial-gradient(ellipse at 50% 60%, '+c+'22, transparent 70%)">'
    +'<img class="item-img" src="'+item.img+'" alt="" loading="lazy" decoding="async" draggable="false">'
    +'</div>'
@@ -3394,7 +3403,11 @@ function showModal(item){
  el.modalName.style.color=c;
  el.modalRarity.textContent=RARITY_NAMES[item.rarity]+(item.pityDrop?' · ГАРАНТ':'');
  el.modalRarity.style.color=c;
- el.modalPrice.textContent=fmt(item.price);
+ if(item.bonusMoney){
+  el.modalPrice.textContent=fmt(item.price)+'  +  '+fmt(item.bonusMoney)+' бонус';
+ }else{
+  el.modalPrice.textContent=fmt(item.price);
+ }
  el.modalOverlay.classList.add('active');
 }
 $('btnCloseModal').addEventListener('click',function(){SFX.init();SFX.click();el.modalOverlay.classList.remove('active')});
@@ -3454,28 +3467,18 @@ function spawnParticles(color,count){
  requestAnimationFrame(anim);
 })();
 
-/* ==================== НАДЁЖНОЕ СОХРАНЕНИЕ ==================== */
 var _saveTimer=null;
 function saveDebounced(){
  if(_saveTimer)clearTimeout(_saveTimer);
  _saveTimer=setTimeout(saveGame,500);
 }
 
-// 1. Автосохранение каждые 3 секунды
 setInterval(saveGame,3000);
-
-// 2. Сохранение при закрытии/уходе страницы
 window.addEventListener('beforeunload',saveGame);
 window.addEventListener('pagehide',saveGame);
 window.addEventListener('unload',saveGame);
 window.addEventListener('blur',saveGame);
-
-// 3. Сохранение при скрытии вкладки
-document.addEventListener('visibilitychange',function(){
- if(document.hidden)saveGame();
-});
-
-// 4. Сохранение по Ctrl+S
+document.addEventListener('visibilitychange',function(){ if(document.hidden)saveGame(); });
 document.addEventListener('keydown',function(e){
  if((e.ctrlKey||e.metaKey)&&(e.key||'').toLowerCase()==='s'){
   e.preventDefault();
@@ -3483,12 +3486,7 @@ document.addEventListener('keydown',function(e){
   showSaveToast();
  }
 });
-
-// 5. Сохранение после любого клика
-document.addEventListener('pointerup',function(){
- saveDebounced();
-},true);
-/* ==================== КОНЕЦ АВТОСОХРАНЕНИЯ ==================== */
+document.addEventListener('pointerup',function(){ saveDebounced(); },true);
 
 var loaded=loadGame();
 

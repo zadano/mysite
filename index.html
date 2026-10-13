@@ -230,7 +230,8 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 .slots-result.info{color:var(--text-dim)}
 .clicker-section{display:flex;gap:24px;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:16px;padding:18px 24px;margin-bottom:20px;flex-wrap:wrap;box-shadow:0 8px 32px rgba(0,0,0,.4)}
 .clicker-left{position:relative;width:190px;height:190px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.clicker-btn{width:170px;height:170px;border-radius:50%;border:none;cursor:pointer;background:radial-gradient(circle at 32% 28%,#e6d4ff,#9b5cff 45%,#4c1d95 100%);box-shadow:0 10px 30px rgba(155,92,255,.45),inset 0 -6px 14px rgba(0,0,0,.35),inset 0 6px 12px rgba(255,255,255,.35);font-size:3.8rem;font-weight:700;color:#2a1050;text-shadow:0 1px 0 rgba(255,255,255,.35);transition:transform .07s;user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.clicker-btn{width:170px;height:170px;border-radius:50%;border:none;cursor:pointer;background:radial-gradient(circle at 32% 28%,#e6d4ff,#9b5cff 45%,#4c1d95 100%);box-shadow:0 10px 30px rgba(155,92,255,.45),inset 0 -6px 14px rgba(0,0,0,.35),inset 0 6px 12px rgba(255,255,255,.35);font-size:3.8rem;font-weight:700;color:#2a1050;text-shadow:0 1px 0 rgba(255,255,255,.35);transition:transform .07s;user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;outline:none;text-decoration:none;-webkit-user-drag:none;pointer-events:auto}
+.clicker-btn::before,.clicker-btn::after{content:none !important;display:none !important}
 .clicker-btn:hover{filter:brightness(1.1)}
 .clicker-btn:active{transform:scale(.9)}
 .float-plus{position:absolute;left:50%;pointer-events:none;color:var(--money);font-weight:700;font-size:.85rem;text-shadow:0 0 8px rgba(185,140,255,.7);animation:floatUp .8s ease-out forwards;z-index:5}
@@ -939,7 +940,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
   <section class="clicker-section">
     <div class="clicker-left" id="clickerArea">
-      <button class="clicker-btn" id="clickerBtn" aria-label="Кликнуть">$</button>
+      <button class="clicker-btn" id="clickerBtn" type="button" aria-label="Кликнуть">$</button>
     </div>
     <div class="clicker-info">
       <div class="clicker-title">💰 КЛИКЕР</div>
@@ -1083,7 +1084,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </div>
 
 <div class="save-toast" id="saveToast">💾 Сохранено</div>
-<canvas class="particles" id="particleCanvas"></canvas>
+<canvas class="particles" id="particleCanvas" style="pointer-events:none"></canvas>
 
 <script>
 (function(){
@@ -1092,6 +1093,169 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 if(!window.__mcsHasSession || !window.__mcsHasSession()){
   return;
 }
+
+/* ============ ЗАЩИТА ОТ РЕКЛАМЫ И ВНЕШНИХ ССЫЛОК ============ */
+(function(){
+  // 1. Блокируем window.open
+  try{
+    var _open=window.open;
+    window.open=function(){
+      console.warn('[GAME] window.open заблокирован');
+      return null;
+    };
+  }catch(e){}
+
+  // 2. Блокируем изменение location.href на внешние домены
+  try{
+    var _assign=location.assign.bind(location);
+    var _replace=location.replace.bind(location);
+    var ALLOWED_HOSTS=['image.qwenlm.ai','avatars.mds.yandex.net','cdn.jsdelivr.net'];
+    function isExternal(url){
+      try{
+        var u=new URL(url,location.href);
+        if(u.hostname===location.hostname)return false;
+        for(var i=0;i<ALLOWED_HOSTS.length;i++){
+          if(u.hostname===ALLOWED_HOSTS[i]||u.hostname.endsWith('.'+ALLOWED_HOSTS[i]))return false;
+        }
+        return true;
+      }catch(e){return false}
+    }
+    // Не патчим location.href напрямую (это вызовет ошибки), но патчим click-обработчики
+  }catch(e){}
+
+  // 3. Блокируем клики по всем <a> с внешними ссылками
+  document.addEventListener('click',function(e){
+    var a=e.target.closest('a');
+    if(!a)return;
+    var href=a.getAttribute('href')||'';
+    if(!href)return;
+    if(href.indexOf('http')===0||href.indexOf('//')===0){
+      try{
+        var u=new URL(href,location.href);
+        if(u.hostname!==location.hostname){
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          console.warn('[GAME] Внешняя ссылка заблокирована:',href);
+          return false;
+        }
+      }catch(err){}
+    }
+  },true);
+
+  // 4. Блокируем все клики по <a> с target="_blank"
+  document.addEventListener('click',function(e){
+    var a=e.target.closest('a[target="_blank"]');
+    if(a){e.preventDefault();e.stopPropagation();}
+  },true);
+
+  // 5. Отслеживаем все изменения DOM: если появляется <script> из внешнего источника или <iframe> — блокируем
+  var ALLOWED_HOSTS2=['image.qwenlm.ai','avatars.mds.yandex.net','cdn.jsdelivr.net'];
+  function isAllowedHost(url){
+    try{
+      var u=new URL(url,location.href);
+      if(u.hostname===location.hostname)return true;
+      for(var i=0;i<ALLOWED_HOSTS2.length;i++){
+        if(u.hostname===ALLOWED_HOSTS2[i]||u.hostname.endsWith('.'+ALLOWED_HOSTS2[i]))return true;
+      }
+      return false;
+    }catch(e){return false}
+  }
+
+  // 6. Патчим setAttribute для img и script
+  try{
+    var _setAttr=Element.prototype.setAttribute;
+    Element.prototype.setAttribute=function(name,value){
+      var tag=this.tagName;
+      var n=(name||'').toLowerCase();
+      if(typeof value==='string'){
+        if(tag==='IMG' && n==='src'){
+          if(!isAllowedHost(value)){
+            console.warn('[GAME] Внешняя картинка заблокирована:',value);
+            return;
+          }
+        }
+        if((tag==='SCRIPT'||tag==='IFRAME') && (n==='src')){
+          if(!isAllowedHost(value)){
+            console.warn('[GAME] Внешний '+tag+' заблокирован:',value);
+            return;
+          }
+        }
+      }
+      return _setAttr.call(this,name,value);
+    };
+  }catch(e){}
+
+  // 7. Патчим img.src
+  try{
+    var imgDesc=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');
+    if(imgDesc && imgDesc.set){
+      Object.defineProperty(HTMLImageElement.prototype,'src',{
+        get:imgDesc.get,
+        set:function(v){
+          if(typeof v==='string' && !isAllowedHost(v)){
+            console.warn('[GAME] Внешняя картинка заблокирована (src=):',v);
+            return;
+          }
+          return imgDesc.set.call(this,v);
+        },
+        configurable:true
+      });
+    }
+  }catch(e){}
+
+  // 8. Следим за появлением <iframe> и внешних <script> в DOM
+  try{
+    var observer=new MutationObserver(function(mutations){
+      mutations.forEach(function(m){
+        m.addedNodes.forEach(function(node){
+          if(node.nodeType!==1)return;
+          if(node.tagName==='IFRAME'){
+            var src=node.getAttribute('src')||'';
+            if(src && !isAllowedHost(src)){
+              console.warn('[GAME] Внешний iframe удалён:',src);
+              node.remove();
+            }
+          }
+          if(node.tagName==='SCRIPT'){
+            var ssrc=node.getAttribute('src')||'';
+            if(ssrc && !isAllowedHost(ssrc)){
+              console.warn('[GAME] Внешний script удалён:',ssrc);
+              node.remove();
+            }
+          }
+        });
+      });
+    });
+    observer.observe(document.documentElement,{childList:true,subtree:true});
+  }catch(e){}
+
+  // 9. Блокируем все клики по кнопке кликера на уровне захвата — чтобы гарантированно ничего не всплывало
+  document.addEventListener('click',function(e){
+    var t=e.target;
+    if(t && t.id==='clickerBtn'){
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+    }
+  },true);
+  document.addEventListener('auxclick',function(e){
+    var t=e.target;
+    if(t && t.id==='clickerBtn'){
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+    }
+  },true);
+  document.addEventListener('contextmenu',function(e){
+    var t=e.target;
+    if(t && t.id==='clickerBtn'){
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+    }
+  },true);
+})();
+/* ============ КОНЕЦ ЗАЩИТЫ ============ */
 
 document.addEventListener('contextmenu',function(e){e.preventDefault()});
 document.addEventListener('keydown',function(e){
@@ -1107,8 +1271,7 @@ var DRINKS={
  compote:B+'1b5bbbc83-4eb2-4e1b-88b8-a5cfe1d3f3ed.png',
  cola:B+'1070744d0-f791-4b8e-8222-51fd97865621.png',
  kvass:B+'163d4a4b0-9ca6-409c-8003-9d7f56169754.png',
- chekushka:B+'1941f0033-4f3a-4fd9-872a-a0f11a6fddce.png',
- baltika:'https://avatars.mds.yandex.net/i?id=a4bc94c05816f3beb255d53cf9086fbf4ad8535a-5218867-images-thumbs&n=13'
+ chekushka:B+'1941f0033-4f3a-4fd9-872a-a0f11a6fddce.png'
 };
 
 var PET_IMG_HAPPY='https://avatars.mds.yandex.net/i?id=0c80a9bda1b7afcd4ad05ee343904880e905e1aa-9386274-images-thumbs&n=13';
@@ -1116,8 +1279,7 @@ var PET_IMG_SAD='https://avatars.mds.yandex.net/i?id=0c80a9bda1b7afcd4ad05ee3439
 var PET_IMG=PET_IMG_HAPPY;
 
 var ITEMS1=[
- {name:'Вода «Кристальная»',img:DRINKS.water,rarity:'common',chance:22,minP:131000,maxP:141000},
- {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:5,minP:161000,maxP:181000},
+ {name:'Вода «Кристальная»',img:DRINKS.water,rarity:'common',chance:27,minP:131000,maxP:141000},
  {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare',chance:28,minP:131000,maxP:151000},
  {name:'Кока-Кола «Классик»',img:DRINKS.cola,rarity:'epic',chance:25,minP:141000,maxP:171000},
  {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:15,minP:151000,maxP:191000},
@@ -1125,30 +1287,26 @@ var ITEMS1=[
 ];
 
 var ITEMS2=[
- {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare',chance:15,minP:134000,maxP:154000},
- {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:10,minP:174000,maxP:194000},
- {name:'Кока-Кола «Классик»',img:DRINKS.cola,rarity:'epic',chance:30,minP:144000,maxP:174000},
+ {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare',chance:20,minP:134000,maxP:154000},
+ {name:'Кока-Кола «Классик»',img:DRINKS.cola,rarity:'epic',chance:35,minP:144000,maxP:174000},
  {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:25,minP:154000,maxP:194000},
  {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:20,minP:184000,maxP:214000}
 ];
 
 var ITEMS3=[
  {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare',chance:15,minP:136500,maxP:156500},
- {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:5,minP:176500,maxP:196500},
- {name:'Кока-Кола «Классик»',img:DRINKS.cola,rarity:'epic',chance:30,minP:146500,maxP:176500},
+ {name:'Кока-Кола «Классик»',img:DRINKS.cola,rarity:'epic',chance:35,minP:146500,maxP:176500},
  {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:25,minP:156500,maxP:196500},
  {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:25,minP:186500,maxP:216500}
 ];
 
 var ITEMS4=[
- {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:30,minP:146000,maxP:186000},
- {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:5,minP:186000,maxP:206000},
+ {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic',chance:35,minP:146000,maxP:186000},
  {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:65,minP:166000,maxP:226000}
 ];
 
 var ITEMS5=[
- {name:'Балтика',img:DRINKS.baltika,rarity:'emerald',chance:40,minP:185000,maxP:215000},
- {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:60,minP:195000,maxP:245000}
+ {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary',chance:100,minP:195000,maxP:245000}
 ];
 
 var CASES=[
@@ -1200,8 +1358,7 @@ var SHOP_ITEMS_POOL=[
  {name:'Компот «Бабушкин»',img:DRINKS.compote,rarity:'rare'},
  {name:'Кока-Кола «Классик»',img:DRINKS.cola,rarity:'epic'},
  {name:'Квас «Бочковой»',img:DRINKS.kvass,rarity:'mythic'},
- {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary'},
- {name:'Балтика',img:DRINKS.baltika,rarity:'emerald'}
+ {name:'Чекушка «Юбилейная»',img:DRINKS.chekushka,rarity:'legendary'}
 ];
 
 function buildShopCase(name,price,composition,style,tag,tagClass,btn){
@@ -1223,21 +1380,21 @@ var SHOP_CASES=[
  buildShopCase('БРОНЗОВЫЙ КЕЙС',550000,[{rarity:'common',chance:30,minOff:20000,maxOff:40000},{rarity:'rare',chance:40,minOff:25000,maxOff:40000},{rarity:'epic',chance:22,minOff:30000,maxOff:40000},{rarity:'mythic',chance:8,minOff:35000,maxOff:40000}],'','БРОНЗА','',''),
  buildShopCase('СЕРЕБРЯНЫЙ КЕЙС',600000,[{rarity:'rare',chance:45,minOff:20000,maxOff:40000},{rarity:'epic',chance:35,minOff:25000,maxOff:40000},{rarity:'mythic',chance:15,minOff:30000,maxOff:40000},{rarity:'legendary',chance:5,minOff:35000,maxOff:40000}],'','СЕРЕБРО','',''),
  buildShopCase('ЗОЛОТОЙ КЕЙС',700000,[{rarity:'rare',chance:35,minOff:20000,maxOff:40000},{rarity:'epic',chance:40,minOff:25000,maxOff:40000},{rarity:'mythic',chance:20,minOff:30000,maxOff:40000},{rarity:'legendary',chance:5,minOff:35000,maxOff:40000}],'gold','ЗОЛОТО','gold','gold'),
- buildShopCase('ПЛАТИНОВЫЙ КЕЙС',800000,[{rarity:'epic',chance:50,minOff:20000,maxOff:40000},{rarity:'mythic',chance:35,minOff:25000,maxOff:40000},{rarity:'legendary',chance:12,minOff:30000,maxOff:40000},{rarity:'emerald',chance:3,minOff:35000,maxOff:40000}],'premium','ПЛАТИНА','','gold'),
- buildShopCase('АЛМАЗНЫЙ КЕЙС',900000,[{rarity:'epic',chance:40,minOff:20000,maxOff:40000},{rarity:'mythic',chance:40,minOff:25000,maxOff:40000},{rarity:'legendary',chance:15,minOff:30000,maxOff:40000},{rarity:'emerald',chance:5,minOff:35000,maxOff:40000}],'premium','АЛМАЗ','','gold'),
- buildShopCase('РУБИНОВЫЙ КЕЙС',1000000,[{rarity:'epic',chance:30,minOff:20000,maxOff:40000},{rarity:'mythic',chance:45,minOff:25000,maxOff:40000},{rarity:'legendary',chance:20,minOff:30000,maxOff:40000},{rarity:'emerald',chance:5,minOff:35000,maxOff:40000}],'legend','РУБИН','red','red'),
- buildShopCase('ИЗУМРУДНЫЙ КЕЙС',1100000,[{rarity:'mythic',chance:50,minOff:20000,maxOff:40000},{rarity:'legendary',chance:35,minOff:25000,maxOff:40000},{rarity:'emerald',chance:15,minOff:30000,maxOff:40000}],'','ИЗУМРУД','',''),
- buildShopCase('САПФИРОВЫЙ КЕЙС',1200000,[{rarity:'mythic',chance:45,minOff:20000,maxOff:40000},{rarity:'legendary',chance:40,minOff:25000,maxOff:40000},{rarity:'emerald',chance:15,minOff:30000,maxOff:40000}],'','САПФИР','',''),
- buildShopCase('КОРОЛЕВСКИЙ КЕЙС',1300000,[{rarity:'mythic',chance:40,minOff:20000,maxOff:40000},{rarity:'legendary',chance:45,minOff:25000,maxOff:40000},{rarity:'emerald',chance:15,minOff:30000,maxOff:40000}],'premium','КОРОЛЬ','','gold'),
- buildShopCase('ИМПЕРАТОРСКИЙ КЕЙС',1400000,[{rarity:'legendary',chance:60,minOff:20000,maxOff:40000},{rarity:'emerald',chance:40,minOff:25000,maxOff:40000}],'legend','ИМПЕРАТОР','red','red'),
- buildShopCase('ЛЕГЕНДАРНЫЙ PRO',1500000,[{rarity:'legendary',chance:55,minOff:20000,maxOff:40000},{rarity:'emerald',chance:45,minOff:25000,maxOff:40000}],'legend','PRO ЛЕГ','red','red'),
- buildShopCase('МИФИЧЕСКИЙ КЕЙС',1600000,[{rarity:'legendary',chance:50,minOff:20000,maxOff:40000},{rarity:'emerald',chance:50,minOff:25000,maxOff:40000}],'purple','МИФ','purple','purple'),
- buildShopCase('КЕЙС ДЕМИУРГА',1700000,[{rarity:'legendary',chance:45,minOff:20000,maxOff:40000},{rarity:'emerald',chance:55,minOff:25000,maxOff:40000}],'purple','ДЕМИУРГ','purple','purple'),
- buildShopCase('КЕЙС АБСОЛЮТ',1800000,[{rarity:'legendary',chance:40,minOff:20000,maxOff:40000},{rarity:'emerald',chance:60,minOff:25000,maxOff:40000}],'gold','АБСОЛЮТ','gold','gold-rich'),
- buildShopCase('БОЖЕСТВЕННЫЙ КЕЙС',1900000,[{rarity:'legendary',chance:35,minOff:20000,maxOff:40000},{rarity:'emerald',chance:65,minOff:25000,maxOff:40000}],'gold','БОГ','gold','gold-rich'),
- buildShopCase('КОСМИЧЕСКИЙ КЕЙС',2000000,[{rarity:'legendary',chance:30,minOff:20000,maxOff:40000},{rarity:'emerald',chance:70,minOff:25000,maxOff:40000}],'gold','КОСМОС','gold','gold-rich'),
- buildShopCase('КЕЙС ЧЁРНАЯ ДЫРА',2000000,[{rarity:'legendary',chance:25,minOff:20000,maxOff:40000},{rarity:'emerald',chance:75,minOff:25000,maxOff:40000}],'legend','ХОЛ','red','red'),
- buildShopCase('КЕЙС ВСЕЛЕННАЯ',2000000,[{rarity:'legendary',chance:20,minOff:20000,maxOff:40000},{rarity:'emerald',chance:80,minOff:25000,maxOff:40000}],'gold','УЛЬТРА','gold','gold-rich')
+ buildShopCase('ПЛАТИНОВЫЙ КЕЙС',800000,[{rarity:'epic',chance:50,minOff:20000,maxOff:40000},{rarity:'mythic',chance:35,minOff:25000,maxOff:40000},{rarity:'legendary',chance:15,minOff:30000,maxOff:40000}],'premium','ПЛАТИНА','','gold'),
+ buildShopCase('АЛМАЗНЫЙ КЕЙС',900000,[{rarity:'epic',chance:40,minOff:20000,maxOff:40000},{rarity:'mythic',chance:40,minOff:25000,maxOff:40000},{rarity:'legendary',chance:20,minOff:30000,maxOff:40000}],'premium','АЛМАЗ','','gold'),
+ buildShopCase('РУБИНОВЫЙ КЕЙС',1000000,[{rarity:'epic',chance:30,minOff:20000,maxOff:40000},{rarity:'mythic',chance:45,minOff:25000,maxOff:40000},{rarity:'legendary',chance:25,minOff:30000,maxOff:40000}],'legend','РУБИН','red','red'),
+ buildShopCase('ИЗУМРУДНЫЙ КЕЙС',1100000,[{rarity:'mythic',chance:50,minOff:20000,maxOff:40000},{rarity:'legendary',chance:50,minOff:30000,maxOff:40000}],'','ИЗУМРУД','',''),
+ buildShopCase('САПФИРОВЫЙ КЕЙС',1200000,[{rarity:'mythic',chance:45,minOff:20000,maxOff:40000},{rarity:'legendary',chance:55,minOff:30000,maxOff:40000}],'','САПФИР','',''),
+ buildShopCase('КОРОЛЕВСКИЙ КЕЙС',1300000,[{rarity:'mythic',chance:40,minOff:20000,maxOff:40000},{rarity:'legendary',chance:60,minOff:30000,maxOff:40000}],'premium','КОРОЛЬ','','gold'),
+ buildShopCase('ИМПЕРАТОРСКИЙ КЕЙС',1400000,[{rarity:'legendary',chance:100,minOff:30000,maxOff:40000}],'legend','ИМПЕРАТОР','red','red'),
+ buildShopCase('ЛЕГЕНДАРНЫЙ PRO',1500000,[{rarity:'legendary',chance:100,minOff:30000,maxOff:40000}],'legend','PRO ЛЕГ','red','red'),
+ buildShopCase('МИФИЧЕСКИЙ КЕЙС',1600000,[{rarity:'legendary',chance:100,minOff:30000,maxOff:40000}],'purple','МИФ','purple','purple'),
+ buildShopCase('КЕЙС ДЕМИУРГА',1700000,[{rarity:'legendary',chance:100,minOff:30000,maxOff:40000}],'purple','ДЕМИУРГ','purple','purple'),
+ buildShopCase('КЕЙС АБСОЛЮТ',1800000,[{rarity:'legendary',chance:100,minOff:30000,maxOff:40000}],'gold','АБСОЛЮТ','gold','gold-rich'),
+ buildShopCase('БОЖЕСТВЕННЫЙ КЕЙС',1900000,[{rarity:'legendary',chance:100,minOff:30000,maxOff:40000}],'gold','БОГ','gold','gold-rich'),
+ buildShopCase('КОСМИЧЕСКИЙ КЕЙС',2000000,[{rarity:'legendary',chance:100,minOff:30000,maxOff:40000}],'gold','КОСМОС','gold','gold-rich'),
+ buildShopCase('КЕЙС ЧЁРНАЯ ДЫРА',2000000,[{rarity:'legendary',chance:100,minOff:35000,maxOff:40000}],'legend','ХОЛ','red','red'),
+ buildShopCase('КЕЙС ВСЕЛЕННАЯ',2000000,[{rarity:'legendary',chance:100,minOff:35000,maxOff:40000}],'gold','УЛЬТРА','gold','gold-rich')
 ];
 
 var caseInventory=[];
@@ -1482,7 +1639,6 @@ var WHEEL_COOLDOWN=24*60*60*1000;
 
 var pityCounter=0;
 
-/* ==================== ПИТОМЕЦ ==================== */
 var pet=null;
 var petFoodInventory={};
 var petFireAppearAt=0;
@@ -1860,13 +2016,10 @@ function renderFoodGrid(){
  });
 }
 
-/* ==================== КОНЕЦ ПИТОМЦА ==================== */
-
 var MINES_GRID=25;
 var MINES_BOMBS=3;
 var minesGame=null;
 
-/* ==================== КРАШ (ИСПРАВЛЕН) ==================== */
 var crashRaf=null;
 var CRASH_GROWTH=0.35;
 var CRASH_INSTANT_BUST=0.10;
@@ -2157,26 +2310,40 @@ function updateCasinoBadge(){
  }
 }
 
-$('clickerBtn').addEventListener('pointerdown',function(e){
- e.preventDefault();
- SFX.init();
- var reward=CLICK_BASE*clickMultiplier;
- balance+=reward;clicks++;clickerEarned+=reward;stats.earned+=reward;
- SFX.pling();
- el.clicksCount.textContent=clicks;
- el.clickerEarned.textContent=fmt(clickerEarned);
- updateBalanceUI();
- updateCasinoBadge();
- if(el.clickerArea.childElementCount<18){
-  var f=document.createElement('span');
-  f.className='float-plus';
-  f.textContent='+'+fmt(reward);
-  f.style.top=(30+Math.random()*40)+'px';
-  f.style.left=(50+(Math.random()*30-15))+'%';
-  el.clickerArea.appendChild(f);
-  f.addEventListener('animationend',function(){f.remove()});
- }
-});
+/* ==== КЛИКЕР (с защитой) ==== */
+var clickerBtn=$('clickerBtn');
+if(clickerBtn){
+ clickerBtn.addEventListener('pointerdown',function(e){
+  e.preventDefault();
+  e.stopPropagation();
+  e.stopImmediatePropagation();
+  SFX.init();
+  var reward=CLICK_BASE*clickMultiplier;
+  balance+=reward;clicks++;clickerEarned+=reward;stats.earned+=reward;
+  SFX.pling();
+  el.clicksCount.textContent=clicks;
+  el.clickerEarned.textContent=fmt(clickerEarned);
+  updateBalanceUI();
+  updateCasinoBadge();
+  if(el.clickerArea.childElementCount<18){
+   var f=document.createElement('span');
+   f.className='float-plus';
+   f.textContent='+'+fmt(reward);
+   f.style.top=(30+Math.random()*40)+'px';
+   f.style.left=(50+(Math.random()*30-15))+'%';
+   el.clickerArea.appendChild(f);
+   f.addEventListener('animationend',function(){f.remove()});
+  }
+ },{passive:false});
+ ['click','mousedown','mouseup','auxclick','contextmenu','dragstart'].forEach(function(evt){
+  clickerBtn.addEventListener(evt,function(e){
+   e.preventDefault();
+   e.stopPropagation();
+   e.stopImmediatePropagation();
+   return false;
+  },{passive:false});
+ });
+}
 
 function dailyReady(){return Date.now()-lastDaily>=DAILY_COOLDOWN}
 function updateDailyUI(){
@@ -2223,7 +2390,6 @@ function claimDaily(){
 }
 if(el.btnDaily)el.btnDaily.addEventListener('click',claimDaily);
 
-/* ==================== МАГАЗИН ==================== */
 function renderShopGrid(){
  var grid=$('shopGrid');if(!grid)return;
  grid.innerHTML='';
@@ -2415,7 +2581,6 @@ function startInvCaseSpin(c){
  },SPIN_MS+400);
 }
 
-/* ==================== МИНЫ ==================== */
 function updateMinesUI(){
  if(!el.btnMinesStart)return;
  if(minesGame&&minesGame.active){
@@ -2552,7 +2717,6 @@ document.querySelectorAll('.mines-quick-btn').forEach(function(btn){
  }
 });
 
-/* ==================== КРАШ (ИСПРАВЛЕННЫЕ ФУНКЦИИ) ==================== */
 function updateCrashUI(){
  if(!el.btnCrashStart)return;
  if(crashGame&&crashGame.active){
@@ -2634,7 +2798,6 @@ function crashStart(){
   saveGame();
   return;
  }
- /* УБРАНА ПОДСКАЗКА О ТОЧКЕ КРАХА */
  setCrashMsg('Множитель растёт — успей забрать!','info');
  updateCrashUI();
  updateUI();
@@ -3354,7 +3517,6 @@ window.__buyFood=buyFood;
 window.__feedPet=feedPet;
 window.__PET_FOOD=PET_FOOD;
 
-/* ==================== ПРОФИЛЬ ==================== */
 function fmtUSD(n){
  if(typeof n!=='number'||!isFinite(n))n=0;
  return '$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');

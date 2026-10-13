@@ -419,10 +419,8 @@ header{display:flex;justify-content:space-between;align-items:center;gap:15px;pa
 <script>
 (function(){
 'use strict';
-/* Блокируем ВСЁ до того, как что-либо загрузится */
 try{ window.open=function(){console.warn('[BLOCK] window.open');return null;}; }catch(e){}
 
-/* Разрешаем только эти домены для картинок/скриптов */
 var ALLOWED=['image.qwenlm.ai','avatars.mds.yandex.net','cdn.jsdelivr.net'];
 function isAllowed(url){
   if(!url)return false;
@@ -437,18 +435,16 @@ function isAllowed(url){
   }catch(e){return false}
 }
 
-/* Удаляем любой <a>, <iframe>, внешний <script> из DOM */
 function cleanup(node){
   if(!node||node.nodeType!==1)return;
-  if(node.tagName==='IFRAME'){console.warn('[BLOCK] iframe');node.remove();return;}
+  if(node.tagName==='IFRAME'){node.remove();return;}
   if(node.tagName==='SCRIPT'){
     var src=node.getAttribute('src')||'';
-    if(src && !isAllowed(src)){console.warn('[BLOCK] script',src);node.remove();return;}
+    if(src && !isAllowed(src)){node.remove();return;}
   }
   if(node.tagName==='A'){
     var href=node.getAttribute('href')||'';
     if(href && href.indexOf('javascript:')!==0 && href.indexOf('#')!==0 && !isAllowed(href)){
-      console.warn('[BLOCK] link',href);
       node.removeAttribute('href');
       node.removeAttribute('target');
       node.style.pointerEvents='none';
@@ -456,18 +452,17 @@ function cleanup(node){
   }
   if(node.tagName==='IMG'){
     var s=node.getAttribute('src')||'';
-    if(s && !isAllowed(s)){console.warn('[BLOCK] img',s);node.remove();return;}
+    if(s && !isAllowed(s)){node.remove();return;}
   }
   if(node.children)for(var i=0;i<node.children.length;i++)cleanup(node.children[i]);
 }
 
-/* Патчим DOM-API */
 try{
   var _sa=Element.prototype.setAttribute;
   Element.prototype.setAttribute=function(n,v){
     n=(n||'').toLowerCase();
     if(typeof v==='string'&&(n==='src'||n==='href')&&(v.indexOf('http')===0||v.indexOf('//')===0)){
-      if(!isAllowed(v)){console.warn('[BLOCK] setAttribute '+n,v);return;}
+      if(!isAllowed(v)){return;}
     }
     if(n==='target'&&v==='_blank')v='_self';
     return _sa.call(this,n,v);
@@ -480,14 +475,13 @@ try{
     Object.defineProperty(HTMLImageElement.prototype,'src',{
       get:_imgDesc.get,
       set:function(v){
-        if(typeof v==='string'&&v&&!isAllowed(v)){console.warn('[BLOCK] img.src',v);return;}
+        if(typeof v==='string'&&v&&!isAllowed(v)){return;}
         return _imgDesc.set.call(this,v);
       },configurable:true
     });
   }
 }catch(e){}
 
-/* MutationObserver */
 try{
   var obs=new MutationObserver(function(muts){
     muts.forEach(function(m){
@@ -502,26 +496,24 @@ try{
   obs.observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['src','href','target']});
 }catch(e){}
 
-/* Глобальный перехват кликов (capture) */
 document.addEventListener('click',function(e){
   var a=e.target.closest('a');
   if(a){
     var href=a.getAttribute('href')||'';
     if(href&&(href.indexOf('http')===0||href.indexOf('//')===0)){
-      try{var u=new URL(href,location.href);if(u.hostname!==location.hostname){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();console.warn('[BLOCK] click',href);return false;}}catch(err){}
+      try{var u=new URL(href,location.href);if(u.hostname!==location.hostname){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return false;}}catch(err){}
     }
   }
 },true);
 document.addEventListener('auxclick',function(e){var a=e.target.closest('a');if(a){e.preventDefault();e.stopPropagation();}},true);
 document.addEventListener('contextmenu',function(e){var a=e.target.closest('a');if(a){e.preventDefault();e.stopPropagation();}},true);
 
-/* Чистим localStorage от рекламы */
 try{
   var bad=['ad','porn','pop','click','traffic','promo','banner','rotator','adv'];
   for(var i=localStorage.length-1;i>=0;i--){
     var k=localStorage.key(i),kl=(k||'').toLowerCase();
     for(var j=0;j<bad.length;j++){
-      if(kl.indexOf(bad[j])!==-1){console.warn('[BLOCK] localStorage',k);localStorage.removeItem(k);break;}
+      if(kl.indexOf(bad[j])!==-1){localStorage.removeItem(k);break;}
     }
   }
 }catch(e){}
@@ -556,6 +548,34 @@ try{
     </div>
   </div>
 </div>
+
+<!-- ==================== НАДЁЖНОЕ СОХРАНЕНИЕ — УСТАНОВКА ХУКА СРАЗУ ==================== -->
+<script>
+(function(){
+'use strict';
+/* Ставим хук на localStorage ДО загрузки игрового скрипта */
+try{
+  var SAVE_KEY='military_case_sim_save_v6';
+  var SAVE_PREFIX='mcs_save_v1_';
+  var SESSION_KEY='mcs_session_v1';
+  var _origSet=localStorage.setItem.bind(localStorage);
+
+  localStorage.setItem=function(k,v){
+    try{ _origSet(k,v); }catch(e){ return; }
+    // Автоматически дублируем ключи игры
+    if(k===SAVE_KEY){
+      var sess=null;
+      try{ sess=localStorage.getItem(SESSION_KEY); }catch(e){}
+      if(sess){ try{ _origSet(SAVE_PREFIX+sess,v); }catch(e){} }
+    }
+    if(typeof k==='string' && k.indexOf(SAVE_PREFIX)===0){
+      try{ _origSet(SAVE_KEY,v); }catch(e){}
+    }
+  };
+  localStorage.__saveHooked=true;
+}catch(e){}
+})();
+</script>
 
 <script>
 (function(){
@@ -703,24 +723,15 @@ function injectUserBox(){
 }
 function installSaveKeyHook(){
   var session=getSession();if(!session)return;
-  if(localStorage.__mcsHooked)return;
-  localStorage.__mcsHooked=true;
-  var origSet=localStorage.setItem.bind(localStorage);
-  var origGet=localStorage.getItem.bind(localStorage);
+  // Загружаем сохранение аккаунта в оба ключа
   try{
-    var userSave=origGet(SAVE_PREFIX+session);
-    if(userSave){origSet(LEGACY_SAVE_KEY,userSave)}
-    else{var legacy=origGet(LEGACY_SAVE_KEY);if(legacy)origSet(SAVE_PREFIX+session,legacy)}
-  }catch(e){}
-  try{
-    localStorage.setItem=function(k,v){
-      if(k===LEGACY_SAVE_KEY){
-        origSet(LEGACY_SAVE_KEY,v);
-        try{origSet(SAVE_PREFIX+session,v)}catch(e){}
-        return;
-      }
-      return origSet(k,v);
-    };
+    var userSave=localStorage.getItem(SAVE_PREFIX+session);
+    if(userSave){
+      try{ localStorage.setItem(LEGACY_SAVE_KEY,userSave); }catch(e){}
+    }else{
+      var legacy=localStorage.getItem(LEGACY_SAVE_KEY);
+      if(legacy){ try{ localStorage.setItem(SAVE_PREFIX+session,legacy); }catch(e){} }
+    }
   }catch(e){}
 }
 function init(){
@@ -1206,18 +1217,7 @@ if(!window.__mcsHasSession || !window.__mcsHasSession()){
   return;
 }
 
-/* ==== ДОП. ЗАЩИТА ==== */
-try{ window.open=function(){console.warn('[BLOCK] window.open');return null;}; }catch(e){}
-document.addEventListener('click',function(e){
-  var a=e.target.closest('a');
-  if(a){
-    var href=a.getAttribute('href')||'';
-    if(href && (href.indexOf('http')===0||href.indexOf('//')===0)){
-      try{var u=new URL(href,location.href);if(u.hostname!==location.hostname){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return false;}}catch(err){}
-    }
-  }
-},true);
-/* ==== КОНЕЦ ДОП. ЗАЩИТЫ ==== */
+try{ window.open=function(){return null;}; }catch(e){}
 
 document.addEventListener('contextmenu',function(e){e.preventDefault()});
 document.addEventListener('keydown',function(e){
@@ -2031,6 +2031,7 @@ function minesWinAmount(bet,revealed){
 }
 
 var SAVE_KEY='military_case_sim_save_v6';
+var _lastSaveError=false;
 
 function saveGame(){
  try{
@@ -2045,14 +2046,30 @@ function saveGame(){
    petLost:petLost,petLostReason:petLostReason,petHappyUntil:petHappyUntil,
    musicOn:Music.on,muted:SFX.muted,version:6,savedAt:Date.now()
   };
-  localStorage.setItem(SAVE_KEY,JSON.stringify(data));
+  var str=JSON.stringify(data);
+  try{ localStorage.setItem(SAVE_KEY,str); }catch(e1){}
+  try{
+   var session=localStorage.getItem('mcs_session_v1');
+   if(session){
+    localStorage.setItem('mcs_save_v1_'+session,str);
+   }
+  }catch(e2){}
+  _lastSaveError=false;
   return true;
- }catch(e){console.warn('save error',e);return false}
+ }catch(e){console.warn('save error',e);_lastSaveError=true;return false}
 }
 
 function loadGame(){
  try{
   var raw=localStorage.getItem(SAVE_KEY);
+  if(!raw){
+   try{
+    var session=localStorage.getItem('mcs_session_v1');
+    if(session){
+     raw=localStorage.getItem('mcs_save_v1_'+session);
+    }
+   }catch(e){}
+  }
   if(!raw)return false;
   var data=JSON.parse(raw);
   if(!data||typeof data!=='object')return false;
@@ -2115,6 +2132,10 @@ function loadGame(){
 function resetGame(){
  if(!confirm('Удалить всё сохранение и начать заново?'))return;
  try{localStorage.removeItem(SAVE_KEY)}catch(e){}
+ try{
+  var session=localStorage.getItem('mcs_session_v1');
+  if(session)localStorage.removeItem('mcs_save_v1_'+session);
+ }catch(e){}
  location.reload();
 }
 
@@ -2272,7 +2293,6 @@ function updateCasinoBadge(){
  }
 }
 
-/* ==== КЛИКЕР (div, максимально безопасный) ==== */
 var clickerBtn=$('clickerBtn');
 if(clickerBtn){
  ['click','mousedown','mouseup','auxclick','contextmenu','dragstart','touchstart','touchend','pointerup'].forEach(function(evt){
@@ -2295,6 +2315,7 @@ if(clickerBtn){
   el.clickerEarned.textContent=fmt(clickerEarned);
   updateBalanceUI();
   updateCasinoBadge();
+  saveDebounced();
   if(el.clickerArea.childElementCount<18){
    var f=document.createElement('span');
    f.className='float-plus';
@@ -3107,6 +3128,7 @@ function applyWheelPrize(prize){
  el.wheelGlow.classList.add('on');
 
  updateUI();
+ saveGame();
  if(item)showModal(item);
 }
 if(el.btnWheel)el.btnWheel.addEventListener('click',spinWheel);
@@ -3432,10 +3454,41 @@ function spawnParticles(color,count){
  requestAnimationFrame(anim);
 })();
 
-setInterval(saveGame,5000);
+/* ==================== НАДЁЖНОЕ СОХРАНЕНИЕ ==================== */
+var _saveTimer=null;
+function saveDebounced(){
+ if(_saveTimer)clearTimeout(_saveTimer);
+ _saveTimer=setTimeout(saveGame,500);
+}
+
+// 1. Автосохранение каждые 3 секунды
+setInterval(saveGame,3000);
+
+// 2. Сохранение при закрытии/уходе страницы
 window.addEventListener('beforeunload',saveGame);
 window.addEventListener('pagehide',saveGame);
-document.addEventListener('visibilitychange',function(){if(document.hidden)saveGame()});
+window.addEventListener('unload',saveGame);
+window.addEventListener('blur',saveGame);
+
+// 3. Сохранение при скрытии вкладки
+document.addEventListener('visibilitychange',function(){
+ if(document.hidden)saveGame();
+});
+
+// 4. Сохранение по Ctrl+S
+document.addEventListener('keydown',function(e){
+ if((e.ctrlKey||e.metaKey)&&(e.key||'').toLowerCase()==='s'){
+  e.preventDefault();
+  saveGame();
+  showSaveToast();
+ }
+});
+
+// 5. Сохранение после любого клика
+document.addEventListener('pointerup',function(){
+ saveDebounced();
+},true);
+/* ==================== КОНЕЦ АВТОСОХРАНЕНИЯ ==================== */
 
 var loaded=loadGame();
 
@@ -3545,6 +3598,7 @@ $('pfChangePassBtn').addEventListener('click',function(){
  $('pfOldPass').value='';$('pfNewPass').value='';$('pfNewPass2').value='';
 });
 $('pfLogoutBtn').addEventListener('click',function(){
+ saveGame();
  $('profileModal').classList.remove('active');
  if(window.__mcsLogout)window.__mcsLogout();
 });

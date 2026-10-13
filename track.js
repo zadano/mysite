@@ -218,22 +218,18 @@
     else { showImage(); }
   }
 
+  // ===== ПРИВЯЗКА ЧЕРЕЗ ДЕЛЕГИРОВАНИЕ =====
   function attachClickSound() {
-    const tryAttach = () => {
-      const btn = document.getElementById('clickerBtn');
-      if (btn && !btn.dataset.soundAttached) {
-        btn.dataset.soundAttached = '1';
-        btn.addEventListener('pointerdown', handleClick, true);
-        console.log('✅ Sound/image attached for ' + myId);
-        return true;
-      }
-      return false;
-    };
-    if (tryAttach()) return;
-    const observer = new MutationObserver(() => { if (tryAttach()) observer.disconnect(); });
-    observer.observe(document.body, { childList: true, subtree: true });
-    setTimeout(tryAttach, 500);
-    setTimeout(tryAttach, 1500);
+    if (window.__clickSoundAttached) return;
+    window.__clickSoundAttached = true;
+
+    document.addEventListener('pointerdown', function (e) {
+      const btn = e.target.closest && e.target.closest('#clickerBtn');
+      if (!btn) return;
+      handleClick();
+    }, true);
+
+    console.log('✅ Sound/image listener attached for ' + myId);
   }
 
   // ===== СТАРТ =====
@@ -244,9 +240,5 @@
     if (document.hidden) send();
   });
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', attachClickSound);
-  } else {
-    attachClickSound();
-  }
+  attachClickSound();
 })();

@@ -169,12 +169,12 @@ body{
   color:#fff;font-size:11.5px;font-weight:700;backdrop-filter:blur(6px);
 }
 
-/* ===== HOME (СОХРАНЁН) ===== */
+/* ===== HOME — затемненный фон с оверлеем ===== */
 .home{
   position:relative;height:100%;display:flex;flex-direction:column;
-  background-image:url('https://i.postimg.cc/prm3LcGb/83FD1976-2AAA-4494-BE9C-0EAD67D50CFA.png');
+  background-image: linear-gradient(rgba(5, 12, 22, 0.7), rgba(5, 12, 22, 0.9)), url('https://i.postimg.cc/prm3LcGb/83FD1976-2AAA-4494-BE9C-0EAD67D50CFA.png');
   background-size:cover;background-position:center;background-repeat:no-repeat;
-  background-color:#1a3a5c;overflow:hidden;
+  background-color:#050c16;overflow:hidden;
   user-select:none;touch-action:manipulation;cursor:pointer;
 }
 .balance{
@@ -206,43 +206,18 @@ body{
 }
 .home-spacer{flex:1;min-height:0;}
 
-.tap-cat-wrap{
-  position:relative;z-index:4;
-  width:min(76vw,320px);height:min(76vw,320px);
-  margin:0 auto 20px;
-  display:grid;place-items:center;
-}
-.tap-cat-btn{
-  position:relative;width:100%;height:100%;border-radius:50%;
-  border:none;padding:0;cursor:pointer;
-  background-image:url('https://i.postimg.cc/prm3LcGb/83FD1976-2AAA-4494-BE9C-0EAD67D50CFA.png');
-  background-size:cover;background-position:center;background-repeat:no-repeat;
-  background-color:#fff;
-  box-shadow:0 20px 40px rgba(0,0,0,.28),0 0 0 8px rgba(255,255,255,.22),0 0 0 9px rgba(255,255,255,.08);
-  transition:transform .09s ease, box-shadow .09s ease;
-  -webkit-user-select:none;user-select:none;overflow:hidden;touch-action:manipulation;
-}
-.tap-cat-btn::after{
-  content:'';position:absolute;inset:0;border-radius:50%;
-  background:radial-gradient(circle at 50% 25%, rgba(255,255,255,.3), transparent 50%);
-  pointer-events:none;
-}
-.tap-cat-btn:active{
-  transform:scale(.94);
-  box-shadow:0 12px 24px rgba(0,0,0,.3),0 0 0 6px rgba(255,255,255,.28),0 0 0 7px rgba(255,255,255,.12);
-}
-
 .float-coin{
   position:absolute;transform:translate(-50%,-50%);
-  font-weight:800;font-size:22px;color:#FFE066;
-  text-shadow:0 2px 8px rgba(245,166,35,.9), 0 1px 3px rgba(0,0,0,.4);
+  font-weight:700;font-size:22px;color:#fff;
+  text-shadow:0 2px 8px rgba(20,80,130,.6);
   pointer-events:none;z-index:30;
-  animation:floatUp 1s cubic-bezier(.2,.8,.3,1) forwards;white-space:nowrap;
+  animation:floatUp .9s cubic-bezier(.2,.8,.3,1) forwards;
+  white-space:nowrap;
 }
 @keyframes floatUp{
-  0%{opacity:0;transform:translate(-50%,-50%) scale(.4);}
-  15%{opacity:1;transform:translate(-50%,-85%) scale(1.2);}
-  100%{opacity:0;transform:translate(-50%,-220%) scale(.95);}
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.5);}
+  18%{opacity:1;transform:translate(-50%,-80%) scale(1.15);}
+  100%{opacity:0;transform:translate(-50%,-200%) scale(.95);}
 }
 
 /* ===== BOTTOM NAV ===== */
@@ -574,7 +549,6 @@ body{
   padding:7px 12px;border-radius:20px;white-space:nowrap;
 }
 
-/* Адаптив для меньших экранов */
 @media (max-width:380px){
   .bal-num{font-size:38px;}
   .screen-head h2{font-size:19px;}
@@ -595,9 +569,9 @@ body{
 
 <main class="content">
 
-  <!-- HOME (СОХРАНЁН) -->
+  <!-- HOME: тап по всему экрану -->
   <section class="screen active" id="s-home">
-    <div class="home">
+    <div class="home" id="tapZone">
       <div class="balance">
         <div class="bal-num-row">
           <img class="coin-img big" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt="">
@@ -611,9 +585,6 @@ body{
         <div class="boost-bar" id="boostBar"></div>
       </div>
       <div class="home-spacer"></div>
-      <div class="tap-cat-wrap">
-        <button class="tap-cat-btn" id="tapCatBtn" aria-label="Тапнуть кота"></button>
-      </div>
     </div>
   </section>
 
@@ -657,8 +628,7 @@ body{
     <div class="tabs">
       <button class="tab active" data-shop="boosts">Бусты</button>
       <button class="tab" data-shop="premium">⭐ Премиум</button>
-      <button class="tab" data-shop="other">Монеты</button>
-      <button class="tab" data-shop="diamonds">💎</button>
+      <button class="tab" data-shop="diamonds">💎 Алмазы</button>
     </div>
     <div class="list" id="shopList"></div>
   </section>
@@ -1032,7 +1002,7 @@ body{
   const homePerSec = $('#homePerSec');
   const homeDiamonds = $('#homeDiamonds');
   const boostBar = $('#boostBar');
-  const tapCatBtn = $('#tapCatBtn');
+  const tapZone = $('#tapZone');
   const topbar = $('#topbar');
   const upgradesList = $('#upgradesList');
   const buildingsList = $('#buildingsList');
@@ -1056,7 +1026,7 @@ body{
 
   function save(){
     try{
-      localStorage.setItem('cryptocat_save_v3', JSON.stringify({
+      localStorage.setItem('cryptocat_save_v5', JSON.stringify({
         coins: state.coins, diamonds: state.diamonds,
         level: state.level, xp: state.xp, xpNext: state.xpNext,
         totalTaps: state.totalTaps, buildingsBuilt: state.buildingsBuilt,
@@ -1071,7 +1041,7 @@ body{
 
   function load(){
     try{
-      const raw = localStorage.getItem('cryptocat_save_v3');
+      const raw = localStorage.getItem('cryptocat_save_v5');
       if(!raw) return;
       const data = JSON.parse(raw);
       Object.assign(state, data);
@@ -1081,7 +1051,6 @@ body{
   }
 
   function applyTheme(){
-    // Так как дизайн зафиксирован на светлой теме, просто оставляем светлую
     if(tg){
       try{ tg.setHeaderColor('#1B3F63'); }catch(e){}
     }
@@ -1212,16 +1181,19 @@ body{
     state.totalTaps++;
     haptic('light');
 
-    const rect = tapCatBtn.getBoundingClientRect();
+    const rect = tapZone.getBoundingClientRect();
     let x = e.clientX, y = e.clientY;
-    if(!x){ x = rect.left + rect.width/2; y = rect.top + rect.height/2; }
+    if(!x && !y){
+      x = rect.left + rect.width/2;
+      y = rect.top + rect.height/2;
+    }
 
     const float = document.createElement('div');
     float.className = 'float-coin';
     float.textContent = '+'+fmt(val);
     float.style.left = (x - rect.left) + 'px';
     float.style.top = (y - rect.top) + 'px';
-    tapCatBtn.appendChild(float);
+    tapZone.appendChild(float);
     setTimeout(()=>float.remove(), 1000);
 
     state.xp += 1;
@@ -1235,8 +1207,8 @@ body{
     updateDisplay();
   }
 
-  tapCatBtn.addEventListener('pointerdown', (e)=>{ e.preventDefault(); doTap(e); });
-  tapCatBtn.addEventListener('contextmenu', e => e.preventDefault());
+  tapZone.addEventListener('pointerdown', (e)=>{ e.preventDefault(); doTap(e); });
+  tapZone.addEventListener('contextmenu', e => e.preventDefault());
 
   setInterval(()=>{
     const income = getTotalIncome();
@@ -1415,40 +1387,6 @@ body{
         });
       }
     }
-    else if(currentShopTab === 'other'){
-      const canAfford = state.coins >= 100000;
-      const item = document.createElement('div');
-      item.className = 'item';
-      item.innerHTML = `
-        <div class="item-icon" style="background:linear-gradient(135deg,#E0F2FE,#BAE6FD);">💎</div>
-        <div class="item-body">
-          <div class="item-name">1 алмаз</div>
-          <div class="item-sub">Обмен 100 000 монет на 1 алмаз</div>
-        </div>
-        <button class="buy ${canAfford?'':'off'}" data-buy-diamond="1"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png">100.0K</button>
-      `;
-      shopList.appendChild(item);
-
-      const options = [
-        { coins: 1000, price: 1 },
-        { coins: 5000, price: 4 },
-        { coins: 25000, price: 18 },
-      ];
-      for(const opt of options){
-        const canA = state.diamonds >= opt.price;
-        const it = document.createElement('div');
-        it.className = 'item';
-        it.innerHTML = `
-          <div class="item-icon" style="background:linear-gradient(135deg,#FFF9E0,#FFE8A0);">🪙</div>
-          <div class="item-body">
-            <div class="item-name">${fmt(opt.coins)} монет</div>
-            <div class="item-sub">Обмен алмазов на монеты</div>
-          </div>
-          <button class="buy ${canA?'':'off'}" data-buy-coins="${opt.coins}" data-price="${opt.price}">💎 ${opt.price}</button>
-        `;
-        shopList.appendChild(it);
-      }
-    }
     else if(currentShopTab === 'diamonds'){
       const options = [
         { diamonds: 1, price: 100000, bonus: 0 },
@@ -1491,24 +1429,6 @@ body{
         updateDisplay(); renderShop(); save();
       });
     });
-    shopList.querySelectorAll('[data-buy-diamond]').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        if(state.coins < 100000){ showToast('❌ Нужно 100 000 монет!'); haptic('error'); return; }
-        state.coins -= 100000; state.diamonds += 1;
-        showToast('💎 +1 алмаз!'); haptic('success');
-        updateDisplay(); renderShop(); save();
-      });
-    });
-    shopList.querySelectorAll('[data-buy-coins]').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const price = parseInt(btn.dataset.price);
-        const coins = parseInt(btn.dataset.buyCoins);
-        if(state.diamonds < price){ showToast('❌ Недостаточно алмазов!'); haptic('error'); return; }
-        state.diamonds -= price; state.coins += coins;
-        showToast('✅ +'+fmt(coins)+' монет!'); haptic('success');
-        updateDisplay(); renderShop(); save();
-      });
-    });
     shopList.querySelectorAll('[data-buy-diamonds]').forEach(btn=>{
       btn.addEventListener('click', ()=>{
         const price = parseInt(btn.dataset.price);
@@ -1525,8 +1445,8 @@ body{
     $$('.screen').forEach(s => s.classList.remove('active'));
     const el = document.getElementById(id);
     if(el) el.classList.add('active');
-    $$('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.screen === id));
-    $$('.dnav').forEach(n => n.classList.toggle('active', n.dataset.screen === id));
+    $$('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.screen === id));$$
+('.dnav').forEach(n => n.classList.toggle('active', n.dataset.screen === id));
     if(id === 's-home'){
       topbar.classList.remove('solid');
       topbar.classList.add('transparent');
@@ -1545,18 +1465,9 @@ body{
   const drawer = $('#drawer');
   const overlay = $('#drawerOverlay');
   const menuBtn = $('#menuBtn');
-  const drawerClose = $('#drawerClose');
-
-  function openDrawer(){ drawer.classList.add('open'); overlay.classList.add('show'); haptic('medium'); }
-  function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('show'); }
-
-  menuBtn.addEventListener('click', openDrawer);
-  drawerClose.addEventListener('click', closeDrawer);
-  overlay.addEventListener('click', closeDrawer);
-  $$('.nav-item, .dnav').forEach(btn=>btn.addEventListener('click', ()=>switchScreen(btn.dataset.screen)));
-  $$('.tab[data-shop]').forEach(tab=>{
-    tab.addEventListener('click', ()=>{
-      $$('.tab[data-shop]').forEach(t=>t.classList.remove('active'));
+  const drawerClose = $('#drawerClose');    function openDrawer(){ drawer.classList.add('open'); overlay.classList.add('show'); haptic('medium'); } function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('show'); }    menuBtn.addEventListener('click', openDrawer); drawerClose.addEventListener('click', closeDrawer); overlay.addEventListener('click', closeDrawer); $$('.nav-item, .dnav').forEach(btn=>btn.addEventListener('click', ()=>switchScreen(btn.dataset.screen)));
+  $$('.tab[data-shop]').forEach(tab=>{ tab.addEventListener('click', ()=>{ $$
+('.tab[data-shop]').forEach(t=>t.classList.remove('active'));
       tab.classList.add('active');
       currentShopTab = tab.dataset.shop;
       renderShop();
@@ -1772,7 +1683,6 @@ body{
     else window.open(shareUrl, '_blank');
   });
 
-  // Настройки (заглушка)
   $('#settingsBtn').addEventListener('click', ()=>{
     showToast('⚙️ Настройки в разработке');
     haptic('light');
@@ -1812,7 +1722,7 @@ body{
     updateDisplay();
 
     if(state.totalTaps === 0){
-      setTimeout(()=>showToast('👋 Тапни кота, чтобы начать!'), 500);
+      setTimeout(()=>showToast('👋 Тапай по экрану, чтобы начать!'), 500);
     }
 
     setInterval(renderBoostBar, 500);

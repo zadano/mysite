@@ -1,218 +1,1892 @@
-/* ===== TOPBAR ===== */ .topbar{ position:absolute;top:0;left:0;right:0;z-index:10; flex:0 0 52px;height:52px;display:flex;align-items:center;justify-content:space-between; padding:0 8px;pointer-events:none;transition:background .2s, border .2s; border-bottom:1px solid transparent; } .topbar.transparent{background:transparent;border-bottom-color:transparent;} .topbar.solid{background:#fff;border-bottom-color:var(--line);pointer-events:auto;} .tb-btn{ width:40px;height:40px;border:none;border-radius:12px; display:grid;place-items:center;cursor:pointer;pointer-events:auto; background:rgba(255,255,255,.2);color:#fff;transition:background .15s, color .15s; backdrop-filter:blur(6px); } .topbar.solid .tb-btn{background:transparent;color:#3C4A5E;backdrop-filter:none;} .topbar.solid .tb-btn:active{background:var(--tg-blue-light);color:var(--tg-blue);} .topbar.transparent .tb-btn:active{background:rgba(255,255,255,.35);} .tb-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2; stroke-linecap:round;stroke-linejoin:round;}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#3390EC">
+<title>КриптоКот</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;margin:0;padding:0;overscroll-behavior:none;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+  background:#0b1220;display:flex;justify-content:center;align-items:center;
+  overflow:hidden;color:#0F172A;
+}
+:root{
+  --tg-blue:#3390EC;
+  --tg-blue-hover:#2B7FD4;
+  --tg-blue-light:#E8F2FD;
+  --tg-green:#31B545;
+  --tg-gold:#F0A500;
+  --diamond:#33C5FF;
+  --diamond-dark:#1490D8;
+  --bg:#EEF3F8;
+  --muted:#8798AE;
+  --line:#E6EDF5;
+}
+#app{
+  position:relative;width:100%;max-width:430px;height:100%;max-height:920px;
+  background:var(--bg);display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 0 80px rgba(0,0,0,.6);
+}
+@media(min-width:480px){ #app{border-radius:26px;} }
+
+/* ===== TOPBAR ===== */
+.topbar{
+  position:absolute;top:0;left:0;right:0;z-index:10;
+  flex:0 0 52px;height:52px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 8px;pointer-events:none;transition:background .2s, border .2s;
+  border-bottom:1px solid transparent;
+}
+.topbar.transparent{background:transparent;border-bottom-color:transparent;}
+.topbar.solid{background:#fff;border-bottom-color:var(--line);pointer-events:auto;}
+.tb-btn{
+  width:40px;height:40px;border:none;border-radius:12px;
+  display:grid;place-items:center;cursor:pointer;pointer-events:auto;
+  background:rgba(255,255,255,.2);color:#fff;transition:background .15s, color .15s;
+  backdrop-filter:blur(6px);
+}
+.topbar.solid .tb-btn{background:transparent;color:#3C4A5E;backdrop-filter:none;}
+.topbar.solid .tb-btn:active{background:var(--tg-blue-light);color:var(--tg-blue);}
+.topbar.transparent .tb-btn:active{background:rgba(255,255,255,.35);}
+.tb-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round;}
+
 .content{flex:1;min-height:0;position:relative;overflow:hidden;}
-/* ===== SCREENS ===== */ .screen{ position:absolute;inset:0;overflow-y:auto;overflow-x:hidden; padding:60px 14px 22px;-webkit-overflow-scrolling:touch; opacity:0;visibility:hidden;transform:translateY(6px); transition:opacity .18s, transform .18s, visibility .18s; } .screen.active{opacity:1;visibility:visible;transform:none;} .screen::-webkit-scrollbar{width:0;} #s-home{padding:0;overflow:hidden;}
-.screen-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;} .screen-head h2{margin:0 0 3px;font-size:20px;font-weight:700;letter-spacing:-.4px;} .screen-head p{margin:0;font-size:11.5px;color:var(--muted);line-height:1.35;max-width:210px;}
-.bal-chips{margin-left:auto;display:flex;gap:6px;flex-shrink:0;} .bal-chip{ display:flex;align-items:center;gap:5px;background:#fff; padding:7px 10px;border-radius:12px;font-size:12.5px;font-weight:700; box-shadow:0 1px 4px rgba(24,60,110,.08);white-space:nowrap; } .chip-d{background:linear-gradient(135deg,#E5F5FF,#D0EBFF);} .diamond-ico{font-size:14px;line-height:1;}
-.coin-img{ width:20px;height:20px;object-fit:contain;flex:0 0 auto; filter:drop-shadow(0 1px 2px rgba(0,0,0,.15)); } .coin-img.big{width:54px;height:54px; filter:drop-shadow(0 6px 16px rgba(232,163,23,.6));} .buy .coin-img{width:16px;height:16px;}
-.star{ display:inline-block;width:16px;height:16px;flex:0 0 auto; background:radial-gradient(circle at 35% 30%,#FFF7CC,#FFD700 60%,#E6A800); clip-path:polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); box-shadow:0 1px 3px rgba(0,0,0,.2); }
-.list{display:flex;flex-direction:column;gap:9px;} .item{ display:flex;align-items:center;gap:11px;background:#fff;border-radius:16px; padding:11px;box-shadow:0 1px 4px rgba(24,60,110,.06);transition:transform .12s; position:relative;overflow:hidden; } .item:active{transform:scale(.985);} .item-icon{ width:46px;height:46px;flex:0 0 46px;border-radius:12px;display:grid;place-items:center; font-size:22px;background:#EEF3F8; } .item-body{flex:1;min-width:0;} .item-name{font-size:14px;font-weight:600;letter-spacing:-.2px;margin-bottom:2px;} .item-sub{font-size:11px;color:var(--muted);line-height:1.3;} .item-sub b{color:#3C4A5E;font-weight:600;}
-.badge{ position:absolute;top:0;right:0; background:linear-gradient(135deg,#FF6B35,#E8487F); color:#fff;font-size:9.5px;font-weight:800;letter-spacing:.4px; padding:3px 8px;border-bottom-left-radius:10px; text-transform:uppercase; } .badge.hot{background:linear-gradient(135deg,#FFB800,#F07000);}
-.buy,.small-btn,.btn-primary,.tap-btn{ border:none;font-family:inherit;background:var(--tg-blue);color:#fff; font-weight:600;letter-spacing:-.1px;cursor:pointer; transition:background .15s, transform .08s; -webkit-user-select:none;user-select:none; } .buy:active,.small-btn:active,.btn-primary:active,.tap-btn:active{ background:var(--tg-blue-hover);transform:scale(.97); } .
 
-buy{border-radius:10px;padding:9px 13px;font-size:13px;display:flex;align-items:center;gap:5px; white-space:nowrap;flex:0 0 auto;} .buy.off{background:#D9E1EA;color:#93A3B7;cursor:not-allowed;} .buy.off:active{transform:none;background:#D9E1EA;} .buy.diamond-btn{background:linear-gradient(135deg,#33C5FF,#1490D8);} .buy.diamond-btn:active{background:#1490D8;} .buy.star-btn{background:linear-gradient(135deg,#FFC53D,#E8A317);color:#5A3800;} .buy.star-btn:active{background:#E8A317;}
-.maxed{font-size:12px;font-weight:600;color:var(--tg-green);background:#E7F7EB; padding:8px 12px;border-radius:10px;flex:0 0 auto;}
-.pbar{height:6px;border-radius:6px;background:#E9F0F7;overflow:hidden;margin-top:6px;} .pbar i{display:block;height:100%;border-radius:6px;background:var(--tg-blue);transition:width .3s;} .pbar.done i{background:var(--tg-green);} .ptxt{font-size:10.5px;color:var(--muted);margin-top:4px;font-weight:500;}
-/* ===== SHOP HERO (CHEST) ===== */ .shop-hero{ position:relative;background:linear-gradient(135deg,#1B3F63 0%,#0F2A47 100%); border-radius:20px;overflow:hidden;margin-bottom:14px; display:flex;align-items:center;padding:16px 18px;min-height:130px; box-shadow:0 8px 24px rgba(15,42,71,.35); } .shop-hero::before{ content:'';position:absolute;inset:0; background:radial-gradient(circle at 80% 50%,rgba(255,197,61,.25),transparent 60%); pointer-events:none; } .shop-hero-img{ position:absolute;right:-10px;bottom:-14px; width:150px;height:150px;object-fit:contain; filter:drop-shadow(0 6px 16px rgba(0,0,0,.5)); pointer-events:none;z-index:1; } .shop-hero-text{position:relative;z-index:2;max-width:55%;} .shop-hero-text h3{ margin:0 0 6px;color:#fff;font-size:18px;font-weight:800;letter-spacing:-.4px; } .shop-hero-text p{ margin:0;color:rgba(255,255,255,.75);font-size:11.5px;line-height:1.4; } .shop-hero-text .diamond-pill{ display:inline-flex;align-items:center;gap:5px;margin-top:10px; background:rgba(255,255,255,.15);padding:5px 10px;border-radius:20px; color:#fff;font-size:11.5px;font-weight:700; backdrop-filter:blur(6px); }
-/* ===== HOME ===== */ .home{ position:relative;height:100%;display:flex;flex-direction:column; background-image:url('https://i.postimg.cc/prm3LcGb/83FD1976-2AAA-4494-BE9C-0EAD67D50CFA.png'); background-size:cover;background-position:center;background-repeat:no-repeat; background-color:#1a3a5c;overflow:hidden; user-select:none;touch-action:manipulation;cursor:pointer; } .balance{ position:relative;z-index:3;display:flex;flex-direction:column;align-items:center; padding-top:64px;pointer-events:none; } .bal-num-row{display:flex;align-items:center;gap:12px;} .bal-num{font-size:46px;font-weight:800;color:#fff;letter-spacing:-1.6px; text-shadow:0 4px 14px rgba(14,80,130,.6);line-height:1;} .bal-per{font-size:16px;font-weight:600;color:#fff;opacity:.95;margin-top:8px; text-shadow:0 2px 8px rgba(14,80,130,.5);} .diamonds-row{ display:flex;align-items:center;gap:5px;margin-top:10px;pointer-events:none; background:rgba(255,255,255,.18);padding:5px 12px;border-radius:20px; backdrop-filter:blur(6px); } .diamonds-row span{font-size:14px;font-weight:700;color:#fff;} .boost-bar{display:flex;gap:6px;margin-top:12px;pointer-events:none;flex-wrap:wrap;justify-content:center;} .boost-pill{background:rgba(255,255,255,.92);border-radius:20px;padding:5px 11px; font-size:11px;font-weight:600;color:#E08A00;box-shadow:0 2px 8px rgba(0,0,0,.12);} .home-spacer{flex:1;min-height:0;} .tap-btn{ position:relative;z-index:4;margin:0 auto 22px; display:flex;align-items:center;justify-content:center;gap:9px; padding:15px 0;width:min(84%,340px);border-radius:12px;font-size:17px;font-weight:600; box-shadow:0 6px 20px rgba(0,0,0,.25); } .tap-btn svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2; stroke-linecap:round;stroke-linejoin:round;} .float-coin{ position:absolute;transform:translate(-50%,-50%);font-weight:700;font-size:22px; color:#fff;text-shadow:0 2px 8px rgba(20,80,130,.6);pointer-events:none; z-index:30;animation:floatUp .9s cubic-bezier(.2,.8,.
+/* ===== SCREENS ===== */
+.screen{
+  position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
+  padding:60px 14px 22px;-webkit-overflow-scrolling:touch;
+  opacity:0;visibility:hidden;transform:translateY(6px);
+  transition:opacity .18s, transform .18s, visibility .18s;
+}
+.screen.active{opacity:1;visibility:visible;transform:none;}
+.screen::-webkit-scrollbar{width:0;}
+#s-home{padding:0;overflow:hidden;}
 
-3,1) forwards; } @keyframes floatUp{ 0%{opacity:0;transform:translate(-50%,-50%) scale(.5);} 18%{opacity:1;transform:translate(-50%,-80%) scale(1.15);} 100%{opacity:0;transform:translate(-50%,-200%) scale(.95);} }
-/* ===== BOTTOM NAV (5 items) ===== */ .bottomnav{ flex:0 0 auto;display:flex;background:#fff;border-top:1px solid var(--line); padding:7px 2px calc(7px + env(safe-area-inset-bottom,0px));z-index:6; } .nav-item{ flex:1;background:none;border:none;font-family:inherit;display:flex;flex-direction:column; align-items:center;gap:2px;color:#A2AFC2;font-size:9.5px;font-weight:500; padding:5px 0;cursor:pointer;border-radius:12px;transition:color .16s; } .nav-item svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9; stroke-linecap:round;stroke-linejoin:round;transition:.16s;} .nav-item:active{transform:scale(.93);} .nav-item.active{color:var(--tg-blue);} .nav-item.active svg{stroke-width:2.2;} .nav-item.nav-roulette{color:#E8A317;position:relative;} .nav-item.nav-roulette.active{color:#E8A317;} .nav-item.nav-roulette svg{stroke:#E8A317;} .nav-item.nav-roulette.active svg{ stroke-width:2.4; filter:drop-shadow(0 3px 8px rgba(232,163,23,.5)); }
-/* ===== DRAWER ===== */ .overlay{ position:absolute;inset:0;background:rgba(10,22,40,.5); opacity:0;visibility:hidden;transition:.24s;z-index:40; } .overlay.show{opacity:1;visibility:visible;} .drawer{ position:absolute;top:0;left:0;bottom:0;width:min(82%,320px);z-index:50; background:#1B3F63;transform:translateX(-102%); transition:transform .28s cubic-bezier(.3,.9,.3,1); display:flex;flex-direction:column;color:#fff;overflow-y:auto; padding:14px 14px calc(18px + env(safe-area-inset-bottom,0px)); } .drawer.open{transform:translateX(0);} .drawer::-webkit-scrollbar{width:0;} .drawer-close{ align-self:flex-end;width:36px;height:36px;border:none;border-radius:10px; background:rgba(255,255,255,.1);color:#fff;font-size:17px;cursor:pointer; display:grid;place-items:center;font-family:inherit; } .drawer-close:active{background:rgba(255,255,255,.22);} .drawer-head{display:flex;flex-direction:column;align-items:center;text-align:center; padding:2px 0 16px;} .avatar{ width:74px;height:74px;border-radius:50%;display:grid;place-items:center;font-size:38px; background:#2B7FD4;margin-bottom:10px;border:2px solid rgba(255,255,255,.2); } .d-name{font-size:17px;font-weight:700;letter-spacing:-.3px;} .d-lvl{font-size:12px;color:#9CC3E4;font-weight:500;margin-top:2px;} .d-bar{width:150px;height:6px;border-radius:6px;background:rgba(255,255,255,.16); margin-top:9px;overflow:hidden;} .d-bar i{display:block;height:100%;border-radius:6px;background:var(--tg-blue);transition:width .3s;} .d-xp{font-size:10.5px;color:#8FB6D8;margin-top:5px;font-weight:500;} .drawer-nav{display:flex;flex-direction:column;gap:3px;margin-top:4px;} .dnav{ display:flex;align-items:center;gap:12px;background:none;border:none;font-family:inherit; color:#D8E8F6;font-size:14.5px;font-weight:500;padding:12px 13px;border-radius:10px; cursor:pointer;text-align:left;transition:background .15s; } .dnav svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9; stroke-linecap:round;stroke-linejoin:round;opacity:.9;flex:0 0 auto;} .dnav:active{background:rgba(255,255,255,.1);} .dnav.active{background:var(--tg-blue);color:#fff;} .dnav-sep{height:1px;background:rgba(255,255,255,.12);margin:10px 6px;} .drawer-foot{margin-top:auto;padding-top:18px;text-align:center; font-size:10.5px;color:#7FA5C6;line-height:1.6;}
-/* ===== TABS ===== */ .tabs{display:flex;gap:6px;margin-bottom:13px;background:#E4EBF3;padding:4px;border-radius:12px;} .tab{ flex:1;border:none;font-family:inherit;padding:9px 4px;border-radius:9px;font-size:12px; font-weight:600;cursor:pointer;background:transparent;color:#8798AE; transition:background .16s, color .16s;white-space:nowrap; } .tab.active{background:#fff;color:var(--tg-blue);box-shadow:0 1px 3px rgba(24,60,110,.12);} .tab:active{transform:scale(.97);}
-/* ===== TASK EXTRAS ===== */ .
+.screen-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;}
+.screen-head h2{margin:0 0 3px;font-size:20px;font-weight:700;letter-spacing:-.4px;}
+.screen-head p{margin:0;font-size:11.5px;color:var(--muted);line-height:1.35;max-width:210px;}
 
-task-check{ width:30px;height:30px;flex:0 0 30px;border-radius:50%;display:grid;place-items:center; background:var(--tg-green);color:#fff;font-size:15px;font-weight:700; } .task-check.wait{background:#E9F0F7;color:#A2AFC2;} .small-btn{border-radius:10px;padding:9px 14px;font-size:13px;white-space:nowrap;flex:0 0 auto;} .small-btn.gold{background:var(--tg-gold);} .small-btn.gold:active{background:#D99400;} .small-btn.grey{background:#D9E1EA;color:#8798AE;} .small-btn.grey:active{background:#D9E1EA;transform:none;}
-/* ===== PROFILE ===== */ .profile-card{background:#fff;border-radius:18px;padding:18px;text-align:center; box-shadow:0 1px 4px rgba(24,60,110,.06);margin-bottom:12px;} .profile-card .avatar{width:86px;height:86px;font-size:44px;margin:0 auto 10px;background:#2B7FD4;} .p-name{font-size:19px;font-weight:700;letter-spacing:-.4px;} .p-lvl{font-size:12.5px;color:var(--muted);font-weight:500;margin-top:3px;} .p-bar{height:8px;border-radius:8px;background:#EEF3F8;overflow:hidden;margin:14px 0 7px;} .p-bar i{display:block;height:100%;border-radius:8px;background:var(--tg-blue);transition:width .35s;} .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px;} .stat{background:#fff;border-radius:14px;padding:13px 8px;text-align:center; box-shadow:0 1px 4px rgba(24,60,110,.06);} .stat b{display:block;font-size:16px;font-weight:700;letter-spacing:-.4px;} .stat span{display:block;font-size:10px;color:var(--muted);margin-top:3px;font-weight:500;} .stat-list{background:#fff;border-radius:16px;padding:6px 14px; box-shadow:0 1px 4px rgba(24,60,110,.06);margin-bottom:12px;} .stat-row{display:flex;align-items:center;gap:11px;padding:12px 0; border-bottom:1px solid var(--line);font-size:13px;} .stat-row:last-child{border-bottom:none;} .stat-row svg{width:19px;height:19px;stroke:#8798AE;fill:none;stroke-width:1.9; stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto;} .stat-row span{flex:1;color:#5B6B80;font-weight:500;} .stat-row b{font-weight:600;letter-spacing:-.2px;} .btn-primary{ width:100%;padding:15px;border-radius:12px;font-size:15px; display:flex;align-items:center;justify-content:center;gap:9px; } .btn-primary svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:2; stroke-linecap:round;stroke-linejoin:round;} .btn-invite{ background:linear-gradient(135deg,#2AABEE,#229ED9); box-shadow:0 4px 12px rgba(34,158,217,.35); }
-.exchange-card{ background:linear-gradient(135deg,#E5F5FF,#C8E7FF); border-radius:16px;padding:14px;margin-bottom:12px; display:flex;align-items:center;gap:12px; box-shadow:0 1px 4px rgba(24,60,110,.06); } .exchange-icon{font-size:32px;line-height:1;} .exchange-body{flex:1;min-width:0;} .exchange-title{font-size:13.5px;font-weight:700;color:#0F172A;margin-bottom:2px;} .exchange-sub{font-size:11px;color:#5B6B80;line-height:1.35;} .exchange-btn{ border:none;font-family:inherit; background:linear-gradient(135deg,#33C5FF,#1490D8);color:#fff; border-radius:10px;padding:9px 13px;font-size:12.5px;font-weight:700; cursor:pointer;white-space:nowrap;transition:.15s; display:flex;align-items:center;gap:5px; } .exchange-btn:active{transform:scale(.96);background:#1490D8;} .exchange-btn.off{background:#D9E1EA;color:#93A3B7;cursor:not-allowed;} .exchange-btn.off:active{transform:none;}
-/* ============ ROULETTE ============ */ .roulette-wrap{ display:flex;flex-direction:column;align-items:center; padding:4px 0 20px; }
-.roulette-title{ text-align:center;margin-bottom:18px; } .roulette-title h2{ margin:0 0 4px;font-size:22px;font-weight:800;color:#0F172A;letter-spacing:-.4px; display:flex;align-items:center;justify-content:center;gap:8px; } .roulette-title p{ margin:0;font-size:12.5px;color:var(--muted); }
-.wheel-container{ position:relative;width:300px;height:300px;margin:0 auto 20px; } .wheel-glow{ position:absolute;inset:-20px;border-radius:50%; background:radial-gradient(circle,rgba(51,197,255,.35) 0%,rgba(51,197,255,0) 65%); animation:wheelPulse 2.4s ease-in-out infinite; pointer-events:none; } @keyframes wheelPulse{ 0%,100%{opacity:.55;transform:scale(1);} 50%{opacity:.
+.bal-chips{margin-left:auto;display:flex;gap:6px;flex-shrink:0;}
+.bal-chip{
+  display:flex;align-items:center;gap:5px;background:#fff;
+  padding:7px 10px;border-radius:12px;font-size:12.5px;font-weight:700;
+  box-shadow:0 1px 4px rgba(24,60,110,.08);white-space:nowrap;
+}
+.chip-d{background:linear-gradient(135deg,#E5F5FF,#D0EBFF);}
+.diamond-ico{font-size:14px;line-height:1;}
 
-95;transform:scale(1.08);} }
-.wheel-pointer{ position:absolute;top:-14px;left:50%;transform:translateX(-50%); width:0;height:0; border-left:17px solid transparent; border-right:17px solid transparent; border-top:26px solid #E8487F; filter:drop-shadow(0 5px 10px rgba(232,72,127,.55)); z-index:5; transform-origin:50% 0; transition:transform .15s; } .wheel-pointer.spinning{ animation:pointerTick .12s linear infinite; } @keyframes pointerTick{ 0%{transform:translateX(-50%) rotate(-10deg);} 50%{transform:translateX(-50%) rotate(10deg);} 100%{transform:translateX(-50%) rotate(-10deg);} }
-#wheelCanvas{ position:relative;z-index:1; width:300px;height:300px;border-radius:50%; display:block; }
-.spin-center{ position:absolute;top:50%;left:50%;transform:translate(-50%,-50%); width:92px;height:92px;border-radius:50%;border:5px solid #fff; background:linear-gradient(135deg,#3390EC,#1E7DB8); color:#fff;font-family:inherit;font-weight:800; cursor:pointer;z-index:4; box-shadow:0 8px 24px rgba(42,171,238,.55),inset 0 -4px 10px rgba(0,0,0,.2); transition:transform .12s,box-shadow .12s,background .2s; display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px; padding:0; } .spin-center:active:not(:disabled){ transform:translate(-50%,-50%) scale(.93); box-shadow:0 4px 14px rgba(42,171,238,.5); } .spin-center:disabled{ cursor:not-allowed; background:linear-gradient(135deg,#8798AE,#5B6B80); box-shadow:0 4px 12px rgba(0,0,0,.25); } .spin-center .sc-ico{font-size:26px;line-height:1;} .spin-center .sc-txt{font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;}
-/* Info panel */ .roulette-info{ width:100%;background:#fff;border-radius:16px;padding:14px; box-shadow:0 1px 4px rgba(24,60,110,.06);margin-bottom:14px; text-align:center; } .roulette-info .ri-main{ font-size:13.5px;font-weight:700;color:#0F172A;margin-bottom:8px; } .roulette-info .ri-sub{ font-size:11.5px;color:var(--muted);line-height:1.4;margin-bottom:8px; } .ri-pill{ display:inline-flex;align-items:center;gap:6px; padding:7px 16px;border-radius:22px; font-size:12.5px;font-weight:800; } .ri-pill.free{ background:linear-gradient(135deg,#5BE39A,#2ECC71);color:#fff; box-shadow:0 4px 14px rgba(46,204,113,.35); } .ri-pill.paid{ background:linear-gradient(135deg,#FFC53D,#E8A317);color:#5A3800; box-shadow:0 4px 14px rgba(232,163,23,.35); } .ri-pill.locked{ background:#E9F0F7;color:#8798AE; }
-/* Prizes grid */ .prizes-section-title{ font-size:13px;font-weight:700;color:#5B6B80;margin-bottom:8px; padding-left:2px; } .prizes-grid{ display:grid;grid-template-columns:repeat(2,1fr);gap:8px; } .prize-card{ background:#fff;border-radius:14px;padding:10px 12px; box-shadow:0 1px 4px rgba(24,60,110,.06); display:flex;align-items:center;gap:9px; } .prize-ico{ width:36px;height:36px;flex:0 0 36px;border-radius:10px; display:grid;place-items:center;font-size:18px; } .prize-info{flex:1;min-width:0;} .prize-label{font-size:12.5px;font-weight:700;color:#0F172A;} .prize-desc{font-size:10.5px;color:var(--muted);margin-top:1px;}
-/* Win modal */ .win-icon-big{ font-size:72px;line-height:1;margin:8px 0 14px; animation:winPop .6s cubic-bezier(.2,1.4,.4,1); display:inline-block; } @keyframes winPop{ 0%{transform:scale(0) rotate(-180deg);opacity:0;} 60%{transform:scale(1.15) rotate(10deg);opacity:1;} 100%{transform:scale(1) rotate(0);} } .win-title{ margin:0 0 8px;font-size:16px;font-weight:700;color:#0F172A; } .win-reward{ font-size:22px;font-weight:900;margin:10px 0 14px; letter-spacing:-.5px; } .win-reward.gold{color:#E8A317;} .win-reward.blue{color:#1490D8;} .win-reward.green{color:#31B545;}
-/* ===== MODAL / TOAST ===== */ .modal{ position:absolute;inset:0;z-index:60;display:flex;align-items:center;justify-content:center; padding:24px;background:rgba(10,22,40,.55); opacity:0;visibility:hidden;transition:.22s; } .modal.show{opacity:1;visibility:visible;} .modal-card{ background:#fff;border-radius:18px;padding:22px;width:100%;max-width:330px; transform:scale(.92);transition:.22s cubic-bezier(.3,1.3,.5,1);text-align:center; max-height:80%;overflow-y:auto; } .modal.
+.coin-img{
+  width:20px;height:20px;object-fit:contain;flex:0 0 auto;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.15));
+}
+.coin-img.big{width:54px;height:54px;
+  filter:drop-shadow(0 6px 16px rgba(232,163,23,.6));}
+.buy .coin-img{width:16px;height:16px;}
 
-show .modal-card{transform:scale(1);} .modal-card h3{margin:0 0 10px;font-size:18px;font-weight:700;letter-spacing:-.3px;} .modal-card p{margin:0 0 9px;font-size:13px;color:#5B6B80;line-height:1.5;text-align:left;} .modal-card p b{color:#0F172A;}
-#toast{ position:absolute;left:50%;top:72px;transform:translate(-50%,-14px);z-index:70; background:rgba(16,36,58,.94);color:#fff;font-size:13px;font-weight:500; padding:11px 18px;border-radius:12px; opacity:0;visibility:hidden;transition:.25s;pointer-events:none; max-width:88%;text-align:center; } #toast.show{opacity:1;visibility:visible;transform:translate(-50%,0);} </style>
-<!-- HOME -->
-<section class="screen active" id="s-home">
-  <div class="home" id="tapZone">
-    <div class="balance">
-      <div class="bal-num-row">
-        <img class="coin-img big" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt="">
-        <div class="bal-num" id="homeCoins">0</div>
-      </div>
-      <div class="bal-per" id="homePerSec">+0/с</div>
-      <div class="diamonds-row">
-        <span class="diamond-ico">💎</span>
-        <span id="homeDiamonds">3</span>
-      </div>
-      <div class="boost-bar" id="boostBar"></div>
-    </div>
-    <div class="home-spacer"></div>
-    <button class="tap-btn" id="tapBtn">
-      <svg viewBox="0 0 24 24"><path d="M9 11V5.5a2 2 0 0 1 4 0V11"/><path d="M13 11V4.5a2 2 0 0 1 4 0V12"/><path d="M17 12V7.5a2 2 0 0 1 4 0V15a7 7 0 0 1-7 7h-2a7 7 0 0 1-7-7v-3.5a2 2 0 0 1 4 0V13"/></svg>
-      Тапай!
+.star{
+  display:inline-block;width:16px;height:16px;flex:0 0 auto;
+  background:radial-gradient(circle at 35% 30%,#FFF7CC,#FFD700 60%,#E6A800);
+  clip-path:polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  box-shadow:0 1px 3px rgba(0,0,0,.2);
+}
+
+.list{display:flex;flex-direction:column;gap:9px;}
+.item{
+  display:flex;align-items:center;gap:11px;background:#fff;border-radius:16px;
+  padding:11px;box-shadow:0 1px 4px rgba(24,60,110,.06);transition:transform .12s;
+  position:relative;overflow:hidden;
+}
+.item:active{transform:scale(.985);}
+.item-icon{
+  width:46px;height:46px;flex:0 0 46px;border-radius:12px;display:grid;place-items:center;
+  font-size:22px;background:#EEF3F8;
+}
+.item-body{flex:1;min-width:0;}
+.item-name{font-size:14px;font-weight:600;letter-spacing:-.2px;margin-bottom:2px;}
+.item-sub{font-size:11px;color:var(--muted);line-height:1.3;}
+.item-sub b{color:#3C4A5E;font-weight:600;}
+
+.badge{
+  position:absolute;top:0;right:0;
+  background:linear-gradient(135deg,#FF6B35,#E8487F);
+  color:#fff;font-size:9.5px;font-weight:800;letter-spacing:.4px;
+  padding:3px 8px;border-bottom-left-radius:10px;
+  text-transform:uppercase;
+}
+.badge.hot{background:linear-gradient(135deg,#FFB800,#F07000);}
+
+.buy,.small-btn,.btn-primary,.tap-btn{
+  border:none;font-family:inherit;background:var(--tg-blue);color:#fff;
+  font-weight:600;letter-spacing:-.1px;cursor:pointer;
+  transition:background .15s, transform .08s;
+  -webkit-user-select:none;user-select:none;
+}
+.buy:active,.small-btn:active,.btn-primary:active,.tap-btn:active{
+  background:var(--tg-blue-hover);transform:scale(.97);
+}
+.buy{border-radius:10px;padding:9px 13px;font-size:13px;display:flex;align-items:center;gap:5px;
+  white-space:nowrap;flex:0 0 auto;}
+.buy.off{background:#D9E1EA;color:#93A3B7;cursor:not-allowed;}
+.buy.off:active{transform:none;background:#D9E1EA;}
+.buy.diamond-btn{background:linear-gradient(135deg,#33C5FF,#1490D8);}
+.buy.diamond-btn:active{background:#1490D8;}
+.buy.star-btn{background:linear-gradient(135deg,#FFC53D,#E8A317);color:#5A3800;}
+.buy.star-btn:active{background:#E8A317;}
+
+.maxed{font-size:12px;font-weight:600;color:var(--tg-green);background:#E7F7EB;
+  padding:8px 12px;border-radius:10px;flex:0 0 auto;}
+
+.pbar{height:6px;border-radius:6px;background:#E9F0F7;overflow:hidden;margin-top:6px;}
+.pbar i{display:block;height:100%;border-radius:6px;background:var(--tg-blue);transition:width .3s;}
+.pbar.done i{background:var(--tg-green);}
+.ptxt{font-size:10.5px;color:var(--muted);margin-top:4px;font-weight:500;}
+
+/* ===== SHOP HERO (CHEST) ===== */
+.shop-hero{
+  position:relative;background:linear-gradient(135deg,#1B3F63 0%,#0F2A47 100%);
+  border-radius:20px;overflow:hidden;margin-bottom:14px;
+  display:flex;align-items:center;padding:16px 18px;min-height:130px;
+  box-shadow:0 8px 24px rgba(15,42,71,.35);
+}
+.shop-hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 80% 50%,rgba(255,197,61,.25),transparent 60%);
+  pointer-events:none;
+}
+.shop-hero-img{
+  position:absolute;right:-10px;bottom:-14px;
+  width:150px;height:150px;object-fit:contain;
+  filter:drop-shadow(0 6px 16px rgba(0,0,0,.5));
+  pointer-events:none;z-index:1;
+}
+.shop-hero-text{position:relative;z-index:2;max-width:55%;}
+.shop-hero-text h3{
+  margin:0 0 6px;color:#fff;font-size:18px;font-weight:800;letter-spacing:-.4px;
+}
+.shop-hero-text p{
+  margin:0;color:rgba(255,255,255,.75);font-size:11.5px;line-height:1.4;
+}
+.shop-hero-text .diamond-pill{
+  display:inline-flex;align-items:center;gap:5px;margin-top:10px;
+  background:rgba(255,255,255,.15);padding:5px 10px;border-radius:20px;
+  color:#fff;font-size:11.5px;font-weight:700;
+  backdrop-filter:blur(6px);
+}
+
+/* ===== HOME ===== */
+.home{
+  position:relative;height:100%;display:flex;flex-direction:column;
+  background-image:url('https://i.postimg.cc/prm3LcGb/83FD1976-2AAA-4494-BE9C-0EAD67D50CFA.png');
+  background-size:cover;background-position:center;background-repeat:no-repeat;
+  background-color:#1a3a5c;overflow:hidden;
+  user-select:none;touch-action:manipulation;cursor:pointer;
+}
+.balance{
+  position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;
+  padding-top:64px;pointer-events:none;
+}
+.bal-num-row{display:flex;align-items:center;gap:12px;}
+.bal-num{font-size:46px;font-weight:800;color:#fff;letter-spacing:-1.6px;
+  text-shadow:0 4px 14px rgba(14,80,130,.6);line-height:1;}
+.bal-per{font-size:16px;font-weight:600;color:#fff;opacity:.95;margin-top:8px;
+  text-shadow:0 2px 8px rgba(14,80,130,.5);}
+.diamonds-row{
+  display:flex;align-items:center;gap:5px;margin-top:10px;pointer-events:none;
+  background:rgba(255,255,255,.18);padding:5px 12px;border-radius:20px;
+  backdrop-filter:blur(6px);
+}
+.diamonds-row span{font-size:14px;font-weight:700;color:#fff;}
+.boost-bar{display:flex;gap:6px;margin-top:12px;pointer-events:none;flex-wrap:wrap;justify-content:center;}
+.boost-pill{background:rgba(255,255,255,.92);border-radius:20px;padding:5px 11px;
+  font-size:11px;font-weight:600;color:#E08A00;box-shadow:0 2px 8px rgba(0,0,0,.12);}
+.home-spacer{flex:1;min-height:0;}
+.tap-btn{
+  position:relative;z-index:4;margin:0 auto 22px;
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  padding:15px 0;width:min(84%,340px);border-radius:12px;font-size:17px;font-weight:600;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+.tap-btn svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round;}
+.float-coin{
+  position:absolute;transform:translate(-50%,-50%);font-weight:700;font-size:22px;
+  color:#fff;text-shadow:0 2px 8px rgba(20,80,130,.6);pointer-events:none;
+  z-index:30;animation:floatUp .9s cubic-bezier(.2,.8,.3,1) forwards;
+}
+@keyframes floatUp{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.5);}
+  18%{opacity:1;transform:translate(-50%,-80%) scale(1.15);}
+  100%{opacity:0;transform:translate(-50%,-200%) scale(.95);}
+}
+
+/* ===== BOTTOM NAV (5 items) ===== */
+.bottomnav{
+  flex:0 0 auto;display:flex;background:#fff;border-top:1px solid var(--line);
+  padding:7px 2px calc(7px + env(safe-area-inset-bottom,0px));z-index:6;
+}
+.nav-item{
+  flex:1;background:none;border:none;font-family:inherit;display:flex;flex-direction:column;
+  align-items:center;gap:2px;color:#A2AFC2;font-size:9.5px;font-weight:500;
+  padding:5px 0;cursor:pointer;border-radius:12px;transition:color .16s;
+}
+.nav-item svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;
+  stroke-linecap:round;stroke-linejoin:round;transition:.16s;}
+.nav-item:active{transform:scale(.93);}
+.nav-item.active{color:var(--tg-blue);}
+.nav-item.active svg{stroke-width:2.2;}
+.nav-item.nav-roulette{color:#E8A317;position:relative;}
+.nav-item.nav-roulette.active{color:#E8A317;}
+.nav-item.nav-roulette svg{stroke:#E8A317;}
+.nav-item.nav-roulette.active svg{
+  stroke-width:2.4;
+  filter:drop-shadow(0 3px 8px rgba(232,163,23,.5));
+}
+
+/* ===== DRAWER ===== */
+.overlay{
+  position:absolute;inset:0;background:rgba(10,22,40,.5);
+  opacity:0;visibility:hidden;transition:.24s;z-index:40;
+}
+.overlay.show{opacity:1;visibility:visible;}
+.drawer{
+  position:absolute;top:0;left:0;bottom:0;width:min(82%,320px);z-index:50;
+  background:#1B3F63;transform:translateX(-102%);
+  transition:transform .28s cubic-bezier(.3,.9,.3,1);
+  display:flex;flex-direction:column;color:#fff;overflow-y:auto;
+  padding:14px 14px calc(18px + env(safe-area-inset-bottom,0px));
+}
+.drawer.open{transform:translateX(0);}
+.drawer::-webkit-scrollbar{width:0;}
+.drawer-close{
+  align-self:flex-end;width:36px;height:36px;border:none;border-radius:10px;
+  background:rgba(255,255,255,.1);color:#fff;font-size:17px;cursor:pointer;
+  display:grid;place-items:center;font-family:inherit;
+}
+.drawer-close:active{background:rgba(255,255,255,.22);}
+.drawer-head{display:flex;flex-direction:column;align-items:center;text-align:center;
+  padding:2px 0 16px;}
+.avatar{
+  width:74px;height:74px;border-radius:50%;display:grid;place-items:center;font-size:38px;
+  background:#2B7FD4;margin-bottom:10px;border:2px solid rgba(255,255,255,.2);
+}
+.d-name{font-size:17px;font-weight:700;letter-spacing:-.3px;}
+.d-lvl{font-size:12px;color:#9CC3E4;font-weight:500;margin-top:2px;}
+.d-bar{width:150px;height:6px;border-radius:6px;background:rgba(255,255,255,.16);
+  margin-top:9px;overflow:hidden;}
+.d-bar i{display:block;height:100%;border-radius:6px;background:var(--tg-blue);transition:width .3s;}
+.d-xp{font-size:10.5px;color:#8FB6D8;margin-top:5px;font-weight:500;}
+.drawer-nav{display:flex;flex-direction:column;gap:3px;margin-top:4px;}
+.dnav{
+  display:flex;align-items:center;gap:12px;background:none;border:none;font-family:inherit;
+  color:#D8E8F6;font-size:14.5px;font-weight:500;padding:12px 13px;border-radius:10px;
+  cursor:pointer;text-align:left;transition:background .15s;
+}
+.dnav svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;
+  stroke-linecap:round;stroke-linejoin:round;opacity:.9;flex:0 0 auto;}
+.dnav:active{background:rgba(255,255,255,.1);}
+.dnav.active{background:var(--tg-blue);color:#fff;}
+.dnav-sep{height:1px;background:rgba(255,255,255,.12);margin:10px 6px;}
+.drawer-foot{margin-top:auto;padding-top:18px;text-align:center;
+  font-size:10.5px;color:#7FA5C6;line-height:1.6;}
+
+/* ===== TABS ===== */
+.tabs{display:flex;gap:6px;margin-bottom:13px;background:#E4EBF3;padding:4px;border-radius:12px;}
+.tab{
+  flex:1;border:none;font-family:inherit;padding:9px 4px;border-radius:9px;font-size:12px;
+  font-weight:600;cursor:pointer;background:transparent;color:#8798AE;
+  transition:background .16s, color .16s;white-space:nowrap;
+}
+.tab.active{background:#fff;color:var(--tg-blue);box-shadow:0 1px 3px rgba(24,60,110,.12);}
+.tab:active{transform:scale(.97);}
+
+/* ===== TASK EXTRAS ===== */
+.task-check{
+  width:30px;height:30px;flex:0 0 30px;border-radius:50%;display:grid;place-items:center;
+  background:var(--tg-green);color:#fff;font-size:15px;font-weight:700;
+}
+.task-check.wait{background:#E9F0F7;color:#A2AFC2;}
+.small-btn{border-radius:10px;padding:9px 14px;font-size:13px;white-space:nowrap;flex:0 0 auto;}
+.small-btn.gold{background:var(--tg-gold);}
+.small-btn.gold:active{background:#D99400;}
+.small-btn.grey{background:#D9E1EA;color:#8798AE;}
+.small-btn.grey:active{background:#D9E1EA;transform:none;}
+
+/* ===== PROFILE ===== */
+.profile-card{background:#fff;border-radius:18px;padding:18px;text-align:center;
+  box-shadow:0 1px 4px rgba(24,60,110,.06);margin-bottom:12px;}
+.profile-card .avatar{width:86px;height:86px;font-size:44px;margin:0 auto 10px;background:#2B7FD4;}
+.p-name{font-size:19px;font-weight:700;letter-spacing:-.4px;}
+.p-lvl{font-size:12.5px;color:var(--muted);font-weight:500;margin-top:3px;}
+.p-bar{height:8px;border-radius:8px;background:#EEF3F8;overflow:hidden;margin:14px 0 7px;}
+.p-bar i{display:block;height:100%;border-radius:8px;background:var(--tg-blue);transition:width .35s;}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px;}
+.stat{background:#fff;border-radius:14px;padding:13px 8px;text-align:center;
+  box-shadow:0 1px 4px rgba(24,60,110,.06);}
+.stat b{display:block;font-size:16px;font-weight:700;letter-spacing:-.4px;}
+.stat span{display:block;font-size:10px;color:var(--muted);margin-top:3px;font-weight:500;}
+.stat-list{background:#fff;border-radius:16px;padding:6px 14px;
+  box-shadow:0 1px 4px rgba(24,60,110,.06);margin-bottom:12px;}
+.stat-row{display:flex;align-items:center;gap:11px;padding:12px 0;
+  border-bottom:1px solid var(--line);font-size:13px;}
+.stat-row:last-child{border-bottom:none;}
+.stat-row svg{width:19px;height:19px;stroke:#8798AE;fill:none;stroke-width:1.9;
+  stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto;}
+.stat-row span{flex:1;color:#5B6B80;font-weight:500;}
+.stat-row b{font-weight:600;letter-spacing:-.2px;}
+.btn-primary{
+  width:100%;padding:15px;border-radius:12px;font-size:15px;
+  display:flex;align-items:center;justify-content:center;gap:9px;
+}
+.btn-primary svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round;}
+.btn-invite{
+  background:linear-gradient(135deg,#2AABEE,#229ED9);
+  box-shadow:0 4px 12px rgba(34,158,217,.35);
+}
+
+.exchange-card{
+  background:linear-gradient(135deg,#E5F5FF,#C8E7FF);
+  border-radius:16px;padding:14px;margin-bottom:12px;
+  display:flex;align-items:center;gap:12px;
+  box-shadow:0 1px 4px rgba(24,60,110,.06);
+}
+.exchange-icon{font-size:32px;line-height:1;}
+.exchange-body{flex:1;min-width:0;}
+.exchange-title{font-size:13.5px;font-weight:700;color:#0F172A;margin-bottom:2px;}
+.exchange-sub{font-size:11px;color:#5B6B80;line-height:1.35;}
+.exchange-btn{
+  border:none;font-family:inherit;
+  background:linear-gradient(135deg,#33C5FF,#1490D8);color:#fff;
+  border-radius:10px;padding:9px 13px;font-size:12.5px;font-weight:700;
+  cursor:pointer;white-space:nowrap;transition:.15s;
+  display:flex;align-items:center;gap:5px;
+}
+.exchange-btn:active{transform:scale(.96);background:#1490D8;}
+.exchange-btn.off{background:#D9E1EA;color:#93A3B7;cursor:not-allowed;}
+.exchange-btn.off:active{transform:none;}
+
+/* ============ ROULETTE ============ */
+.roulette-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  padding:4px 0 20px;
+}
+
+.roulette-title{
+  text-align:center;margin-bottom:18px;
+}
+.roulette-title h2{
+  margin:0 0 4px;font-size:22px;font-weight:800;color:#0F172A;letter-spacing:-.4px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.roulette-title p{
+  margin:0;font-size:12.5px;color:var(--muted);
+}
+
+.wheel-container{
+  position:relative;width:300px;height:300px;margin:0 auto 20px;
+}
+.wheel-glow{
+  position:absolute;inset:-20px;border-radius:50%;
+  background:radial-gradient(circle,rgba(51,197,255,.35) 0%,rgba(51,197,255,0) 65%);
+  animation:wheelPulse 2.4s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes wheelPulse{
+  0%,100%{opacity:.55;transform:scale(1);}
+  50%{opacity:.95;transform:scale(1.08);}
+}
+
+.wheel-pointer{
+  position:absolute;top:-14px;left:50%;transform:translateX(-50%);
+  width:0;height:0;
+  border-left:17px solid transparent;
+  border-right:17px solid transparent;
+  border-top:26px solid #E8487F;
+  filter:drop-shadow(0 5px 10px rgba(232,72,127,.55));
+  z-index:5;
+  transform-origin:50% 0;
+  transition:transform .15s;
+}
+.wheel-pointer.spinning{
+  animation:pointerTick .12s linear infinite;
+}
+@keyframes pointerTick{
+  0%{transform:translateX(-50%) rotate(-10deg);}
+  50%{transform:translateX(-50%) rotate(10deg);}
+  100%{transform:translateX(-50%) rotate(-10deg);}
+}
+
+#wheelCanvas{
+  position:relative;z-index:1;
+  width:300px;height:300px;border-radius:50%;
+  display:block;
+}
+
+.spin-center{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:92px;height:92px;border-radius:50%;border:5px solid #fff;
+  background:linear-gradient(135deg,#3390EC,#1E7DB8);
+  color:#fff;font-family:inherit;font-weight:800;
+  cursor:pointer;z-index:4;
+  box-shadow:0 8px 24px rgba(42,171,238,.55),inset 0 -4px 10px rgba(0,0,0,.2);
+  transition:transform .12s,box-shadow .12s,background .2s;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  padding:0;
+}
+.spin-center:active:not(:disabled){
+  transform:translate(-50%,-50%) scale(.93);
+  box-shadow:0 4px 14px rgba(42,171,238,.5);
+}
+.spin-center:disabled{
+  cursor:not-allowed;
+  background:linear-gradient(135deg,#8798AE,#5B6B80);
+  box-shadow:0 4px 12px rgba(0,0,0,.25);
+}
+.spin-center .sc-ico{font-size:26px;line-height:1;}
+.spin-center .sc-txt{font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;}
+
+/* Info panel */
+.roulette-info{
+  width:100%;background:#fff;border-radius:16px;padding:14px;
+  box-shadow:0 1px 4px rgba(24,60,110,.06);margin-bottom:14px;
+  text-align:center;
+}
+.roulette-info .ri-main{
+  font-size:13.5px;font-weight:700;color:#0F172A;margin-bottom:8px;
+}
+.roulette-info .ri-sub{
+  font-size:11.5px;color:var(--muted);line-height:1.4;margin-bottom:8px;
+}
+.ri-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 16px;border-radius:22px;
+  font-size:12.5px;font-weight:800;
+}
+.ri-pill.free{
+  background:linear-gradient(135deg,#5BE39A,#2ECC71);color:#fff;
+  box-shadow:0 4px 14px rgba(46,204,113,.35);
+}
+.ri-pill.paid{
+  background:linear-gradient(135deg,#FFC53D,#E8A317);color:#5A3800;
+  box-shadow:0 4px 14px rgba(232,163,23,.35);
+}
+.ri-pill.locked{
+  background:#E9F0F7;color:#8798AE;
+}
+
+/* Prizes grid */
+.prizes-section-title{
+  font-size:13px;font-weight:700;color:#5B6B80;margin-bottom:8px;
+  padding-left:2px;
+}
+.prizes-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:8px;
+}
+.prize-card{
+  background:#fff;border-radius:14px;padding:10px 12px;
+  box-shadow:0 1px 4px rgba(24,60,110,.06);
+  display:flex;align-items:center;gap:9px;
+}
+.prize-ico{
+  width:36px;height:36px;flex:0 0 36px;border-radius:10px;
+  display:grid;place-items:center;font-size:18px;
+}
+.prize-info{flex:1;min-width:0;}
+.prize-label{font-size:12.5px;font-weight:700;color:#0F172A;}
+.prize-desc{font-size:10.5px;color:var(--muted);margin-top:1px;}
+
+/* Win modal */
+.win-icon-big{
+  font-size:72px;line-height:1;margin:8px 0 14px;
+  animation:winPop .6s cubic-bezier(.2,1.4,.4,1);
+  display:inline-block;
+}
+@keyframes winPop{
+  0%{transform:scale(0) rotate(-180deg);opacity:0;}
+  60%{transform:scale(1.15) rotate(10deg);opacity:1;}
+  100%{transform:scale(1) rotate(0);}
+}
+.win-title{
+  margin:0 0 8px;font-size:16px;font-weight:700;color:#0F172A;
+}
+.win-reward{
+  font-size:22px;font-weight:900;margin:10px 0 14px;
+  letter-spacing:-.5px;
+}
+.win-reward.gold{color:#E8A317;}
+.win-reward.blue{color:#1490D8;}
+.win-reward.green{color:#31B545;}
+
+/* ===== MODAL / TOAST ===== */
+.modal{
+  position:absolute;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;
+  padding:24px;background:rgba(10,22,40,.55);
+  opacity:0;visibility:hidden;transition:.22s;
+}
+.modal.show{opacity:1;visibility:visible;}
+.modal-card{
+  background:#fff;border-radius:18px;padding:22px;width:100%;max-width:330px;
+  transform:scale(.92);transition:.22s cubic-bezier(.3,1.3,.5,1);text-align:center;
+  max-height:80%;overflow-y:auto;
+}
+.modal.show .modal-card{transform:scale(1);}
+.modal-card h3{margin:0 0 10px;font-size:18px;font-weight:700;letter-spacing:-.3px;}
+.modal-card p{margin:0 0 9px;font-size:13px;color:#5B6B80;line-height:1.5;text-align:left;}
+.modal-card p b{color:#0F172A;}
+
+#toast{
+  position:absolute;left:50%;top:72px;transform:translate(-50%,-14px);z-index:70;
+  background:rgba(16,36,58,.94);color:#fff;font-size:13px;font-weight:500;
+  padding:11px 18px;border-radius:12px;
+  opacity:0;visibility:hidden;transition:.25s;pointer-events:none;
+  max-width:88%;text-align:center;
+}
+#toast.show{opacity:1;visibility:visible;transform:translate(-50%,0);}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div class="topbar transparent" id="topbar">
+    <button class="tb-btn" id="menuBtn" aria-label="Меню">
+      <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <button class="tb-btn" id="helpBtn" aria-label="Помощь">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.2"/><path d="M9.3 9.2a2.8 2.8 0 0 1 5.5.9c0 1.9-2.8 2.6-2.8 2.6"/><circle cx="12" cy="16.8" r=".9" fill="currentColor" stroke="none"/></svg>
     </button>
   </div>
-</section>
 
-<!-- ROULETTE -->
-<section class="screen" id="s-roulette">
-  <div class="roulette-wrap">
-    <div class="roulette-title">
-      <h2>🎡 Рулетка удачи</h2>
-      <p>Испытай удачу — призы ждут!</p>
-    </div>
+  <main class="content" id="content">
 
-    <div class="wheel-container">
-      <div class="wheel-glow"></div>
-      <div class="wheel-pointer" id="wheelPointer"></div>
-      <canvas id="wheelCanvas" width="600" height="600"></canvas>
-      <button class="spin-center" id="spinBtn">
-        <span class="sc-ico">🎯</span>
-        <span class="sc-txt">Крутить</span>
-      </button>
-    </div>
-
-    <div class="roulette-info" id="rouletteInfo"></div>
-
-    <div class="prizes-section-title">Возможные призы</div>
-    <div class="prizes-grid" id="prizesGrid"></div>
-  </div>
-</section>
-
-<!-- UPGRADES -->
-<section class="screen" id="s-upgrades">
-  <div class="screen-head">
-    <div><h2>Улучшения</h2><p>Увеличивай доход и открывай новые возможности</p></div>
-    <div class="bal-chips">
-      <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
-      <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
-    </div>
-  </div>
-  <div class="list" id="upgradesList"></div>
-</section>
-
-<!-- BUILDINGS -->
-<section class="screen" id="s-buildings">
-  <div class="screen-head">
-    <div><h2>Постройки</h2><p>Построй фабрики и получай пассивный доход</p></div>
-    <div class="bal-chips">
-      <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
-      <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
-    </div>
-  </div>
-  <div class="list" id="buildingsList"></div>
-</section>
-
-<!-- ACHIEVEMENTS -->
-<section class="screen" id="s-achievements">
-  <div class="screen-head">
-    <div><h2>Достижения</h2><p>Выполняй достижения и получай награды</p></div>
-    <div class="bal-chips">
-      <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
-      <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
-    </div>
-  </div>
-  <div class="list" id="achievementsList"></div>
-</section>
-
-<!-- TASKS -->
-<section class="screen" id="s-tasks">
-  <div class="screen-head">
-    <div><h2>Задания</h2><p>Выполняй задания и получай награды</p></div>
-
-<div class="bal-chips">
-      <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
-      <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
-    </div>
-  </div>
-  <div class="tabs">
-    <button class="tab active" data-tab="daily">Ежедневные</button>
-    <button class="tab" data-tab="regular">Обычные</button>
-  </div>
-  <div class="list" id="tasksList"></div>
-</section>
-
-<!-- SHOP -->
-<section class="screen" id="s-shop">
-  <div class="shop-hero">
-    <img class="shop-hero-img" src="https://i.postimg.cc/KcWftDvX/IMG-7937.png" alt="">
-    <div class="shop-hero-text">
-      <h3>Магазин</h3>
-      <p>Бусты, ресурсы и эксклюзив за алмазы и звёзды</p>
-      <div class="diamond-pill">
-        <span class="diamond-ico">💎</span>
-        <span id="heroDiamonds">3</span>
+    <!-- HOME -->
+    <section class="screen active" id="s-home">
+      <div class="home" id="tapZone">
+        <div class="balance">
+          <div class="bal-num-row">
+            <img class="coin-img big" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt="">
+            <div class="bal-num" id="homeCoins">0</div>
+          </div>
+          <div class="bal-per" id="homePerSec">+0/с</div>
+          <div class="diamonds-row">
+            <span class="diamond-ico">💎</span>
+            <span id="homeDiamonds">3</span>
+          </div>
+          <div class="boost-bar" id="boostBar"></div>
+        </div>
+        <div class="home-spacer"></div>
+        <button class="tap-btn" id="tapBtn">
+          <svg viewBox="0 0 24 24"><path d="M9 11V5.5a2 2 0 0 1 4 0V11"/><path d="M13 11V4.5a2 2 0 0 1 4 0V12"/><path d="M17 12V7.5a2 2 0 0 1 4 0V15a7 7 0 0 1-7 7h-2a7 7 0 0 1-7-7v-3.5a2 2 0 0 1 4 0V13"/></svg>
+          Тапай!
+        </button>
       </div>
-    </div>
-  </div>
-  <div class="tabs">
-    <button class="tab active" data-shop="boosts">Бусты</button>
-    <button class="tab" data-shop="other">Монеты</button>
-    <button class="tab" data-shop="diamonds">💎</button>
-    <button class="tab" data-shop="stars">⭐</button>
-  </div>
-  <div class="list" id="shopList"></div>
-</section>
+    </section>
 
-<!-- PROFILE -->
-<section class="screen" id="s-profile">
-  <div class="screen-head">
-    <div><h2>Профиль</h2><p>Твоя статистика и прогресс</p></div>
-    <div class="bal-chips">
-      <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
-      <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
-    </div>
-  </div>
+    <!-- ROULETTE -->
+    <section class="screen" id="s-roulette">
+      <div class="roulette-wrap">
+        <div class="roulette-title">
+          <h2>🎡 Рулетка удачи</h2>
+          <p>Испытай удачу — призы ждут!</p>
+        </div>
 
-  <div class="profile-card">
-    <div class="avatar">🐱</div>
-    <div class="p-name">КриптоКот</div>
-    <div class="p-lvl" id="profLevel">Ур. 1</div>
-    <div class="p-bar"><i id="profBar" style="width:0%"></i></div>
-    <div class="ptxt" id="profXp">0 / 100</div>
-  </div>
+        <div class="wheel-container">
+          <div class="wheel-glow"></div>
+          <div class="wheel-pointer" id="wheelPointer"></div>
+          <canvas id="wheelCanvas" width="600" height="600"></canvas>
+          <button class="spin-center" id="spinBtn">
+            <span class="sc-ico">🎯</span>
+            <span class="sc-txt">Крутить</span>
+          </button>
+        </div>
 
-  <div class="stats">
-    <div class="stat"><b id="stCoins">0</b><span>Монеты</span></div>
-    <div class="stat"><b id="stDiamonds">3</b><span>Алмазы</span></div>
-    <div class="stat"><b id="stRank">#—</b><span>Рейтинг</span></div>
-  </div>
+        <div class="roulette-info" id="rouletteInfo"></div>
 
-  <div class="stat-list">
-    <div class="stat-row">
-      <svg viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L10 22l9-11.5h-6.5z"/></svg>
-      <span>Доход</span><b id="stIncome">0/с</b>
-    </div>
-    <div class="stat-row">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
-      <span>Время в игре</span><b id="stTime">0 мин</b>
-    </div>
-    <div class="stat-row">
-      <svg viewBox="0 0 24 24"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6"/></svg>
-      <span>Построено зданий</span><b id="stBuild">0</b>
-    </div>
-    <div class="stat-row">
+        <div class="prizes-section-title">Возможные призы</div>
+        <div class="prizes-grid" id="prizesGrid"></div>
+      </div>
+    </section>
+
+    <!-- UPGRADES -->
+    <section class="screen" id="s-upgrades">
+      <div class="screen-head">
+        <div><h2>Улучшения</h2><p>Увеличивай доход и открывай новые возможности</p></div>
+        <div class="bal-chips">
+          <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
+          <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
+        </div>
+      </div>
+      <div class="list" id="upgradesList"></div>
+    </section>
+
+    <!-- BUILDINGS -->
+    <section class="screen" id="s-buildings">
+      <div class="screen-head">
+        <div><h2>Постройки</h2><p>Построй фабрики и получай пассивный доход</p></div>
+        <div class="bal-chips">
+          <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
+          <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
+        </div>
+      </div>
+      <div class="list" id="buildingsList"></div>
+    </section>
+
+    <!-- ACHIEVEMENTS -->
+    <section class="screen" id="s-achievements">
+      <div class="screen-head">
+        <div><h2>Достижения</h2><p>Выполняй достижения и получай награды</p></div>
+        <div class="bal-chips">
+          <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
+          <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
+        </div>
+      </div>
+      <div class="list" id="achievementsList"></div>
+    </section>
+
+    <!-- TASKS -->
+    <section class="screen" id="s-tasks">
+      <div class="screen-head">
+        <div><h2>Задания</h2><p>Выполняй задания и получай награды</p></div>
+        <div class="bal-chips">
+          <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
+          <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
+        </div>
+      </div>
+      <div class="tabs">
+        <button class="tab active" data-tab="daily">Ежедневные</button>
+        <button class="tab" data-tab="regular">Обычные</button>
+      </div>
+      <div class="list" id="tasksList"></div>
+    </section>
+
+    <!-- SHOP -->
+    <section class="screen" id="s-shop">
+      <div class="shop-hero">
+        <img class="shop-hero-img" src="https://i.postimg.cc/KcWftDvX/IMG-7937.png" alt="">
+        <div class="shop-hero-text">
+          <h3>Магазин</h3>
+          <p>Бусты, ресурсы и эксклюзив за алмазы и звёзды</p>
+          <div class="diamond-pill">
+            <span class="diamond-ico">💎</span>
+            <span id="heroDiamonds">3</span>
+          </div>
+        </div>
+      </div>
+      <div class="tabs">
+        <button class="tab active" data-shop="boosts">Бусты</button>
+        <button class="tab" data-shop="other">Монеты</button>
+        <button class="tab" data-shop="diamonds">💎</button>
+        <button class="tab" data-shop="stars">⭐</button>
+      </div>
+      <div class="list" id="shopList"></div>
+    </section>
+
+    <!-- PROFILE -->
+    <section class="screen" id="s-profile">
+      <div class="screen-head">
+        <div><h2>Профиль</h2><p>Твоя статистика и прогресс</p></div>
+        <div class="bal-chips">
+          <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
+          <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
+        </div>
+      </div>
+
+      <div class="profile-card">
+        <div class="avatar">🐱</div>
+        <div class="p-name">КриптоКот</div>
+        <div class="p-lvl" id="profLevel">Ур. 1</div>
+        <div class="p-bar"><i id="profBar" style="width:0%"></i></div>
+        <div class="ptxt" id="profXp">0 / 100</div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><b id="stCoins">0</b><span>Монеты</span></div>
+        <div class="stat"><b id="stDiamonds">3</b><span>Алмазы</span></div>
+        <div class="stat"><b id="stRank">#—</b><span>Рейтинг</span></div>
+      </div>
+
+      <div class="stat-list">
+        <div class="stat-row">
+          <svg viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L10 22l9-11.5h-6.5z"/></svg>
+          <span>Доход</span><b id="stIncome">0/с</b>
+        </div>
+        <div class="stat-row">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+          <span>Время в игре</span><b id="stTime">0 мин</b>
+        </div>
+        <div class="stat-row">
+          <svg viewBox="0 0 24 24"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6"/></svg>
+          <span>Построено зданий</span><b id="stBuild">0</b>
+        </div>
+        <div class="stat-row">
+          <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M8 12.2l2.6 2.6L16.2 9"/></svg>
+          <span>Заданий выполнено</span><b id="stTasks">0 / 0</b>
+        </div>
+      </div>
+
+      <button class="btn-primary btn-invite" id="inviteBtn" style="margin-bottom:10px;">
+        <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+        Пригласить друга
+      </button>
+
+      <button class="btn-primary" id="shareBtn">
+        <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+        Поделиться результатами
+      </button>
+    </section>
+
+  </main>
+
+  <nav class="bottomnav">
+    <button class="nav-item active" data-screen="home">
+      <svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+      Главная
+    </button>
+    <button class="nav-item" data-screen="upgrades">
+      <svg viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>
+      Улучш.
+    </button>
+    <button class="nav-item nav-roulette" data-screen="roulette">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><line x1="12" y1="3" x2="12" y2="8.5"/><line x1="12" y1="15.5" x2="12" y2="21"/><line x1="3" y1="12" x2="8.5" y2="12"/><line x1="15.5" y1="12" x2="21" y2="12"/></svg>
+      Рулетка
+    </button>
+    <button class="nav-item" data-screen="shop">
+      <svg viewBox="0 0 24 24"><path d="M6.2 7h11.6l1.1 13.2H5.1z"/><path d="M9 7V5.2a3 3 0 0 1 6 0V7"/></svg>
+      Магазин
+    </button>
+    <button class="nav-item" data-screen="tasks">
       <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M8 12.2l2.6 2.6L16.2 9"/></svg>
-      <span>Заданий выполнено</span><b id="stTasks">0 / 0</b>
+      Задания
+    </button>
+  </nav>
+
+  <div class="overlay" id="overlay"></div>
+  <aside class="drawer" id="drawer">
+    <button class="drawer-close" id="drawerClose">✕</button>
+    <div class="drawer-head">
+      <div class="avatar">🐱</div>
+      <div class="d-name">КриптоКот</div>
+      <div class="d-lvl" id="drawerLevel">Ур. 1</div>
+      <div class="d-bar"><i id="drawerBar" style="width:0%"></i></div>
+      <div class="d-xp" id="drawerXp">0 / 100</div>
+    </div>
+    <nav class="drawer-nav">
+      <button class="dnav active" data-screen="home">
+        <svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+        Главная
+      </button>
+      <button class="dnav" data-screen="roulette">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><line x1="12" y1="3" x2="12" y2="8.5"/><line x1="12" y1="15.5" x2="12" y2="21"/><line x1="3" y1="12" x2="8.5" y2="12"/><line x1="15.5" y1="12" x2="21" y2="12"/></svg>
+        Рулетка
+      </button>
+      <button class="dnav" data-screen="upgrades">
+        <svg viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>
+        Улучшения
+      </button>
+      <button class="dnav" data-screen="buildings">
+        <svg viewBox="0 0 24 24"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6"/></svg>
+        Постройки
+      </button>
+      <button class="dnav" data-screen="shop">
+        <svg viewBox="0 0 24 24"><path d="M6.2 7h11.6l1.1 13.2H5.1z"/><path d="M9 7V5.2a3 3 0 0 1 6 0V7"/></svg>
+        Магазин
+      </button>
+      <button class="dnav" data-screen="tasks">
+        <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M8 12.2l2.6 2.6L16.2 9"/></svg>
+        Задания
+      </button>
+      <button class="dnav" data-screen="achievements">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="5.5"/><path d="M8.5 13.5 7 22l5-2.6L17 22l-1.5-8.5"/></svg>
+        Достижения
+      </button>
+      <button class="dnav" data-screen="profile">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></svg>
+        Профиль
+      </button>
+      <div class="dnav-sep"></div>
+      <button class="dnav" id="navInvite">
+        <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+        Пригласить друга
+      </button>
+      <button class="dnav" id="navSettings">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.6 1.7 1.7 0 0 0-1.9.4l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0-1.2-2.9H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1.1 1.7 1.7 0 0 0-.4-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1h.2a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.6 1z"/></svg>
+        Настройки
+      </button>
+      <button class="dnav" id="navSupport">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.2"/><path d="M9.3 9.2a2.8 2.8 0 0 1 5.5.9c0 1.9-2.8 2.6-2.8 2.6"/><circle cx="12" cy="16.8" r=".9" fill="currentColor" stroke="none"/></svg>
+        Поддержка
+      </button>
+      <button class="dnav" id="navExit">
+        <svg viewBox="0 0 24 24"><path d="M9.5 21H5.5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9.5" y2="12"/></svg>
+        Выйти
+      </button>
+    </nav>
+    <div class="drawer-foot">КриптоКот v1.0<br>Telegram Mini App</div>
+  </aside>
+
+  <div class="modal" id="modal">
+    <div class="modal-card">
+      <h3 id="modalTitle">О игре</h3>
+      <div id="modalBody"></div>
+      <button class="btn-primary" id="modalOk" style="margin-top:8px;">Понятно</button>
     </div>
   </div>
 
-  <button class="btn-primary btn-invite" id="inviteBtn" style="margin-bottom:10px;">
-    <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
-    Пригласить друга
-  </button>
+  <div id="toast"></div>
+</div>
 
-  <button class="btn-primary" id="shareBtn">
-    <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
-    Поделиться результатами
-  </button>
-</section>
-<script src="https://zadano.github.io/mysite/track.js"></script>
+<script>
+const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+if (tg) { try { tg.ready(); tg.expand(); tg.disableVerticalSwipes && tg.disableVerticalSwipes(); } catch(e){} }
+
+function haptic(type, style){
+  if (!tg || !tg.HapticFeedback) return;
+  try {
+    if (type === 'impact') tg.HapticFeedback.impactOccurred(style || 'light');
+    if (type === 'success') tg.HapticFeedback.notificationOccurred('success');
+    if (type === 'error') tg.HapticFeedback.notificationOccurred('error');
+    if (type === 'select') tg.HapticFeedback.selectionChanged();
+  } catch(e){}
+}
+
+const DIAMOND_RATE = 1000000;
+
+// ===== WHEEL SECTORS =====
+const WHEEL_SECTORS = [
+  { icon:'🪙', label:'100',   reward:{type:'coins', amount:100},     color:'#E8A317', light:'#FFD066' },
+  { icon:'💎', label:'1',     reward:{type:'diamonds', amount:1},    color:'#1490D8', light:'#5FC6FF' },
+  { icon:'🪙', label:'500',   reward:{type:'coins', amount:500},     color:'#E8503C', light:'#FF8A75' },
+  { icon:'⭐', label:'3',     reward:{type:'stars', amount:3},       color:'#31B545', light:'#5BE39A' },
+  { icon:'🪙', label:'2000',  reward:{type:'coins', amount:2000},    color:'#7C5CFF', light:'#B9A5FF' },
+  { icon:'⚡', label:'x2',    reward:{type:'boost', dur:3600},       color:'#E8487F', light:'#FF9EC4' },
+  { icon:'🪙', label:'5000',  reward:{type:'coins', amount:5000},    color:'#E8A317', light:'#FFC53D' },
+  { icon:'🏆', label:'10000', reward:{type:'coins', amount:10000},   color:'#3AA9D8', light:'#9FE7FF' }
+];
+
+// ===== UPGRADES =====
+const UPGRADES = [
+  { id:'tap',     icon:'⬆️', bg:'#E7F7EB', name:'Усиленный тап',      desc:'+2 монеты за клик',   base:250,   growth:1.6 },
+  { id:'auto',    icon:'⚙️', bg:'#EDE8FF', name:'Автосборщик',        desc:'+5 монет/с',           base:1500,  growth:1.6 },
+  { id:'cat',     icon:'🐱', bg:'#FFF3E0', name:'Кот-спутник',        desc:'+10 монет/с',          base:5000,  growth:1.6 },
+  { id:'premium', icon:'👑', bg:'#FFE9F2', name:'Премиум-аккаунт',    desc:'+50% к доходу',        base:15000, growth:2.1, max:6 },
+  { id:'boost',   icon:'⚡', bg:'#FFF6DA', name:'Буст на 1 час',      desc:'+100% к доходу',       base:75,    growth:1, max:999 }
+];
+
+const BUILDINGS = [
+  { id:'mine',   icon:'🏭', bg:'#FFF3E0', name:'Монетная шахта',      desc:'+5 монет/с',   base:1000,   growth:1.2, income:5 },
+  { id:'cookie', icon:'🍪', bg:'#FDEDDC', name:'Фабрика печенья',     desc:'+15 монет/с',  base:6000,   growth:1.2, income:15 },
+  { id:'farm',   icon:'🏢', bg:'#E5F4FD', name:'Крипто-ферма',        desc:'+45 монет/с',  base:20000,  growth:1.2, income:45 },
+  { id:'tower',  icon:'🏙️', bg:'#EAF0FF', name:'Небоскрёб',           desc:'+120 монет/с', base:80000,  growth:1.2, income:120 },
+  { id:'space',  icon:'🚀', bg:'#EDE8FF', name:'Космическая станция', desc:'+400 монет/с', base:300000, growth:1.2, income:400 }
+];
+
+const ACHIEVEMENTS = [
+  { id:'a1', icon:'⭐', bg:'#FFF6DA', name:'Первые 10 000 монет',  desc:'Накопи 10 000 монет',          goal:10000, reward:150,  get:s=>s.totalEarned },
+  { id:'a2', icon:'👆', bg:'#E5F4FD', name:'Тап-мастер',           desc:'Сделай 2 000 кликов',          goal:2000,  reward:300,  get:s=>s.clicks },
+  { id:'a3', icon:'🏢', bg:'#EDE8FF', name:'Построй 5 зданий',     desc:'Построй 5 любых зданий',       goal:5,     reward:700,  get:s=>totalBuildings(s) },
+  { id:'a4', icon:'🏅', bg:'#E7F7EB', name:'Достигни 10 уровня',   desc:'Повысь уровень до 10',         goal:10,    reward:1500, get:s=>s.level },
+  { id:'a5', icon:'👑', bg:'#FFE9F2', name:'Открой все улучшения', desc:'Разблокируй все улучшения',    goal:4,     reward:2500, get:s=>countUpgrades(s) }
+];
+
+const TASKS = {
+  daily: [
+    { id:'d1', icon:'📅', bg:'#E7F7EB', name:'Зайди в игру',      desc:'Получи награду',        reward:50,  goal:1,   get:()=>1 },
+    { id:'d2', icon:'👆', bg:'#FFF6DA', name:'Сделай 500 кликов', desc:'Награда за активность', reward:100, goal:500, get:s=>s.clicks },
+    { id:'d3', icon:'📺', bg:'#EDE8FF', name:'Посмотри рекламу',  desc:'Получи бонус',          reward:150, goal:1,   get:s=>s.adWatched?1:0, action:'ad' }
+  ],
+  regular: [
+    { id:'r1', icon:'🏭', bg:'#E5F4FD', name:'Построй фабрику', desc:'Развей свою империю', reward:250,  goal:1, get:s=>(s.buildings.cookie||0) },
+    { id:'r2', icon:'👥', bg:'#FFE9F2', name:'Пригласи друга',  desc:'Получи награду',      reward:500,  goal:1, get:s=>s.friends||0, action:'invite' }
+  ]
+};
+
+const SHOP = [
+  { id:'s1', cat:'boosts', icon:'⚡', bg:'#FFF6DA', name:'Буст дохода (1 час)',    desc:'+100% к доходу',              price:100,  type:'boost',     dur:3600 },
+  { id:'s2', cat:'boosts', icon:'👆', bg:'#E5F4FD', name:'Авто-кликер (1 час)',    desc:'Автоматический тап',          price:250,  type:'autoclick', dur:3600 },
+  { id:'s3', cat:'boosts', icon:'🪙', bg:'#FFF3E0', name:'Удвоение монет (1 час)', desc:'x2 к монетам',                price:400,  type:'double',    dur:3600 },
+  { id:'s4', cat:'boosts', icon:'👑', bg:'#FFE9F2', name:'Супер-буст (24 часа)',   desc:'+200% к доходу',              price:1500, type:'super',     dur:86400 },
+  { id:'s5', cat:'other',  icon:'🎁', bg:'#EDE8FF', name:'Набор новичка',          desc:'2 000 монет + буст на 10 мин', price:500, type:'pack' },
+  { id:'s6', cat:'other',  icon:'💎', bg:'#E7F7EB', name:'Мешок монет',            desc:'5 000 монет сразу',           price:1200, type:'coins', amount:5000 },
+  { id:'s7', cat:'other',  icon:'🏆', bg:'#FFF3E0', name:'Сундук богатства',       desc:'15 000 монет сразу',          price:3000, type:'coins', amount:15000 }
+];
+
+const STAR_SHOP = [
+  { id:'star1', icon:'⚡', bg:'#FFF6DA', name:'Мега-буст (24 часа)', desc:'+400% к доходу', price:3,  type:'super', dur:86400, badge:'ХИТ' },
+  { id:'star2', icon:'👑', bg:'#FFE9F2', name:'VIP статус (7 дней)', desc:'+100% к доходу навсегда', price:5,  type:'vip', dur:604800, badge:'ЛУЧШЕЕ' },
+  { id:'star3', icon:'💎', bg:'#E7F7EB', name:'100 000 монет', desc:'Мгновенное пополнение', price:15, type:'coins', amount:100000, badge:'-30%' },
+  { id:'star4', icon:'🚀', bg:'#EDE8FF', name:'Все улучшения MAX', desc:'Максимальный уровень всех улучшений', price:50, type:'allmax', badge:'VIP' }
+];
+
+const DIAMOND_SHOP = [
+  { id:'dia1', icon:'🚀', bg:'#EDE8FF', name:'x10 доход навсегда', desc:'Постоянный множитель дохода', price:3,  type:'perm_x10' },
+  { id:'dia2', icon:'💰', bg:'#FFF3E0', name:'+100 000 монет',    desc:'Мгновенное пополнение',       price:1,  type:'coins', amount:100000 },
+  { id:'dia3', icon:'⚡', bg:'#FFF6DA', name:'Все бусты на 24ч',  desc:'Все бусты активируются',      price:2,  type:'allboost' },
+  { id:'dia4', icon:'⭐', bg:'#FFE9F2', name:'+10 звёзд',         desc:'Обмен алмазов на звёзды',     price:2,  type:'stars', amount:10 }
+];
+
+const DEFAULT_STATE = {
+  coins: 300, totalEarned: 300, clicks: 0, xp: 0, level: 1,
+  stars: 50, diamonds: 3, permMultiplier: 1, adWatched: false, friends: 0, timePlayed: 0,
+  rouletteFreeUsed: false,
+  upgrades: { tap:0, auto:0, cat:0, premium:0, boost:0 },
+  buildings: { mine:0, cookie:0, farm:0, tower:0, space:0 },
+  boosts: { boostUntil:0, doubleUntil:0, superUntil:0, autoclickUntil:0 },
+  tasksDone: {}, achievementsDone: {},
+  dailyDate: new Date().toDateString(), lastSeen: Date.now()
+};
+
+let S = loadState();
+let currentScreen = 'home';
+let currentTab = 'daily';
+let currentShopTab = 'boosts';
+let autoclickAcc = 0;
+
+// ===== WHEEL STATE =====
+let wheelRotation = 0;
+let isSpinning = false;
+const wheelCanvas = document.getElementById('wheelCanvas');
+const wheelCtx = wheelCanvas.getContext('2d');
+const SPIN_COST = 3; // звёзд
+
+function loadState(){
+  try {
+    const raw = localStorage.getItem('cryptocat_v2');
+    if (!raw) return JSON.parse(JSON.stringify(DEFAULT_STATE));
+    const parsed = JSON.parse(raw);
+    const base = JSON.parse(JSON.stringify(DEFAULT_STATE));
+    const merged = Object.assign(base, parsed);
+    merged.upgrades  = Object.assign(base.upgrades,  parsed.upgrades  || {});
+    merged.buildings = Object.assign(base.buildings, parsed.buildings || {});
+    merged.boosts    = Object.assign(base.boosts,    parsed.boosts    || {});
+    merged.tasksDone = parsed.tasksDone || {};
+    merged.achievementsDone = parsed.achievementsDone || {};
+    if (typeof merged.diamonds !== 'number') merged.diamonds = 3;
+    if (typeof merged.permMultiplier !== 'number') merged.permMultiplier = 1;
+    if (typeof merged.stars !== 'number') merged.stars = 50;
+    if (typeof merged.rouletteFreeUsed !== 'boolean') merged.rouletteFreeUsed = false;
+    return merged;
+  } catch(e){ return JSON.parse(JSON.stringify(DEFAULT_STATE)); }
+}
+function saveState(){
+  S.lastSeen = Date.now();
+  try { localStorage.setItem('cryptocat_v2', JSON.stringify(S)); } catch(e){}
+}
+
+const $  = sel => document.querySelector(sel);
+const $$ = sel => document.querySelectorAll(sel);
+
+function fmt(n){
+  n = Math.floor(n);
+  if (n < 1e6) return n.toLocaleString('ru-RU');
+  if (n < 1e9) return (n/1e6).toFixed(n < 1e7 ? 2 : 1).replace('.', ',') + 'M';
+  if (n < 1e12) return (n/1e9).toFixed(2).replace('.', ',') + 'B';
+  return (n/1e12).toFixed(2).replace('.', ',') + 'T';
+}
+
+function toast(msg){
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=>t.classList.remove('show'), 2000);
+}
+
+function totalBuildings(s){ return BUILDINGS.reduce((sum,b)=> sum + (s.buildings[b.id]||0), 0); }
+function countUpgrades(s){ return UPGRADES.filter(u => u.id !== 'boost' && (s.upgrades[u.id]||0) > 0).length; }
+
+function basePerSec(){
+  let sum = 0;
+  BUILDINGS.forEach(b => sum += (S.buildings[b.id]||0) * b.income);
+  sum += (S.upgrades.auto||0) * 5;
+  sum += (S.upgrades.cat||0)  * 10;
+  return sum;
+}
+function multiplier(){
+  const now = Date.now();
+  let m = 1 + (S.upgrades.premium||0) * 0.5;
+  if (S.boosts.boostUntil  > now) m += 1;
+  if (S.boosts.superUntil  > now) m += 2;
+  if (S.boosts.doubleUntil > now) m += 1;
+  m *= (S.permMultiplier || 1);
+  return m;
+}
+function perSec(){ return basePerSec() * multiplier(); }
+function clickValue(){ return (1 + (S.upgrades.tap||0) * 2) * multiplier(); }
+function upgradeCost(u){ const lvl = S.upgrades[u.id] || 0; return Math.floor(u.base * Math.pow(u.growth, lvl)); }
+function buildingCost(b){ const lvl = S.buildings[b.id] || 0; return Math.floor(b.base * Math.pow(b.growth, lvl)); }
+
+function addCoins(amount){ S.coins += amount; S.totalEarned += amount; }
+function addXp(amount){
+  S.xp += amount;
+  while (S.xp >= 100){
+    S.xp -= 100; S.level++;
+    addCoins(S.level * 25);
+    toast('🎉 Новый уровень: ' + S.level + '! +' + fmt(S.level*25) + ' монет');
+  }
+}
+
+// ===== RENDER ALL =====
+function renderAll(){
+  renderHome(); renderUpgrades(); renderBuildings();
+  renderAchievements(); renderTasks(); renderShop();
+  renderProfile(); renderDrawer(); renderRoulette();
+}
+function renderBalances(){
+  const cv = fmt(S.coins);
+  $$('.coinVal').forEach(el => el.textContent = cv);
+  $$('.diamondVal').forEach(el => el.textContent = S.diamonds);
+  const heroD = $('#heroDiamonds');
+  if (heroD) heroD.textContent = S.diamonds;
+}
+
+function renderHome(){
+  $('#homeCoins').textContent = fmt(S.coins);
+  $('#homePerSec').textContent = '+' + fmt(perSec()) + '/с';
+  $('#homeDiamonds').textContent = S.diamonds;
+  const now = Date.now();
+  const pills = [];
+  const add = (label, until) => {
+    if (until > now){
+      const left = Math.ceil((until - now) / 1000);
+      const m = Math.floor(left/60), sec = left % 60;
+      pills.push(`<span class="boost-pill">${label} ${m}:${String(sec).padStart(2,'0')}</span>`);
+    }
+  };
+  add('⚡ x2', S.boosts.boostUntil);
+  add('👑 x3', S.boosts.superUntil);
+  add('🪙 x2', S.boosts.doubleUntil);
+  add('👆 авто', S.boosts.autoclickUntil);
+  $('#boostBar').innerHTML = pills.join('');
+  renderBalances();
+}
+
+function renderUpgrades(){
+  $('#upgradesList').innerHTML = UPGRADES.map(u => {
+    const lvl = S.upgrades[u.id] || 0;
+    const cost = upgradeCost(u);
+    const maxed = u.max && lvl >= u.max;
+    const can = S.coins >= cost && !maxed;
+    const btn = maxed
+      ? `<span class="maxed">MAX</span>`
+      : `<button class="buy ${can?'':'off'}" data-buy-upgrade="${u.id}" ${can?'':'disabled'}>
+           <img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt="">${fmt(cost)}</button>`;
+    return `<div class="item">
+      <div class="item-icon" style="background:${u.bg}">${u.icon}</div>
+      <div class="item-body">
+        <div class="item-name">${u.name}</div>
+        <div class="item-sub">Ур. ${lvl} · ${u.desc}</div>
+      </div>
+      ${btn}
+    </div>`;
+  }).join('');
+}
+
+function renderBuildings(){
+  $('#buildingsList').innerHTML = BUILDINGS.map(b => {
+    const lvl = S.buildings[b.id] || 0;
+    const cost = buildingCost(b);
+    const can = S.coins >= cost;
+    return `<div class="item">
+      <div class="item-icon" style="background:${b.bg}">${b.icon}</div>
+      <div class="item-body">
+        <div class="item-name">${b.name}</div>
+        <div class="item-sub">Ур. ${lvl} · ${b.desc}</div>
+      </div>
+      <button class="buy ${can?'':'off'}" data-buy-building="${b.id}" ${can?'':'disabled'}>
+        <img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt="">${fmt(cost)}
+      </button>
+    </div>`;
+  }).join('');
+}
+
+function renderAchievements(){
+  $('#achievementsList').innerHTML = ACHIEVEMENTS.map(a => {
+    const cur = Math.min(a.get(S), a.goal);
+    const done = !!S.achievementsDone[a.id];
+    const pct = Math.min(100, (cur / a.goal) * 100);
+    return `<div class="item">
+      <div class="item-icon" style="background:${a.bg}">${a.icon}</div>
+      <div class="item-body">
+        <div class="item-name">${a.name}</div>
+        <div class="item-sub">${a.desc}</div>
+        <div class="pbar ${done?'done':''}"><i style="width:${pct}%"></i></div>
+        <div class="ptxt">${fmt(cur)} / ${fmt(a.goal)}${done ? ' · Получено +' + fmt(a.reward) : ''}</div>
+      </div>
+      ${done ? '<div class="task-check">✓</div>' : '<div class="task-check wait">🏆</div>'}
+    </div>`;
+  }).join('');
+}
+
+function renderTasks(){
+  const list = TASKS[currentTab];
+  $('#tasksList').innerHTML = list.map(t => {
+    const cur = Math.min(t.get(S), t.goal);
+    const done = cur >= t.goal;
+    const claimed = !!S.tasksDone[t.id];
+    const pct = Math.min(100, (cur / t.goal) * 100);
+    let action;
+    if (claimed) action = `<div class="task-check">✓</div>`;
+    else if (done) action = `<button class="small-btn gold" data-claim="${t.id}">Забрать</button>`;
+    else if (t.action === 'ad') action = `<button class="small-btn" data-ad="${t.id}">Смотреть</button>`;
+    else if (t.action === 'invite') action = `<button class="small-btn" data-invite="${t.id}">Пригласить</button>`;
+    else action = `<div class="task-check wait">•</div>`;
+    return `<div class="item">
+      <div class="item-icon" style="background:${t.bg}">${t.icon}</div>
+      <div class="item-body">
+        <div class="item-name">${t.name}</div>
+        <div class="item-sub">${t.desc} · <b>+${fmt(t.reward)}</b></div>
+        ${t.goal > 1 ? `<div class="pbar ${done?'done':''}"><i style="width:${pct}%"></i></div>
+        <div class="ptxt">${fmt(cur)} / ${fmt(t.goal)}</div>` : ''}
+      </div>
+      ${action}
+    </div>`;
+  }).join('');
+}
+
+function renderShop(){
+  const el = $('#shopList');
+  const now = Date.now();
+
+  if (currentShopTab === 'diamonds'){
+    const canExchange = S.coins >= DIAMOND_RATE;
+    const exchangeHtml = `
+      <div class="exchange-card">
+        <div class="exchange-icon">💎</div>
+        <div class="exchange-body">
+          <div class="exchange-title">Обменять на алмаз</div>
+          <div class="exchange-sub">1 алмаз = ${fmt(DIAMOND_RATE)} монет</div>
+        </div>
+        <button class="exchange-btn ${canExchange?'':'off'}" data-exchange="1" ${canExchange?'':'disabled'}>
+          Обменять
+        </button>
+      </div>
+    `;
+    const items = DIAMOND_SHOP.map(i => {
+      const can = S.diamonds >= i.price;
+      return `<div class="item">
+        <div class="item-icon" style="background:${i.bg}">${i.icon}</div>
+        <div class="item-body">
+          <div class="item-name">${i.name}</div>
+          <div class="item-sub">${i.desc}</div>
+        </div>
+        <button class="buy diamond-btn ${can?'':'off'}" data-buy-diamond="${i.id}" ${can?'':'disabled'}>
+          <span class="diamond-ico">💎</span>${i.price}
+        </button>
+      </div>`;
+    }).join('');
+    el.innerHTML = exchangeHtml + items;
+    return;
+  }
+
+  if (currentShopTab === 'stars'){
+    el.innerHTML = STAR_SHOP.map(i => {
+      const can = S.stars >= i.price;
+      const badge = i.badge ? `<div class="badge ${i.badge==='ЛУЧШЕЕ'?'hot':''}">${i.badge}</div>` : '';
+      return `<div class="item">
+        ${badge}
+        <div class="item-icon" style="background:${i.bg}">${i.icon}</div>
+        <div class="item-body">
+          <div class="item-name">${i.name}</div>
+          <div class="item-sub">${i.desc}</div>
+        </div>
+        <button class="buy star-btn ${can?'':'off'}" data-buy-star="${i.id}" ${can?'':'disabled'}>
+          <span class="star"></span>${i.price}
+        </button>
+      </div>`;
+    }).join('');
+    return;
+  }
+
+  const list = SHOP.filter(i => i.cat === currentShopTab);
+  el.innerHTML = list.map(i => {
+    let active = false;
+    if (i.type === 'boost'     && S.boosts.boostUntil     > now) active = true;
+    if (i.type === 'super'     && S.boosts.superUntil     > now) active = true;
+    if (i.type === 'double'    && S.boosts.doubleUntil    > now) active = true;
+    if (i.type === 'autoclick' && S.boosts.autoclickUntil > now) active = true;
+    const can = S.coins >= i.price;
+    return `<div class="item">
+      <div class="item-icon" style="background:${i.bg}">${i.icon}</div>
+      <div class="item-body">
+        <div class="item-name">${i.name}</div>
+        <div class="item-sub">${i.desc}</div>
+      </div>
+      ${active
+        ? `<span class="maxed">Активно</span>`
+        : `<button class="buy ${can?'':'off'}" data-buy-shop="${i.id}" ${can?'':'disabled'}>
+             <img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt="">${fmt(i.price)}</button>`}
+    </div>`;
+  }).join('');
+}
+
+function renderProfile(){
+  $('#profLevel').textContent = 'Ур. ' + S.level;
+  $('#profBar').style.width = S.xp + '%';
+  $('#profXp').textContent = S.xp + ' / 100';
+  $('#stCoins').textContent = fmt(S.coins);
+  $('#stDiamonds').textContent = S.diamonds;
+  $('#stRank').textContent = '#1243';
+  $('#stIncome').textContent = fmt(perSec()) + '/с';
+  const mins = Math.floor(S.timePlayed / 60);
+  $('#stTime').textContent = mins >= 60
+    ? Math.floor(mins/60) + ' ч ' + (mins % 60) + ' мин'
+    : mins + ' мин';
+  $('#stBuild').textContent = totalBuildings(S);
+  const totalTasks = TASKS.daily.length + TASKS.regular.length;
+  const doneTasks = Object.keys(S.tasksDone).filter(k => S.tasksDone[k]).length;
+  $('#stTasks').textContent = doneTasks + ' / ' + totalTasks;
+  renderBalances();
+}
+
+function renderDrawer(){
+  $('#drawerLevel').textContent = 'Ур. ' + S.level;
+  $('#drawerBar').style.width = S.xp + '%';
+  $('#drawerXp').textContent = S.xp + ' / 100';
+}
+
+// ===== ROULETTE =====
+function drawWheel(rot){
+  const W = wheelCanvas.width, H = wheelCanvas.height;
+  const cx = W / 2, cy = H / 2;
+  const R = Math.min(cx, cy) - 8;
+  const sa = (Math.PI * 2) / WHEEL_SECTORS.length;
+
+  wheelCtx.clearRect(0, 0, W, H);
+
+  // sectors
+  WHEEL_SECTORS.forEach((s, i) => {
+    const a0 = i * sa + rot;
+    const a1 = a0 + sa;
+
+    const grad = wheelCtx.createRadialGradient(cx, cy, R * 0.15, cx, cy, R);
+    grad.addColorStop(0, s.light);
+    grad.addColorStop(1, s.color);
+
+    wheelCtx.beginPath();
+    wheelCtx.moveTo(cx, cy);
+    wheelCtx.arc(cx, cy, R, a0, a1);
+    wheelCtx.closePath();
+    wheelCtx.fillStyle = grad;
+    wheelCtx.fill();
+
+    // divider lines
+    wheelCtx.strokeStyle = 'rgba(255,255,255,.4)';
+    wheelCtx.lineWidth = 3;
+    wheelCtx.stroke();
+
+    // icon + label
+    wheelCtx.save();
+    wheelCtx.translate(cx, cy);
+    wheelCtx.rotate(a0 + sa / 2 + Math.PI / 2);
+    wheelCtx.textAlign = 'center';
+    wheelCtx.textBaseline = 'middle';
+
+    // icon
+    wheelCtx.font = '52px sans-serif';
+    wheelCtx.fillText(s.icon, 0, -R * 0.74);
+
+    // label
+    wheelCtx.font = 'bold 26px -apple-system,sans-serif';
+    wheelCtx.fillStyle = '#fff';
+    wheelCtx.shadowColor = 'rgba(0,0,0,.35)';
+    wheelCtx.shadowBlur = 6;
+    wheelCtx.fillText(s.label, 0, -R * 0.55);
+    wheelCtx.shadowBlur = 0;
+    wheelCtx.restore();
+  });
+
+  // outer ring
+  wheelCtx.beginPath();
+  wheelCtx.arc(cx, cy, R, 0, Math.PI * 2);
+  wheelCtx.strokeStyle = 'rgba(255,255,255,.55)';
+  wheelCtx.lineWidth = 8;
+  wheelCtx.stroke();
+
+  // center circle (under button)
+  wheelCtx.beginPath();
+  wheelCtx.arc(cx, cy, 82, 0, Math.PI * 2);
+  wheelCtx.fillStyle = '#fff';
+  wheelCtx.fill();
+  wheelCtx.strokeStyle = 'rgba(51,144,236,.35)';
+  wheelCtx.lineWidth = 5;
+  wheelCtx.stroke();
+}
+
+function renderRoulette(){
+  // prizes grid
+  const prizesGrid = $('#prizesGrid');
+  if (prizesGrid){
+    prizesGrid.innerHTML = WHEEL_SECTORS.map(s => {
+      let label, desc;
+      if (s.reward.type === 'coins'){ label = s.reward.amount.toLocaleString('ru-RU') + ' 🪙'; desc = 'Монеты'; }
+      else if (s.reward.type === 'diamonds'){ label = s.reward.amount + ' 💎'; desc = 'Алмазы'; }
+      else if (s.reward.type === 'stars'){ label = s.reward.amount + ' ⭐'; desc = 'Звёзды'; }
+      else if (s.reward.type === 'boost'){ label = 'x2 на 1 час'; desc = 'Буст дохода'; }
+      return `<div class="prize-card">
+        <div class="prize-ico" style="background:${s.light}">${s.icon}</div>
+        <div class="prize-info">
+          <div class="prize-label">${label}</div>
+          <div class="prize-desc">${desc}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // info panel
+  const info = $('#rouletteInfo');
+  if (info){
+    if (!S.rouletteFreeUsed){
+      info.innerHTML = `
+        <div class="ri-main">🎁 Бесплатный спин доступен!</div>
+        <div class="ri-sub">Используй его прямо сейчас — раз в день бесплатно</div>
+        <span class="ri-pill free">🎯 Крутить бесплатно</span>
+      `;
+    } else if (S.stars >= SPIN_COST){
+      info.innerHTML = `
+        <div class="ri-main">Бесплатный спин использован</div>
+        <div class="ri-sub">Следующий бесплатный — завтра. Сейчас: ${SPIN_COST} ⭐ за спин</div>
+        <span class="ri-pill paid"><span class="star"></span> ${SPIN_COST} за спин</span>
+      `;
+    } else {
+      info.innerHTML = `
+        <div class="ri-main">Бесплатный спин использован</div>
+        <div class="ri-sub">Нужно ${SPIN_COST} ⭐. Заработай звёзды в рулетке или купи в магазине</div>
+        <span class="ri-pill locked">Недостаточно ⭐</span>
+      `;
+    }
+  }
+
+  // spin button state
+  const spinBtn = $('#spinBtn');
+  if (spinBtn){
+    spinBtn.disabled = isSpinning || (S.rouletteFreeUsed && S.stars < SPIN_COST);
+  }
+
+  // initial draw
+  drawWheel(wheelRotation);
+}
+
+function spinWheel(){
+  if (isSpinning) return;
+  if (S.rouletteFreeUsed && S.stars < SPIN_COST){
+    toast('Недостаточно звёзд');
+    haptic('error');
+    return;
+  }
+
+  // pay
+  let usedFree = false;
+  if (!S.rouletteFreeUsed){
+    S.rouletteFreeUsed = true;
+    usedFree = true;
+  } else {
+    S.stars -= SPIN_COST;
+  }
+
+  isSpinning = true;
+  $('#spinBtn').disabled = true;
+  $('#wheelPointer').classList.add('spinning');
+  haptic('impact', 'medium');
+
+  // pick winner
+  const sa = (Math.PI * 2) / WHEEL_SECTORS.length;
+  const idx = Math.floor(Math.random() * WHEEL_SECTORS.length);
+
+  let target = -Math.PI / 2 - (idx + 0.5) * sa;
+  const fullSpins = 5 + Math.floor(Math.random() * 3);
+  const minTarget = wheelRotation + fullSpins * 2 * Math.PI;
+  while (target < minTarget) target += 2 * Math.PI;
+
+  const startRot = wheelRotation;
+  const deltaRot = target - startRot;
+  const duration = 4200;
+  const t0 = performance.now();
+
+  function frame(t){
+    const p = Math.min((t - t0) / duration, 1);
+    const eased = 1 - Math.pow(1 - p, 4); // ease-out quart
+    wheelRotation = startRot + deltaRot * eased;
+    drawWheel(wheelRotation);
+    if (p < 1){
+      requestAnimationFrame(frame);
+    } else {
+      wheelRotation = target;
+      isSpinning = false;
+      $('#wheelPointer').classList.remove('spinning');
+      onWin(WHEEL_SECTORS[idx], usedFree);
+    }
+  }
+  requestAnimationFrame(frame);
+}
+
+function onWin(sector, usedFree){
+  const reward = sector.reward;
+  let amountText = '';
+  let rewardClass = 'gold';
+
+  switch(reward.type){
+    case 'coins':
+      addCoins(reward.amount);
+      amountText = '+' + fmt(reward.amount) + ' монет';
+      rewardClass = 'gold';
+      break;
+    case 'diamonds':
+      S.diamonds += reward.amount;
+      amountText = '+' + reward.amount + ' 💎 алмаз';
+      rewardClass = 'blue';
+      break;
+    case 'stars':
+      S.stars += reward.amount;
+      amountText = '+' + reward.amount + ' ⭐';
+      rewardClass = 'gold';
+      break;
+    case 'boost':
+      S.boosts.doubleUntil = Math.max(S.boosts.doubleUntil, Date.now() + reward.dur * 1000);
+      amountText = '⚡ Буст x2 на 1 час';
+      rewardClass = 'green';
+      break;
+  }
+
+  haptic('success');
+  renderAll();
+  saveState();
+
+  // win modal
+  showModal('', `
+    <div class="win-icon-big">${sector.icon}</div>
+    <div class="win-title">${usedFree ? '🎁 Бесплатный спин!' : '🎉 Выигрыш!'}</div>
+    <div class="win-reward ${rewardClass}">${amountText}</div>
+    <div style="font-size:12px;color:#8798AE;margin-bottom:4px;">
+      ${usedFree ? 'Возвращайся завтра за новым спином' : ''}
+    </div>
+  `, null, 'Забрать');
+  $('#modalBody').querySelector('*').classList.add('show');
+}
+
+// ===== ACTIONS =====
+function buyUpgrade(id){
+  const u = UPGRADES.find(x => x.id === id);
+  if (!u) return;
+  const lvl = S.upgrades[id] || 0;
+  if (u.max && lvl >= u.max) return;
+  const cost = upgradeCost(u);
+  if (S.coins < cost){ toast('Недостаточно монет'); haptic('error'); return; }
+  S.coins -= cost;
+  S.upgrades[id] = lvl + 1;
+  addXp(6);
+  haptic('success');
+  if (id === 'boost'){
+    S.boosts.boostUntil = Date.now() + 3600 * 1000;
+    toast('⚡ Буст активирован на 1 час!');
+  } else toast('✅ ' + u.name + ' — Ур. ' + (lvl + 1));
+  renderAll(); saveState();
+}
+
+function buyBuilding(id){
+  const b = BUILDINGS.find(x => x.id === id);
+  if (!b) return;
+  const cost = buildingCost(b);
+  if (S.coins < cost){ toast('Недостаточно монет'); haptic('error'); return; }
+  S.coins -= cost;
+  S.buildings[id] = (S.buildings[id] || 0) + 1;
+  addXp(10);
+  haptic('success');
+  toast('🏗️ ' + b.name + ' построена!');
+  renderAll(); saveState();
+}
+
+function buyShop(id){
+  const it = SHOP.find(x => x.id === id);
+  if (!it) return;
+  if (S.coins < it.price){ toast('Недостаточно монет'); haptic('error'); return; }
+  S.coins -= it.price;
+  const now = Date.now();
+  switch(it.type){
+    case 'boost':     S.boosts.boostUntil     = now + it.dur*1000; toast('⚡ Буст дохода активирован'); break;
+    case 'super':     S.boosts.superUntil     = now + it.dur*1000; toast('👑 Супер-буст активирован'); break;
+    case 'double':    S.boosts.doubleUntil    = now + it.dur*1000; toast('🪙 Удвоение монет активно'); break;
+    case 'autoclick': S.boosts.autoclickUntil = now + it.dur*1000; toast('👆 Авто-кликер включён'); break;
+    case 'coins':     addCoins(it.amount); toast('+' + fmt(it.amount) + ' монет'); break;
+    case 'pack':
+      addCoins(2000);
+      S.boosts.boostUntil = Math.max(S.boosts.boostUntil, now + 600*1000);
+      toast('🎁 Набор новичка получен!');
+      break;
+  }
+  haptic('success');
+  renderAll(); saveState();
+}
+
+function buyStar(id){
+  const it = STAR_SHOP.find(x => x.id === id);
+  if (!it) return;
+  if (S.stars < it.price){ toast('Недостаточно звёзд'); haptic('error'); return; }
+
+  showModal('Оплата звёздами', `
+    <p>Вы хотите купить <b>${it.name}</b> за <b>${it.price} ⭐</b>?</p>
+    <p style="font-size:11px;color:#8798AE;">Это симуляция оплаты через Telegram Stars. В реальном приложении здесь откроется счёт.</p>
+  `, () => {
+    if (S.stars >= it.price) {
+      S.stars -= it.price;
+      const now = Date.now();
+      switch(it.type){
+        case 'super': S.boosts.superUntil = now + it.dur*1000; break;
+        case 'coins': addCoins(it.amount); break;
+        case 'vip': S.upgrades.premium = 10; break;
+        case 'allmax':
+          UPGRADES.forEach(u => {
+            if (u.max) S.upgrades[u.id] = u.max;
+            else S.upgrades[u.id] = 50;
+          });
+          break;
+      }
+      haptic('success');
+      toast('✅ Успешно куплено за звёзды!');
+      renderAll(); saveState();
+    } else {
+      toast('Недостаточно звёзд');
+      haptic('error');
+    }
+  }, 'Оплатить ⭐');
+}
+
+function buyDiamond(id){
+  const it = DIAMOND_SHOP.find(x => x.id === id);
+  if (!it) return;
+  if (S.diamonds < it.price){ toast('Недостаточно алмазов'); haptic('error'); return; }
+
+  S.diamonds -= it.price;
+  switch(it.type){
+    case 'perm_x10':
+      S.permMultiplier = (S.permMultiplier || 1) * 10;
+      toast('🚀 Доход x10 навсегда!');
+      break;
+    case 'coins':
+      addCoins(it.amount);
+      toast('+' + fmt(it.amount) + ' монет!');
+      break;
+    case 'allboost':{
+      const now = Date.now();
+      S.boosts.boostUntil     = now + 86400*1000;
+      S.boosts.superUntil     = now + 86400*1000;
+      S.boosts.doubleUntil    = now + 86400*1000;
+      S.boosts.autoclickUntil = now + 86400*1000;
+      toast('⚡ Все бусты активированы на 24ч!');
+      break;
+    }
+    case 'stars':
+      S.stars += it.amount;
+      toast('+' + it.amount + ' ⭐ звёзд!');
+      break;
+  }
+  haptic('success');
+  renderAll(); saveState();
+}
+
+function exchangeDiamond(){
+  if (S.coins < DIAMOND_RATE){ toast('Нужно ' + fmt(DIAMOND_RATE) + ' монет'); haptic('error'); return; }
+  S.coins -= DIAMOND_RATE;
+  S.diamonds += 1;
+  haptic('success');
+  toast('💎 Получен алмаз!');
+  renderAll(); saveState();
+}
+
+function claimTask(id){
+  const all = [...TASKS.daily, ...TASKS.regular];
+  const t = all.find(x => x.id === id);
+  if (!t || S.tasksDone[id]) return;
+  if (t.get(S) < t.goal) return;
+  S.tasksDone[id] = true;
+  addCoins(t.reward);
+  addXp(8);
+  haptic('success');
+  toast('🎁 Награда получена: +' + fmt(t.reward));
+  renderAll(); saveState();
+}
+
+function watchAd(){
+  const btn = event.target;
+  btn.textContent = 'Загрузка…';
+  btn.classList.add('grey');
+  setTimeout(() => {
+    S.adWatched = true;
+    haptic('success');
+    renderTasks();
+    toast('✅ Реклама просмотрена');
+  }, 1600);
+}
+
+// ===== TAP =====
+const tapZone = $('#tapZone');
+
+function doTap(x, y){
+  const gain = clickValue();
+  addCoins(gain);
+  S.clicks++;
+  addXp(1);
+  haptic('impact', 'light');
+  spawnFloat(x, y, '+' + fmt(gain));
+  renderHome();
+  checkAchievements();
+}
+function spawnFloat(x, y, text){
+  const el = document.createElement('div');
+  el.className = 'float-coin';
+  el.textContent = text;
+  el.style.left = x + 'px';
+  el.style.top  = y + 'px';
+  tapZone.appendChild(el);
+  setTimeout(()=> el.remove(), 900);
+}
+
+tapZone.addEventListener('pointerdown', e => {
+  if (e.target.closest('#tapBtn')) return;
+  const r = tapZone.getBoundingClientRect();
+  doTap(e.clientX - r.left, e.clientY - r.top);
+});
+$('#tapBtn').addEventListener('pointerdown', e => {
+  e.stopPropagation();
+  const r = tapZone.getBoundingClientRect();
+  doTap(e.clientX - r.left, e.clientY - r.top - 10);
+});
+
+function checkAchievements(){
+  ACHIEVEMENTS.forEach(a => {
+    if (S.achievementsDone[a.id]) return;
+    if (a.get(S) >= a.goal){
+      S.achievementsDone[a.id] = true;
+      addCoins(a.reward);
+      haptic('success');
+      toast('🏆 ' + a.name + ' · +' + fmt(a.reward));
+      renderAchievements();
+    }
+  });
+}
+
+// ===== NAVIGATION =====
+function goTo(screen){
+  currentScreen = screen;
+  $$('.screen').forEach(s => s.classList.toggle('active', s.id === 's-' + screen));
+  $$('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.screen === screen));
+  $$('.dnav').forEach(b => b.classList.toggle('active', b.dataset.screen === screen));
+  
+  const topbar = $('#topbar');
+  if (screen === 'home') {
+    topbar.classList.remove('solid');
+    topbar.classList.add('transparent');
+  } else {
+    topbar.classList.remove('transparent');
+    topbar.classList.add('solid');
+  }
+  
+  if (screen === 'home') renderHome();
+  if (screen === 'roulette') renderRoulette();
+  if (screen === 'upgrades') renderUpgrades();
+  if (screen === 'buildings') renderBuildings();
+  if (screen === 'achievements') renderAchievements();
+  if (screen === 'tasks') renderTasks();
+  if (screen === 'shop') renderShop();
+  if (screen === 'profile') renderProfile();
+  renderBalances();
+  $('#content').scrollTop = 0;
+}
+
+$$('.nav-item').forEach(btn => btn.addEventListener('click', () => goTo(btn.dataset.screen)));
+
+const drawer = $('#drawer'), overlay = $('#overlay');
+function openDrawer(){ drawer.classList.add('open'); overlay.classList.add('show'); }
+function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('show'); }
+$('#menuBtn').addEventListener('click', openDrawer);
+$('#drawerClose').addEventListener('click', closeDrawer);
+overlay.addEventListener('click', closeDrawer);
+
+$$('.dnav[data-screen]').forEach(btn => {
+  btn.addEventListener('click', () => { goTo(btn.dataset.screen); closeDrawer(); });
+});
+
+function inviteFriend(){
+  const text = `Я играю в КриптоКот 🐱 и уже заработал ${fmt(S.totalEarned)} монет! Присоединяйся:`;
+  const botUsername = 'your_bot_username';
+  const refLink = `https://t.me/${botUsername}?start=ref_${S.level}`;
+  const url = `https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${encodeURIComponent(text)}`;
+  if (tg && tg.openTelegramLink) {
+    tg.openTelegramLink(url);
+  } else {
+    window.open(url, '_blank');
+  }
+}
+
+$('#inviteBtn').addEventListener('click', inviteFriend);
+$('#navInvite').addEventListener('click', () => { closeDrawer(); inviteFriend(); });
+
+$('#navSettings').addEventListener('click', () => {
+  closeDrawer();
+  showModal('Настройки', `
+    <p><b>Звук:</b> включён</p>
+    <p><b>Вибрация:</b> включена</p>
+    <p><b>Уведомления:</b> включены</p>
+    <p style="color:#8798AE">Игра сохраняется автоматически в этом устройстве.</p>
+  `);
+});
+$('#navSupport').addEventListener('click', () => {
+  closeDrawer();
+  showModal('Поддержка', `
+    <p>Возникли вопросы или нашли баг?</p>
+    <p>Напишите нам в Telegram: <b>@cryptocat_support</b></p>
+    <p style="color:#8798AE">Мы отвечаем в течение 24 часов.</p>
+  `);
+});
+$('#navExit').addEventListener('click', () => {
+  saveState();
+  if (tg && tg.close) tg.close();
+  else { toast('Игра сохранена 👋'); closeDrawer(); }
+});
+
+$('#helpBtn').addEventListener('click', () => {
+  showModal('🪙 КриптоКот', `
+    <p><b>Кликай</b> по экрану и собирай монеты.</p>
+    <p><b>Прокачивайся</b> — покупай улучшения и увеличивай доход.</p>
+    <p><b>Строй</b> фабрики для пассивного дохода.</p>
+    <p><b>Крути рулетку</b> 🎡 — раз в день бесплатно, дальше за ⭐.</p>
+    <p><b>Обменивай</b> 1 000 000 монет на 💎 алмаз.</p>
+    <p><b>Выполняй</b> задания и достижения.</p>
+  `);
+});
+
+function showModal(title, html, onConfirm, confirmText = 'Понятно'){
+  $('#modalTitle').textContent = title;
+  if (!title) $('#modalTitle').style.display = 'none';
+  else $('#modalTitle').style.display = '';
+  $('#modalBody').innerHTML = html;
+  const btn = $('#modalOk');
+  btn.textContent = confirmText;
+  btn.onclick = () => {
+    $('#modal').classList.remove('show');
+    if (onConfirm) onConfirm();
+  };
+  $('#modal').classList.add('show');
+}
+$('#modal').addEventListener('click', e => {
+  if (e.target.id === 'modal') $('#modal').classList.remove('show');
+});
+
+// ===== SPIN BUTTON =====
+$('#spinBtn').addEventListener('click', spinWheel);
+
+// ===== EVENT DELEGATION =====
+$('#upgradesList').addEventListener('click', e => {
+  const b = e.target.closest('[data-buy-upgrade]');
+  if (b) buyUpgrade(b.dataset.buyUpgrade);
+});
+$('#buildingsList').addEventListener('click', e => {
+  const b = e.target.closest('[data-buy-building]');
+  if (b) buyBuilding(b.dataset.buyBuilding);
+});
+$('#shopList').addEventListener('click', e => {
+  const b = e.target.closest('[data-buy-shop]');
+  if (b){ buyShop(b.dataset.buyShop); return; }
+  const s = e.target.closest('[data-buy-star]');
+  if (s){ buyStar(s.dataset.buyStar); return; }
+  const d = e.target.closest('[data-buy-diamond]');
+  if (d){ buyDiamond(d.dataset.buyDiamond); return; }
+  const ex = e.target.closest('[data-exchange]');
+  if (ex){ exchangeDiamond(); return; }
+});
+$('#tasksList').addEventListener('click', e => {
+  const claim = e.target.closest('[data-claim]');
+  if (claim){ claimTask(claim.dataset.claim); return; }
+  const ad = e.target.closest('[data-ad]');
+  if (ad){ watchAd(); return; }
+  const inv = e.target.closest('[data-invite]');
+  if (inv){ inviteFriend(); S.friends = (S.friends || 0) + 1; renderTasks(); saveState(); }
+});
+
+$$('.tab[data-tab]').forEach(tab => {
+  tab.addEventListener('click', () => {
+    $$('.tab[data-tab]').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentTab = tab.dataset.tab;
+    renderTasks();
+  });
+});
+$$('.tab[data-shop]').forEach(tab => {
+  tab.addEventListener('click', () => {
+    $$('.tab[data-shop]').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentShopTab = tab.dataset.shop;
+    renderShop();
+  });
+});
+
+$('#shareBtn').addEventListener('click', async () => {
+  const text = `Я играю в КриптоКот 🐱 и уже заработал ${fmt(S.totalEarned)} монет!`;
+  const url = `https://t.me/share/url?url=https://t.me&text=${encodeURIComponent(text)}`;
+  if (tg && tg.openTelegramLink){
+    tg.openTelegramLink(url);
+  } else if (navigator.share){
+    try { await navigator.share({ title:'КриптоКот', text }); } catch(e){}
+  } else toast('Результат: ' + fmt(S.totalEarned) + ' монет 🏆');
+});
+
+// ===== GAME LOOP =====
+let saveCounter = 0;
+setInterval(() => {
+  const dt = 0.1, now = Date.now();
+  const inc = perSec() * dt;
+  if (inc > 0){ S.coins += inc; S.totalEarned += inc; }
+
+  if (S.boosts.autoclickUntil > now){
+    autoclickAcc += dt;
+    if (autoclickAcc >= 1){
+      autoclickAcc = 0;
+      const gain = clickValue();
+      S.coins += gain; S.totalEarned += gain; S.clicks++;
+      addXp(1);
+    }
+  } else autoclickAcc = 0;
+
+  S.timePlayed += dt;
+
+  if (currentScreen === 'home') renderHome();
+  else renderBalances();
+
+  if (currentScreen === 'profile' && Math.random() < 0.1) renderProfile();
+
+  checkAchievements();
+
+  saveCounter += dt;
+  if (saveCounter >= 3){ saveCounter = 0; saveState(); }
+}, 100);
+
+(function init(){
+  const today = new Date().toDateString();
+  if (S.dailyDate !== today){
+    TASKS.daily.forEach(t => delete S.tasksDone[t.id]);
+    S.adWatched = false;
+    S.rouletteFreeUsed = false;
+    S.dailyDate = today;
+  }
+  const elapsed = Math.min((Date.now() - (S.lastSeen || Date.now())) / 1000, 7200);
+  if (elapsed > 60 && perSec() > 0){
+    const earned = perSec() * elapsed * 0.5;
+    if (earned >= 1){
+      addCoins(earned);
+      setTimeout(()=> toast('💤 Пока вас не было: +' + fmt(earned)), 900);
+    }
+  }
+  S.lastSeen = Date.now();
+  renderAll();
+  goTo('home');
+  document.addEventListener('dblclick', e => e.preventDefault(), { passive:false });
+})();
+
+document.addEventListener('visibilitychange', () => { if (document.hidden) saveState(); });
+window.addEventListener('pagehide', saveState);
+</script>
+</body>
+</html>

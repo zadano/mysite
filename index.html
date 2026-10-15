@@ -17,7 +17,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 #app{position:relative;display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:520px;margin:0 auto;
   background:#F4F7FB;overflow:hidden;}
 
-/* TOPBAR */
 .topbar{position:absolute;top:0;left:0;right:0;z-index:10;flex:0 0 52px;height:52px;display:flex;align-items:center;justify-content:space-between;
   padding:0 8px;pointer-events:none;transition:background .2s,border .2s;border-bottom:1px solid transparent;}
 .topbar.transparent{background:transparent;border-bottom-color:transparent;}
@@ -59,11 +58,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .item-sub{font-size:11px;color:var(--muted);line-height:1.3;}
 .item-sub b{color:#3C4A5E;font-weight:600;}
 
-.badge{position:absolute;top:0;right:0;background:linear-gradient(135deg,#FF6B35,#E8487F);color:#fff;font-size:9.5px;font-weight:800;
-  letter-spacing:.4px;padding:3px 8px;border-bottom-left-radius:10px;text-transform:uppercase;}
-.badge.hot{background:linear-gradient(135deg,#FFB800,#F07000);}
-.badge.prem{background:linear-gradient(135deg,#FFB800,#F07000);}
-
 .buy,.small-btn,.btn-primary,.tap-btn{border:none;font-family:inherit;background:var(--tg-blue);color:#fff;font-weight:600;
   letter-spacing:-.1px;cursor:pointer;transition:background .15s,transform .08s;-webkit-user-select:none;user-select:none;}
 .buy:active,.small-btn:active,.btn-primary:active,.tap-btn:active{background:var(--tg-blue-hover);transform:scale(.97);}
@@ -72,21 +66,12 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .buy.off:active{transform:none;background:#D9E1EA;}
 .buy.diamond-btn{background:linear-gradient(135deg,#33C5FF,#1490D8);}
 .buy.diamond-btn:active{background:#1490D8;}
-.buy.star-btn{background:linear-gradient(135deg,#FFC53D,#E8A317);color:#5A3800;}
-.buy.star-btn:active{background:#E8A317;}
-.buy.prem-btn{background:linear-gradient(135deg,#FFB800,#F07000);color:#fff;}
-.buy.prem-btn:active{background:#D99400;}
 .buy.green-btn{background:linear-gradient(135deg,#5BE39A,#2ECC71);}
 .buy.green-btn:active{background:#28B863;}
-.buy.ghost{background:#E9F0F7;color:#5B6B80;}
-.buy.ghost:active{background:#D9E1EA;}
-.maxed{font-size:12px;font-weight:600;color:var(--tg-green);background:#E7F7EB;padding:8px 12px;border-radius:10px;flex:0 0 auto;}
 .pbar{height:6px;border-radius:6px;background:#E9F0F7;overflow:hidden;margin-top:6px;}
 .pbar i{display:block;height:100%;border-radius:6px;background:var(--tg-blue);transition:width .3s;}
-.pbar.done i{background:var(--tg-green);}
 .ptxt{font-size:10.5px;color:var(--muted);margin-top:4px;font-weight:500;}
 
-/* SHOP HERO */
 .shop-hero{position:relative;background:linear-gradient(135deg,#1B3F63 0%,#0F2A47 100%);border-radius:20px;overflow:hidden;margin-bottom:14px;
   display:flex;align-items:center;padding:16px 18px;min-height:130px;box-shadow:0 8px 24px rgba(15,42,71,.35);}
 .shop-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 50%,rgba(255,197,61,.25),transparent 60%);pointer-events:none;}
@@ -97,7 +82,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .shop-hero-text .diamond-pill{display:inline-flex;align-items:center;gap:5px;margin-top:10px;background:rgba(255,255,255,.15);
   padding:5px 10px;border-radius:20px;color:#fff;font-size:11.5px;font-weight:700;backdrop-filter:blur(6px);}
 
-/* HOME */
 .home{position:relative;height:100%;display:flex;flex-direction:column;background-color:#1a3a5c;overflow:hidden;
   user-select:none;touch-action:manipulation;cursor:pointer;background-size:cover;background-position:center;background-repeat:no-repeat;
   transition:background-image .4s;}
@@ -123,7 +107,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 @keyframes floatUp{0%{opacity:0;transform:translate(-50%,-50%) scale(.5);}18%{opacity:1;transform:translate(-50%,-80%) scale(1.15);}
   100%{opacity:0;transform:translate(-50%,-200%) scale(.95);}}
 
-/* BOTTOM NAV */
 .bottomnav{flex:0 0 auto;display:flex;background:#fff;border-top:1px solid var(--line);padding:7px 2px calc(7px + env(safe-area-inset-bottom,0px));z-index:6;}
 .nav-item{flex:1;background:none;border:none;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:2px;
   color:#A2AFC2;font-size:9.5px;font-weight:500;padding:5px 0;cursor:pointer;border-radius:12px;transition:color .16s;}
@@ -135,7 +118,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .nav-item.nav-roulette.active{color:#E8A317;}
 .nav-item.nav-roulette svg{stroke:#E8A317;}
 
-/* DRAWER */
 .overlay{position:absolute;inset:0;background:rgba(10,22,40,.5);opacity:0;visibility:hidden;transition:.24s;z-index:40;}
 .overlay.show{opacity:1;visibility:visible;}
 .drawer{position:absolute;top:0;left:0;bottom:0;width:min(82%,320px);z-index:50;background:#1B3F63;transform:translateX(-102%);
@@ -165,7 +147,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .dnav-sep{height:1px;background:rgba(255,255,255,.12);margin:10px 6px;}
 .drawer-foot{margin-top:auto;padding-top:18px;text-align:center;font-size:10.5px;color:#7FA5C6;line-height:1.6;}
 
-/* TABS */
 .tabs{display:flex;gap:6px;margin-bottom:13px;background:#E4EBF3;padding:4px;border-radius:12px;overflow-x:auto;}
 .tabs::-webkit-scrollbar{height:0;}
 .tab{flex:1;border:none;font-family:inherit;padding:9px 4px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;
@@ -176,13 +157,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .task-check{width:30px;height:30px;flex:0 0 30px;border-radius:50%;display:grid;place-items:center;background:var(--tg-green);
   color:#fff;font-size:15px;font-weight:700;}
 .task-check.wait{background:#E9F0F7;color:#A2AFC2;}
-.small-btn{border-radius:10px;padding:9px 14px;font-size:13px;white-space:nowrap;flex:0 0 auto;}
-.small-btn.gold{background:var(--tg-gold);}
-.small-btn.gold:active{background:#D99400;}
-.small-btn.grey{background:#D9E1EA;color:#8798AE;}
-.small-btn.grey:active{background:#D9E1EA;transform:none;}
 
-/* PROFILE */
 .profile-card{background:#fff;border-radius:18px;padding:18px;text-align:center;box-shadow:0 1px 4px rgba(24,60,110,.06);margin-bottom:12px;}
 .profile-card .avatar{width:86px;height:86px;font-size:44px;margin:0 auto 10px;background:#2B7FD4;}
 .p-name{font-size:19px;font-weight:700;letter-spacing:-.4px;}
@@ -202,8 +177,8 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .btn-primary{width:100%;padding:15px;border-radius:12px;font-size:15px;display:flex;align-items:center;justify-content:center;gap:9px;}
 .btn-primary svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 .btn-invite{background:linear-gradient(135deg,#2AABEE,#229ED9);box-shadow:0 4px 12px rgba(34,158,217,.35);}
+.btn-rename{background:linear-gradient(135deg,#8B5CF6,#6D28D9);box-shadow:0 4px 12px rgba(139,92,246,.35);}
 
-/* Customization */
 .custom-block{background:#fff;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(24,60,110,.06);}
 .custom-title{font-size:13.5px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
 .custom-title .lock{font-size:11px;color:#fff;background:linear-gradient(135deg,#FFB800,#F07000);padding:3px 8px;border-radius:8px;font-weight:700;}
@@ -223,7 +198,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .url-row input:focus{border-color:var(--tg-blue);}
 .url-row button{border:none;font-family:inherit;background:var(--tg-blue);color:#fff;border-radius:10px;padding:0 14px;font-size:12.5px;font-weight:700;cursor:pointer;}
 
-/* Premium card */
 .prem-card{background:linear-gradient(135deg,#2A1600,#3D2300);border-radius:18px;padding:16px;color:#fff;margin-bottom:12px;
   box-shadow:0 8px 24px rgba(255,184,0,.25);position:relative;overflow:hidden;}
 .prem-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(255,197,61,.35),transparent 60%);pointer-events:none;}
@@ -235,7 +209,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .prem-card .prem-btn:active{transform:scale(.97);}
 .prem-card.owned{background:linear-gradient(135deg,#0F2A47,#1B3F63);box-shadow:0 8px 24px rgba(42,171,238,.25);}
 
-/* Backgrounds grid */
 .bg-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
 .bg-item{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;cursor:pointer;border:3px solid transparent;
   background:#EEF3F8;background-size:cover;background-position:center;transition:transform .12s;}
@@ -248,7 +221,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
   display:none;place-items:center;font-size:13px;font-weight:800;}
 .bg-item.selected .bg-check{display:grid;}
 
-/* ADMIN */
 .admin-hero{background:linear-gradient(135deg,#8B5CF6 0%,#EC4899 100%);border-radius:20px;padding:18px;color:#fff;margin-bottom:14px;
   box-shadow:0 8px 24px rgba(139,92,246,.35);position:relative;overflow:hidden;}
 .admin-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 90% 20%,rgba(255,255,255,.25),transparent 60%);pointer-events:none;}
@@ -256,7 +228,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .admin-hero p{margin:0;font-size:11.5px;color:rgba(255,255,255,.85);position:relative;z-index:1;}
 .admin-hero .aid{display:inline-block;background:rgba(0,0,0,.25);padding:4px 10px;border-radius:20px;margin-top:8px;
   font-size:11px;font-weight:700;position:relative;z-index:1;}
-
 .admin-block{background:#fff;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(24,60,110,.06);}
 .admin-block-title{font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#5B6B80;margin-bottom:10px;}
 .admin-row{display:flex;flex-wrap:wrap;gap:8px;}
@@ -270,7 +241,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .admin-badge{display:inline-block;color:#fff;background:linear-gradient(135deg,#8B5CF6,#EC4899);font-size:10px;font-weight:800;
   padding:2px 7px;border-radius:8px;margin-left:6px;vertical-align:middle;}
 
-/* ============ ROULETTE ============ */
 .roulette-wrap{display:flex;flex-direction:column;align-items:center;padding:4px 0 20px;}
 .roulette-title{text-align:center;margin-bottom:18px;}
 .roulette-title h2{margin:0 0 4px;font-size:22px;font-weight:800;color:#0F172A;letter-spacing:-.4px;display:flex;align-items:center;justify-content:center;gap:8px;}
@@ -299,7 +269,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .ri-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:22px;font-size:12.5px;font-weight:800;}
 .ri-pill.free{background:linear-gradient(135deg,#5BE39A,#2ECC71);color:#fff;box-shadow:0 4px 14px rgba(46,204,113,.35);}
 .ri-pill.paid{background:linear-gradient(135deg,#FFC53D,#E8A317);color:#5A3800;box-shadow:0 4px 14px rgba(232,163,23,.35);}
-.ri-pill.locked{background:#E9F0F7;color:#8798AE;}
 .prizes-section-title{font-size:13px;font-weight:700;color:#5B6B80;margin-bottom:8px;padding-left:2px;}
 .prizes-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;width:100%;}
 .prize-card{background:#fff;border-radius:14px;padding:10px 12px;box-shadow:0 1px 4px rgba(24,60,110,.06);display:flex;align-items:center;gap:9px;}
@@ -308,7 +277,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .prize-label{font-size:12.5px;font-weight:700;color:#0F172A;}
 .prize-desc{font-size:10.5px;color:var(--muted);margin-top:1px;}
 
-/* MODAL / TOAST */
 .modal{position:absolute;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(10,22,40,.55);
   opacity:0;visibility:hidden;transition:.22s;}
 .modal.show{opacity:1;visibility:visible;}
@@ -341,7 +309,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 <body>
 <div id="app">
 
-  <!-- TOPBAR -->
   <div class="topbar transparent" id="topbar">
     <button class="tb-btn" id="menuBtn">
       <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -351,7 +318,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
     </button>
   </div>
 
-  <!-- DRAWER -->
   <div class="overlay" id="overlay"></div>
   <aside class="drawer" id="drawer">
     <button class="drawer-close" id="drawerClose">✕</button>
@@ -384,7 +350,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 
   <div class="content" id="content">
 
-    <!-- HOME -->
     <section class="screen active" id="s-home">
       <div class="home" id="tapZone">
         <div class="balance">
@@ -407,7 +372,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       </div>
     </section>
 
-    <!-- ROULETTE -->
     <section class="screen" id="s-roulette">
       <div class="roulette-wrap">
         <div class="roulette-title">
@@ -429,7 +393,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       </div>
     </section>
 
-    <!-- UPGRADES -->
     <section class="screen" id="s-upgrades">
       <div class="screen-head">
         <div><h2>Улучшения</h2><p>Увеличивай доход и открывай новые возможности</p></div>
@@ -441,7 +404,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       <div class="list" id="upgradesList"></div>
     </section>
 
-    <!-- BUILDINGS -->
     <section class="screen" id="s-buildings">
       <div class="screen-head">
         <div><h2>Постройки</h2><p>Построй здания и получай пассивный доход</p></div>
@@ -453,7 +415,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       <div class="list" id="buildingsList"></div>
     </section>
 
-    <!-- ACHIEVEMENTS -->
     <section class="screen" id="s-achievements">
       <div class="screen-head">
         <div><h2>Достижения</h2><p>Выполняй достижения и получай награды</p></div>
@@ -465,7 +426,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       <div class="list" id="achievementsList"></div>
     </section>
 
-    <!-- TASKS -->
     <section class="screen" id="s-tasks">
       <div class="screen-head">
         <div><h2>Задания</h2><p>Выполняй задания и получай награды</p></div>
@@ -481,7 +441,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       <div class="list" id="tasksList"></div>
     </section>
 
-    <!-- SHOP -->
     <section class="screen" id="s-shop">
       <div class="shop-hero">
         <img class="shop-hero-img" src="https://i.postimg.cc/KcWftDvX/IMG-7937.png" alt="">
@@ -502,7 +461,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       <div class="list" id="shopList"></div>
     </section>
 
-    <!-- PROFILE -->
     <section class="screen" id="s-profile">
       <div class="screen-head">
         <div><h2>Профиль</h2><p>Твоя статистика и прогресс</p></div>
@@ -541,6 +499,10 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
           <span>Заданий выполнено</span><b id="stTasks">0 / 0</b>
         </div>
       </div>
+      <button class="btn-primary btn-rename" id="renameBtn" style="margin-bottom:10px;">
+        <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+        Сменить имя — 50 000 🪙
+      </button>
       <button class="btn-primary btn-invite" id="inviteBtn" style="margin-bottom:10px;">
         <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
         Пригласить друга
@@ -551,7 +513,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       </button>
     </section>
 
-    <!-- CUSTOMIZATION -->
     <section class="screen" id="s-custom">
       <div class="screen-head">
         <div><h2>Кастомизация</h2><p>Аватарки, рамки, фоны</p></div>
@@ -586,7 +547,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       </div>
     </section>
 
-    <!-- ADMIN -->
     <section class="screen" id="s-admin">
       <div class="screen-head">
         <div><h2>👑 Админ-панель</h2><p>Режим бога — только для админов</p></div>
@@ -666,7 +626,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 
   </div>
 
-  <!-- BOTTOM NAV -->
   <nav class="bottomnav">
     <button class="nav-item active" data-go="s-home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Главная</button>
     <button class="nav-item" data-go="s-buildings"><svg viewBox="0 0 24 24"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6"/></svg>Здания</button>
@@ -677,7 +636,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 
 </div>
 
-<!-- MODAL -->
 <div class="modal" id="modal">
   <div class="modal-card">
     <div id="modalContent"></div>
@@ -685,12 +643,11 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
   </div>
 </div>
 
-<!-- TOAST -->
 <div id="toast"></div>
 
 <script>
 /* ==================== ADMIN ==================== */
-const ADMIN_IDS = [7166372887]; // Telegram ID админов
+const ADMIN_IDS = [7166372887];
 let IS_ADMIN = false;
 
 function checkAdmin(){
@@ -701,7 +658,6 @@ function checkAdmin(){
   return false;
 }
 
-/* Секрет: 7 тапов по логотипу монеты за 3 секунды (для теста в браузере) */
 let secretTaps = 0;
 let secretTimer = null;
 function secretTap(){
@@ -723,13 +679,6 @@ function showAdminUI(){
   const btn = document.getElementById('adminNavBtn');
   if (sep) sep.style.display = 'block';
   if (btn) btn.style.display = 'flex';
-  document.querySelectorAll('#profName, #dName').forEach(el=>{
-    if (!el.querySelector('.admin-badge')){
-      const b = document.createElement('span');
-      b.className = 'admin-badge'; b.textContent = '👑';
-      el.appendChild(b);
-    }
-  });
   const lbl = document.getElementById('adminIdLabel');
   if (lbl){
     const uid = tg?.initDataUnsafe?.user?.id || 'браузер';
@@ -770,6 +719,7 @@ function defaultState(){
     dailyDone: {},
     lastSpin: 0,
     achievements: {},
+    name: 'КриптоКот',
     startedAt: Date.now(),
     playTime: 0
   };
@@ -813,15 +763,15 @@ async function load(){
 
 /* ==================== DATA ==================== */
 const BUILDINGS = [
-  {id:'farm',     name:'Ферма',       icon:'🌾', base:150,     inc:0.15,  bg:'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1200'},
-  {id:'mine',     name:'Шахта',       icon:'⛏️', base:900,     inc:0.9,   bg:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200'},
-  {id:'factory',  name:'Фабрика',     icon:'🏭', base:5500,    inc:5.5,   bg:'https://images.unsplash.com/photo-1518709594023-6eab9bab7b23?w=1200'},
-  {id:'bank',     name:'Банк',        icon:'🏦', base:30000,   inc:32,    bg:'https://images.unsplash.com/photo-1541354329998-f4d9a9f9297f?w=1200'},
-  {id:'mall',     name:'Торговый центр',icon:'🏬',base:150000, inc:170,   bg:'https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?w=1200'},
-  {id:'hotel',    name:'Отель',       icon:'🏨', base:750000,  inc:900,   bg:'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200'},
-  {id:'station',  name:'Электростанция',icon:'⚡',base:3500000,inc:4200,  bg:'https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=1200'},
-  {id:'cosmo',    name:'Космопорт',   icon:'🚀', base:18000000,inc:22000, bg:'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200'},
-  {id:'exchange', name:'Биржа',       icon:'📈', base:90000000,inc:120000,bg:'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200'}
+  {id:'farm',     name:'Ферма',       icon:'🌾', base:150,     inc:0.15},
+  {id:'mine',     name:'Шахта',       icon:'⛏️', base:900,     inc:0.9},
+  {id:'factory',  name:'Фабрика',     icon:'🏭', base:5500,    inc:5.5},
+  {id:'bank',     name:'Банк',        icon:'🏦', base:30000,   inc:32},
+  {id:'mall',     name:'Торговый центр',icon:'🏬',base:150000, inc:170},
+  {id:'hotel',    name:'Отель',       icon:'🏨', base:750000,  inc:900},
+  {id:'station',  name:'Электростанция',icon:'⚡',base:3500000,inc:4200},
+  {id:'cosmo',    name:'Космопорт',   icon:'🚀', base:18000000,inc:22000},
+  {id:'exchange', name:'Биржа',       icon:'📈', base:90000000,inc:120000}
 ];
 
 const UPGRADES = [
@@ -1324,13 +1274,10 @@ function renderProfile(){
   const di = $('#drawerAvatarImg');
   di.src = av.url; di.style.display='block';
 
-  // значок админа
-  const pName = $('#profName');
-  const dName = $('#dName');
-  if (IS_ADMIN){
-    if (!pName.querySelector('.admin-badge')) pName.innerHTML = 'КриптоКот <span class="admin-badge">👑</span>';
-    if (!dName.querySelector('.admin-badge')) dName.innerHTML = 'КриптоКот <span class="admin-badge">👑</span>';
-  }
+  const name = S.name || 'КриптоКот';
+  const badge = IS_ADMIN ? ' <span class="admin-badge">👑</span>' : '';
+  $('#profName').innerHTML = name + badge;
+  $('#dName').innerHTML = name + badge;
 
   $('#profLevel').textContent = 'Ур. '+S.level;
   const need = xpForLevel(S.level);
@@ -1349,6 +1296,13 @@ function renderProfile(){
   $('#stBuild').textContent = totalBuildings();
   const doneTasks = Object.keys(S.tasksDone).length + Object.keys(S.dailyDone).length;
   $('#stTasks').textContent = doneTasks + ' / ' + (TASKS_DAILY.length + TASKS_REGULAR.length);
+
+  const rBtn = $('#renameBtn');
+  if (rBtn){
+    const price = IS_ADMIN ? 0 : (S.premium ? 45000 : 50000);
+    rBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>` +
+      (IS_ADMIN ? 'Сменить имя — бесплатно (ADMIN)' : 'Сменить имя — ' + fmt(price) + ' 🪙');
+  }
 }
 
 function renderCustom(){
@@ -1433,7 +1387,6 @@ function drawWheel(){
     ctx.strokeStyle = '#fff';
     ctx.lineWidth = 3;
     ctx.stroke();
-
     ctx.save();
     ctx.translate(cx,cy);
     ctx.rotate(start+arc/2);
@@ -1578,7 +1531,6 @@ $('#tapBtn').addEventListener('click', e=>{
   doTap(e.clientX, e.clientY);
 });
 
-/* Секретный вход (7 тапов по логотипу монеты) */
 $('#coinLogo').addEventListener('click', e=>{
   e.stopPropagation();
   secretTap();
@@ -1588,6 +1540,63 @@ $('#coinLogo').addEventListener('click', e=>{
 $$('[data-admin]').forEach(b=>{
   b.onclick = ()=>adminAction(b.dataset.admin, b.dataset.val);
 });
+
+/* ==================== RENAME ==================== */
+const NAME_MAX = 8;
+const NAME_MIN = 2;
+const NAME_FIRST_FORBIDDEN = /^[@#₽&\-_()\=%"*':/!?+$€¥¢©®™~¿\[\]{}<>^¡`;÷\\|¦¬×§¶°]/;
+const NAME_ALLOWED = /^[A-Za-zА-Яа-яЁё0-9 _\-]+$/;
+
+function validateName(val){
+  if (!val) return 'Введите имя';
+  if (val.length < NAME_MIN) return 'Минимум ' + NAME_MIN + ' символа';
+  if (val.length > NAME_MAX) return 'Максимум ' + NAME_MAX + ' символов';
+  if (!/^[A-Za-zА-Яа-яЁё0-9]/.test(val)) return 'Имя должно начинаться с буквы или цифры';
+  if (NAME_FIRST_FORBIDDEN.test(val)) return 'Нельзя начинать с этого символа';
+  if (!NAME_ALLOWED.test(val)) return 'Разрешены только буквы, цифры, пробел, _ и -';
+  return null;
+}
+
+$('#renameBtn').onclick = ()=>{
+  const price = IS_ADMIN ? 0 : (S.premium ? 45000 : 50000);
+  const cur = S.name || 'КриптоКот';
+  if (S.coins < price){ toast('Нужно ' + fmt(price) + ' 🪙'); return; }
+
+  const content = document.getElementById('modalContent');
+  const btns = document.getElementById('modalBtns');
+  content.innerHTML = `
+    <h3>✏️ Смена имени</h3>
+    <p>Цена: <b>${IS_ADMIN ? 'бесплатно' : fmt(price) + ' 🪙'}</b></p>
+    <input id="renameInput" type="text" maxlength="${NAME_MAX}" value="${cur}"
+      style="width:100%;padding:12px 14px;border:1.5px solid #E4EBF3;border-radius:12px;
+             font-family:inherit;font-size:15px;text-align:center;outline:none;margin:6px 0 4px;">
+    <p style="font-size:11px;color:#8798AE;text-align:center;margin-top:6px;line-height:1.5;">
+      ${NAME_MIN}–${NAME_MAX} символов.<br>
+      Начинается с буквы или цифры.<br>
+      Разрешены: буквы, цифры, пробел, <b>_</b> и <b>-</b>.
+    </p>`;
+  btns.innerHTML = '';
+  const cancel = document.createElement('button');
+  cancel.className = 'cancel'; cancel.textContent = 'Отмена';
+  cancel.onclick = closeModal;
+  const ok = document.createElement('button');
+  ok.className = 'ok'; ok.textContent = IS_ADMIN ? 'Сменить' : 'Заплатить ' + fmt(price) + ' 🪙';
+  ok.onclick = ()=>{
+    const val = (document.getElementById('renameInput').value || '').trim();
+    const err = validateName(val);
+    if (err){ toast('⚠️ ' + err); return; }
+    if (S.coins < price){ toast('Мало монет'); return; }
+    S.coins -= price;
+    S.name = val;
+    save(); renderAll();
+    closeModal();
+    toast('✅ Имя изменено: ' + val);
+  };
+  btns.appendChild(cancel);
+  btns.appendChild(ok);
+  document.getElementById('modal').classList.add('show');
+  setTimeout(()=>document.getElementById('renameInput')?.focus(), 150);
+};
 
 /* ==================== ROULETTE ==================== */
 $('#spinBtn').onclick = spin;

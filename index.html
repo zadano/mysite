@@ -250,10 +250,11 @@ body{
   pointer-events:none;
   overflow:hidden;
 }
-.home-cat img{
-  max-width:80%;
+.home-cat svg{
+  max-width:100%;
   max-height:100%;
-  object-fit:contain;
+  width:auto;
+  height:auto;
   filter:drop-shadow(0 12px 32px rgba(0,0,0,.25)) drop-shadow(0 0 24px var(--glow-color));
   transition:filter .5s ease;
   animation: catFloat 4s ease-in-out infinite;
@@ -262,10 +263,9 @@ body{
   0%,100%{transform:translateY(0) scale(1);}
   50%{transform:translateY(-14px) scale(1.03);}
 }
-/* Мягкое свечение вокруг кота */
 .home-cat::before{
   content:'';position:absolute;
-  width:70%;height:70%;
+  width:75%;height:75%;
   border-radius:50%;
   background:radial-gradient(circle, var(--glow-color) 0%, transparent 70%);
   z-index:-1;
@@ -519,7 +519,6 @@ body{
 .modal-btn.secondary{background:var(--line);color:var(--text-2);}
 .modal-btn.gold{background:linear-gradient(135deg,#FBBF24,#F59E0B);color:#fff;}
 
-/* Селекторы кастомизации */
 .selector-title{
   font-size:12px;font-weight:700;color:var(--muted);
   text-transform:uppercase;letter-spacing:0.5px;
@@ -642,7 +641,6 @@ body{
 }
 #toast.show{opacity:1;visibility:visible;transform:translate(-50%,0);}
 
-/* Обводки аватарок */
 .ring-none{box-shadow:none;}
 .ring-simple{box-shadow:0 0 0 3px #4F8EF7, 0 0 16px rgba(79,142,247,.5);}
 .ring-gold{box-shadow:0 0 0 3px #FBBF24, 0 0 20px rgba(251,191,36,.6);}
@@ -655,7 +653,6 @@ body{
 .ring-fire{box-shadow:0 0 0 3px #F59E0B, 0 0 24px 8px rgba(245,158,11,.7);}
 .ring-ice{box-shadow:0 0 0 3px #06B6D4, 0 0 24px 8px rgba(6,182,212,.7);}
 
-/* Ежедневная награда */
 .daily-card{
   background:linear-gradient(135deg,#FBBF24,#F59E0B);
   border-radius:16px;padding:16px;color:#fff;
@@ -685,7 +682,6 @@ body{
   .bal-num{font-size:38px;}
   .screen-head h2{font-size:19px;}
   .item-icon{width:42px;height:42px;flex:0 0 42px;font-size:20px;}
-  .home-cat img{max-width:85%;}
 }
 </style>
 </head>
@@ -717,7 +713,133 @@ body{
         <div class="boost-bar" id="boostBar"></div>
       </div>
       <div class="home-cat">
-        <img src="https://i.postimg.cc/prm3LcGb/83FD1976-2AAA-4494-BE9C-0EAD67D50CFA.png" alt="КриптоКот">
+        <!-- Встроенная SVG-картинка кота (не требует интернета) -->
+        <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="width:100%;max-width:340px;height:auto;">
+          <defs>
+            <radialGradient id="catFur" cx="50%" cy="35%" r="65%">
+              <stop offset="0%" stop-color="#FBD38D"/>
+              <stop offset="55%" stop-color="#F6AD55"/>
+              <stop offset="100%" stop-color="#DD6B20"/>
+            </radialGradient>
+            <radialGradient id="catFurDark" cx="50%" cy="50%" r="60%">
+              <stop offset="0%" stop-color="#ED8936"/>
+              <stop offset="100%" stop-color="#C05621"/>
+            </radialGradient>
+            <radialGradient id="innerEar" cx="50%" cy="50%" r="70%">
+              <stop offset="0%" stop-color="#FBB6CE"/>
+              <stop offset="100%" stop-color="#F687B3"/>
+            </radialGradient>
+            <radialGradient id="eyeGrad" cx="35%" cy="35%" r="75%">
+              <stop offset="0%" stop-color="#9AE6B4"/>
+              <stop offset="55%" stop-color="#48BB78"/>
+              <stop offset="100%" stop-color="#276749"/>
+            </radialGradient>
+            <radialGradient id="coinGrad" cx="35%" cy="30%" r="75%">
+              <stop offset="0%" stop-color="#FEF3C7"/>
+              <stop offset="35%" stop-color="#FBBF24"/>
+              <stop offset="100%" stop-color="#D97706"/>
+            </radialGradient>
+            <radialGradient id="coinShine" cx="30%" cy="25%" r="60%">
+              <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+            </radialGradient>
+            <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+              <feOffset dx="0" dy="6" result="offsetblur"/>
+              <feComponentTransfer><feFuncA type="linear" slope="0.3"/></feComponentTransfer>
+              <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- Тень под котом -->
+          <ellipse cx="200" cy="370" rx="120" ry="14" fill="#000" opacity="0.15"/>
+
+          <!-- Хвост -->
+          <path d="M 300 300 Q 360 280 370 210 Q 375 170 345 165" 
+                stroke="url(#catFurDark)" stroke-width="30" stroke-linecap="round" fill="none"/>
+          <path d="M 345 165 Q 330 160 328 175" 
+                stroke="#FBD38D" stroke-width="14" stroke-linecap="round" fill="none" opacity="0.6"/>
+
+          <!-- Задние лапки -->
+          <ellipse cx="150" cy="345" rx="30" ry="22" fill="url(#catFurDark)"/>
+          <ellipse cx="250" cy="345" rx="30" ry="22" fill="url(#catFurDark)"/>
+
+          <!-- Тело -->
+          <ellipse cx="200" cy="280" rx="105" ry="95" fill="url(#catFur)"/>
+          
+          <!-- Животик (светлее) -->
+          <ellipse cx="200" cy="300" rx="60" ry="60" fill="#FEEBC8" opacity="0.7"/>
+
+          <!-- Голова -->
+          <ellipse cx="200" cy="175" rx="95" ry="85" fill="url(#catFur)"/>
+
+          <!-- Ушки -->
+          <path d="M 120 115 L 105 55 L 165 100 Z" fill="url(#catFur)" stroke="#C05621" stroke-width="2"/>
+          <path d="M 130 110 L 118 70 L 155 100 Z" fill="url(#innerEar)"/>
+          <path d="M 280 115 L 295 55 L 235 100 Z" fill="url(#catFur)" stroke="#C05621" stroke-width="2"/>
+          <path d="M 270 110 L 282 70 L 245 100 Z" fill="url(#innerEar)"/>
+
+          <!-- Глаза -->
+          <g filter="url(#softShadow)">
+            <ellipse cx="165" cy="170" rx="20" ry="24" fill="#FFFFFF"/>
+            <ellipse cx="235" cy="170" rx="20" ry="24" fill="#FFFFFF"/>
+          </g>
+          <ellipse cx="165" cy="172" rx="15" ry="19" fill="url(#eyeGrad)"/>
+          <ellipse cx="235" cy="172" rx="15" ry="19" fill="url(#eyeGrad)"/>
+          <!-- Зрачки -->
+          <ellipse cx="165" cy="174" rx="6" ry="14" fill="#1A202C"/>
+          <ellipse cx="235" cy="174" rx="6" ry="14" fill="#1A202C"/>
+          <!-- Блики -->
+          <ellipse cx="160" cy="165" rx="5" ry="7" fill="#FFFFFF" opacity="0.95"/>
+          <ellipse cx="230" cy="165" rx="5" ry="7" fill="#FFFFFF" opacity="0.95"/>
+          <circle cx="169" cy="180" r="2.5" fill="#FFFFFF" opacity="0.7"/>
+          <circle cx="239" cy="180" r="2.5" fill="#FFFFFF" opacity="0.7"/>
+
+          <!-- Носик -->
+          <path d="M 195 205 L 205 205 L 200 214 Z" fill="#F687B3"/>
+          <!-- Ротик -->
+          <path d="M 200 214 Q 190 224 182 218" stroke="#744210" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <path d="M 200 214 Q 210 224 218 218" stroke="#744210" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+
+          <!-- Усы -->
+          <g stroke="#744210" stroke-width="2" stroke-linecap="round" opacity="0.7">
+            <line x1="130" y1="195" x2="95" y2="190"/>
+            <line x1="130" y1="205" x2="95" y2="208"/>
+            <line x1="130" y1="215" x2="98" y2="225"/>
+            <line x1="270" y1="195" x2="305" y2="190"/>
+            <line x1="270" y1="205" x2="305" y2="208"/>
+            <line x1="270" y1="215" x2="302" y2="225"/>
+          </g>
+
+          <!-- Щёчки румянец -->
+          <ellipse cx="140" cy="210" rx="14" ry="8" fill="#F687B3" opacity="0.35"/>
+          <ellipse cx="260" cy="210" rx="14" ry="8" fill="#F687B3" opacity="0.35"/>
+
+          <!-- Передние лапки -->
+          <ellipse cx="140" cy="330" rx="25" ry="30" fill="url(#catFur)" stroke="#C05621" stroke-width="1.5"/>
+          <ellipse cx="260" cy="330" rx="25" ry="30" fill="url(#catFur)" stroke="#C05621" stroke-width="1.5"/>
+          <!-- Подушечки -->
+          <ellipse cx="140" cy="340" rx="6" ry="8" fill="#FBB6CE"/>
+          <ellipse cx="260" cy="340" rx="6" ry="8" fill="#FBB6CE"/>
+
+          <!-- Криптомонетка в лапках -->
+          <g transform="translate(200 320)">
+            <circle r="32" fill="#B7791F"/>
+            <circle r="28" fill="url(#coinGrad)" stroke="#92400E" stroke-width="2"/>
+            <circle r="28" fill="url(#coinShine)"/>
+            <!-- Символ "₿" -->
+            <text x="0" y="10" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="34" font-weight="900" fill="#92400E">₿</text>
+            <!-- Внутренний круг -->
+            <circle r="24" fill="none" stroke="#B7791F" stroke-width="1" opacity="0.5"/>
+          </g>
+
+          <!-- Искорки вокруг монеты -->
+          <g fill="#FBBF24" opacity="0.9">
+            <path d="M 145 290 L 148 296 L 154 299 L 148 302 L 145 308 L 142 302 L 136 299 L 142 296 Z"/>
+            <path d="M 258 288 L 260 293 L 265 295 L 260 297 L 258 302 L 256 297 L 251 295 L 256 293 Z"/>
+            <path d="M 200 355 L 202 359 L 206 361 L 202 363 L 200 367 L 198 363 L 194 361 L 198 359 Z" opacity="0.7"/>
+          </g>
+        </svg>
       </div>
       <div class="home-spacer"></div>
     </div>
@@ -1225,7 +1347,7 @@ body{
     },
   ];
 
-  const SAVE_KEY = 'cryptocat_save_v9';
+  const SAVE_KEY = 'cryptocat_save_v10';
 
   const state = {
     coins: 0,
@@ -1331,7 +1453,6 @@ body{
     }catch(e){}
   }
 
-  // ============ ПРИМЕНЕНИЕ ТЕМЫ ============
   function applyTheme(){
     const tObj = THEMES.find(t => t.id === state.theme) || THEMES[0];
     const root = document.documentElement;
@@ -1341,7 +1462,7 @@ body{
     }
     void document.body.offsetHeight;
 
-    const catImg = document.querySelector('.home-cat img');
+    const catSvg = document.querySelector('.home-cat svg');
     const rainbowThemes = ['purple','emerald','rose','amber','cyan','indigo'];
     if(state.theme === 'rainbow'){
       document.body.style.background = 'linear-gradient(135deg, #FF5F6D, #FFC371, #47E5BC, #5B9BF8, #C471F5, #FF5F6D)';
@@ -1350,8 +1471,8 @@ body{
       tapZone.style.background = 'linear-gradient(135deg, #FF5F6D, #FFC371, #47E5BC, #5B9BF8, #C471F5, #FF5F6D)';
       tapZone.style.backgroundSize = '400% 400%';
       tapZone.style.animation = 'rainbowShift 8s ease infinite';
-      if(catImg){
-        catImg.style.filter = 'drop-shadow(0 12px 32px rgba(0,0,0,.3)) drop-shadow(0 0 32px rgba(255,255,255,.7)) saturate(1.25)';
+      if(catSvg){
+        catSvg.style.filter = 'drop-shadow(0 12px 32px rgba(0,0,0,.3)) drop-shadow(0 0 32px rgba(255,255,255,.7)) saturate(1.25)';
       }
     } else {
       document.body.style.background = '';
@@ -1360,11 +1481,11 @@ body{
       tapZone.style.background = '';
       tapZone.style.backgroundSize = '';
       tapZone.style.animation = '';
-      if(catImg){
+      if(catSvg){
         if(state.theme === 'dark' || rainbowThemes.includes(state.theme)){
-          catImg.style.filter = 'drop-shadow(0 12px 32px rgba(0,0,0,.5)) drop-shadow(0 0 24px var(--glow-color)) brightness(.92)';
+          catSvg.style.filter = 'drop-shadow(0 12px 32px rgba(0,0,0,.5)) drop-shadow(0 0 24px var(--glow-color)) brightness(.92)';
         } else {
-          catImg.style.filter = '';
+          catSvg.style.filter = '';
         }
       }
     }
@@ -2043,7 +2164,7 @@ body{
 
   function init(){
     try{
-      ['cryptocat_save_v6','cryptocat_save_v7','cryptocat_save_v8'].forEach(k => localStorage.removeItem(k));
+      ['cryptocat_save_v6','cryptocat_save_v7','cryptocat_save_v8','cryptocat_save_v9'].forEach(k => localStorage.removeItem(k));
     }catch(e){}
 
     load();

@@ -436,6 +436,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       <button class="dnav" data-go="s-tasks"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M8 12.2l2.6 2.6L16.2 9"/></svg>Задания</button>
       <button class="dnav" data-go="s-roulette"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>Рулетка</button>
       <button class="dnav" data-go="s-shop"><svg viewBox="0 0 24 24"><path d="M3 9l1-5h16l1 5"/><path d="M4 9v11h16V9"/></svg>Магазин</button>
+      <button class="dnav" data-go="s-inventory"><svg viewBox="0 0 24 24"><path d="M4 7h16l-1.5 12.5a2 2 0 0 1-2 1.5H7.5a2 2 0 0 1-2-1.5z"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg>🎒 Инвентарь</button>
       <button class="dnav" data-go="s-profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4-6 8-6s6.5 2 8 6"/></svg>Профиль</button>
       <button class="dnav" data-go="s-custom"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1.4" fill="currentColor"/><circle cx="15" cy="10" r="1.4" fill="currentColor"/><path d="M8 15c1.2 1.4 2.6 2 4 2s2.8-.6 4-2"/></svg>Кастомизация</button>
       <div class="dnav-sep" id="adminSep" style="display:none"></div>
@@ -550,6 +551,54 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
         <button class="tab" data-shop="diamonds">💎</button>
       </div>
       <div class="list" id="shopList"></div>
+    </section>
+
+    <section class="screen" id="s-inventory">
+      <div class="screen-head">
+        <div><h2>🎒 Инвентарь</h2><p>Всё, что выпало из кейсов</p></div>
+        <div class="bal-chips">
+          <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
+          <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
+        </div>
+      </div>
+
+      <div class="custom-block">
+        <div class="custom-title">🍃 Пыль</div>
+        <div class="item" style="margin-bottom:8px;">
+          <div class="item-icon">🍃</div>
+          <div class="item-body">
+            <div class="item-name">Пыль <span style="color:#8798AE;font-weight:500" id="invDust">×0</span></div>
+            <div class="item-sub">Продаётся за <b>10 монет</b> за штуку</div>
+          </div>
+          <button class="buy green-btn" id="invSellDust">Продать</button>
+        </div>
+      </div>
+
+      <div class="custom-block">
+        <div class="custom-title">🎟️ Билеты рулетки</div>
+        <div class="item">
+          <div class="item-icon">🎟️</div>
+          <div class="item-body">
+            <div class="item-name">Билеты <span style="color:#8798AE;font-weight:500" id="invTickets">×0</span></div>
+            <div class="item-sub">Дают <b>бесплатное вращение</b> рулетки</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="custom-block">
+        <div class="custom-title">⚡ Активные бусты</div>
+        <div id="invBoosts" class="list"></div>
+      </div>
+
+      <div class="custom-block">
+        <div class="custom-title">🎨 Разблокированные рамки</div>
+        <div id="invFrames" class="custom-grid"></div>
+      </div>
+
+      <div class="custom-block">
+        <div class="custom-title">🌄 Разблокированные фоны</div>
+        <div id="invBgs" class="bg-grid"></div>
+      </div>
     </section>
 
     <section class="screen" id="s-profile">
@@ -667,6 +716,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
         <button class="admin-btn blue" data-admin="boost5x">Выдать ×5 на 30м</button>
         <button class="admin-btn blue" data-admin="tickets" data-val="10">+10 билетов</button>
         <button class="admin-btn blue" data-admin="discount" data-val="50">Скидка 50%</button>
+        <button class="admin-btn blue" data-admin="dust" data-val="100">+100 пыли</button>
       </div></div>
       <div class="admin-block"><div class="admin-block-title">🎨 Косметика</div><div class="admin-row">
         <button class="admin-btn blue" data-admin="unlock-bg">Открыть все фоны</button>
@@ -973,7 +1023,6 @@ function defaultState(){
     unlockedFrames: {},
     musicOn: true,
     muted: false,
-    // Бонусы из кейсов
     activeBoosts: {},
     boostTapUntil: 0,
     discount: 0,
@@ -1224,14 +1273,8 @@ function isWeekend(){
 /* ==================== STATE HELPERS ==================== */
 function totalBuildings(){ return Object.values(S.buildings).reduce((a,b)=>a+b,0); }
 function prestigeMult(){ return 1 + (S.prestige||0) * 0.5; }
-
-/* Бонусы из кейсов */
-function hasBoost(key){
-  return ((S.activeBoosts || {})[key] || 0) > Date.now();
-}
-function boostRemaining(key){
-  return Math.max(0, ((S.activeBoosts || {})[key] || 0) - Date.now());
-}
+function hasBoost(key){ return ((S.activeBoosts || {})[key] || 0) > Date.now(); }
+function boostRemaining(key){ return Math.max(0, ((S.activeBoosts || {})[key] || 0) - Date.now()); }
 function getBoostMult(){
   let m = 1;
   if (hasBoost('boost2x')) m *= 2;
@@ -1253,7 +1296,6 @@ function formatBoostTime(ms){
   if (h > 0) return h + 'ч ' + m + 'м';
   return m + ':' + String(s).padStart(2, '0');
 }
-
 function tapValue(){
   let v = 1;
   UPGRADES.filter(u=>u.type==='tap').forEach(u=>{ v += (S.upgrades[u.id]||0)*u.add; });
@@ -1330,6 +1372,8 @@ function adminAction(cmd, val){
       S.tickets = (S.tickets||0) + (v||1); toast('🎟️ +'+(v||1)+' билетов'); break;
     case 'discount':
       S.discount = v||10; toast('🏦 Скидка '+S.discount+'%'); break;
+    case 'dust':
+      S.dust = (S.dust||0) + (v||1); toast('🍃 +'+(v||1)+' пыли'); break;
     case 'unlock-bg':
       BACKGROUNDS.forEach(b=>{ if (b.building) S.ownedBuildings[b.building] = true; });
       toast('🌄 Все фоны открыты'); break;
@@ -1473,6 +1517,7 @@ function renderAll(){
   renderAchievements();
   renderTasks();
   renderShop();
+  renderInventory();
   renderProfile();
   renderCustom();
   renderRouletteInfo();
@@ -1492,7 +1537,6 @@ function renderHome(){
   $('#heroDiamonds').textContent = S.diamonds;
 
   const bar = $('#boostBar'); bar.innerHTML = '';
-  // PREMIUM
   if (isPremiumActive()){
     const el = document.createElement('div'); el.className='boost-pill prem';
     if (S.premium){ el.textContent = '⭐ PREMIUM'; }
@@ -1505,7 +1549,6 @@ function renderHome(){
   if (IS_ADMIN){
     const el = document.createElement('div'); el.className='boost-pill admin'; el.textContent='👑 ADMIN'; bar.appendChild(el);
   }
-  // Бусты из кейсов
   if (hasBoost('boost5x')){
     const el = document.createElement('div'); el.className='boost-pill prem';
     el.textContent = '⚡ ×5 · ' + formatBoostTime(boostRemaining('boost5x'));
@@ -1790,21 +1833,22 @@ function renderShop(){
   }
   else if (currentShopTab === 'diamonds'){
     const items = [
-      {name:'10 💎',  price:10000,   gain:10},
-      {name:'30 💎',  price:27000,   gain:30},
-      {name:'60 💎',  price:50000,   gain:60},
-      {name:'120 💎', price:95000,   gain:120},
-      {name:'300 💎', price:220000,  gain:300},
-      {name:'700 💎', price:490000,  gain:700}
+      {name:'10 💎',  price:45000,   gain:10,  old:45000},
+      {name:'30 💎',  price:49000,   gain:30,  old:135000},
+      {name:'60 💎',  price:95000,   gain:60,  old:270000},
+      {name:'120 💎', price:185000,  gain:120, old:540000},
+      {name:'300 💎', price:450000,  gain:300, old:1350000},
+      {name:'700 💎', price:1000000, gain:700, old:3150000}
     ];
     items.forEach(it=>{
       const can = S.coins >= it.price;
       const div = document.createElement('div'); div.className='item';
+      const oldPrice = it.old && it.old > it.price ? `<span style="text-decoration:line-through;color:#8798AE;font-size:10px;margin-left:4px;">${fmt(it.old)}</span>` : '';
       div.innerHTML = `
         <div class="item-icon">💎</div>
         <div class="item-body">
           <div class="item-name">${it.name}</div>
-          <div class="item-sub">Обмен монет на алмазы</div>
+          <div class="item-sub">Обмен монет на алмазы ${oldPrice}</div>
         </div>
         <button class="buy diamond-btn ${can?'':'off'}"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png">${fmt(it.price)}</button>`;
       div.querySelector('.buy').onclick = ()=>{
@@ -1814,6 +1858,127 @@ function renderShop(){
       };
       list.appendChild(div);
     });
+  }
+}
+
+function renderInventory(){
+  const dustEl = $('#invDust');
+  if (dustEl) dustEl.textContent = '×' + (S.dust || 0);
+  const tEl = $('#invTickets');
+  if (tEl) tEl.textContent = '×' + (S.tickets || 0);
+  const boosts = $('#invBoosts');
+  if (boosts){
+    boosts.innerHTML = '';
+    const now = Date.now();
+    let any = false;
+    if ((S.premiumUntil||0) > now && !S.premium){
+      any = true;
+      const el = document.createElement('div');
+      el.className = 'item';
+      el.innerHTML = `
+        <div class="item-icon">⭐</div>
+        <div class="item-body">
+          <div class="item-name">⭐ Premium (временный)</div>
+          <div class="item-sub">Осталось: <b>${formatBoostTime(S.premiumUntil - now)}</b></div>
+        </div>`;
+      boosts.appendChild(el);
+    }
+    if (S.premium){
+      any = true;
+      const el = document.createElement('div');
+      el.className = 'item';
+      el.innerHTML = `
+        <div class="item-icon">⭐</div>
+        <div class="item-body">
+          <div class="item-name">⭐ Premium</div>
+          <div class="item-sub">Куплен навсегда</div>
+        </div>`;
+      boosts.appendChild(el);
+    }
+    if (hasBoost('boost2x')){
+      any = true;
+      const el = document.createElement('div');
+      el.className = 'item';
+      el.innerHTML = `
+        <div class="item-icon">⚡</div>
+        <div class="item-body">
+          <div class="item-name">⚡ Буст дохода ×2</div>
+          <div class="item-sub">Осталось: <b>${formatBoostTime(boostRemaining('boost2x'))}</b></div>
+        </div>`;
+      boosts.appendChild(el);
+    }
+    if (hasBoost('boost5x')){
+      any = true;
+      const el = document.createElement('div');
+      el.className = 'item';
+      el.innerHTML = `
+        <div class="item-icon">⚡</div>
+        <div class="item-body">
+          <div class="item-name">⚡ Буст дохода ×5</div>
+          <div class="item-sub">Осталось: <b>${formatBoostTime(boostRemaining('boost5x'))}</b></div>
+        </div>`;
+      boosts.appendChild(el);
+    }
+    if (getTapBoostBonus() > 0){
+      any = true;
+      const el = document.createElement('div');
+      el.className = 'item';
+      el.innerHTML = `
+        <div class="item-icon">🔥</div>
+        <div class="item-body">
+          <div class="item-name">🔥 Мега-тап (+10)</div>
+          <div class="item-sub">Осталось: <b>${formatBoostTime(S.boostTapUntil - now)}</b></div>
+        </div>`;
+      boosts.appendChild(el);
+    }
+    if (S.discount > 0){
+      any = true;
+      const el = document.createElement('div');
+      el.className = 'item';
+      el.innerHTML = `
+        <div class="item-icon">🏦</div>
+        <div class="item-body">
+          <div class="item-name">🏦 Скидка ${S.discount}%</div>
+          <div class="item-sub">На следующую покупку здания</div>
+        </div>`;
+      boosts.appendChild(el);
+    }
+    if (!any){
+      boosts.innerHTML = '<div style="text-align:center;padding:14px;color:#8798AE;font-size:12px;">Нет активных бустов</div>';
+    }
+  }
+  const fEl = $('#invFrames');
+  if (fEl){
+    fEl.innerHTML = '';
+    const unlocked = FRAMES.filter(f => !f.free && ((S.unlockedFrames||{})[f.id]));
+    if (!unlocked.length){
+      fEl.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:10px;color:#8798AE;font-size:12px;">Пока ничего не выпало</div>';
+    } else {
+      unlocked.forEach(f=>{
+        const el = document.createElement('div');
+        el.className = 'custom-item frame';
+        el.innerHTML = `<div class="frame-inner" style="border:3px solid ${f.color.startsWith('linear')?'#2AABEE':f.color}; background:${f.color.startsWith('linear')?f.color:(f.color==='transparent'?'#2B7FD4':f.color)}">
+          <img src="${AVATARS.find(a=>a.id===S.avatar)?.url||''}" alt="">
+        </div>`;
+        fEl.appendChild(el);
+      });
+    }
+  }
+  const bEl = $('#invBgs');
+  if (bEl){
+    bEl.innerHTML = '';
+    const owned = BACKGROUNDS.filter(b => b.building && S.ownedBuildings[b.building]);
+    if (!owned.length){
+      bEl.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:10px;color:#8798AE;font-size:12px;">Пока ничего не выпало</div>';
+    } else {
+      owned.forEach(b=>{
+        const el = document.createElement('div');
+        el.className = 'bg-item';
+        el.style.backgroundImage = `url('${b.url}')`;
+        el.innerHTML = `<div class="bg-lbl">${b.name}</div>`;
+        bEl.appendChild(el);
+      });
+    }
   }
 }
 
@@ -2059,12 +2224,23 @@ function renderProfile(){
     pBtn.style.opacity = '.55';
     pLabel.textContent = 'Престиж (нужно '+fmt(threshold)+' 🪙)';
   }
-  // Пыль
   const dustEl = $('#dustCount');
   if (dustEl) dustEl.textContent = S.dust || 0;
 }
 
 $('#sellDustBtn').onclick = ()=>{
+  SFX.click();
+  const d = S.dust || 0;
+  if (d <= 0){ SFX.error(); toast('Пыли нет'); return; }
+  const total = d * 10;
+  S.dust = 0;
+  S.coins += total; S.totalEarned += total;
+  SFX.coin(); save(); renderAll();
+  toast('🍃 +' + fmt(total) + ' 🪙 за пыль');
+};
+
+const invSellDust = document.getElementById('invSellDust');
+if (invSellDust) invSellDust.onclick = ()=>{
   SFX.click();
   const d = S.dust || 0;
   if (d <= 0){ SFX.error(); toast('Пыли нет'); return; }
@@ -2453,7 +2629,7 @@ setInterval(()=>{
   }
 }, 1000);
 setInterval(()=>{ renderRouletteInfo(); }, 1000);
-setInterval(()=>{ renderHome(); }, 1000);
+setInterval(()=>{ renderHome(); if ($('#s-inventory').classList.contains('active')) renderInventory(); }, 1000);
 setInterval(()=>{ S.playTime++; save(); }, 1000);
 
 /* ==================== INIT ==================== */

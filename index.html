@@ -244,6 +244,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .btn-invite{background:linear-gradient(135deg,#2AABEE,#229ED9);box-shadow:0 4px 12px rgba(34,158,217,.35);}
 .btn-rename{background:linear-gradient(135deg,#8B5CF6,#6D28D9);box-shadow:0 4px 12px rgba(139,92,246,.35);}
 .btn-prestige{background:linear-gradient(135deg,#5BE39A,#2ECC71);box-shadow:0 4px 12px rgba(46,204,113,.35);}
+.btn-dust{background:linear-gradient(135deg,#8798AE,#5B6B80);box-shadow:0 4px 12px rgba(90,110,140,.35);}
 
 .custom-block{background:#fff;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(24,60,110,.06);}
 .custom-title{font-size:13.5px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
@@ -586,6 +587,10 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
         </div>
       </div>
 
+      <button class="btn-primary btn-dust" id="sellDustBtn" style="margin-bottom:10px;">
+        🍃 Продать пыль (<span id="dustCount">0</span> × 10 🪙)
+      </button>
+
       <button class="btn-primary btn-prestige" id="prestigeBtn" style="margin-bottom:10px;">
         <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9"/><path d="M21 3v6h-6"/></svg>
         <span id="prestigeLabel">Престиж</span>
@@ -657,6 +662,12 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
         <button class="admin-btn green" data-admin="all-upgrades" data-val="10">+10 к апгрейдам</button>
         <button class="admin-btn green" data-admin="prestige-add" data-val="1">+1 престиж</button>
       </div></div>
+      <div class="admin-block"><div class="admin-block-title">🎁 Бонусы</div><div class="admin-row">
+        <button class="admin-btn blue" data-admin="boost2x">Выдать ×2 на 1ч</button>
+        <button class="admin-btn blue" data-admin="boost5x">Выдать ×5 на 30м</button>
+        <button class="admin-btn blue" data-admin="tickets" data-val="10">+10 билетов</button>
+        <button class="admin-btn blue" data-admin="discount" data-val="50">Скидка 50%</button>
+      </div></div>
       <div class="admin-block"><div class="admin-block-title">🎨 Косметика</div><div class="admin-row">
         <button class="admin-btn blue" data-admin="unlock-bg">Открыть все фоны</button>
       </div></div>
@@ -720,11 +731,9 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 <div id="toast"></div>
 
 <script>
-/* ==================== ADMIN ==================== */
-// Режим бога ТОЛЬКО по этому ID. Никаких секретных тапов, никаких других ID.
+/* ==================== ADMIN (только твой ID) ==================== */
 const ADMIN_IDS = [7166372887];
 let IS_ADMIN = false;
-
 function checkAdmin(){
   try{
     const uid = tg?.initDataUnsafe?.user?.id;
@@ -757,7 +766,6 @@ function getAudio(){
   }
   return audioCtx;
 }
-
 const SFX = {
   muted: false,
   tone(freq, dur, type, vol, delay, slideTo){
@@ -964,7 +972,14 @@ function defaultState(){
     pityCounter: 0,
     unlockedFrames: {},
     musicOn: true,
-    muted: false
+    muted: false,
+    // Бонусы из кейсов
+    activeBoosts: {},
+    boostTapUntil: 0,
+    discount: 0,
+    tickets: 0,
+    dust: 0,
+    premiumUntil: 0
   };
 }
 let S = defaultState();
@@ -993,6 +1008,7 @@ async function load(){
     S.buildings = S.buildings||{}; S.upgrades = S.upgrades||{}; S.ownedBuildings = S.ownedBuildings||{};
     S.tasksDone = S.tasksDone||{}; S.dailyDone = S.dailyDone||{}; S.achievements = S.achievements||{};
     S.dailyQuests = S.dailyQuests||{}; S.usedPromos = S.usedPromos||{}; S.unlockedFrames = S.unlockedFrames||{};
+    S.activeBoosts = S.activeBoosts||{};
     if (typeof S.musicOn === 'boolean') Music.on = S.musicOn;
     if (typeof S.muted === 'boolean') SFX.muted = S.muted;
   }
@@ -1123,29 +1139,41 @@ const WHEEL_PRIZES = [
 const CASES = [
   {id:'case_bronze', name:'Бронзовый кейс', icon:'🎁', price:5, currency:'diamonds',
    prizes:[
-     {chance:55, type:'coins',    value:1000,  label:'1 000 🪙',  rarity:'common'},
-     {chance:25, type:'coins',    value:3000,  label:'3 000 🪙',  rarity:'common'},
-     {chance:12, type:'coins',    value:8000,  label:'8 000 🪙',  rarity:'uncommon'},
-     {chance:6,  type:'diamonds', value:2,     label:'2 💎',      rarity:'rare'},
-     {chance:2,  type:'coins',    value:25000, label:'25 000 🪙', rarity:'legendary'}
+     {chance:30, type:'coins',    value:1000,  label:'1 000 🪙',    rarity:'common'},
+     {chance:20, type:'dust',     value:1,     label:'🍃 Пыль',     rarity:'common'},
+     {chance:18, type:'coins',    value:3000,  label:'3 000 🪙',    rarity:'common'},
+     {chance:12, type:'coins',    value:8000,  label:'8 000 🪙',    rarity:'uncommon'},
+     {chance:10, type:'boostTap', value:10,    label:'🔥 Мега-тап', rarity:'uncommon'},
+     {chance:5,  type:'ticket',   value:1,     label:'🎟️ Билет',    rarity:'uncommon'},
+     {chance:4,  type:'diamonds', value:2,     label:'2 💎',         rarity:'rare'},
+     {chance:1,  type:'coins',    value:25000, label:'25 000 🪙',   rarity:'legendary'}
    ]},
   {id:'case_silver', name:'Серебряный кейс', icon:'📦', price:20, currency:'diamonds',
    prizes:[
-     {chance:45, type:'coins',    value:8000,   label:'8 000 🪙',   rarity:'common'},
-     {chance:25, type:'coins',    value:20000,  label:'20 000 🪙',  rarity:'common'},
-     {chance:15, type:'diamonds', value:8,      label:'8 💎',       rarity:'rare'},
-     {chance:8,  type:'coins',    value:60000,  label:'60 000 🪙',  rarity:'epic'},
-     {chance:5,  type:'frame',    value:'neon', label:'🎨 Неон',    rarity:'epic'},
-     {chance:2,  type:'premium',  value:1,      label:'⭐ PREMIUM', rarity:'legendary'}
+     {chance:25, type:'coins',    value:8000,   label:'8 000 🪙',       rarity:'common'},
+     {chance:15, type:'dust',     value:1,      label:'🍃 Пыль',        rarity:'common'},
+     {chance:15, type:'coins',    value:20000,  label:'20 000 🪙',      rarity:'common'},
+     {chance:10, type:'boost2x',  value:30,     label:'⚡ Буст ×2 (30м)', rarity:'rare'},
+     {chance:10, type:'diamonds', value:8,      label:'8 💎',           rarity:'rare'},
+     {chance:8,  type:'coins',    value:60000,  label:'60 000 🪙',      rarity:'epic'},
+     {chance:6,  type:'discount10',value:10,    label:'🏦 Скидка 10%',  rarity:'uncommon'},
+     {chance:5,  type:'ticket',   value:2,      label:'🎟️ 2 билета',    rarity:'uncommon'},
+     {chance:4,  type:'frame',    value:'neon', label:'🎨 Неон',        rarity:'epic'},
+     {chance:2,  type:'premium',  value:1,      label:'⭐ PREMIUM',     rarity:'legendary'}
    ]},
   {id:'case_gold', name:'Золотой кейс', icon:'🏆', price:60, currency:'diamonds',
    prizes:[
-     {chance:35, type:'coins',    value:25000,   label:'25 000 🪙',    rarity:'common'},
-     {chance:30, type:'coins',    value:80000,   label:'80 000 🪙',    rarity:'uncommon'},
-     {chance:15, type:'diamonds', value:25,      label:'25 💎',        rarity:'rare'},
-     {chance:10, type:'bg',       value:'b_bank',label:'🌄 Банк',      rarity:'epic'},
-     {chance:5,  type:'coins',    value:250000,  label:'250 000 🪙',   rarity:'epic'},
-     {chance:5,  type:'premium',  value:1,       label:'⭐ PREMIUM',   rarity:'legendary'}
+     {chance:20, type:'coins',    value:25000,   label:'25 000 🪙',       rarity:'common'},
+     {chance:15, type:'coins',    value:80000,   label:'80 000 🪙',       rarity:'uncommon'},
+     {chance:10, type:'boost2x',  value:60,      label:'⚡ Буст ×2 (1ч)',  rarity:'rare'},
+     {chance:10, type:'diamonds', value:25,      label:'25 💎',           rarity:'rare'},
+     {chance:8,  type:'discount25',value:25,     label:'🏦 Скидка 25%',   rarity:'epic'},
+     {chance:8,  type:'bg',       value:'b_bank',label:'🌄 Банк',         rarity:'epic'},
+     {chance:6,  type:'boost5x',  value:15,      label:'⚡ Буст ×5 (15м)', rarity:'epic'},
+     {chance:5,  type:'coins',    value:250000,  label:'250 000 🪙',      rarity:'epic'},
+     {chance:4,  type:'ticket',   value:5,       label:'🎟️ 5 билетов',    rarity:'epic'},
+     {chance:4,  type:'premium',  value:1,       label:'⭐ PREMIUM',      rarity:'legendary'},
+     {chance:1,  type:'premiumTimed', value:72,  label:'⭐ Premium 3 дня', rarity:'legendary'}
    ]}
 ];
 
@@ -1196,10 +1224,41 @@ function isWeekend(){
 /* ==================== STATE HELPERS ==================== */
 function totalBuildings(){ return Object.values(S.buildings).reduce((a,b)=>a+b,0); }
 function prestigeMult(){ return 1 + (S.prestige||0) * 0.5; }
+
+/* Бонусы из кейсов */
+function hasBoost(key){
+  return ((S.activeBoosts || {})[key] || 0) > Date.now();
+}
+function boostRemaining(key){
+  return Math.max(0, ((S.activeBoosts || {})[key] || 0) - Date.now());
+}
+function getBoostMult(){
+  let m = 1;
+  if (hasBoost('boost2x')) m *= 2;
+  if (hasBoost('boost5x')) m *= 5;
+  return m;
+}
+function getTapBoostBonus(){
+  return (S.boostTapUntil || 0) > Date.now() ? 10 : 0;
+}
+function isPremiumActive(){
+  return S.premium || (S.premiumUntil || 0) > Date.now();
+}
+function formatBoostTime(ms){
+  if (ms <= 0) return '';
+  const total = Math.floor(ms / 1000);
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  if (h > 0) return h + 'ч ' + m + 'м';
+  return m + ':' + String(s).padStart(2, '0');
+}
+
 function tapValue(){
   let v = 1;
   UPGRADES.filter(u=>u.type==='tap').forEach(u=>{ v += (S.upgrades[u.id]||0)*u.add; });
-  if (S.premium) v += 2;
+  if (isPremiumActive()) v += 2;
+  v += getTapBoostBonus();
   v *= prestigeMult();
   return Math.max(1, v);
 }
@@ -1217,8 +1276,9 @@ function incomePerSec(){
   let bonus = 0;
   UPGRADES.filter(u=>u.type==='income').forEach(u=>{ bonus += (S.upgrades[u.id]||0)*u.add; });
   inc *= (1 + bonus);
-  if (S.premium) inc *= 1.5;
+  if (isPremiumActive()) inc *= 1.5;
   inc *= prestigeMult();
+  inc *= getBoostMult();
   if (isWeekend()) inc *= 2;
   return inc;
 }
@@ -1239,6 +1299,7 @@ function hasBuilding(id){ return (S.buildings[id]||0) > 0; }
 function adminAction(cmd, val){
   if (!IS_ADMIN){ toast('⛔ Нет доступа'); return; }
   const v = Number(val)||0;
+  const now = Date.now();
   switch(cmd){
     case 'coins':
       if (S.coins + v < 0) S.coins = 0;
@@ -1247,7 +1308,7 @@ function adminAction(cmd, val){
     case 'diamonds':
       S.diamonds = Math.max(0, S.diamonds + v); toast('+'+v+' 💎'); break;
     case 'premium-on': S.premium = true; toast('⭐ Premium выдан'); break;
-    case 'premium-off': S.premium = false; toast('Premium забран'); break;
+    case 'premium-off': S.premium = false; S.premiumUntil = 0; toast('Premium забран'); break;
     case 'level': S.level += v; S.xp = 0; toast('+'+v+' уровней'); break;
     case 'xp': addXp(v); toast('+'+fmt(v)+' XP'); break;
     case 'prestige-add': S.prestige = (S.prestige||0) + v; toast('♻️ Престиж: ×'+prestigeMult().toFixed(1)); break;
@@ -1257,6 +1318,18 @@ function adminAction(cmd, val){
     case 'all-upgrades':
       UPGRADES.forEach(u=>{ S.upgrades[u.id] = (S.upgrades[u.id]||0) + (v||1); });
       toast('⚡ +'+(v||1)+' ко всем апгрейдам'); break;
+    case 'boost2x':
+      if (!S.activeBoosts) S.activeBoosts = {};
+      S.activeBoosts['boost2x'] = Math.max(S.activeBoosts['boost2x']||0, now) + 60*60*1000;
+      toast('⚡ Буст ×2 на 1 час'); break;
+    case 'boost5x':
+      if (!S.activeBoosts) S.activeBoosts = {};
+      S.activeBoosts['boost5x'] = Math.max(S.activeBoosts['boost5x']||0, now) + 30*60*1000;
+      toast('⚡ Буст ×5 на 30 мин'); break;
+    case 'tickets':
+      S.tickets = (S.tickets||0) + (v||1); toast('🎟️ +'+(v||1)+' билетов'); break;
+    case 'discount':
+      S.discount = v||10; toast('🏦 Скидка '+S.discount+'%'); break;
     case 'unlock-bg':
       BACKGROUNDS.forEach(b=>{ if (b.building) S.ownedBuildings[b.building] = true; });
       toast('🌄 Все фоны открыты'); break;
@@ -1297,17 +1370,13 @@ function checkDailyStreak(){
     const todayD = new Date(td + 'T00:00:00');
     daysSince = Math.round((todayD - lastD) / (1000*60*60*24));
   }
-  if (daysSince === 1){
-    S.streak = Math.min(7, (S.streak||0) + 1);
-  } else if (daysSince > 1 || last === ''){
-    S.streak = 1;
-  }
+  if (daysSince === 1){ S.streak = Math.min(7, (S.streak||0) + 1); }
+  else if (daysSince > 1 || last === ''){ S.streak = 1; }
   if (last === td) return;
   showDailyPopup();
 }
 function showDailyPopup(){
-  const grid = $('#dailyGrid');
-  grid.innerHTML = '';
+  const grid = $('#dailyGrid'); grid.innerHTML = '';
   for (let i=1; i<=7; i++){
     const r = DAILY_REWARDS[i-1];
     const div = document.createElement('div');
@@ -1316,7 +1385,6 @@ function showDailyPopup(){
     else if (i === S.streak) cls += ' today';
     div.className = cls;
     div.innerHTML = `<div class="dd-ico">${i===7?'🎁':(r.diamonds?'💎':'🪙')}</div>${i}`;
-    div.title = r.coins ? (r.coins + ' монет' + (r.diamonds ? ' + ' + r.diamonds + ' 💎' : '')) : '';
     grid.appendChild(div);
   }
   const cur = DAILY_REWARDS[Math.min(6, (S.streak||1)-1)];
@@ -1325,15 +1393,13 @@ function showDailyPopup(){
 }
 $('#dailyClaim').onclick = ()=>{
   const cur = DAILY_REWARDS[Math.min(6, (S.streak||1)-1)];
-  S.coins += cur.coins;
-  S.totalEarned += cur.coins;
+  S.coins += cur.coins; S.totalEarned += cur.coins;
   if (cur.diamonds) S.diamonds += cur.diamonds;
   S.lastDailyDate = today();
   save();
   $('#dailyPopup').classList.remove('show');
-  renderAll();
-  SFX.coin();
-  toast('🎁 Награда получена! +'+fmt(cur.coins)+' 🪙' + (cur.diamonds?' +'+cur.diamonds+' 💎':''));
+  renderAll(); SFX.coin();
+  toast('🎁 +'+fmt(cur.coins)+' 🪙' + (cur.diamonds?' +'+cur.diamonds+' 💎':''));
 };
 
 /* ==================== OFFLINE INCOME ==================== */
@@ -1349,12 +1415,10 @@ function checkOfflineIncome(){
   $('#offlinePopup').classList.add('show');
   const take = (x2) => {
     const sum = x2 ? income*2 : income;
-    S.coins += sum;
-    S.totalEarned += sum;
+    S.coins += sum; S.totalEarned += sum;
     save(); renderAll();
     $('#offlinePopup').classList.remove('show');
-    SFX.coin();
-    toast('💤 +' + fmt(sum) + ' 🪙');
+    SFX.coin(); toast('💤 +' + fmt(sum) + ' 🪙');
   };
   $('#offlineTake').onclick = ()=>take(false);
   $('#offlineX2').onclick = ()=>take(true);
@@ -1392,11 +1456,8 @@ function resetDailyCountersIfNeeded(){
   const td = today();
   if (S.todayDate !== td){
     S.todayDate = td;
-    S.todayTaps = 0;
-    S.todayEarned = 0;
-    S.todaySpins = 0;
-    S.todayBuildings = 0;
-    S.todayCases = 0;
+    S.todayTaps = 0; S.todayEarned = 0; S.todaySpins = 0;
+    S.todayBuildings = 0; S.todayCases = 0;
     save();
   }
 }
@@ -1419,12 +1480,8 @@ function renderAll(){
 }
 function renderWeekend(){
   const b = $('#weekendBanner');
-  if (isWeekend()){
-    b.style.display = 'block';
-    b.textContent = '🔥 ВЫХОДНЫЕ: ×2 ДОХОД!';
-  } else {
-    b.style.display = 'none';
-  }
+  if (isWeekend()){ b.style.display = 'block'; b.textContent = '🔥 ВЫХОДНЫЕ: ×2 ДОХОД!'; }
+  else { b.style.display = 'none'; }
 }
 function renderHome(){
   $('#homeCoins').textContent = fmt(S.coins);
@@ -1435,8 +1492,12 @@ function renderHome(){
   $('#heroDiamonds').textContent = S.diamonds;
 
   const bar = $('#boostBar'); bar.innerHTML = '';
-  if (S.premium){
-    const el = document.createElement('div'); el.className='boost-pill prem'; el.textContent='⭐ PREMIUM'; bar.appendChild(el);
+  // PREMIUM
+  if (isPremiumActive()){
+    const el = document.createElement('div'); el.className='boost-pill prem';
+    if (S.premium){ el.textContent = '⭐ PREMIUM'; }
+    else { el.textContent = '⭐ ' + formatBoostTime((S.premiumUntil||0) - Date.now()); }
+    bar.appendChild(el);
   }
   if (S.prestige > 0){
     const el = document.createElement('div'); el.className='boost-pill prestige'; el.textContent='♻️ ×'+prestigeMult().toFixed(1); bar.appendChild(el);
@@ -1444,12 +1505,41 @@ function renderHome(){
   if (IS_ADMIN){
     const el = document.createElement('div'); el.className='boost-pill admin'; el.textContent='👑 ADMIN'; bar.appendChild(el);
   }
-  const incB = UPGRADES.filter(u=>u.type==='income').reduce((a,u)=>a+(S.upgrades[u.id]||0),0);
-  if (incB) {
-    const el = document.createElement('div'); el.className='boost-pill'; el.textContent='+'+Math.round(
-      UPGRADES.filter(u=>u.type==='income').reduce((a,u)=>a+(S.upgrades[u.id]||0)*u.add,0)*100
-    )+'% доход'; bar.appendChild(el);
+  // Бусты из кейсов
+  if (hasBoost('boost5x')){
+    const el = document.createElement('div'); el.className='boost-pill prem';
+    el.textContent = '⚡ ×5 · ' + formatBoostTime(boostRemaining('boost5x'));
+    bar.appendChild(el);
+  } else if (hasBoost('boost2x')){
+    const el = document.createElement('div'); el.className='boost-pill prem';
+    el.textContent = '⚡ ×2 · ' + formatBoostTime(boostRemaining('boost2x'));
+    bar.appendChild(el);
   }
+  if (getTapBoostBonus() > 0){
+    const el = document.createElement('div'); el.className='boost-pill';
+    el.textContent = '🔥 +10 тап · ' + formatBoostTime(S.boostTapUntil - Date.now());
+    bar.appendChild(el);
+  }
+  if ((S.tickets || 0) > 0){
+    const el = document.createElement('div'); el.className='boost-pill';
+    el.textContent = '🎟️ ×' + S.tickets;
+    bar.appendChild(el);
+  }
+  if (S.discount > 0){
+    const el = document.createElement('div'); el.className='boost-pill';
+    el.style.background = 'linear-gradient(135deg,#5BE39A,#2ECC71)';
+    el.style.color = '#fff';
+    el.textContent = '🏦 −' + S.discount + '%';
+    bar.appendChild(el);
+  }
+  if ((S.dust || 0) > 0){
+    const el = document.createElement('div'); el.className='boost-pill';
+    el.style.background = 'rgba(135,152,174,.9)';
+    el.style.color = '#fff';
+    el.textContent = '🍃 ×' + S.dust;
+    bar.appendChild(el);
+  }
+
   const home = $('#tapZone');
   let url = '';
   if (S.bgCustom) url = S.bgCustom;
@@ -1473,8 +1563,7 @@ function renderUpgrades(){
     div.querySelector('.buy').onclick = ()=>{
       if (S.coins < price){ SFX.error(); toast('Недостаточно монет'); return; }
       S.coins -= price; S.upgrades[u.id] = count+1;
-      SFX.upgrade();
-      addXp(10); save(); renderAll();
+      SFX.upgrade(); addXp(10); save(); renderAll();
       toast('✅ '+u.name+' ур.'+(count+1));
     };
     list.appendChild(div);
@@ -1484,25 +1573,31 @@ function renderBuildings(){
   const list = $('#buildingsList'); list.innerHTML = '';
   BUILDINGS.forEach(b=>{
     const count = S.buildings[b.id]||0;
-    const price = priceFor(b.base, 1.15, count);
+    let price = priceFor(b.base, 1.15, count);
+    if (S.discount > 0) price = Math.floor(price * (1 - S.discount/100));
     const can = S.coins >= price;
     const div = document.createElement('div'); div.className='item';
     div.innerHTML = `
       <div class="item-icon">${b.icon}</div>
       <div class="item-body">
         <div class="item-name">${b.name} <span style="color:#8798AE;font-weight:500">×${count}</span></div>
-        <div class="item-sub">+<b>${fmt(b.inc)}</b>/сек за штуку</div>
+        <div class="item-sub">+<b>${fmt(b.inc)}</b>/сек за штуку${S.discount>0?' <span style="color:#31B545;font-weight:700">(−'+S.discount+'%)</span>':''}</div>
       </div>
       <button class="buy ${can?'':'off'}"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png">${fmt(price)}</button>`;
     div.querySelector('.buy').onclick = ()=>{
       if (S.coins < price){ SFX.error(); toast('Недостаточно монет'); return; }
+      const usedDiscount = S.discount;
       S.coins -= price; S.buildings[b.id] = count+1;
       S.todayBuildings = (S.todayBuildings||0) + 1;
+      if (usedDiscount > 0){
+        S.discount = 0;
+        toast('🏦 Скидка ' + usedDiscount + '% применена');
+      }
       if (count === 0){
         S.ownedBuildings[b.id] = true;
         SFX.reveal('rare');
-        toast('🎉 Открыт фон «'+b.name+'»!');
-      } else { SFX.upgrade(); toast('✅ '+b.name+' ×'+(count+1)); }
+        if (!usedDiscount) toast('🎉 Открыт фон «'+b.name+'»!');
+      } else if (!usedDiscount) { SFX.upgrade(); toast('✅ '+b.name+' ×'+(count+1)); }
       addXp(20); save(); renderAll();
     };
     list.appendChild(div);
@@ -1534,8 +1629,7 @@ function renderAchievements(){
       S.achievements[a.id] = true;
       if (a.reward.coins) S.coins += a.reward.coins;
       if (a.reward.diamonds) S.diamonds += a.reward.diamonds;
-      SFX.coin();
-      save(); renderAll();
+      SFX.coin(); save(); renderAll();
       toast('🏆 Достижение получено!');
     };
     list.appendChild(div);
@@ -1571,13 +1665,11 @@ function renderTasks(){
         S.dailyQuests[q.id] = 1;
         if (q.reward.coins) S.coins += q.reward.coins;
         if (q.reward.diamonds) S.diamonds += q.reward.diamonds;
-        SFX.coin();
-        save(); renderAll();
+        SFX.coin(); save(); renderAll();
         toast('🎁 Квест выполнен!');
       };
       list.appendChild(div);
     });
-
     progressBlock.style.display = 'block';
     if (doneCount === 3 && !S.dailyBonusClaimed){
       progressBlock.innerHTML = `<div style="font-weight:800;color:#31B545;font-size:13px;">🎉 Все квесты выполнены!</div>
@@ -1586,8 +1678,7 @@ function renderTasks(){
         if (S.dailyBonusClaimed) return;
         S.dailyBonusClaimed = true;
         S.coins += 15000; S.diamonds += 5;
-        SFX.upgrade();
-        save(); renderAll();
+        SFX.upgrade(); save(); renderAll();
         toast('🎁 Бонус за все квесты!');
       };
     } else if (S.dailyBonusClaimed){
@@ -1620,8 +1711,7 @@ function renderTasks(){
         S.tasksDone[t.id] = 1;
         if (t.reward.coins) S.coins += t.reward.coins;
         if (t.reward.diamonds) S.diamonds += t.reward.diamonds;
-        SFX.coin();
-        save(); renderAll();
+        SFX.coin(); save(); renderAll();
         toast('🎁 Награда получена!');
       };
       list.appendChild(div);
@@ -1632,7 +1722,6 @@ function renderTasks(){
 let currentShopTab = 'boosts';
 function renderShop(){
   const list = $('#shopList'); list.innerHTML = '';
-
   if (currentShopTab === 'boosts'){
     UPGRADES.forEach(u=>{
       const count = S.upgrades[u.id]||0;
@@ -1665,13 +1754,13 @@ function renderShop(){
     });
   }
   else if (currentShopTab === 'premium'){
-    const premHTML = S.premium
+    const premHTML = isPremiumActive()
       ? `<div class="prem-card owned">
            <h3>⭐ Premium активен</h3>
            <p style="margin:0 0 10px;font-size:12px;color:rgba(255,255,255,.8);line-height:1.5;">
              +50% к доходу · +2 к тапу · скидка 10% · эксклюзивы
            </p>
-           <div style="font-size:12px;color:#5BE39A;font-weight:700;">✅ Куплен</div>
+           <div style="font-size:12px;color:#5BE39A;font-weight:700;">${S.premium?'✅ Куплен навсегда':'⏱ Осталось '+formatBoostTime(S.premiumUntil-Date.now())}</div>
          </div>`
       : `<div class="prem-card">
            <h3>⭐ Premium</h3>
@@ -1693,8 +1782,7 @@ function renderShop(){
         {label:'Купить', cls:'ok', onClick:()=>{
           if (S.coins < 100000){ SFX.error(); toast('Мало монет'); return; }
           S.coins -= 100000; S.premium = true;
-          SFX.reveal('legendary');
-          save(); renderAll();
+          SFX.reveal('legendary'); save(); renderAll();
           toast('⭐ Premium активирован!');
         }}
       ]);
@@ -1702,9 +1790,12 @@ function renderShop(){
   }
   else if (currentShopTab === 'diamonds'){
     const items = [
-      {name:'10 💎', price:50000, gain:10},
-      {name:'50 💎', price:220000, gain:50},
-      {name:'200 💎', price:800000, gain:200}
+      {name:'10 💎',  price:10000,   gain:10},
+      {name:'30 💎',  price:27000,   gain:30},
+      {name:'60 💎',  price:50000,   gain:60},
+      {name:'120 💎', price:95000,   gain:120},
+      {name:'300 💎', price:220000,  gain:300},
+      {name:'700 💎', price:490000,  gain:700}
     ];
     items.forEach(it=>{
       const can = S.coins >= it.price;
@@ -1719,8 +1810,7 @@ function renderShop(){
       div.querySelector('.buy').onclick = ()=>{
         if (S.coins < it.price){ SFX.error(); toast('Мало монет'); return; }
         S.coins -= it.price; S.diamonds += it.gain;
-        SFX.coin();
-        save(); renderAll(); toast('+'+it.gain+' 💎');
+        SFX.coin(); save(); renderAll(); toast('+'+it.gain+' 💎');
       };
       list.appendChild(div);
     });
@@ -1729,17 +1819,20 @@ function renderShop(){
 
 /* ==================== CASE ROLLER ==================== */
 let caseBusy = false;
-
 function rarityOf(p){ return p.rarity || 'common'; }
 function prizeIcon(p){
   if (p.type === 'coins') return '🪙';
   if (p.type === 'diamonds') return '💎';
-  if (p.type === 'premium') return '⭐';
+  if (p.type === 'premium' || p.type === 'premiumTimed') return '⭐';
   if (p.type === 'frame') return '🎨';
   if (p.type === 'bg') return '🌄';
+  if (p.type === 'boost2x' || p.type === 'boost5x') return '⚡';
+  if (p.type === 'boostTap') return '🔥';
+  if (p.type === 'ticket') return '🎟️';
+  if (p.type === 'discount10' || p.type === 'discount25') return '🏦';
+  if (p.type === 'dust') return '🍃';
   return '🎁';
 }
-
 function openCase(c){
   caseBusy = false;
   SFX.click();
@@ -1750,7 +1843,6 @@ function openCase(c){
   $('#caseCloseBtn').style.display = 'block';
   $('#caseOpenBtn').onclick = ()=>runCaseRoll(c);
   $('#caseCloseBtn').onclick = ()=>{ if (!caseBusy){ SFX.click(); $('#casePopup').classList.remove('show'); } };
-
   const track = $('#caseTrack');
   track.classList.add('no-anim');
   track.style.transform = 'translateX(0)';
@@ -1759,7 +1851,6 @@ function openCase(c){
   setTimeout(()=>track.classList.remove('no-anim'), 30);
   $('#casePopup').classList.add('show');
 }
-
 function randomCasePrizeVisual(c){
   const total = c.prizes.reduce((a,p)=>a+p.chance,0);
   let r = Math.random()*total;
@@ -1767,14 +1858,12 @@ function randomCasePrizeVisual(c){
   for (const it of c.prizes){ if (r < it.chance){ p = it; break; } r -= it.chance; }
   return p;
 }
-
 function makeCaseItem(p){
   const el = document.createElement('div');
   el.className = 'case-item rar-' + rarityOf(p);
   el.innerHTML = `<div class="ico">${prizeIcon(p)}</div><div class="lbl">${p.label}</div>`;
   return el;
 }
-
 function rollCasePrize(c){
   if (!S.pityCounter) S.pityCounter = 0;
   S.pityCounter++;
@@ -1790,20 +1879,17 @@ function rollCasePrize(c){
   if (picked.rarity && picked.rarity !== 'common') S.pityCounter = 0;
   return picked;
 }
-
 function runCaseRoll(c){
   if (caseBusy) return;
   if (S.diamonds < c.price){ SFX.error(); toast('Мало алмазов'); return; }
   S.diamonds -= c.price;
   caseBusy = true;
   $('#caseOpenBtn').disabled = true;
-
   const track = $('#caseTrack');
   const totalItems = 50;
   const winIndex = 40 + Math.floor(Math.random()*5);
   const realPrize = rollCasePrize(c);
   const rarity = rarityOf(realPrize);
-
   track.classList.add('no-anim');
   track.style.transform = 'translateX(0)';
   track.innerHTML = '';
@@ -1813,11 +1899,9 @@ function runCaseRoll(c){
     else p = randomCasePrizeVisual(c);
     track.appendChild(makeCaseItem(p));
   }
-
   SFX.clank();
   setTimeout(()=>SFX.clank(), 180);
   setTimeout(()=>SFX.whoosh(), 400);
-
   const startTime = Date.now();
   const DURATION = 6000;
   let tickInterval = 40;
@@ -1829,7 +1913,6 @@ function runCaseRoll(c){
     setTimeout(tickLoop, tickInterval);
   };
   tickLoop();
-
   requestAnimationFrame(()=>{
     track.classList.remove('no-anim');
     const winEl = track.children[winIndex];
@@ -1840,10 +1923,10 @@ function runCaseRoll(c){
     const shift = winCenter - windowCenter + jitter;
     track.style.transform = `translateX(-${shift}px)`;
   });
-
   setTimeout(()=>{
     caseBusy = false;
     let msg = '';
+    const now = Date.now();
     if (realPrize.type === 'coins'){
       S.coins += realPrize.value; S.totalEarned += realPrize.value;
       msg = '+'+fmt(realPrize.value)+' 🪙';
@@ -1853,7 +1936,14 @@ function runCaseRoll(c){
       msg = '+'+realPrize.value+' 💎';
     }
     else if (realPrize.type === 'premium'){
-      S.premium = true; msg = '⭐ PREMIUM!';
+      S.premium = true; msg = '⭐ PREMIUM навсегда!';
+    }
+    else if (realPrize.type === 'premiumTimed'){
+      const mins = realPrize.value;
+      const cur = S.premiumUntil || 0;
+      S.premiumUntil = Math.max(cur, now) + mins * 60 * 1000;
+      const days = Math.round(mins / 60 / 24);
+      msg = '⭐ Premium на ' + days + ' дня!';
     }
     else if (realPrize.type === 'frame'){
       if (!S.unlockedFrames) S.unlockedFrames = {};
@@ -1865,27 +1955,55 @@ function runCaseRoll(c){
       if (bg && bg.building) S.ownedBuildings[bg.building] = true;
       msg = '🌄 Фон открыт!';
     }
+    else if (realPrize.type === 'boost2x'){
+      if (!S.activeBoosts) S.activeBoosts = {};
+      const cur = S.activeBoosts['boost2x'] || 0;
+      S.activeBoosts['boost2x'] = Math.max(cur, now) + realPrize.value * 60 * 1000;
+      msg = '⚡ Буст ×2 на ' + realPrize.value + ' мин!';
+    }
+    else if (realPrize.type === 'boost5x'){
+      if (!S.activeBoosts) S.activeBoosts = {};
+      const cur = S.activeBoosts['boost5x'] || 0;
+      S.activeBoosts['boost5x'] = Math.max(cur, now) + realPrize.value * 60 * 1000;
+      msg = '⚡ Буст ×5 на ' + realPrize.value + ' мин!';
+    }
+    else if (realPrize.type === 'boostTap'){
+      const cur = S.boostTapUntil || 0;
+      S.boostTapUntil = Math.max(cur, now) + 10 * 60 * 1000;
+      msg = '🔥 Мега-тап +10 на 10 мин!';
+    }
+    else if (realPrize.type === 'ticket'){
+      S.tickets = (S.tickets || 0) + realPrize.value;
+      msg = '🎟️ +' + realPrize.value + ' билет(ов)!';
+    }
+    else if (realPrize.type === 'discount10'){
+      S.discount = 10;
+      msg = '🏦 Скидка 10% на след. здание!';
+    }
+    else if (realPrize.type === 'discount25'){
+      S.discount = 25;
+      msg = '🏦 Скидка 25% на след. здание!';
+    }
+    else if (realPrize.type === 'dust'){
+      S.dust = (S.dust || 0) + realPrize.value;
+      msg = '🍃 Пыль ×' + realPrize.value;
+    }
+    else { msg = '😢 Пусто'; }
     S.todayCases = (S.todayCases||0) + 1;
     addXp(30);
     save(); renderAll();
-
     SFX.reveal(rarity);
-    if (rarity === 'legendary' || realPrize.type === 'premium'){
+    if (rarity === 'legendary' || realPrize.type === 'premium' || realPrize.type === 'premiumTimed'){
       haptic('success'); showConfetti();
-    } else if (rarity === 'epic'){
-      haptic('heavy');
-    } else if (rarity === 'rare'){
-      haptic('medium');
-    } else {
-      haptic('light');
-    }
-
+    } else if (rarity === 'epic'){ haptic('heavy'); }
+    else if (rarity === 'rare'){ haptic('medium'); }
+    else { haptic('light'); }
     $('#casePopup').classList.remove('show');
     const emoji = rarity === 'legendary' ? '🎉' : (rarity === 'epic' ? '✨' : '🎁');
     modal(
       `<div class="win-icon-big">${emoji}</div>
        <div class="win-title">${c.icon} ${c.name}</div>
-       <div class="win-reward ${realPrize.type==='premium'?'gold':(realPrize.type==='diamonds'?'blue':'gold')}">${msg}</div>
+       <div class="win-reward ${realPrize.type==='premium'||realPrize.type==='premiumTimed'?'gold':(realPrize.type==='diamonds'?'blue':'gold')}">${msg}</div>
        <div style="font-size:11px;color:#8798AE;margin-top:-4px;">Редкость: ${rarity.toUpperCase()}</div>`,
       [{label:'Забрать', cls:'ok'}]
     );
@@ -1896,34 +2014,26 @@ function renderProfile(){
   const av = AVATARS.find(a=>a.id===S.avatar) || AVATARS[0];
   const frame = FRAMES.find(f=>f.id===S.frame) || FRAMES[0];
   const bgc = AVATAR_BG.find(b=>b.id===S.avatarBg) || AVATAR_BG[0];
-
   const profAvatar = $('#profAvatar');
   profAvatar.style.background = bgc.color;
   profAvatar.style.border = frame.id==='none' ? 'none' : `3px solid ${frame.color.startsWith('linear')?'#2AABEE':frame.color}`;
   if (frame.color.startsWith('linear')) profAvatar.style.backgroundImage = frame.color;
   else profAvatar.style.backgroundImage = 'none';
-  const pi = $('#profAvatarImg');
-  pi.src = av.url; pi.style.display = 'block';
-
+  const pi = $('#profAvatarImg'); pi.src = av.url; pi.style.display = 'block';
   const drawerAvatar = $('#drawerAvatar');
   drawerAvatar.style.background = bgc.color;
-  const di = $('#drawerAvatarImg');
-  di.src = av.url; di.style.display='block';
-
+  const di = $('#drawerAvatarImg'); di.src = av.url; di.style.display='block';
   const name = S.name || 'КриптоКот';
   const badge = IS_ADMIN ? ' <span class="admin-badge">👑</span>' : '';
   $('#profName').innerHTML = name + badge;
   $('#dName').innerHTML = name + badge;
-
   $('#profLevel').textContent = 'Ур. '+S.level;
   const need = xpForLevel(S.level);
   $('#profBar').style.width = Math.min(100, (S.xp/need)*100)+'%';
   $('#profXp').textContent = S.xp+' / '+need;
-
   $('#dLevel').textContent = 'Ур. '+S.level;
   $('#dBar').style.width = Math.min(100, (S.xp/need)*100)+'%';
   $('#dXp').textContent = S.xp+' / '+need+' XP';
-
   $('#stCoins').textContent = fmt(S.coins);
   $('#stDiamonds').textContent = S.diamonds;
   $('#stPrestige').textContent = '×'+prestigeMult().toFixed(1);
@@ -1933,7 +2043,6 @@ function renderProfile(){
   $('#stBuild').textContent = totalBuildings();
   const doneTasks = Object.keys(S.tasksDone).length;
   $('#stTasks').textContent = doneTasks + ' / ' + TASKS_REGULAR.length;
-
   const rBtn = $('#renameBtn');
   if (rBtn){
     const price = IS_ADMIN ? 0 : (S.premium ? 45000 : 50000);
@@ -1950,15 +2059,25 @@ function renderProfile(){
     pBtn.style.opacity = '.55';
     pLabel.textContent = 'Престиж (нужно '+fmt(threshold)+' 🪙)';
   }
+  // Пыль
+  const dustEl = $('#dustCount');
+  if (dustEl) dustEl.textContent = S.dust || 0;
 }
+
+$('#sellDustBtn').onclick = ()=>{
+  SFX.click();
+  const d = S.dust || 0;
+  if (d <= 0){ SFX.error(); toast('Пыли нет'); return; }
+  const total = d * 10;
+  S.dust = 0;
+  S.coins += total; S.totalEarned += total;
+  SFX.coin(); save(); renderAll();
+  toast('🍃 +' + fmt(total) + ' 🪙 за пыль');
+};
 
 $('#prestigeBtn').onclick = ()=>{
   const threshold = 1000000 * Math.pow(3, S.prestige||0);
-  if (S.coins < threshold){
-    SFX.error();
-    toast('Нужно ' + fmt(threshold) + ' 🪙');
-    return;
-  }
+  if (S.coins < threshold){ SFX.error(); toast('Нужно ' + fmt(threshold) + ' 🪙'); return; }
   const newMult = (1 + ((S.prestige||0)+1)*0.5).toFixed(1);
   modal(
     `<h3>♻️ Престиж</h3>
@@ -1971,8 +2090,7 @@ $('#prestigeBtn').onclick = ()=>{
         S.prestige = (S.prestige||0) + 1;
         S.coins = 0; S.buildings = {}; S.upgrades = {};
         S.xp = 0; S.level = 1;
-        SFX.upgrade();
-        save(); renderAll();
+        SFX.upgrade(); save(); renderAll();
         toast('♻️ Престиж! Теперь ×'+prestigeMult().toFixed(1));
       }}
     ]
@@ -1983,17 +2101,17 @@ function renderCustom(){
   const ag = $('#avatarGrid'); ag.innerHTML = '';
   AVATARS.forEach(a=>{
     const el = document.createElement('div');
-    el.className = 'custom-item' + (S.avatar===a.id?' selected':'') + (!a.free&&!S.premium?' locked':'');
+    el.className = 'custom-item' + (S.avatar===a.id?' selected':'') + (!a.free&&!isPremiumActive()?' locked':'');
     el.innerHTML = `<img src="${a.url}" alt="">`;
     el.onclick = ()=>{
-      if (!a.free && !S.premium && !IS_ADMIN){ SFX.error(); toast('Только для Premium'); return; }
+      if (!a.free && !isPremiumActive() && !IS_ADMIN){ SFX.error(); toast('Только для Premium'); return; }
       S.avatar = a.id; SFX.click(); save(); renderAll();
     };
     ag.appendChild(el);
   });
   const fg = $('#frameGrid'); fg.innerHTML = '';
   FRAMES.forEach(f=>{
-    const frameUnlocked = f.free || S.premium || (S.unlockedFrames && S.unlockedFrames[f.id]) || IS_ADMIN;
+    const frameUnlocked = f.free || isPremiumActive() || (S.unlockedFrames && S.unlockedFrames[f.id]) || IS_ADMIN;
     const el = document.createElement('div');
     el.className = 'custom-item frame' + (S.frame===f.id?' selected':'') + (!frameUnlocked?' locked':'');
     el.innerHTML = `<div class="frame-inner" style="border:3px solid ${f.color.startsWith('linear')?'#2AABEE':f.color}; background-image:${f.color.startsWith('linear')?f.color:'none'}; background:${f.color.startsWith('linear')?f.color:(f.color==='transparent'?'#2B7FD4':f.color)}">
@@ -2008,10 +2126,10 @@ function renderCustom(){
   const bgc = $('#bgColorGrid'); bgc.innerHTML = '';
   AVATAR_BG.forEach(b=>{
     const el = document.createElement('div');
-    el.className = 'custom-item' + (S.avatarBg===b.id?' selected':'') + (!b.free&&!S.premium?' locked':'');
+    el.className = 'custom-item' + (S.avatarBg===b.id?' selected':'') + (!b.free&&!isPremiumActive()?' locked':'');
     el.style.background = b.color;
     el.onclick = ()=>{
-      if (!b.free && !S.premium && !IS_ADMIN){ SFX.error(); toast('Только для Premium'); return; }
+      if (!b.free && !isPremiumActive() && !IS_ADMIN){ SFX.error(); toast('Только для Premium'); return; }
       S.avatarBg = b.id; SFX.click(); save(); renderAll();
     };
     bgc.appendChild(el);
@@ -2057,6 +2175,7 @@ function drawWheel(){
 drawWheel();
 function canSpinFree(){
   if (IS_ADMIN) return true;
+  if ((S.tickets || 0) > 0) return true;
   const now = Date.now();
   return (now - S.lastSpin) >= 5*60*1000;
 }
@@ -2064,10 +2183,11 @@ function renderRouletteInfo(){
   const info = $('#rouletteInfo');
   const free = canSpinFree();
   if (free){
+    const extra = (S.tickets || 0) > 0 ? ' · 🎟️' + S.tickets : '';
     info.innerHTML = `
-      <div class="ri-main">Бесплатное вращение доступно!</div>
-      <div class="ri-sub">Крутите и получайте призы</div>
-      <div class="ri-pill free">🎁 БЕСПЛАТНО${IS_ADMIN?' (ADMIN)':''}</div>`;
+      <div class="ri-main">Вращение доступно!</div>
+      <div class="ri-sub">${(S.tickets||0)>0?'Билет активируется автоматически':'Крутите и получайте призы'}</div>
+      <div class="ri-pill free">🎁 БЕСПЛАТНО${extra}${IS_ADMIN?' (ADMIN)':''}</div>`;
   } else {
     const left = Math.ceil((5*60*1000 - (Date.now()-S.lastSpin))/1000);
     const m = Math.floor(left/60), s = left%60;
@@ -2090,14 +2210,16 @@ function spin(){
   if (spinning) return;
   const free = canSpinFree();
   if (!free && S.diamonds < 1){ SFX.error(); toast('Нужен 1 💎 или подожди'); return; }
-  if (!free) S.diamonds -= 1;
+  if (!free){
+    if ((S.tickets || 0) > 0){ S.tickets -= 1; toast('🎟️ Билет использован ('+S.tickets+' ост.)'); }
+    else S.diamonds -= 1;
+  }
   S.lastSpin = Date.now();
   S.todaySpins = (S.todaySpins||0) + 1;
   spinning = true;
   $('#spinBtn').disabled = true;
   $('#wheelPointer').classList.add('spinning');
   SFX.whoosh();
-
   const spinStart = Date.now();
   const SPIN_DUR = 4000;
   const spinTick = () => {
@@ -2108,7 +2230,6 @@ function spin(){
     setTimeout(spinTick, interval);
   };
   spinTick();
-
   const n = WHEEL_PRIZES.length;
   const idx = Math.floor(Math.random()*n);
   const arc = 360/n;
@@ -2126,13 +2247,10 @@ function spin(){
     else if (prize.type==='diamonds'){ S.diamonds += prize.value; msg = '+'+prize.value+' 💎'; cls='blue'; }
     else if (prize.type==='boost'){ S.coins += 1000; msg = 'Буст x2 + 1000 🪙'; cls='green'; }
     else { msg = 'Пусто 😢'; cls='green'; }
-    addXp(15);
-    save(); renderAll();
-
+    addXp(15); save(); renderAll();
     if (prize.type === 'coins' && prize.value >= 2000) SFX.reveal('epic');
     else if (prize.type === 'diamonds' || prize.value >= 5000) SFX.reveal('rare');
     else SFX.reveal('common');
-
     modal(`<div class="win-icon-big">🎉</div><div class="win-title">${prize.label}</div><div class="win-reward ${cls}">${msg}</div>`, [{label:'Забрать', cls: 'ok'}]);
   }, 4200);
 }
@@ -2143,13 +2261,10 @@ function doTap(x, y){
   let gain = tapValue();
   const isCrit = Math.random() < critChance();
   if (isCrit) gain *= 5;
-  S.coins += gain;
-  S.totalEarned += gain;
-  S.totalTaps++;
+  S.coins += gain; S.totalEarned += gain; S.totalTaps++;
   S.todayTaps = (S.todayTaps||0) + 1;
   S.todayEarned = (S.todayEarned||0) + gain;
   addXp(isCrit?3:1);
-
   const f = document.createElement('div');
   f.className = 'float-coin';
   f.textContent = '+' + fmt(gain) + (isCrit?' 💥':'');
@@ -2159,7 +2274,6 @@ function doTap(x, y){
   f.style.top = (y - rect.top)+'px';
   zone.appendChild(f);
   setTimeout(()=>f.remove(), 900);
-
   renderHome();
   if (S.totalTaps % 5 === 0) save();
 }
@@ -2206,7 +2320,6 @@ $('#tapBtn').addEventListener('click', e=>{
   e.stopPropagation();
   doTap(e.clientX, e.clientY);
 });
-// Секретный тап отключён — режим бога ТОЛЬКО по ID
 
 /* ==================== ADMIN BTNS ==================== */
 $$('[data-admin]').forEach(b=>{
@@ -2274,8 +2387,7 @@ $('#renameBtn').onclick = ()=>{
     if (err){ SFX.error(); toast('⚠️ ' + err); return; }
     if (S.coins < price){ SFX.error(); toast('Мало монет'); return; }
     S.coins -= price; S.name = val;
-    SFX.upgrade();
-    save(); renderAll(); closeModal();
+    SFX.upgrade(); save(); renderAll(); closeModal();
     toast('✅ Имя изменено: ' + val);
   };
   btns.appendChild(cancel); btns.appendChild(ok);
@@ -2294,8 +2406,7 @@ $('#promoBtn').onclick = ()=>{
   S.usedPromos[code] = 1;
   if (p.coins){ S.coins += p.coins; S.totalEarned += p.coins; }
   if (p.diamonds) S.diamonds += p.diamonds;
-  SFX.reveal('epic');
-  save(); renderAll();
+  SFX.reveal('epic'); save(); renderAll();
   $('#promoInput').value = '';
   toast('🎟️ +' + fmt(p.coins||0) + ' 🪙' + (p.diamonds?' +'+p.diamonds+' 💎':''));
 };
@@ -2309,9 +2420,8 @@ $('#applyBgUrl').onclick = ()=>{
   const url = $('#customBgUrl').value.trim();
   if (!url) { S.bgCustom=''; S.bg='default'; save(); renderAll(); toast('Свой фон убран'); return; }
   if (!/^https?:\/\//.test(url)){ SFX.error(); toast('URL должен начинаться с http(s)://'); return; }
-  S.bgCustom = url; S.bg = 'custom';
-  SFX.upgrade();
-  save(); renderAll(); toast('✅ Свой фон установлен');
+  S.bgCustom = url; S.bg = 'custom'; SFX.upgrade(); save(); renderAll();
+  toast('✅ Свой фон установлен');
 };
 
 /* ==================== PROFILE BTNS ==================== */
@@ -2336,14 +2446,14 @@ $('#modal').onclick = e=>{ if (e.target.id==='modal') closeModal(); };
 setInterval(()=>{
   const inc = incomePerSec();
   if (inc > 0){
-    S.coins += inc;
-    S.totalEarned += inc;
+    S.coins += inc; S.totalEarned += inc;
     S.todayEarned = (S.todayEarned||0) + inc;
     renderHome();
     $$('.coinVal').forEach(e=>e.textContent = fmt(S.coins));
   }
 }, 1000);
 setInterval(()=>{ renderRouletteInfo(); }, 1000);
+setInterval(()=>{ renderHome(); }, 1000);
 setInterval(()=>{ S.playTime++; save(); }, 1000);
 
 /* ==================== INIT ==================== */
@@ -2361,12 +2471,10 @@ document.addEventListener('pointerdown', initAudioOnce, {once:true});
   resetDailyCountersIfNeeded();
   renderAll();
   goTo('s-home');
-
   const muteBtn = document.getElementById('btnMute');
   const musicBtn = document.getElementById('btnMusic');
   if (muteBtn && SFX.muted){ muteBtn.textContent = '🔇'; muteBtn.classList.add('off'); }
   if (musicBtn && !Music.on){ musicBtn.classList.add('off'); }
-
   if (IS_ADMIN){
     showAdminUI();
     setTimeout(()=>toast('👑 Режим бога активирован'), 800);

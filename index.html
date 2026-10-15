@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#F7F9FC">
+<meta name="theme-color" content="#FFFFFF">
 <title>КриптоКот</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
@@ -12,18 +12,16 @@
   --tg-blue-hover:#2B7FD4;
   --tg-blue-light:#E8F2FE;
   --tg-green:#31B545;
-  --tg-gold:#F5A623;
   --line:#EEF2F7;
   --muted:#8798AE;
   --card:#FFFFFF;
   --text:#0F172A;
   --text-2:#5B6B80;
-  --bg:#F7F9FC;
-  --bg-gradient: radial-gradient(120% 120% at 50% 0%, #FFFFFF 0%, #F7F9FC 60%, #EEF4FB 100%);
-  --glow-color: rgba(51,144,236,.35);
-  --chip-gradient: linear-gradient(135deg, #E0F2FE, #BAE6FD);
-  --chip-text: #0369A1;
-  --icon-gradient: linear-gradient(135deg, var(--tg-blue-light), color-mix(in srgb, var(--tg-blue) 25%, var(--card)));
+  --bg:#FFFFFF;
+  --bg-gradient:linear-gradient(180deg, #FFFFFF 0%, #F7F9FC 100%);
+  --glow-color:rgba(51,144,236,.3);
+  --home-overlay: linear-gradient(180deg, rgba(15,42,71,.15) 0%, rgba(15,42,71,.55) 100%);
+  --home-bg:#FFFFFF;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
@@ -31,15 +29,14 @@
 html,body{margin:0;padding:0;height:100%;overflow:hidden;}
 body{
   font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Roboto,sans-serif;
-  background-color:var(--bg);
-  background-image:var(--bg-gradient);
+  background:var(--bg);
   color:var(--text);
   display:flex;flex-direction:column;
   height:100vh;height:100dvh;
   max-width:520px;margin:0 auto;
   position:relative;font-size:14px;line-height:1.4;
   -webkit-font-smoothing:antialiased;
-  transition:background-color .4s ease, color .3s ease;
+  transition:background .4s ease, color .35s ease;
 }
 
 /* ===== TOPBAR ===== */
@@ -50,21 +47,21 @@ body{
   pointer-events:none;transition:background .3s, border .3s, box-shadow .3s;
   border-bottom:1px solid transparent;
 }
-.topbar.transparent{background:transparent;border-bottom-color:transparent;box-shadow:none;}
+.topbar.transparent{background:transparent;border-bottom-color:transparent;}
 .topbar.solid{
   background:var(--card);border-bottom-color:var(--line);pointer-events:auto;
-  box-shadow:0 4px 24px var(--glow-color);
+  box-shadow:0 4px 20px var(--glow-color);
 }
 .tb-btn{
   width:40px;height:40px;border:none;border-radius:12px;
   display:grid;place-items:center;cursor:pointer;pointer-events:auto;
-  background:rgba(255,255,255,.2);color:#fff;
+  background:rgba(255,255,255,.25);color:var(--text);
   transition:background .2s, color .2s, transform .15s, box-shadow .2s;
   backdrop-filter:blur(8px);
 }
 .topbar.solid .tb-btn{background:transparent;color:var(--text-2);backdrop-filter:none;}
 .topbar.solid .tb-btn:active{background:var(--tg-blue-light);color:var(--tg-blue);box-shadow:0 0 0 4px var(--glow-color);}
-.topbar.transparent .tb-btn:active{background:rgba(255,255,255,.35);}
+.topbar.transparent .tb-btn:active{background:rgba(255,255,255,.4);}
 .tb-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 
 .content{flex:1;min-height:0;position:relative;overflow:hidden;}
@@ -74,7 +71,8 @@ body{
   padding:calc(64px + var(--safe-top)) 16px 24px;
   -webkit-overflow-scrolling:touch;
   opacity:0;visibility:hidden;transform:translateY(8px);
-  transition:opacity .22s, transform .22s, visibility .22s;
+  transition:opacity .22s, transform .22s, visibility .22s, background .4s;
+  background:transparent;
 }
 .screen.active{opacity:1;visibility:visible;transform:none;}
 .screen::-webkit-scrollbar{width:0;}
@@ -89,20 +87,15 @@ body{
   display:flex;align-items:center;gap:5px;
   background:var(--card);padding:8px 11px;border-radius:12px;
   font-size:13px;font-weight:700;
-  box-shadow:0 1px 3px rgba(24,60,110,.08), 0 0 12px var(--glow-color);
+  box-shadow:0 1px 3px rgba(0,0,0,.06), 0 0 12px var(--glow-color);
   white-space:nowrap;color:var(--text);
   border:1px solid var(--line);
   transition:background .35s, color .35s, border-color .35s, box-shadow .35s;
 }
-.chip-d{
-  background:var(--chip-gradient);
-  color:var(--chip-text);
-  border-color:transparent;
-}
 .diamond-ico{font-size:14px;line-height:1;}
 
 .coin-img{width:18px;height:18px;object-fit:contain;flex:0 0 auto;filter:drop-shadow(0 1px 2px rgba(0,0,0,.15));}
-.coin-img.big{width:52px;height:52px;filter:drop-shadow(0 6px 16px rgba(232,163,23,.6));}
+.coin-img.big{width:52px;height:52px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.25));}
 .buy .coin-img{width:14px;height:14px;}
 
 .list{display:flex;flex-direction:column;gap:10px;}
@@ -110,7 +103,7 @@ body{
   display:flex;align-items:center;gap:12px;
   background:var(--card);border-radius:16px;
   padding:12px;
-  box-shadow:0 1px 4px rgba(24,60,110,.06), 0 0 16px var(--glow-color);
+  box-shadow:0 1px 4px rgba(0,0,0,.05), 0 0 16px var(--glow-color);
   transition:transform .12s, background .35s, box-shadow .35s, border-color .35s, color .35s;
   position:relative;overflow:hidden;
   border:1px solid var(--line);
@@ -119,9 +112,10 @@ body{
 .item-icon{
   width:48px;height:48px;flex:0 0 48px;border-radius:14px;
   display:grid;place-items:center;font-size:22px;
-  background:var(--icon-gradient);
+  background:var(--tg-blue-light);
   overflow:hidden;
   transition:background .35s;
+  color:var(--tg-blue);
 }
 .item-icon img{width:100%;height:100%;object-fit:cover;}
 .item-body{flex:1;min-width:0;}
@@ -136,7 +130,6 @@ body{
   padding:3px 8px;border-bottom-left-radius:10px;text-transform:uppercase;
 }
 .badge.premium{background:linear-gradient(135deg,#FBBF24,#F59E0B);}
-.badge.hot{background:linear-gradient(135deg,#FFB800,#F07000);}
 
 .buy,.small-btn,.btn-primary{
   border:none;font-family:inherit;background:var(--tg-blue);color:#fff;
@@ -157,27 +150,21 @@ body{
 .buy.off{background:var(--line);color:var(--muted);cursor:not-allowed;box-shadow:none;}
 .buy.off:active{transform:none;background:var(--line);box-shadow:none;}
 .buy.gold{background:linear-gradient(135deg,#FBBF24,#F59E0B);color:#fff;}
-.buy.diamond-btn{background:linear-gradient(135deg,#33C5FF,#1490D8);}
-.buy.star-btn{background:linear-gradient(135deg,#FFC53D,#E8A317);color:#5A3800;}
 
 .maxed{
   font-size:12px;font-weight:600;color:var(--tg-green);
-  background:color-mix(in srgb, var(--tg-green) 15%, transparent);
-  padding:8px 12px;border-radius:10px;flex:0 0 auto;
+  background:rgba(49,181,69,.15);padding:8px 12px;border-radius:10px;flex:0 0 auto;
 }
 .pbar{height:6px;border-radius:6px;background:var(--line);overflow:hidden;margin-top:6px;transition:background .35s;}
 .pbar i{display:block;height:100%;border-radius:6px;background:var(--tg-blue);transition:width .35s, background .35s;box-shadow:0 0 8px var(--glow-color);}
-.pbar.done i{background:var(--tg-green);}
 .ptxt{font-size:10.5px;color:var(--muted);margin-top:4px;font-weight:500;}
 
 /* ===== SHOP HERO ===== */
 .shop-hero{
-  position:relative;
-  background:linear-gradient(135deg, color-mix(in srgb, var(--tg-blue) 40%, #0F2A47) 0%, #0F2A47 100%);
+  position:relative;background:linear-gradient(135deg,#1B3F63 0%,#0F2A47 100%);
   border-radius:20px;overflow:hidden;margin-bottom:14px;
   display:flex;align-items:center;padding:16px 18px;min-height:130px;
   box-shadow:0 8px 32px var(--glow-color);
-  transition:background .35s, box-shadow .35s;
 }
 .shop-hero::before{
   content:'';position:absolute;inset:0;
@@ -199,22 +186,22 @@ body{
   color:#fff;font-size:11.5px;font-weight:700;backdrop-filter:blur(6px);
 }
 
-/* ===== HOME ===== */
+/* ===== HOME — теперь без картинки, чистый CSS под тему ===== */
 .home{
   position:relative;height:100%;display:flex;flex-direction:column;
-  background-image:url('https://i.postimg.cc/prm3LcGb/83FD1976-2AAA-4494-BE9C-0EAD67D50CFA.png');
-  background-size:cover;background-position:center;background-repeat:no-repeat;
-  background-color:var(--bg);
+  background:var(--home-bg);
   overflow:hidden;
   user-select:none;touch-action:manipulation;cursor:pointer;
-  transition:background-color .4s ease;
+  transition:background .5s ease;
 }
-.home::after{
-  content:'';position:absolute;inset:0;pointer-events:none;z-index:1;
-  background:var(--bg-gradient);
-  mix-blend-mode:overlay;
-  opacity:.4;
-  transition:background .4s ease, opacity .4s ease;
+.home::before{
+  /* Декоративные круги под тему */
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(circle at 20% 20%, var(--glow-color) 0%, transparent 45%),
+    radial-gradient(circle at 85% 75%, var(--glow-color) 0%, transparent 45%);
+  opacity:.7;
+  transition:background .5s ease;
 }
 .balance{
   position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;
@@ -222,43 +209,45 @@ body{
 }
 .bal-num-row{display:flex;align-items:center;gap:12px;}
 .bal-num{
-  font-size:46px;font-weight:800;color:#fff;letter-spacing:-1.6px;
-  text-shadow:0 4px 14px rgba(14,80,130,.6), 0 0 30px var(--glow-color);
+  font-size:46px;font-weight:800;color:var(--text);letter-spacing:-1.6px;
+  text-shadow:0 2px 8px var(--glow-color);
   line-height:1;
-  transition:text-shadow .35s;
+  transition:color .35s, text-shadow .35s;
 }
 .bal-per{
-  font-size:16px;font-weight:600;color:#fff;opacity:.95;margin-top:8px;
-  text-shadow:0 2px 8px rgba(14,80,130,.5), 0 0 20px var(--glow-color);
+  font-size:16px;font-weight:600;color:var(--text);opacity:.75;margin-top:8px;
+  text-shadow:0 1px 4px var(--glow-color);
+  transition:color .35s;
 }
 .diamonds-row{
   display:flex;align-items:center;gap:5px;margin-top:10px;pointer-events:none;
-  background:rgba(255,255,255,.18);padding:5px 12px;border-radius:20px;
-  backdrop-filter:blur(6px);
-  box-shadow:0 0 24px var(--glow-color), inset 0 0 12px rgba(255,255,255,.1);
-  transition:box-shadow .35s;
+  background:var(--card);padding:6px 14px;border-radius:20px;
+  border:1px solid var(--line);
+  box-shadow:0 2px 12px var(--glow-color);
+  transition:background .35s, border-color .35s, box-shadow .35s;
 }
-.diamonds-row span{font-size:14px;font-weight:700;color:#fff;}
+.diamonds-row span{font-size:14px;font-weight:700;color:var(--text);transition:color .35s;}
 .boost-bar{
   display:flex;gap:6px;margin-top:12px;pointer-events:none;
   flex-wrap:wrap;justify-content:center;
 }
 .boost-pill{
-  background:rgba(255,255,255,.92);border-radius:20px;padding:5px 11px;
-  font-size:11px;font-weight:600;color:#E08A00;
-  box-shadow:0 2px 8px rgba(0,0,0,.12), 0 0 20px rgba(255,197,61,.5);
+  background:var(--card);border:1px solid var(--line);border-radius:20px;padding:5px 11px;
+  font-size:11px;font-weight:600;color:var(--tg-blue);
+  box-shadow:0 2px 12px var(--glow-color);
   animation: pulseGlow 1.6s ease-in-out infinite;
+  transition:background .35s, color .35s, border-color .35s;
 }
 @keyframes pulseGlow{
-  0%,100%{box-shadow:0 2px 8px rgba(0,0,0,.12), 0 0 12px rgba(255,197,61,.4);}
-  50%{box-shadow:0 2px 8px rgba(0,0,0,.12), 0 0 24px rgba(255,197,61,.9);}
+  0%,100%{box-shadow:0 2px 8px var(--glow-color);}
+  50%{box-shadow:0 2px 20px var(--glow-color), 0 0 30px var(--glow-color);}
 }
 .home-spacer{flex:1;min-height:0;}
 
 .float-coin{
   position:absolute;transform:translate(-50%,-50%);
-  font-weight:700;font-size:22px;color:#fff;
-  text-shadow:0 2px 8px rgba(20,80,130,.6), 0 0 20px rgba(255,255,255,.6);
+  font-weight:700;font-size:22px;color:var(--text);
+  text-shadow:0 2px 8px var(--glow-color), 0 0 20px var(--glow-color);
   pointer-events:none;z-index:30;
   animation:floatUp .9s cubic-bezier(.2,.8,.3,1) forwards;
   white-space:nowrap;
@@ -372,14 +361,14 @@ body{
 }
 .tab.active{
   background:var(--card);color:var(--tg-blue);
-  box-shadow:0 2px 8px rgba(24,60,110,.15), 0 0 0 3px var(--glow-color), 0 0 20px var(--glow-color);
+  box-shadow:0 2px 8px rgba(0,0,0,.08), 0 0 0 3px var(--glow-color);
 }
 .tab:active{transform:scale(.97);}
 
 /* ===== PROFILE ===== */
 .profile-card{
   background:var(--card);border-radius:20px;overflow:hidden;
-  box-shadow:0 1px 4px rgba(24,60,110,.06), 0 0 20px var(--glow-color);
+  box-shadow:0 1px 4px rgba(0,0,0,.05), 0 0 20px var(--glow-color);
   margin-bottom:14px;
   transition:background .35s, box-shadow .35s, border-color .35s;
   border:1px solid var(--line);
@@ -388,17 +377,13 @@ body{
   height:110px;width:100%;background-size:cover;background-position:center;
   position:relative;background-color:var(--tg-blue);
 }
-.profile-banner::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(180deg,transparent 60%,rgba(0,0,0,.15));
-}
-.profile-body{
-  padding:0 22px 22px;text-align:center;margin-top:-44px;position:relative;
-}
 .profile-card .avatar{
   width:88px;height:88px;font-size:44px;margin:0 auto 12px;
   background:var(--tg-blue-light);border:4px solid var(--card);
-  box-shadow:0 4px 12px rgba(0,0,0,.15), 0 0 24px var(--glow-color);
+  box-shadow:0 4px 12px rgba(0,0,0,.1), 0 0 24px var(--glow-color);
+}
+.profile-body{
+  padding:0 22px 22px;text-align:center;margin-top:-44px;position:relative;
 }
 .p-name{font-size:20px;font-weight:700;letter-spacing:-0.4px;display:flex;align-items:center;justify-content:center;gap:6px;color:var(--text);}
 .p-lvl{font-size:13px;color:var(--muted);font-weight:600;margin-top:4px;}
@@ -407,7 +392,7 @@ body{
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
 .stat{
   background:var(--card);border-radius:14px;padding:14px 8px;text-align:center;
-  box-shadow:0 1px 4px rgba(24,60,110,.06), 0 0 16px var(--glow-color);
+  box-shadow:0 1px 4px rgba(0,0,0,.05), 0 0 16px var(--glow-color);
   border:1px solid var(--line);
   transition:background .35s, box-shadow .35s, border-color .35s;
 }
@@ -415,7 +400,7 @@ body{
 .stat span{display:block;font-size:11px;color:var(--muted);margin-top:4px;font-weight:600;}
 .stat-list{
   background:var(--card);border-radius:16px;padding:4px 16px;
-  box-shadow:0 1px 4px rgba(24,60,110,.06), 0 0 16px var(--glow-color);
+  box-shadow:0 1px 4px rgba(0,0,0,.05), 0 0 16px var(--glow-color);
   margin-bottom:14px;
   border:1px solid var(--line);
   transition:background .35s, box-shadow .35s, border-color .35s;
@@ -435,31 +420,19 @@ body{
 .btn-primary{
   width:100%;padding:15px;border-radius:14px;font-size:15px;
   display:flex;align-items:center;justify-content:center;gap:9px;
-  position:relative;overflow:hidden;
-}
-.btn-primary::after{
-  content:'';position:absolute;inset:0;border-radius:inherit;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
-  pointer-events:none;
 }
 .btn-primary svg{
   width:19px;height:19px;stroke:#fff;fill:none;
   stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
 }
-.btn-invite{background:linear-gradient(135deg,#2AABEE,#229ED9);box-shadow:0 4px 16px rgba(34,158,217,.4);}
-.btn-gold{background:linear-gradient(135deg,#FBBF24,#F59E0B);color:#fff;box-shadow:0 4px 16px rgba(245,158,11,.4);}
-.btn-gold:active{background:#D97706;}
 .btn-grey{background:var(--line);color:var(--text-2);}
 .btn-grey svg{stroke:var(--text-2);}
 .btn-grey:active{filter:brightness(0.95);}
+.btn-invite{background:linear-gradient(135deg,#2AABEE,#229ED9);box-shadow:0 4px 16px rgba(34,158,217,.4);}
+.btn-gold{background:linear-gradient(135deg,#FBBF24,#F59E0B);color:#fff;box-shadow:0 4px 16px rgba(245,158,11,.4);}
 .btn-premium{
   background:linear-gradient(135deg,#FBBF24 0%,#F59E0B 50%,#EF4444 100%);
   color:#fff;box-shadow:0 6px 24px rgba(245,158,11,.5);
-  animation: premiumGlow 2.4s ease-in-out infinite;
-}
-@keyframes premiumGlow{
-  0%,100%{box-shadow:0 6px 24px rgba(245,158,11,.5);}
-  50%{box-shadow:0 6px 36px rgba(245,158,11,.9);}
 }
 
 .prem-star{
@@ -501,16 +474,15 @@ body{
   transition:border .25s, box-shadow .3s, background .35s, color .35s;
   margin:8px 0 4px;background:var(--bg);
 }
-.modal-input:focus{border-color:var(--tg-blue);box-shadow:0 0 0 4px var(--glow-color), 0 0 20px var(--glow-color);}
+.modal-input:focus{border-color:var(--tg-blue);box-shadow:0 0 0 4px var(--glow-color);}
 .modal-btns{display:flex;gap:8px;margin-top:16px;}
 .modal-btn{
   flex:1;padding:13px;border-radius:12px;border:none;font-family:inherit;
   font-size:14px;font-weight:600;cursor:pointer;transition:.25s;
 }
 .modal-btn.primary{background:var(--tg-blue);color:#fff;}
-.modal-btn.primary:active{background:var(--tg-blue-hover);transform:scale(.97);box-shadow:0 0 0 4px var(--glow-color), 0 0 24px var(--glow-color);}
+.modal-btn.primary:active{background:var(--tg-blue-hover);transform:scale(.97);box-shadow:0 0 0 4px var(--glow-color);}
 .modal-btn.secondary{background:var(--line);color:var(--text-2);}
-.modal-btn.secondary:active{filter:brightness(0.95);}
 .modal-btn.gold{background:linear-gradient(135deg,#FBBF24,#F59E0B);color:#fff;}
 
 /* Селекторы кастомизации */
@@ -534,17 +506,27 @@ body{
 .theme-opt:active{transform:scale(.95);}
 .theme-opt.selected{
   border-color:var(--tg-blue);
-  box-shadow:0 0 0 3px var(--glow-color), 0 0 30px var(--glow-color), 0 0 60px var(--glow-color);
+  box-shadow:0 0 0 3px var(--glow-color), 0 0 30px var(--glow-color);
 }
 .theme-opt .theme-name{
   font-size:9px;font-weight:700;color:#fff;
-  text-shadow:0 1px 2px rgba(0,0,0,.5);
+  text-shadow:0 1px 2px rgba(0,0,0,.6);
   background:rgba(0,0,0,.35);padding:2px 6px;border-radius:8px;
   backdrop-filter:blur(4px);
 }
 .theme-opt.locked::after{
   content:'🔒';position:absolute;inset:0;display:grid;place-items:center;
   background:rgba(0,0,0,.5);font-size:20px;
+}
+.theme-opt.rainbow{
+  background:linear-gradient(135deg,#FF5F6D,#FFC371,#47E5BC,#5B9BF8,#C471F5,#FF5F6D) !important;
+  background-size:400% 400% !important;
+  animation: rainbowShift 4s ease infinite;
+}
+@keyframes rainbowShift{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
 }
 
 .banner-opt{
@@ -605,7 +587,7 @@ body{
   box-shadow:0 4px 16px rgba(79,142,247,.4);
   transition:transform .2s, box-shadow .3s;
 }
-.upload-btn:active{transform:scale(.97);box-shadow:0 0 0 4px var(--glow-color), 0 4px 24px rgba(79,142,247,.7);}
+.upload-btn:active{transform:scale(.97);}
 .upload-btn svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 
 .premium-badge-modal{
@@ -613,19 +595,16 @@ body{
   background:linear-gradient(135deg,#FBBF24,#F59E0B);
   color:#fff;font-size:11px;font-weight:800;
   padding:4px 10px;border-radius:20px;margin-bottom:12px;letter-spacing:0.3px;
-  animation: starPulse 2s ease-in-out infinite;
 }
 
 #toast{
   position:absolute;left:50%;top:calc(72px + var(--safe-top));
   transform:translate(-50%,-14px);z-index:70;
-  background:color-mix(in srgb, var(--text) 92%, transparent);
-  color:var(--card);font-size:13px;font-weight:600;
+  background:var(--text);color:var(--card);font-size:13px;font-weight:600;
   padding:12px 20px;border-radius:14px;
   opacity:0;visibility:hidden;transition:.28s;pointer-events:none;
   max-width:88%;text-align:center;
-  box-shadow:0 8px 24px rgba(15,23,42,.35), 0 0 20px var(--glow-color);
-  backdrop-filter:blur(8px);
+  box-shadow:0 8px 24px rgba(0,0,0,.25), 0 0 20px var(--glow-color);
 }
 #toast.show{opacity:1;visibility:visible;transform:translate(-50%,0);}
 
@@ -647,22 +626,13 @@ body{
   background:linear-gradient(135deg,#FBBF24,#F59E0B);
   border-radius:16px;padding:16px;color:#fff;
   display:flex;align-items:center;gap:12px;margin-bottom:14px;
-  box-shadow:0 6px 16px rgba(245,158,11,.35), 0 0 24px rgba(245,158,11,.4);
+  box-shadow:0 6px 16px rgba(245,158,11,.35);
   cursor:pointer;
   transition:transform .15s, box-shadow .3s;
 }
-.daily-card:active{transform:scale(.98);}
-.daily-card:not(.claimed){
-  animation: dailyGlow 2.5s ease-in-out infinite;
-}
-@keyframes dailyGlow{
-  0%,100%{box-shadow:0 6px 16px rgba(245,158,11,.35), 0 0 24px rgba(245,158,11,.4);}
-  50%{box-shadow:0 6px 32px rgba(245,158,11,.85), 0 0 60px rgba(245,158,11,.7);}
-}
 .daily-card.claimed{
   background:linear-gradient(135deg,#94A3B8,#64748B);
-  box-shadow:0 6px 16px rgba(100,116,139,.3);cursor:default;
-  animation:none;
+  cursor:default;
 }
 .daily-icon{
   width:48px;height:48px;border-radius:14px;
@@ -675,11 +645,6 @@ body{
 .daily-cta{
   font-size:11.5px;font-weight:800;background:rgba(255,255,255,.25);
   padding:7px 12px;border-radius:20px;white-space:nowrap;
-  animation: ctaPulse 1.5s ease-in-out infinite;
-}
-@keyframes ctaPulse{
-  0%,100%{transform:scale(1);}
-  50%{transform:scale(1.06);}
 }
 
 @media (max-width:380px){
@@ -725,7 +690,7 @@ body{
       <div><h2>Улучшения</h2><p>Увеличивай доход и открывай новые возможности</p></div>
       <div class="bal-chips">
         <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
-        <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
+        <div class="bal-chip"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
       </div>
     </div>
     <div class="list" id="upgradesList"></div>
@@ -736,7 +701,7 @@ body{
       <div><h2>Постройки</h2><p>Построй фабрики и получай пассивный доход</p></div>
       <div class="bal-chips">
         <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
-        <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
+        <div class="bal-chip"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
       </div>
     </div>
     <div class="list" id="buildingsList"></div>
@@ -767,7 +732,7 @@ body{
       <div><h2>Профиль</h2><p>Твоя статистика и прогресс</p></div>
       <div class="bal-chips">
         <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
-        <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
+        <div class="bal-chip"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
       </div>
     </div>
 
@@ -965,6 +930,7 @@ body{
       ✅ <b>Золотая звезда</b> рядом с именем<br>
       ✅ <b>+3000 монет раз в день</b><br>
       ✅ <b>Все цветные темы оформления</b><br>
+      ✅ <b>Радужная тема</b><br>
       ✅ <b>Красивые баннеры</b> профиля<br>
       ✅ <b>Обводки аватарки</b> (до радужной)<br>
       ✅ Приоритетная поддержка
@@ -1001,7 +967,7 @@ body{
   if(tg){
     tg.ready();
     tg.expand();
-    tg.setBackgroundColor('#F7F9FC');
+    tg.setBackgroundColor('#FFFFFF');
     tg.enableClosingConfirmation();
   }
 
@@ -1015,7 +981,6 @@ body{
     }catch(e){}
   }
 
-  // ===================== ДАННЫЕ =====================
   const AVATARS = [
     'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=200&q=80',
     'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=200&q=80',
@@ -1059,106 +1024,171 @@ body{
 
   const THEMES = [
     {
-      id:'light', name:'Светлая', premium:false, color:'linear-gradient(135deg,#5B9BF8,#3B78E0)',
+      id:'light', name:'Светлая', premium:false,
+      color:'linear-gradient(135deg,#FFFFFF,#E8F2FE)',
       vars: {
-        '--bg':'#F7F9FC', '--card':'#FFFFFF', '--text':'#0F172A', '--text-2':'#5B6B80',
-        '--line':'#EEF2F7', '--tg-blue':'#3390EC', '--tg-blue-hover':'#2B7FD4',
-        '--tg-blue-light':'#E8F2FE', '--muted':'#8798AE',
-        '--bg-gradient':'radial-gradient(120% 120% at 50% 0%, #FFFFFF 0%, #F7F9FC 60%, #DCE9F7 100%)',
-        '--glow-color':'rgba(51,144,236,.35)',
-        '--chip-gradient':'linear-gradient(135deg, #E0F2FE, #BAE6FD)',
-        '--chip-text':'#0369A1'
+        '--bg':'#FFFFFF',
+        '--card':'#FFFFFF',
+        '--text':'#0F172A',
+        '--text-2':'#5B6B80',
+        '--line':'#EEF2F7',
+        '--tg-blue':'#3390EC',
+        '--tg-blue-hover':'#2B7FD4',
+        '--tg-blue-light':'#E8F2FE',
+        '--muted':'#8798AE',
+        '--glow-color':'rgba(51,144,236,.25)',
+        '--bg-gradient':'linear-gradient(180deg, #FFFFFF 0%, #F7F9FC 100%)',
+        '--home-bg':'linear-gradient(180deg, #FFFFFF 0%, #E8F2FE 100%)'
       }
     },
     {
-      id:'dark', name:'Тёмная', premium:false, color:'linear-gradient(135deg,#1E293B,#0F172A)',
+      id:'dark', name:'Тёмная', premium:false,
+      color:'linear-gradient(135deg,#1E293B,#0F172A)',
       vars: {
-        '--bg':'#0F172A', '--card':'#1E293B', '--text':'#F8FAFC', '--text-2':'#94A3B8',
-        '--line':'#334155', '--tg-blue':'#38BDF8', '--tg-blue-hover':'#0284C7',
-        '--tg-blue-light':'#0C4A6E', '--muted':'#94A3B8',
-        '--bg-gradient':'radial-gradient(120% 120% at 50% 0%, #1E293B 0%, #0F172A 60%, #020617 100%)',
-        '--glow-color':'rgba(56,189,248,.45)',
-        '--chip-gradient':'linear-gradient(135deg, #0C4A6E, #075985)',
-        '--chip-text':'#7DD3FC'
+        '--bg':'#0F172A',
+        '--card':'#1E293B',
+        '--text':'#F8FAFC',
+        '--text-2':'#94A3B8',
+        '--line':'#334155',
+        '--tg-blue':'#38BDF8',
+        '--tg-blue-hover':'#0284C7',
+        '--tg-blue-light':'#0C4A6E',
+        '--muted':'#94A3B8',
+        '--glow-color':'rgba(56,189,248,.35)',
+        '--bg-gradient':'linear-gradient(180deg, #0F172A 0%, #020617 100%)',
+        '--home-bg':'linear-gradient(180deg, #1E293B 0%, #0F172A 100%)'
       }
     },
     {
-      id:'purple', name:'Фиолет', premium:true, color:'linear-gradient(135deg,#C084FC,#9333EA)',
+      id:'purple', name:'Фиолет', premium:true,
+      color:'linear-gradient(135deg,#C084FC,#9333EA)',
       vars: {
-        '--bg':'#13091B', '--card':'#20102D', '--text':'#F3E8FF', '--text-2':'#D8B4FE',
-        '--line':'#3B1F52', '--tg-blue':'#C084FC', '--tg-blue-hover':'#A855F7',
-        '--tg-blue-light':'#4C1D6E', '--muted':'#A78BFA',
-        '--bg-gradient':'radial-gradient(120% 120% at 50% 0%, #2D1240 0%, #13091B 60%, #0A0410 100%)',
-        '--glow-color':'rgba(192,132,252,.55)',
-        '--chip-gradient':'linear-gradient(135deg, #4C1D6E, #6B21A8)',
-        '--chip-text':'#E9D5FF'
+        '--bg':'#13091B',
+        '--card':'#20102D',
+        '--text':'#F3E8FF',
+        '--text-2':'#D8B4FE',
+        '--line':'#3B1F52',
+        '--tg-blue':'#C084FC',
+        '--tg-blue-hover':'#A855F7',
+        '--tg-blue-light':'#4C1D6E',
+        '--muted':'#A78BFA',
+        '--glow-color':'rgba(192,132,252,.45)',
+        '--bg-gradient':'linear-gradient(180deg, #2D1240 0%, #0A0410 100%)',
+        '--home-bg':'linear-gradient(180deg, #2D1240 0%, #13091B 100%)'
       }
     },
     {
-      id:'emerald', name:'Изумруд', premium:true, color:'linear-gradient(135deg,#34D399,#059669)',
+      id:'emerald', name:'Изумруд', premium:true,
+      color:'linear-gradient(135deg,#34D399,#059669)',
       vars: {
-        '--bg':'#031811', '--card':'#092A1D', '--text':'#ECFDF5', '--text-2':'#A7F3D0',
-        '--line':'#134E35', '--tg-blue':'#34D399', '--tg-blue-hover':'#10B981',
-        '--tg-blue-light':'#065F46', '--muted':'#6EE7B7',
-        '--bg-gradient':'radial-gradient(120% 120% at 50% 0%, #0B3B26 0%, #031811 60%, #010D09 100%)',
-        '--glow-color':'rgba(52,211,153,.55)',
-        '--chip-gradient':'linear-gradient(135deg, #065F46, #047857)',
-        '--chip-text':'#A7F3D0'
+        '--bg':'#031811',
+        '--card':'#092A1D',
+        '--text':'#ECFDF5',
+        '--text-2':'#A7F3D0',
+        '--line':'#134E35',
+        '--tg-blue':'#34D399',
+        '--tg-blue-hover':'#10B981',
+        '--tg-blue-light':'#065F46',
+        '--muted':'#6EE7B7',
+        '--glow-color':'rgba(52,211,153,.45)',
+        '--bg-gradient':'linear-gradient(180deg, #0B3B26 0%, #010D09 100%)',
+        '--home-bg':'linear-gradient(180deg, #0B3B26 0%, #031811 100%)'
       }
     },
     {
-      id:'rose', name:'Роза', premium:true, color:'linear-gradient(135deg,#FB7185,#E11D48)',
+      id:'rose', name:'Роза', premium:true,
+      color:'linear-gradient(135deg,#FB7185,#E11D48)',
       vars: {
-        '--bg':'#1C0B0E', '--card':'#2E1317', '--text':'#FFF1F2', '--text-2':'#FECDD3',
-        '--line':'#4E2129', '--tg-blue':'#FB7185', '--tg-blue-hover':'#F43F5E',
-        '--tg-blue-light':'#7F1D2E', '--muted':'#FDA4AF',
-        '--bg-gradient':'radial-gradient(120% 120% at 50% 0%, #40101A 0%, #1C0B0E 60%, #0E0507 100%)',
-        '--glow-color':'rgba(251,113,133,.55)',
-        '--chip-gradient':'linear-gradient(135deg, #7F1D2E, #9F1239)',
-        '--chip-text':'#FECDD3'
+        '--bg':'#1C0B0E',
+        '--card':'#2E1317',
+        '--text':'#FFF1F2',
+        '--text-2':'#FECDD3',
+        '--line':'#4E2129',
+        '--tg-blue':'#FB7185',
+        '--tg-blue-hover':'#F43F5E',
+        '--tg-blue-light':'#7F1D2E',
+        '--muted':'#FDA4AF',
+        '--glow-color':'rgba(251,113,133,.45)',
+        '--bg-gradient':'linear-gradient(180deg, #40101A 0%, #0E0507 100%)',
+        '--home-bg':'linear-gradient(180deg, #40101A 0%, #1C0B0E 100%)'
       }
     },
     {
-      id:'amber', name:'Янтарь', premium:true, color:'linear-gradient(135deg,#FBBF24,#D97706)',
+      id:'amber', name:'Янтарь', premium:true,
+      color:'linear-gradient(135deg,#FBBF24,#D97706)',
       vars: {
-        '--bg':'#1C1409', '--card':'#2E2211', '--text':'#FEF3C7', '--text-2':'#FDE68A',
-        '--line':'#4E3B1C', '--tg-blue':'#FBBF24', '--tg-blue-hover':'#F59E0B',
-        '--tg-blue-light':'#78350F', '--muted':'#FCD34D',
-        '--bg-gradient':'radial-gradient(120% 120% at 50% 0%, #3D2A0E 0%, #1C1409 60%, #0D0A04 100%)',
-        '--glow-color':'rgba(251,191,36,.55)',
-        '--chip-gradient':'linear-gradient(135deg, #78350F, #92400E)',
-        '--chip-text':'#FDE68A'
+        '--bg':'#1C1409',
+        '--card':'#2E2211',
+        '--text':'#FEF3C7',
+        '--text-2':'#FDE68A',
+        '--line':'#4E3B1C',
+        '--tg-blue':'#FBBF24',
+        '--tg-blue-hover':'#F59E0B',
+        '--tg-blue-light':'#78350F',
+        '--muted':'#FCD34D',
+        '--glow-color':'rgba(251,191,36,.45)',
+        '--bg-gradient':'linear-gradient(180deg, #3D2A0E 0%, #0D0A04 100%)',
+        '--home-bg':'linear-gradient(180deg, #3D2A0E 0%, #1C1409 100%)'
       }
     },
     {
-      id:'cyan', name:'Небо', premium:true, color:'linear-gradient(135deg,#22D3EE,#0891B2)',
+      id:'cyan', name:'Небо', premium:true,
+      color:'linear-gradient(135deg,#22D3EE,#0891B2)',
       vars: {
-        '--bg':'#05181E', '--card':'#0B2B35', '--text':'#ECFEFF', '--text-2':'#A5F3FC',
-        '--line':'#134858', '--tg-blue':'#22D3EE', '--tg-blue-hover':'#06B6D4',
-        '--tg-blue-light':'#0E5C73', '--muted':'#67E8F9',
-        '--bg-gradient':'radial-gradient(120% 120% at 50% 0%, #0A3A47 0%, #05181E 60%, #020B0F 100%)',
-        '--glow-color':'rgba(34,211,238,.55)',
-        '--chip-gradient':'linear-gradient(135deg, #0E5C73, #155E75)',
-        '--chip-text':'#A5F3FC'
+        '--bg':'#05181E',
+        '--card':'#0B2B35',
+        '--text':'#ECFEFF',
+        '--text-2':'#A5F3FC',
+        '--line':'#134858',
+        '--tg-blue':'#22D3EE',
+        '--tg-blue-hover':'#06B6D4',
+        '--tg-blue-light':'#0E5C73',
+        '--muted':'#67E8F9',
+        '--glow-color':'rgba(34,211,238,.45)',
+        '--bg-gradient':'linear-gradient(180deg, #0A3A47 0%, #020B0F 100%)',
+        '--home-bg':'linear-gradient(180deg, #0A3A47 0%, #05181E 100%)'
       }
     },
     {
-      id:'indigo', name:'Индиго', premium:true, color:'linear-gradient(135deg,#818CF8,#4F46E5)',
+      id:'indigo', name:'Индиго', premium:true,
+      color:'linear-gradient(135deg,#818CF8,#4F46E5)',
       vars: {
-        '--bg':'#0C0E1C', '--card':'#161A33', '--text':'#EEF2FF', '--text-2':'#C7D2FE',
-        '--line':'#272E54', '--tg-blue':'#818CF8', '--tg-blue-hover':'#6366F1',
-        '--tg-blue-light':'#3730A3', '--muted':'#A5B4FC',
-        '--bg-gradient':'radial-gradient(120% 120% at 50% 0%, #1E2242 0%, #0C0E1C 60%, #05060E 100%)',
-        '--glow-color':'rgba(129,140,248,.55)',
-        '--chip-gradient':'linear-gradient(135deg, #3730A3, #4338CA)',
-        '--chip-text':'#C7D2FE'
+        '--bg':'#0C0E1C',
+        '--card':'#161A33',
+        '--text':'#EEF2FF',
+        '--text-2':'#C7D2FE',
+        '--line':'#272E54',
+        '--tg-blue':'#818CF8',
+        '--tg-blue-hover':'#6366F1',
+        '--tg-blue-light':'#3730A3',
+        '--muted':'#A5B4FC',
+        '--glow-color':'rgba(129,140,248,.45)',
+        '--bg-gradient':'linear-gradient(180deg, #1E2242 0%, #05060E 100%)',
+        '--home-bg':'linear-gradient(180deg, #1E2242 0%, #0C0E1C 100%)'
+      }
+    },
+    {
+      id:'rainbow', name:'Радуга', premium:true,
+      color:'linear-gradient(135deg,#FF5F6D,#FFC371,#47E5BC,#5B9BF8,#C471F5)',
+      vars: {
+        '--bg':'#1a0d2e',
+        '--card':'rgba(255,255,255,.1)',
+        '--text':'#FFFFFF',
+        '--text-2':'#E0D7FF',
+        '--line':'rgba(255,255,255,.15)',
+        '--tg-blue':'#FF5F6D',
+        '--tg-blue-hover':'#FF3D4F',
+        '--tg-blue-light':'rgba(255,95,109,.25)',
+        '--muted':'#C4B5FD',
+        '--glow-color':'rgba(196,113,245,.6)',
+        '--bg-gradient':'linear-gradient(135deg, #FF5F6D 0%, #FFC371 25%, #47E5BC 50%, #5B9BF8 75%, #C471F5 100%)',
+        '--home-bg':'linear-gradient(135deg, #FF5F6D 0%, #FFC371 25%, #47E5BC 50%, #5B9BF8 75%, #C471F5 100%)'
       }
     },
   ];
 
-  const SAVE_KEY = 'cryptocat_save_v8';
+  const SAVE_KEY = 'cryptocat_save_v9';
 
-  // ===================== СОСТОЯНИЕ =====================
   const state = {
     coins: 0,
     displayCoins: 0,
@@ -1260,21 +1290,38 @@ body{
       Object.assign(state, data);
       state.displayCoins = state.coins;
       state.activeBoosts = [];
-      console.log('[КриптоКот] Загружена тема:', state.theme);
-    }catch(e){
-      console.warn('[КриптоКот] Ошибка загрузки:', e);
-    }
+    }catch(e){}
   }
 
   // ============ ПРИМЕНЕНИЕ ТЕМЫ ============
   function applyTheme(){
     const tObj = THEMES.find(t => t.id === state.theme) || THEMES[0];
     const root = document.documentElement;
+    // Убираем inline-стили прошлой темы
+    Object.keys(THEMES[0].vars).forEach(k => root.style.removeProperty(k));
+    // Применяем переменные новой темы
     for(const [k, v] of Object.entries(tObj.vars)){
       root.style.setProperty(k, v);
     }
-    // Форсируем пересчёт стилей — тема применяется мгновенно
+    // Форсируем перерисовку
     void document.body.offsetHeight;
+
+    // Специальная обработка для радужной темы — анимированный градиент
+    if(state.theme === 'rainbow'){
+      document.body.style.background = 'linear-gradient(135deg, #FF5F6D, #FFC371, #47E5BC, #5B9BF8, #C471F5, #FF5F6D)';
+      document.body.style.backgroundSize = '400% 400%';
+      document.body.style.animation = 'rainbowShift 8s ease infinite';
+      tapZone.style.background = 'linear-gradient(135deg, #FF5F6D, #FFC371, #47E5BC, #5B9BF8, #C471F5, #FF5F6D)';
+      tapZone.style.backgroundSize = '400% 400%';
+      tapZone.style.animation = 'rainbowShift 8s ease infinite';
+    } else {
+      document.body.style.background = '';
+      document.body.style.backgroundSize = '';
+      document.body.style.animation = '';
+      tapZone.style.background = '';
+      tapZone.style.backgroundSize = '';
+      tapZone.style.animation = '';
+    }
 
     let meta = document.querySelector('meta[name="theme-color"]');
     if(!meta){
@@ -1282,15 +1329,14 @@ body{
       meta.name = 'theme-color';
       document.head.appendChild(meta);
     }
-    meta.content = tObj.vars['--bg'];
+    meta.content = state.theme === 'rainbow' ? '#C471F5' : tObj.vars['--bg'];
 
     if(tg){
       try{
-        tg.setBackgroundColor(tObj.vars['--bg']);
-        tg.setHeaderColor(tObj.vars['--bg']);
+        tg.setBackgroundColor(state.theme === 'rainbow' ? '#C471F5' : tObj.vars['--bg']);
+        tg.setHeaderColor(state.theme === 'rainbow' ? '#C471F5' : tObj.vars['--bg']);
       }catch(e){}
     }
-    console.log('[КриптоКот] Применена тема:', tObj.name);
   }
 
   function updateDisplay(){
@@ -1594,7 +1640,7 @@ body{
         item.className = 'item';
         item.innerHTML = `
           <div class="badge premium">АКТИВЕН</div>
-          <div class="item-icon" style="background:linear-gradient(135deg,#FBBF24,#F59E0B);">⭐</div>
+          <div class="item-icon" style="background:linear-gradient(135deg,#FBBF24,#F59E0B);color:#fff;">⭐</div>
           <div class="item-body">
             <div class="item-name">Премиум активен</div>
             <div class="item-sub">Все функции разблокированы навсегда</div>
@@ -1606,7 +1652,7 @@ body{
         item.className = 'item';
         item.innerHTML = `
           <div class="badge premium">ХИТ</div>
-          <div class="item-icon" style="background:linear-gradient(135deg,#FBBF24,#F59E0B);">⭐</div>
+          <div class="item-icon" style="background:linear-gradient(135deg,#FBBF24,#F59E0B);color:#fff;">⭐</div>
           <div class="item-body">
             <div class="item-name">Премиум навсегда</div>
             <div class="item-sub">Звезда, +3000 монет/день, цветные темы, баннеры, обводки</div>
@@ -1723,7 +1769,6 @@ body{
     });
   });
 
-  // ============ СМЕНА ИМЕНИ ============
   const nameModal = $('#nameModal');
   const nameInput = $('#nameInput');
   const nameError = $('#nameError');
@@ -1748,7 +1793,6 @@ body{
     updateDisplay(); nameModal.classList.remove('show'); save();
   });
 
-  // ============ КАСТОМИЗАЦИЯ ============
   const customizeModal = $('#customizeModal');
 
   function buildAvatarGrid(){
@@ -1841,7 +1885,6 @@ body{
     avatarFile.value = '';
   });
 
-  // ============ ТЕМЫ ============
   const themeModal = $('#themeModal');
 
   function buildThemeGrid(){
@@ -1852,10 +1895,14 @@ body{
       const locked = t.premium && !state.isPremium;
       const btn = document.createElement('button');
       btn.className = 'theme-opt' + (state.theme === t.id ? ' selected' : '') + (locked ? ' locked' : '');
-      btn.style.background = t.color;
+      if(t.id === 'rainbow'){
+        btn.classList.add('rainbow');
+      } else {
+        btn.style.background = t.color;
+      }
       btn.innerHTML = '<span class="theme-name">'+t.name+'</span>';
       btn.addEventListener('click', ()=>{
-        if(locked){ showToast('⭐ Цветные темы доступны с Премиумом'); haptic('error'); return; }
+        if(locked){ showToast('⭐ Только с Премиумом'); haptic('error'); return; }
         state.theme = t.id;
         applyTheme();
         buildThemeGrid();
@@ -1877,7 +1924,6 @@ body{
   $('#themeCancel').addEventListener('click', ()=>themeModal.classList.remove('show'));
   themeModal.addEventListener('click', (e)=>{ if(e.target === themeModal) themeModal.classList.remove('show'); });
 
-  // ============ ПРЕМИУМ ============
   const premiumModal = $('#premiumModal');
   $('#premiumBtn').addEventListener('click', ()=>{
     if(state.isPremium) return;
@@ -1899,7 +1945,6 @@ body{
     updateDisplay(); save();
   });
 
-  // ============ ВЫВОД СРЕДСТВ ============
   const withdrawModal = $('#withdrawModal');
   $('#withdrawBtn').addEventListener('click', ()=>{
     withdrawModal.classList.add('show');
@@ -1915,7 +1960,6 @@ body{
     withdrawModal.classList.remove('show');
   });
 
-  // ============ ПРИГЛАШЕНИЯ / ПОДЕЛИТЬСЯ ============
   $('#inviteBtn').addEventListener('click', ()=>{
     haptic('medium');
     const shareUrl = 'https://t.me/share/url?url=' + encodeURIComponent('https://t.me/your_bot/cryptocat') + '&text=' + encodeURIComponent('Присоединяйся к КриптоКоту! 🐱');
@@ -1936,7 +1980,6 @@ body{
     haptic('light');
   });
 
-  // ============ TELEGRAM BACK ============
   if(tg){
     tg.BackButton.onClick(()=>{
       if(drawer.classList.contains('open')){ closeDrawer(); return; }
@@ -1954,10 +1997,9 @@ body{
 
   // ============ INIT ============
   function init(){
-    // Сброс старого сохранения (v6/v7), чтобы не было конфликтов с новым форматом
+    // Удаляем все старые сохранения
     try{
-      localStorage.removeItem('cryptocat_save_v6');
-      localStorage.removeItem('cryptocat_save_v7');
+      ['cryptocat_save_v6','cryptocat_save_v7','cryptocat_save_v8'].forEach(k => localStorage.removeItem(k));
     }catch(e){}
 
     load();
@@ -1967,7 +2009,7 @@ body{
     if(!state.avatar) state.avatar = AVATARS[0];
     if(!state.banner) state.banner = BANNERS[0].url;
     if(!state.ring) state.ring = 'none';
-    if(!state.theme) state.theme = 'light';
+    if(!state.theme || !THEMES.find(t => t.id === state.theme)) state.theme = 'light';
 
     applyTheme();
     renderUpgrades();
@@ -1983,7 +2025,7 @@ body{
     window.addEventListener('beforeunload', save);
     document.addEventListener('visibilitychange', ()=>{ if(document.hidden) save(); });
 
-    console.log('[КриптоКот] Инициализация завершена. Тема:', state.theme, '| Премиум:', state.isPremium);
+    console.log('[КриптоКот] Инициализация. Тема:', state.theme, '| Премиум:', state.isPremium);
   }
 
   init();

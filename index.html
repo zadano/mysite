@@ -1500,9 +1500,9 @@ body{
   const drawer = $('#drawer');
   const overlay = $('#drawerOverlay');
   const menuBtn = $('#menuBtn');
-  const drawerClose = $('#drawerClose');    function openDrawer(){ drawer.classList.add('open'); overlay.classList.add('show'); haptic('medium'); } function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('show'); }    menuBtn.addEventListener('click', openDrawer); drawerClose.addEventListener('click', closeDrawer); overlay.addEventListener('click', closeDrawer); $$('.nav-item, .dnav').forEach(btn=>btn.addEventListener('click', ()=>switchScreen(btn.dataset.screen)));
+  const drawerClose = $('#drawerClose');    function openDrawer(){ drawer.classList.add('open'); overlay.classList.add('show'); haptic('medium'); } function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('show'); }    menuBtn.addEventListener('click', openDrawer); drawerClose.addEventListener('click', closeDrawer); overlay.addEventListener('click', closeDrawer); $$('.nav-item, .dnav').forEach(btn => btn.addEventListener('click', () => switchScreen(btn.dataset.screen)));
   $$('.tab[data-shop]').forEach(tab=>{ tab.addEventListener('click', ()=>{ $$
-('.tab[data-shop]').forEach(t=>t.classList.remove('active'));
+('.tab[data-shop]').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       currentShopTab = tab.dataset.shop;
       renderShop();

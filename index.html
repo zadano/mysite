@@ -98,6 +98,8 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
   box-shadow:0 2px 8px rgba(0,0,0,.12);}
 .boost-pill.prem{background:linear-gradient(135deg,#FFB800,#F07000);color:#fff;}
 .boost-pill.admin{background:linear-gradient(135deg,#8B5CF6,#EC4899);color:#fff;}
+.boost-pill.weekend{background:linear-gradient(135deg,#FF6B35,#E8487F);color:#fff;}
+.boost-pill.prestige{background:linear-gradient(135deg,#5BE39A,#2ECC71);color:#fff;}
 .home-spacer{flex:1;min-height:0;}
 .tap-btn{position:relative;z-index:4;margin:0 auto 22px;display:flex;align-items:center;justify-content:center;gap:9px;
   padding:15px 0;width:min(84%,340px);border-radius:12px;font-size:17px;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.25);}
@@ -107,57 +109,89 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 @keyframes floatUp{0%{opacity:0;transform:translate(-50%,-50%) scale(.5);}18%{opacity:1;transform:translate(-50%,-80%) scale(1.15);}
   100%{opacity:0;transform:translate(-50%,-200%) scale(.95);}}
 
-.bottomnav{flex:0 0 auto;display:flex;background:#fff;border-top:1px solid var(--line);padding:7px 2px calc(7px + env(safe-area-inset-bottom,0px));z-index:6;}
-.nav-item{flex:1;background:none;border:none;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:2px;
-  color:#A2AFC2;font-size:9.5px;font-weight:500;padding:5px 0;cursor:pointer;border-radius:12px;transition:color .16s;}
-.nav-item svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;transition:.16s;}
-.nav-item:active{transform:scale(.93);}
-.nav-item.active{color:var(--tg-blue);}
-.nav-item.active svg{stroke-width:2.2;}
-.nav-item.nav-roulette{color:#E8A317;}
-.nav-item.nav-roulette.active{color:#E8A317;}
-.nav-item.nav-roulette svg{stroke:#E8A317;}
+/* Weekend banner */
+.weekend-banner{position:absolute;top:56px;left:8px;right:8px;z-index:5;background:linear-gradient(135deg,#FF6B35,#E8487F);
+  color:#fff;font-size:11.5px;font-weight:700;padding:8px 14px;border-radius:12px;text-align:center;
+  box-shadow:0 4px 14px rgba(232,72,127,.5);pointer-events:none;animation:weekendPulse 2s ease-in-out infinite;}
+@keyframes weekendPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.02);}}
 
-.overlay{position:absolute;inset:0;background:rgba(10,22,40,.5);opacity:0;visibility:hidden;transition:.24s;z-index:40;}
-.overlay.show{opacity:1;visibility:visible;}
-.drawer{position:absolute;top:0;left:0;bottom:0;width:min(82%,320px);z-index:50;background:#1B3F63;transform:translateX(-102%);
-  transition:transform .28s cubic-bezier(.3,.9,.3,1);display:flex;flex-direction:column;color:#fff;overflow-y:auto;
-  padding:14px 14px calc(18px + env(safe-area-inset-bottom,0px));}
-.drawer.open{transform:translateX(0);}
-.drawer::-webkit-scrollbar{width:0;}
-.drawer-close{align-self:flex-end;width:36px;height:36px;border:none;border-radius:10px;background:rgba(255,255,255,.1);color:#fff;
-  font-size:17px;cursor:pointer;display:grid;place-items:center;font-family:inherit;}
-.drawer-close:active{background:rgba(255,255,255,.22);}
-.drawer-head{display:flex;flex-direction:column;align-items:center;text-align:center;padding:2px 0 16px;}
-.avatar{width:74px;height:74px;border-radius:50%;display:grid;place-items:center;font-size:38px;background:#2B7FD4;margin-bottom:10px;
-  border:2px solid rgba(255,255,255,.2);overflow:hidden;position:relative;}
-.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
-.d-name{font-size:17px;font-weight:700;letter-spacing:-.3px;}
-.d-lvl{font-size:12px;color:#9CC3E4;font-weight:500;margin-top:2px;}
-.d-bar{width:150px;height:6px;border-radius:6px;background:rgba(255,255,255,.16);margin-top:9px;overflow:hidden;}
-.d-bar i{display:block;height:100%;border-radius:6px;background:var(--tg-blue);transition:width .3s;}
-.d-xp{font-size:10.5px;color:#8FB6D8;margin-top:5px;font-weight:500;}
-.drawer-nav{display:flex;flex-direction:column;gap:3px;margin-top:4px;}
-.dnav{display:flex;align-items:center;gap:12px;background:none;border:none;font-family:inherit;color:#D8E8F6;font-size:14.5px;
-  font-weight:500;padding:12px 13px;border-radius:10px;cursor:pointer;text-align:left;transition:background .15s;}
-.dnav svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;opacity:.9;flex:0 0 auto;}
-.dnav:active{background:rgba(255,255,255,.1);}
-.dnav.active{background:var(--tg-blue);color:#fff;}
-.dnav.admin-nav{background:linear-gradient(135deg,#8B5CF6,#EC4899);color:#fff;}
-.dnav-sep{height:1px;background:rgba(255,255,255,.12);margin:10px 6px;}
-.drawer-foot{margin-top:auto;padding-top:18px;text-align:center;font-size:10.5px;color:#7FA5C6;line-height:1.6;}
+/* Daily reward popup */
+.daily-popup{position:fixed;inset:0;background:rgba(10,22,40,.7);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;
+  opacity:0;visibility:hidden;transition:.25s;}
+.daily-popup.show{opacity:1;visibility:visible;}
+.daily-card{background:#fff;border-radius:22px;padding:22px;max-width:340px;width:100%;text-align:center;
+  transform:scale(.9);transition:.3s cubic-bezier(.3,1.4,.5,1);}
+.daily-popup.show .daily-card{transform:scale(1);}
+.daily-card h3{margin:0 0 6px;font-size:19px;font-weight:800;}
+.daily-card p{margin:0 0 14px;font-size:12.5px;color:var(--muted);line-height:1.4;}
+.daily-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:16px;}
+.daily-day{aspect-ratio:1;border-radius:10px;background:#EEF3F8;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;color:#8798AE;border:2px solid transparent;padding:2px;}
+.daily-day.passed{background:var(--tg-green);color:#fff;}
+.daily-day.today{background:linear-gradient(135deg,#FFB800,#F07000);color:#fff;border-color:#fff;box-shadow:0 0 0 3px rgba(255,184,0,.35);animation:dayPulse 1.4s infinite;}
+.daily-day .dd-ico{font-size:16px;line-height:1;margin-bottom:2px;}
+@keyframes dayPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+.daily-claim{width:100%;padding:15px;border:none;border-radius:14px;font-family:inherit;font-weight:800;font-size:15px;
+  background:linear-gradient(135deg,#FFB800,#F07000);color:#fff;cursor:pointer;box-shadow:0 6px 18px rgba(255,140,0,.4);}
+.daily-claim:active{transform:scale(.97);}
 
-.tabs{display:flex;gap:6px;margin-bottom:13px;background:#E4EBF3;padding:4px;border-radius:12px;overflow-x:auto;}
-.tabs::-webkit-scrollbar{height:0;}
-.tab{flex:1;border:none;font-family:inherit;padding:9px 4px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;
-  background:transparent;color:#8798AE;transition:background .16s,color .16s;white-space:nowrap;}
-.tab.active{background:#fff;color:var(--tg-blue);box-shadow:0 1px 3px rgba(24,60,110,.12);}
-.tab:active{transform:scale(.97);}
+/* Offline popup */
+.offline-popup{position:fixed;inset:0;background:rgba(10,22,40,.7);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;
+  opacity:0;visibility:hidden;transition:.25s;}
+.offline-popup.show{opacity:1;visibility:visible;}
+.offline-card{background:#fff;border-radius:22px;padding:24px;max-width:340px;width:100%;text-align:center;
+  transform:scale(.9);transition:.3s cubic-bezier(.3,1.4,.5,1);}
+.offline-popup.show .offline-card{transform:scale(1);}
+.offline-card .oi{font-size:56px;margin-bottom:8px;display:inline-block;animation:winPop .5s;}
+.offline-card h3{margin:0 0 6px;font-size:18px;font-weight:800;}
+.offline-card .osum{font-size:26px;font-weight:900;color:#E8A317;margin:10px 0 4px;}
+.offline-card p{margin:0 0 14px;font-size:12px;color:var(--muted);}
+.offline-card .obtn{width:100%;padding:14px;border:none;border-radius:12px;font-family:inherit;font-weight:800;font-size:14px;
+  background:var(--tg-blue);color:#fff;cursor:pointer;}
+.offline-card .obtn.x2{background:linear-gradient(135deg,#FFB800,#F07000);margin-bottom:8px;}
 
-.task-check{width:30px;height:30px;flex:0 0 30px;border-radius:50%;display:grid;place-items:center;background:var(--tg-green);
-  color:#fff;font-size:15px;font-weight:700;}
-.task-check.wait{background:#E9F0F7;color:#A2AFC2;}
+/* Case in shop */
+.case-card{background:linear-gradient(135deg,#2A1600,#3D2300);border-radius:18px;padding:18px;color:#fff;margin-bottom:12px;text-align:center;
+  box-shadow:0 8px 24px rgba(255,184,0,.25);position:relative;overflow:hidden;}
+.case-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(255,197,61,.35),transparent 60%);pointer-events:none;}
+.case-card .ci{font-size:48px;position:relative;z-index:1;animation:caseShake 2.4s ease-in-out infinite;}
+@keyframes caseShake{0%,90%,100%{transform:rotate(0);}93%{transform:rotate(-8deg);}96%{transform:rotate(8deg);}}
+.case-card h3{margin:6px 0 4px;font-size:17px;font-weight:800;position:relative;z-index:1;}
+.case-card p{margin:0 0 12px;font-size:12px;color:rgba(255,255,255,.8);position:relative;z-index:1;}
+.case-card .cbtn{width:100%;padding:13px;border:none;border-radius:12px;font-family:inherit;font-weight:800;font-size:14px;
+  background:linear-gradient(135deg,#FFB800,#F07000);color:#fff;cursor:pointer;position:relative;z-index:1;}
+.case-card .cbtn:active{transform:scale(.97);}
+.case-card .cbtn:disabled{background:#8798AE;cursor:not-allowed;}
 
+.modal{position:absolute;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(10,22,40,.55);
+  opacity:0;visibility:hidden;transition:.22s;}
+.modal.show{opacity:1;visibility:visible;}
+.modal-card{background:#fff;border-radius:18px;padding:22px;width:100%;max-width:330px;transform:scale(.92);
+  transition:.22s cubic-bezier(.3,1.3,.5,1);text-align:center;max-height:80%;overflow-y:auto;}
+.modal.show .modal-card{transform:scale(1);}
+.modal-card h3{margin:0 0 10px;font-size:18px;font-weight:700;letter-spacing:-.3px;}
+.modal-card p{margin:0 0 9px;font-size:13px;color:#5B6B80;line-height:1.5;text-align:left;}
+.modal-card p b{color:#0F172A;}
+.modal-btns{display:flex;gap:8px;margin-top:14px;}
+.modal-btns button{flex:1;padding:13px;border:none;border-radius:12px;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;}
+.modal-btns .ok{background:var(--tg-blue);color:#fff;}
+.modal-btns .ok:active{background:var(--tg-blue-hover);}
+.modal-btns .cancel{background:#E9F0F7;color:#5B6B80;}
+.modal-btns .cancel:active{background:#D9E1EA;}
+.win-icon-big{font-size:72px;line-height:1;margin:8px 0 14px;animation:winPop .6s cubic-bezier(.2,1.4,.4,1);display:inline-block;}
+@keyframes winPop{0%{transform:scale(0) rotate(-180deg);opacity:0;}60%{transform:scale(1.15) rotate(10deg);opacity:1;}100%{transform:scale(1) rotate(0);}}
+.win-title{margin:0 0 8px;font-size:16px;font-weight:700;color:#0F172A;}
+.win-reward{font-size:22px;font-weight:900;margin:10px 0 14px;letter-spacing:-.5px;}
+.win-reward.gold{color:#E8A317;}
+.win-reward.blue{color:#1490D8;}
+.win-reward.green{color:#31B545;}
+
+#toast{position:absolute;left:50%;top:72px;transform:translate(-50%,-14px);z-index:70;background:rgba(16,36,58,.94);color:#fff;
+  font-size:13px;font-weight:500;padding:11px 18px;border-radius:12px;opacity:0;visibility:hidden;transition:.25s;pointer-events:none;
+  max-width:88%;text-align:center;}
+#toast.show{opacity:1;visibility:visible;transform:translate(-50%,0);}
+
+/* PROFILE + КАСТОМ + ПРЕМИУМ — оставил как было (сокращаю для экономии места, т.к. ты уже видел эти стили) */
 .profile-card{background:#fff;border-radius:18px;padding:18px;text-align:center;box-shadow:0 1px 4px rgba(24,60,110,.06);margin-bottom:12px;}
 .profile-card .avatar{width:86px;height:86px;font-size:44px;margin:0 auto 10px;background:#2B7FD4;}
 .p-name{font-size:19px;font-weight:700;letter-spacing:-.4px;}
@@ -178,6 +212,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .btn-primary svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 .btn-invite{background:linear-gradient(135deg,#2AABEE,#229ED9);box-shadow:0 4px 12px rgba(34,158,217,.35);}
 .btn-rename{background:linear-gradient(135deg,#8B5CF6,#6D28D9);box-shadow:0 4px 12px rgba(139,92,246,.35);}
+.btn-prestige{background:linear-gradient(135deg,#5BE39A,#2ECC71);box-shadow:0 4px 12px rgba(46,204,113,.35);}
 
 .custom-block{background:#fff;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(24,60,110,.06);}
 .custom-title{font-size:13.5px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
@@ -198,17 +233,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .url-row input:focus{border-color:var(--tg-blue);}
 .url-row button{border:none;font-family:inherit;background:var(--tg-blue);color:#fff;border-radius:10px;padding:0 14px;font-size:12.5px;font-weight:700;cursor:pointer;}
 
-.prem-card{background:linear-gradient(135deg,#2A1600,#3D2300);border-radius:18px;padding:16px;color:#fff;margin-bottom:12px;
-  box-shadow:0 8px 24px rgba(255,184,0,.25);position:relative;overflow:hidden;}
-.prem-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(255,197,61,.35),transparent 60%);pointer-events:none;}
-.prem-card h3{margin:0 0 6px;font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px;}
-.prem-card ul{margin:8px 0 12px;padding-left:18px;font-size:12px;line-height:1.6;color:rgba(255,255,255,.85);}
-.prem-card .prem-price{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:800;color:#FFB800;margin-bottom:10px;}
-.prem-card .prem-btn{width:100%;padding:13px;border:none;border-radius:12px;font-family:inherit;font-weight:800;font-size:14px;
-  background:linear-gradient(135deg,#FFB800,#F07000);color:#fff;cursor:pointer;transition:transform .1s;}
-.prem-card .prem-btn:active{transform:scale(.97);}
-.prem-card.owned{background:linear-gradient(135deg,#0F2A47,#1B3F63);box-shadow:0 8px 24px rgba(42,171,238,.25);}
-
 .bg-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
 .bg-item{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;cursor:pointer;border:3px solid transparent;
   background:#EEF3F8;background-size:cover;background-position:center;transition:transform .12s;}
@@ -220,6 +244,17 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .bg-item .bg-check{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;background:var(--tg-green);color:#fff;
   display:none;place-items:center;font-size:13px;font-weight:800;}
 .bg-item.selected .bg-check{display:grid;}
+
+.prem-card{background:linear-gradient(135deg,#2A1600,#3D2300);border-radius:18px;padding:16px;color:#fff;margin-bottom:12px;
+  box-shadow:0 8px 24px rgba(255,184,0,.25);position:relative;overflow:hidden;}
+.prem-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(255,197,61,.35),transparent 60%);pointer-events:none;}
+.prem-card h3{margin:0 0 6px;font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px;}
+.prem-card ul{margin:8px 0 12px;padding-left:18px;font-size:12px;line-height:1.6;color:rgba(255,255,255,.85);}
+.prem-card .prem-price{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:800;color:#FFB800;margin-bottom:10px;}
+.prem-card .prem-btn{width:100%;padding:13px;border:none;border-radius:12px;font-family:inherit;font-weight:800;font-size:14px;
+  background:linear-gradient(135deg,#FFB800,#F07000);color:#fff;cursor:pointer;transition:transform .1s;}
+.prem-card .prem-btn:active{transform:scale(.97);}
+.prem-card.owned{background:linear-gradient(135deg,#0F2A47,#1B3F63);box-shadow:0 8px 24px rgba(42,171,238,.25);}
 
 .admin-hero{background:linear-gradient(135deg,#8B5CF6 0%,#EC4899 100%);border-radius:20px;padding:18px;color:#fff;margin-bottom:14px;
   box-shadow:0 8px 24px rgba(139,92,246,.35);position:relative;overflow:hidden;}
@@ -277,33 +312,63 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .prize-label{font-size:12.5px;font-weight:700;color:#0F172A;}
 .prize-desc{font-size:10.5px;color:var(--muted);margin-top:1px;}
 
-.modal{position:absolute;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(10,22,40,.55);
-  opacity:0;visibility:hidden;transition:.22s;}
-.modal.show{opacity:1;visibility:visible;}
-.modal-card{background:#fff;border-radius:18px;padding:22px;width:100%;max-width:330px;transform:scale(.92);
-  transition:.22s cubic-bezier(.3,1.3,.5,1);text-align:center;max-height:80%;overflow-y:auto;}
-.modal.show .modal-card{transform:scale(1);}
-.modal-card h3{margin:0 0 10px;font-size:18px;font-weight:700;letter-spacing:-.3px;}
-.modal-card p{margin:0 0 9px;font-size:13px;color:#5B6B80;line-height:1.5;text-align:left;}
-.modal-card p b{color:#0F172A;}
-.modal-btns{display:flex;gap:8px;margin-top:14px;}
-.modal-btns button{flex:1;padding:13px;border:none;border-radius:12px;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;}
-.modal-btns .ok{background:var(--tg-blue);color:#fff;}
-.modal-btns .ok:active{background:var(--tg-blue-hover);}
-.modal-btns .cancel{background:#E9F0F7;color:#5B6B80;}
-.modal-btns .cancel:active{background:#D9E1EA;}
-.win-icon-big{font-size:72px;line-height:1;margin:8px 0 14px;animation:winPop .6s cubic-bezier(.2,1.4,.4,1);display:inline-block;}
-@keyframes winPop{0%{transform:scale(0) rotate(-180deg);opacity:0;}60%{transform:scale(1.15) rotate(10deg);opacity:1;}100%{transform:scale(1) rotate(0);}}
-.win-title{margin:0 0 8px;font-size:16px;font-weight:700;color:#0F172A;}
-.win-reward{font-size:22px;font-weight:900;margin:10px 0 14px;letter-spacing:-.5px;}
-.win-reward.gold{color:#E8A317;}
-.win-reward.blue{color:#1490D8;}
-.win-reward.green{color:#31B545;}
+.task-check{width:30px;height:30px;flex:0 0 30px;border-radius:50%;display:grid;place-items:center;background:var(--tg-green);
+  color:#fff;font-size:15px;font-weight:700;}
+.task-check.wait{background:#E9F0F7;color:#A2AFC2;}
 
-#toast{position:absolute;left:50%;top:72px;transform:translate(-50%,-14px);z-index:70;background:rgba(16,36,58,.94);color:#fff;
-  font-size:13px;font-weight:500;padding:11px 18px;border-radius:12px;opacity:0;visibility:hidden;transition:.25s;pointer-events:none;
-  max-width:88%;text-align:center;}
-#toast.show{opacity:1;visibility:visible;transform:translate(-50%,0);}
+.tabs{display:flex;gap:6px;margin-bottom:13px;background:#E4EBF3;padding:4px;border-radius:12px;overflow-x:auto;}
+.tabs::-webkit-scrollbar{height:0;}
+.tab{flex:1;border:none;font-family:inherit;padding:9px 4px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;
+  background:transparent;color:#8798AE;transition:background .16s,color .16s;white-space:nowrap;}
+.tab.active{background:#fff;color:var(--tg-blue);box-shadow:0 1px 3px rgba(24,60,110,.12);}
+.tab:active{transform:scale(.97);}
+
+.drawer{position:absolute;top:0;left:0;bottom:0;width:min(82%,320px);z-index:50;background:#1B3F63;transform:translateX(-102%);
+  transition:transform .28s cubic-bezier(.3,.9,.3,1);display:flex;flex-direction:column;color:#fff;overflow-y:auto;
+  padding:14px 14px calc(18px + env(safe-area-inset-bottom,0px));}
+.drawer.open{transform:translateX(0);}
+.drawer::-webkit-scrollbar{width:0;}
+.drawer-close{align-self:flex-end;width:36px;height:36px;border:none;border-radius:10px;background:rgba(255,255,255,.1);color:#fff;
+  font-size:17px;cursor:pointer;display:grid;place-items:center;font-family:inherit;}
+.drawer-close:active{background:rgba(255,255,255,.22);}
+.drawer-head{display:flex;flex-direction:column;align-items:center;text-align:center;padding:2px 0 16px;}
+.avatar{width:74px;height:74px;border-radius:50%;display:grid;place-items:center;font-size:38px;background:#2B7FD4;margin-bottom:10px;
+  border:2px solid rgba(255,255,255,.2);overflow:hidden;position:relative;}
+.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.d-name{font-size:17px;font-weight:700;letter-spacing:-.3px;}
+.d-lvl{font-size:12px;color:#9CC3E4;font-weight:500;margin-top:2px;}
+.d-bar{width:150px;height:6px;border-radius:6px;background:rgba(255,255,255,.16);margin-top:9px;overflow:hidden;}
+.d-bar i{display:block;height:100%;border-radius:6px;background:var(--tg-blue);transition:width .3s;}
+.d-xp{font-size:10.5px;color:#8FB6D8;margin-top:5px;font-weight:500;}
+.drawer-nav{display:flex;flex-direction:column;gap:3px;margin-top:4px;}
+.dnav{display:flex;align-items:center;gap:12px;background:none;border:none;font-family:inherit;color:#D8E8F6;font-size:14.5px;
+  font-weight:500;padding:12px 13px;border-radius:10px;cursor:pointer;text-align:left;transition:background .15s;}
+.dnav svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;opacity:.9;flex:0 0 auto;}
+.dnav:active{background:rgba(255,255,255,.1);}
+.dnav.active{background:var(--tg-blue);color:#fff;}
+.dnav.admin-nav{background:linear-gradient(135deg,#8B5CF6,#EC4899);color:#fff;}
+.dnav-sep{height:1px;background:rgba(255,255,255,.12);margin:10px 6px;}
+.drawer-foot{margin-top:auto;padding-top:18px;text-align:center;font-size:10.5px;color:#7FA5C6;line-height:1.6;}
+
+.overlay{position:absolute;inset:0;background:rgba(10,22,40,.5);opacity:0;visibility:hidden;transition:.24s;z-index:40;}
+.overlay.show{opacity:1;visibility:visible;}
+
+.bottomnav{flex:0 0 auto;display:flex;background:#fff;border-top:1px solid var(--line);padding:7px 2px calc(7px + env(safe-area-inset-bottom,0px));z-index:6;}
+.nav-item{flex:1;background:none;border:none;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:2px;
+  color:#A2AFC2;font-size:9.5px;font-weight:500;padding:5px 0;cursor:pointer;border-radius:12px;transition:color .16s;}
+.nav-item svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;transition:.16s;}
+.nav-item:active{transform:scale(.93);}
+.nav-item.active{color:var(--tg-blue);}
+.nav-item.active svg{stroke-width:2.2;}
+.nav-item.nav-roulette{color:#E8A317;}
+.nav-item.nav-roulette.active{color:#E8A317;}
+.nav-item.nav-roulette svg{stroke:#E8A317;}
+
+/* Promo */
+.promo-row{display:flex;gap:6px;margin-top:10px;}
+.promo-row input{flex:1;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-family:inherit;font-size:13px;outline:none;text-transform:uppercase;}
+.promo-row input:focus{border-color:var(--tg-blue);}
+.promo-row button{border:none;font-family:inherit;background:linear-gradient(135deg,#5BE39A,#2ECC71);color:#fff;border-radius:10px;padding:0 18px;font-size:13px;font-weight:800;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -343,15 +408,15 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
         <svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg>👑 Админ-панель
       </button>
     </nav>
-    <div class="drawer-foot">
-      КриптоКот v1.0<br>Играй и зарабатывай 🪙
-    </div>
+    <div class="drawer-foot">КриптоКот v1.0<br>Играй и зарабатывай 🪙</div>
   </aside>
 
   <div class="content" id="content">
 
+    <!-- HOME -->
     <section class="screen active" id="s-home">
       <div class="home" id="tapZone">
+        <div class="weekend-banner" id="weekendBanner" style="display:none;"></div>
         <div class="balance">
           <div class="bal-num-row">
             <img class="coin-img big" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt="" id="coinLogo">
@@ -372,20 +437,15 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       </div>
     </section>
 
+    <!-- ROULETTE -->
     <section class="screen" id="s-roulette">
       <div class="roulette-wrap">
-        <div class="roulette-title">
-          <h2>🎡 Рулетка удачи</h2>
-          <p>Испытай удачу — призы ждут!</p>
-        </div>
+        <div class="roulette-title"><h2>🎡 Рулетка удачи</h2><p>Испытай удачу — призы ждут!</p></div>
         <div class="wheel-container">
           <div class="wheel-glow"></div>
           <div class="wheel-pointer" id="wheelPointer"></div>
           <canvas id="wheelCanvas" width="600" height="600"></canvas>
-          <button class="spin-center" id="spinBtn">
-            <span class="sc-ico">🎯</span>
-            <span class="sc-txt">Крутить</span>
-          </button>
+          <button class="spin-center" id="spinBtn"><span class="sc-ico">🎯</span><span class="sc-txt">Крутить</span></button>
         </div>
         <div class="roulette-info" id="rouletteInfo"></div>
         <div class="prizes-section-title">Возможные призы</div>
@@ -393,6 +453,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       </div>
     </section>
 
+    <!-- UPGRADES -->
     <section class="screen" id="s-upgrades">
       <div class="screen-head">
         <div><h2>Улучшения</h2><p>Увеличивай доход и открывай новые возможности</p></div>
@@ -404,6 +465,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       <div class="list" id="upgradesList"></div>
     </section>
 
+    <!-- BUILDINGS -->
     <section class="screen" id="s-buildings">
       <div class="screen-head">
         <div><h2>Постройки</h2><p>Построй здания и получай пассивный доход</p></div>
@@ -415,6 +477,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       <div class="list" id="buildingsList"></div>
     </section>
 
+    <!-- ACHIEVEMENTS -->
     <section class="screen" id="s-achievements">
       <div class="screen-head">
         <div><h2>Достижения</h2><p>Выполняй достижения и получай награды</p></div>
@@ -426,6 +489,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       <div class="list" id="achievementsList"></div>
     </section>
 
+    <!-- TASKS -->
     <section class="screen" id="s-tasks">
       <div class="screen-head">
         <div><h2>Задания</h2><p>Выполняй задания и получай награды</p></div>
@@ -435,32 +499,32 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
         </div>
       </div>
       <div class="tabs">
-        <button class="tab active" data-tab="daily">Ежедневные</button>
+        <button class="tab active" data-tab="dailyQ">Ежедневные</button>
         <button class="tab" data-tab="regular">Обычные</button>
       </div>
+      <div id="dailyQuestProgress" style="background:#fff;border-radius:14px;padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 4px rgba(24,60,110,.06);display:none;"></div>
       <div class="list" id="tasksList"></div>
     </section>
 
+    <!-- SHOP -->
     <section class="screen" id="s-shop">
       <div class="shop-hero">
         <img class="shop-hero-img" src="https://i.postimg.cc/KcWftDvX/IMG-7937.png" alt="">
         <div class="shop-hero-text">
-          <h3>Магазин</h3>
-          <p>Бусты, ресурсы и эксклюзив</p>
-          <div class="diamond-pill">
-            <span class="diamond-ico">💎</span>
-            <span id="heroDiamonds">3</span>
-          </div>
+          <h3>Магазин</h3><p>Бусты, ресурсы и эксклюзив</p>
+          <div class="diamond-pill"><span class="diamond-ico">💎</span><span id="heroDiamonds">3</span></div>
         </div>
       </div>
       <div class="tabs">
         <button class="tab active" data-shop="boosts">Бусты</button>
+        <button class="tab" data-shop="cases">🎁 Кейсы</button>
         <button class="tab" data-shop="premium">⭐ Премиум</button>
         <button class="tab" data-shop="diamonds">💎</button>
       </div>
       <div class="list" id="shopList"></div>
     </section>
 
+    <!-- PROFILE -->
     <section class="screen" id="s-profile">
       <div class="screen-head">
         <div><h2>Профиль</h2><p>Твоя статистика и прогресс</p></div>
@@ -479,26 +543,27 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       <div class="stats">
         <div class="stat"><b id="stCoins">0</b><span>Монеты</span></div>
         <div class="stat"><b id="stDiamonds">3</b><span>Алмазы</span></div>
-        <div class="stat"><b id="stRank">#—</b><span>Рейтинг</span></div>
+        <div class="stat"><b id="stPrestige">×1.0</b><span>Престиж</span></div>
       </div>
       <div class="stat-list">
-        <div class="stat-row">
-          <svg viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L10 22l9-11.5h-6.5z"/></svg>
-          <span>Доход</span><b id="stIncome">0/с</b>
-        </div>
-        <div class="stat-row">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
-          <span>Время в игре</span><b id="stTime">0 мин</b>
-        </div>
-        <div class="stat-row">
-          <svg viewBox="0 0 24 24"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6"/></svg>
-          <span>Построено зданий</span><b id="stBuild">0</b>
-        </div>
-        <div class="stat-row">
-          <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M8 12.2l2.6 2.6L16.2 9"/></svg>
-          <span>Заданий выполнено</span><b id="stTasks">0 / 0</b>
+        <div class="stat-row"><svg viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L10 22l9-11.5h-6.5z"/></svg><span>Доход</span><b id="stIncome">0/с</b></div>
+        <div class="stat-row"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg><span>Время в игре</span><b id="stTime">0 мин</b></div>
+        <div class="stat-row"><svg viewBox="0 0 24 24"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6"/></svg><span>Построено зданий</span><b id="stBuild">0</b></div>
+        <div class="stat-row"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M8 12.2l2.6 2.6L16.2 9"/></svg><span>Заданий выполнено</span><b id="stTasks">0 / 0</b></div>
+      </div>
+
+      <div class="custom-block">
+        <div class="custom-title">🎟️ Промокод</div>
+        <div class="promo-row">
+          <input type="text" id="promoInput" placeholder="Введи код">
+          <button id="promoBtn">ОК</button>
         </div>
       </div>
+
+      <button class="btn-primary btn-prestige" id="prestigeBtn" style="margin-bottom:10px;">
+        <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9"/><path d="M21 3v6h-6"/></svg>
+        <span id="prestigeLabel">Престиж</span>
+      </button>
       <button class="btn-primary btn-rename" id="renameBtn" style="margin-bottom:10px;">
         <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
         Сменить имя — 50 000 🪙
@@ -513,6 +578,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       </button>
     </section>
 
+    <!-- CUSTOMIZATION -->
     <section class="screen" id="s-custom">
       <div class="screen-head">
         <div><h2>Кастомизация</h2><p>Аватарки, рамки, фоны</p></div>
@@ -521,32 +587,17 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
           <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
         </div>
       </div>
-
-      <div class="custom-block">
-        <div class="custom-title">🐱🐶 Аватарки</div>
-        <div class="custom-grid" id="avatarGrid"></div>
-      </div>
-
-      <div class="custom-block">
-        <div class="custom-title">🎨 Рамки <span class="lock">PREMIUM</span></div>
-        <div class="custom-grid" id="frameGrid"></div>
-      </div>
-
-      <div class="custom-block">
-        <div class="custom-title">🌈 Цвет фона авы</div>
-        <div class="custom-grid" id="bgColorGrid"></div>
-      </div>
-
+      <div class="custom-block"><div class="custom-title">🐱🐶 Аватарки</div><div class="custom-grid" id="avatarGrid"></div></div>
+      <div class="custom-block"><div class="custom-title">🎨 Рамки <span class="lock">PREMIUM</span></div><div class="custom-grid" id="frameGrid"></div></div>
+      <div class="custom-block"><div class="custom-title">🌈 Цвет фона авы</div><div class="custom-grid" id="bgColorGrid"></div></div>
       <div class="custom-block">
         <div class="custom-title">🌄 Фоны главного экрана</div>
         <div class="bg-grid" id="bgGrid"></div>
-        <div class="url-row">
-          <input type="text" id="customBgUrl" placeholder="Свой URL фона (https://...)">
-          <button id="applyBgUrl">OK</button>
-        </div>
+        <div class="url-row"><input type="text" id="customBgUrl" placeholder="Свой URL фона (https://...)"><button id="applyBgUrl">OK</button></div>
       </div>
     </section>
 
+    <!-- ADMIN -->
     <section class="screen" id="s-admin">
       <div class="screen-head">
         <div><h2>👑 Админ-панель</h2><p>Режим бога — только для админов</p></div>
@@ -555,73 +606,44 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
           <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
         </div>
       </div>
-
       <div class="admin-hero">
         <h3>⚡ Режим бога активирован</h3>
         <p>Тебе доступны все читы и команды</p>
         <div class="aid" id="adminIdLabel">ID: —</div>
       </div>
-
-      <div class="admin-block">
-        <div class="admin-block-title">💰 Монеты</div>
-        <div class="admin-row">
-          <button class="admin-btn gold" data-admin="coins" data-val="100000">+100K</button>
-          <button class="admin-btn gold" data-admin="coins" data-val="1000000">+1M</button>
-          <button class="admin-btn gold" data-admin="coins" data-val="1000000000">+1B</button>
-          <button class="admin-btn red" data-admin="coins" data-val="-100000">−100K</button>
-        </div>
-      </div>
-
-      <div class="admin-block">
-        <div class="admin-block-title">💎 Алмазы</div>
-        <div class="admin-row">
-          <button class="admin-btn blue" data-admin="diamonds" data-val="10">+10 💎</button>
-          <button class="admin-btn blue" data-admin="diamonds" data-val="100">+100 💎</button>
-          <button class="admin-btn blue" data-admin="diamonds" data-val="1000">+1000 💎</button>
-        </div>
-      </div>
-
-      <div class="admin-block">
-        <div class="admin-block-title">⭐ Premium</div>
-        <div class="admin-row">
-          <button class="admin-btn gold" data-admin="premium-on">Выдать Premium</button>
-          <button class="admin-btn red" data-admin="premium-off">Забрать Premium</button>
-        </div>
-      </div>
-
-      <div class="admin-block">
-        <div class="admin-block-title">📈 Прогресс</div>
-        <div class="admin-row">
-          <button class="admin-btn green" data-admin="level" data-val="10">+10 уровней</button>
-          <button class="admin-btn green" data-admin="xp" data-val="100000">+100K XP</button>
-          <button class="admin-btn green" data-admin="all-buildings">+1 ко всем зданиям</button>
-          <button class="admin-btn green" data-admin="all-upgrades" data-val="10">+10 к апгрейдам</button>
-        </div>
-      </div>
-
-      <div class="admin-block">
-        <div class="admin-block-title">🎨 Косметика</div>
-        <div class="admin-row">
-          <button class="admin-btn blue" data-admin="unlock-bg">Открыть все фоны</button>
-          <button class="admin-btn blue" data-admin="unlock-all">Открыть всё (ава/рамки)</button>
-        </div>
-      </div>
-
-      <div class="admin-block">
-        <div class="admin-block-title">🎰 Рулетка</div>
-        <div class="admin-row">
-          <button class="admin-btn green" data-admin="spin-reset">Сбросить кулдаун рулетки</button>
-        </div>
-      </div>
-
-      <div class="admin-block">
-        <div class="admin-block-title">⚙️ Система</div>
-        <div class="admin-row">
-          <button class="admin-btn" data-admin="save">💾 Сохранить</button>
-          <button class="admin-btn" data-admin="load">📂 Загрузить</button>
-          <button class="admin-btn red" data-admin="reset">🗑️ Полный сброс</button>
-        </div>
-      </div>
+      <div class="admin-block"><div class="admin-block-title">💰 Монеты</div><div class="admin-row">
+        <button class="admin-btn gold" data-admin="coins" data-val="100000">+100K</button>
+        <button class="admin-btn gold" data-admin="coins" data-val="1000000">+1M</button>
+        <button class="admin-btn gold" data-admin="coins" data-val="1000000000">+1B</button>
+        <button class="admin-btn red" data-admin="coins" data-val="-100000">−100K</button>
+      </div></div>
+      <div class="admin-block"><div class="admin-block-title">💎 Алмазы</div><div class="admin-row">
+        <button class="admin-btn blue" data-admin="diamonds" data-val="10">+10 💎</button>
+        <button class="admin-btn blue" data-admin="diamonds" data-val="100">+100 💎</button>
+        <button class="admin-btn blue" data-admin="diamonds" data-val="1000">+1000 💎</button>
+      </div></div>
+      <div class="admin-block"><div class="admin-block-title">⭐ Premium</div><div class="admin-row">
+        <button class="admin-btn gold" data-admin="premium-on">Выдать Premium</button>
+        <button class="admin-btn red" data-admin="premium-off">Забрать Premium</button>
+      </div></div>
+      <div class="admin-block"><div class="admin-block-title">📈 Прогресс</div><div class="admin-row">
+        <button class="admin-btn green" data-admin="level" data-val="10">+10 уровней</button>
+        <button class="admin-btn green" data-admin="xp" data-val="100000">+100K XP</button>
+        <button class="admin-btn green" data-admin="all-buildings">+1 ко всем зданиям</button>
+        <button class="admin-btn green" data-admin="all-upgrades" data-val="10">+10 к апгрейдам</button>
+        <button class="admin-btn green" data-admin="prestige-add" data-val="1">+1 престиж</button>
+      </div></div>
+      <div class="admin-block"><div class="admin-block-title">🎨 Косметика</div><div class="admin-row">
+        <button class="admin-btn blue" data-admin="unlock-bg">Открыть все фоны</button>
+      </div></div>
+      <div class="admin-block"><div class="admin-block-title">🎰 Рулетка</div><div class="admin-row">
+        <button class="admin-btn green" data-admin="spin-reset">Сбросить кулдаун</button>
+      </div></div>
+      <div class="admin-block"><div class="admin-block-title">⚙️ Система</div><div class="admin-row">
+        <button class="admin-btn" data-admin="save">💾 Сохранить</button>
+        <button class="admin-btn" data-admin="load">📂 Загрузить</button>
+        <button class="admin-btn red" data-admin="reset">🗑️ Полный сброс</button>
+      </div></div>
     </section>
 
   </div>
@@ -636,10 +658,27 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 
 </div>
 
-<div class="modal" id="modal">
-  <div class="modal-card">
-    <div id="modalContent"></div>
-    <div class="modal-btns" id="modalBtns"></div>
+<div class="modal" id="modal"><div class="modal-card"><div id="modalContent"></div><div class="modal-btns" id="modalBtns"></div></div></div>
+
+<!-- Daily popup -->
+<div class="daily-popup" id="dailyPopup">
+  <div class="daily-card">
+    <h3>🔥 Ежедневная награда</h3>
+    <p id="dailySub">Заходи каждый день — награда растёт!</p>
+    <div class="daily-grid" id="dailyGrid"></div>
+    <button class="daily-claim" id="dailyClaim">Забрать</button>
+  </div>
+</div>
+
+<!-- Offline popup -->
+<div class="offline-popup" id="offlinePopup">
+  <div class="offline-card">
+    <div class="oi">💤</div>
+    <h3>Пока тебя не было…</h3>
+    <div class="osum" id="offlineSum">+0 🪙</div>
+    <p>Твои здания работали, пока ты отдыхал.<br>Забрать доход?</p>
+    <button class="obtn x2" id="offlineX2">🎬 Забрать ×2</button>
+    <button class="obtn" id="offlineTake">Забрать</button>
   </div>
 </div>
 
@@ -657,9 +696,7 @@ function checkAdmin(){
   }catch(e){}
   return false;
 }
-
-let secretTaps = 0;
-let secretTimer = null;
+let secretTaps = 0, secretTimer = null;
 function secretTap(){
   secretTaps++;
   clearTimeout(secretTimer);
@@ -667,8 +704,7 @@ function secretTap(){
   if (secretTaps >= 7){
     secretTaps = 0;
     if (!IS_ADMIN){
-      IS_ADMIN = true;
-      showAdminUI();
+      IS_ADMIN = true; showAdminUI();
       toast('👑 Режим бога активирован!');
       try{ tg?.HapticFeedback?.notificationOccurred('success'); }catch(e){}
     }
@@ -689,7 +725,6 @@ function showAdminUI(){
 /* ==================== TELEGRAM ==================== */
 const tg = window.Telegram?.WebApp;
 if (tg){ try{ tg.ready(); tg.expand(); if(tg.setHeaderColor) tg.setHeaderColor('#1B3F63'); }catch(e){} }
-
 IS_ADMIN = checkAdmin();
 
 /* ==================== SAVE ==================== */
@@ -699,36 +734,30 @@ let saveBusy = false;
 
 function defaultState(){
   return {
-    coins: 0,
-    diamonds: 3,
-    xp: 0,
-    level: 1,
-    totalTaps: 0,
-    totalEarned: 0,
-    buildings: {},
-    upgrades: {},
-    ownedBuildings: {},
+    coins: 0, diamonds: 3, xp: 0, level: 1,
+    totalTaps: 0, totalEarned: 0,
+    buildings: {}, upgrades: {}, ownedBuildings: {},
     premium: false,
-    avatar: 'cat1',
-    frame: 'none',
-    avatarBg: 'blue',
-    bg: 'default',
-    bgCustom: '',
-    tasksDone: {},
-    dailyDate: '',
-    dailyDone: {},
-    lastSpin: 0,
-    achievements: {},
+    avatar: 'cat1', frame: 'none', avatarBg: 'blue',
+    bg: 'default', bgCustom: '',
+    tasksDone: {}, dailyDate: '', dailyDone: {},
+    lastSpin: 0, achievements: {},
     name: 'КриптоКот',
-    startedAt: Date.now(),
-    playTime: 0
+    startedAt: Date.now(), playTime: 0,
+    // Новые поля
+    streak: 0,
+    lastDailyDate: '',
+    lastSeen: Date.now(),
+    prestige: 0,
+    lastPrestige: 0,
+    dailyQuests: {},
+    dailyQuestsDate: '',
+    usedPromos: {}
   };
 }
 let S = defaultState();
 
-function saveLocal(){
-  try{ localStorage.setItem(SAVE_KEY, JSON.stringify(S)); }catch(e){}
-}
+function saveLocal(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify(S)); }catch(e){} }
 async function saveCloud(){
   if (saveBusy || !tg?.CloudStorage) return;
   saveBusy = true;
@@ -737,14 +766,11 @@ async function saveCloud(){
   }catch(e){}
   saveBusy = false;
 }
-function save(){ saveLocal(); saveCloud(); }
+function save(){ S.lastSeen = Date.now(); saveLocal(); saveCloud(); }
 
 async function load(){
   let data = null;
-  try{
-    const raw = localStorage.getItem(SAVE_KEY);
-    if (raw) data = JSON.parse(raw);
-  }catch(e){}
+  try{ const raw = localStorage.getItem(SAVE_KEY); if (raw) data = JSON.parse(raw); }catch(e){}
   if (!data && tg?.CloudStorage){
     data = await new Promise(res=>{
       tg.CloudStorage.getItem(CLOUD_KEY, (err,val)=>{ if(err||!val) return res(null); try{res(JSON.parse(val));}catch(e){res(null);} });
@@ -752,34 +778,31 @@ async function load(){
   }
   if (data && typeof data === 'object'){
     S = Object.assign(defaultState(), data);
-    S.buildings = S.buildings||{};
-    S.upgrades = S.upgrades||{};
-    S.ownedBuildings = S.ownedBuildings||{};
-    S.tasksDone = S.tasksDone||{};
-    S.dailyDone = S.dailyDone||{};
-    S.achievements = S.achievements||{};
+    S.buildings = S.buildings||{}; S.upgrades = S.upgrades||{}; S.ownedBuildings = S.ownedBuildings||{};
+    S.tasksDone = S.tasksDone||{}; S.dailyDone = S.dailyDone||{}; S.achievements = S.achievements||{};
+    S.dailyQuests = S.dailyQuests||{}; S.usedPromos = S.usedPromos||{};
   }
 }
 
 /* ==================== DATA ==================== */
 const BUILDINGS = [
-  {id:'farm',     name:'Ферма',       icon:'🌾', base:150,     inc:0.15},
-  {id:'mine',     name:'Шахта',       icon:'⛏️', base:900,     inc:0.9},
-  {id:'factory',  name:'Фабрика',     icon:'🏭', base:5500,    inc:5.5},
-  {id:'bank',     name:'Банк',        icon:'🏦', base:30000,   inc:32},
-  {id:'mall',     name:'Торговый центр',icon:'🏬',base:150000, inc:170},
-  {id:'hotel',    name:'Отель',       icon:'🏨', base:750000,  inc:900},
-  {id:'station',  name:'Электростанция',icon:'⚡',base:3500000,inc:4200},
-  {id:'cosmo',    name:'Космопорт',   icon:'🚀', base:18000000,inc:22000},
-  {id:'exchange', name:'Биржа',       icon:'📈', base:90000000,inc:120000}
+  {id:'farm', name:'Ферма', icon:'🌾', base:150, inc:0.15},
+  {id:'mine', name:'Шахта', icon:'⛏️', base:900, inc:0.9},
+  {id:'factory', name:'Фабрика', icon:'🏭', base:5500, inc:5.5},
+  {id:'bank', name:'Банк', icon:'🏦', base:30000, inc:32},
+  {id:'mall', name:'Торговый центр', icon:'🏬', base:150000, inc:170},
+  {id:'hotel', name:'Отель', icon:'🏨', base:750000, inc:900},
+  {id:'station', name:'Электростанция', icon:'⚡', base:3500000, inc:4200},
+  {id:'cosmo', name:'Космопорт', icon:'🚀', base:18000000, inc:22000},
+  {id:'exchange', name:'Биржа', icon:'📈', base:90000000, inc:120000}
 ];
 
 const UPGRADES = [
-  {id:'tap1', name:'Сила тапа',    icon:'👆', base:200,    mult:1.9,  type:'tap',    add:1,   desc:'+1 к монетам за тап'},
-  {id:'tap2', name:'Мега-тап',     icon:'💪', base:5000,   mult:2.1,  type:'tap',    add:3,   desc:'+3 к монетам за тап'},
-  {id:'inc1', name:'Пассивный доход',icon:'💤',base:1500,  mult:2.0,  type:'income', add:0.05,desc:'+5% к пассивному доходу'},
-  {id:'inc2', name:'Автоматизация',icon:'🤖', base:25000,  mult:2.2,  type:'income', add:0.12,desc:'+12% к пассивному доходу'},
-  {id:'crit', name:'Критический тап',icon:'💥',base:8000,  mult:2.4,  type:'crit',   add:0.05,desc:'+5% шанс крита x5'}
+  {id:'tap1', name:'Сила тапа', icon:'👆', base:200, mult:1.9, type:'tap', add:1, desc:'+1 к монетам за тап'},
+  {id:'tap2', name:'Мега-тап', icon:'💪', base:5000, mult:2.1, type:'tap', add:3, desc:'+3 к монетам за тап'},
+  {id:'inc1', name:'Пассивный доход', icon:'💤', base:1500, mult:2.0, type:'income', add:0.05, desc:'+5% к пассивному доходу'},
+  {id:'inc2', name:'Автоматизация', icon:'🤖', base:25000, mult:2.2, type:'income', add:0.12, desc:'+12% к пассивному доходу'},
+  {id:'crit', name:'Критический тап', icon:'💥', base:8000, mult:2.4, type:'crit', add:0.05, desc:'+5% шанс крита x5'}
 ];
 
 const AVATARS = [
@@ -849,15 +872,28 @@ const TASKS_REGULAR = [
   {id:'r_bank',    name:'Купить Банк',          icon:'🏦', goal:1,    reward:{coins:50000}, type:'has:bank'}
 ];
 
+// Ежедневные квесты (пул из которых выбираются 3 случайных каждый день)
+const DAILY_QUEST_POOL = [
+  {id:'dq_tap300',  name:'300 тапов',    icon:'👆', goal:300,    reward:{coins:2000},  type:'tapsToday'},
+  {id:'dq_tap1000', name:'1000 тапов',   icon:'🔥', goal:1000,   reward:{coins:6000},  type:'tapsToday'},
+  {id:'dq_spin1',   name:'Крутить рулетку', icon:'🎡', goal:1,   reward:{coins:3000},  type:'spinsToday'},
+  {id:'dq_build1',  name:'Купить здание', icon:'🏠', goal:1,     reward:{coins:4000, diamonds:1}, type:'buildingsToday'},
+  {id:'dq_case1',   name:'Открыть кейс', icon:'🎁', goal:1,      reward:{diamonds:2},  type:'casesToday'},
+  {id:'dq_earn5k',  name:'Заработать 5000', icon:'🪙', goal:5000, reward:{coins:2500}, type:'earnedToday'},
+  {id:'dq_earn20k', name:'Заработать 20000', icon:'💰', goal:20000, reward:{coins:8000, diamonds:1}, type:'earnedToday'}
+];
+
 const ACHIEVEMENTS = [
-  {id:'a_tap1',   name:'Первый тап',      icon:'👆', goal:1,       stat:'totalTaps',  reward:{coins:100}},
-  {id:'a_tap100', name:'100 тапов',       icon:'✋', goal:100,     stat:'totalTaps',  reward:{coins:500}},
-  {id:'a_tap1k',  name:'1 000 тапов',     icon:'🔥', goal:1000,    stat:'totalTaps',  reward:{coins:5000, diamonds:1}},
-  {id:'a_earn1k', name:'Первая 1000',     icon:'🪙', goal:1000,    stat:'totalEarned',reward:{coins:500}},
-  {id:'a_earn100k',name:'100 000 монет',  icon:'💰', goal:100000,  stat:'totalEarned',reward:{diamonds:3}},
-  {id:'a_build1', name:'Первое здание',   icon:'🏠', goal:1,       stat:'buildings',  reward:{coins:1000}},
-  {id:'a_build10',name:'10 зданий',       icon:'🏙️', goal:10,      stat:'buildings',  reward:{diamonds:2}},
-  {id:'a_lvl5',   name:'5 уровень',       icon:'⭐', goal:5,       stat:'level',      reward:{diamonds:2}}
+  {id:'a_tap1', name:'Первый тап', icon:'👆', goal:1, stat:'totalTaps', reward:{coins:100}},
+  {id:'a_tap100', name:'100 тапов', icon:'✋', goal:100, stat:'totalTaps', reward:{coins:500}},
+  {id:'a_tap1k', name:'1 000 тапов', icon:'🔥', goal:1000, stat:'totalTaps', reward:{coins:5000, diamonds:1}},
+  {id:'a_earn1k', name:'Первая 1000', icon:'🪙', goal:1000, stat:'totalEarned', reward:{coins:500}},
+  {id:'a_earn100k', name:'100 000 монет', icon:'💰', goal:100000, stat:'totalEarned', reward:{diamonds:3}},
+  {id:'a_build1', name:'Первое здание', icon:'🏠', goal:1, stat:'buildings', reward:{coins:1000}},
+  {id:'a_build10', name:'10 зданий', icon:'🏙️', goal:10, stat:'buildings', reward:{diamonds:2}},
+  {id:'a_lvl5', name:'5 уровень', icon:'⭐', goal:5, stat:'level', reward:{diamonds:2}},
+  {id:'a_prestige1', name:'Первый престиж', icon:'♻️', goal:1, stat:'prestige', reward:{diamonds:10}},
+  {id:'a_streak7', name:'Стрик 7 дней', icon:'🔥', goal:7, stat:'streak', reward:{diamonds:15}}
 ];
 
 const WHEEL_PRIZES = [
@@ -870,6 +906,42 @@ const WHEEL_PRIZES = [
   {label:'🪙 5000',   type:'coins',    value:5000,   color:'#FF6B35'},
   {label:'⚡ Буст x2 на 1 мин', type:'boost', value:60, color:'#00C2FF'}
 ];
+
+// Кейсы
+const CASES = [
+  {id:'case_bronze', name:'Бронзовый кейс', icon:'🎁', price:5, currency:'diamonds',
+   prizes:[
+     {chance:60, type:'coins',    value:5000,  label:'5 000 🪙'},
+     {chance:25, type:'coins',    value:15000, label:'15 000 🪙'},
+     {chance:10, type:'diamonds', value:3,     label:'3 💎'},
+     {chance:5,  type:'coins',    value:50000, label:'50 000 🪙 (JACKPOT!)'}
+   ]},
+  {id:'case_silver', name:'Серебряный кейс', icon:'📦', price:20, currency:'diamonds',
+   prizes:[
+     {chance:50, type:'coins',    value:30000,  label:'30 000 🪙'},
+     {chance:25, type:'coins',    value:80000,  label:'80 000 🪙'},
+     {chance:15, type:'diamonds', value:15,     label:'15 💎'},
+     {chance:8,  type:'coins',    value:250000, label:'250 000 🪙 (БОЛЬШОЙ!)'},
+     {chance:2,  type:'premium',  value:1,      label:'⭐ PREMIUM (ДЖЕКПОТ!!)'}
+   ]},
+  {id:'case_gold', name:'Золотой кейс', icon:'🏆', price:60, currency:'diamonds',
+   prizes:[
+     {chance:40, type:'coins',    value:150000,  label:'150 000 🪙'},
+     {chance:30, type:'coins',    value:400000,  label:'400 000 🪙'},
+     {chance:15, type:'diamonds', value:50,      label:'50 💎'},
+     {chance:10, type:'coins',    value:1000000, label:'1 000 000 🪙!'},
+     {chance:5,  type:'premium',  value:1,       label:'⭐ PREMIUM'}
+   ]}
+];
+
+// Промокоды
+const PROMOS = {
+  'CRYPTO2024':  {coins:50000,  diamonds:5},
+  'WELCOME':     {coins:25000},
+  'FEPAMU':      {coins:100000, diamonds:10},
+  'CATLOVE':     {coins:15000,  diamonds:3},
+  'BOOST':       {coins:30000}
+};
 
 /* ==================== HELPERS ==================== */
 const $ = s => document.querySelector(s);
@@ -898,15 +970,23 @@ function modal(html, buttons){
   $('#modal').classList.add('show');
 }
 function closeModal(){ $('#modal').classList.remove('show'); }
+function today(){
+  const d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function isWeekend(){
+  const d = new Date().getDay();
+  return d === 0 || d === 6;
+}
 
 /* ==================== STATE HELPERS ==================== */
-function totalBuildings(){
-  return Object.values(S.buildings).reduce((a,b)=>a+b,0);
-}
+function totalBuildings(){ return Object.values(S.buildings).reduce((a,b)=>a+b,0); }
+function prestigeMult(){ return 1 + (S.prestige||0) * 0.5; }
 function tapValue(){
   let v = 1;
   UPGRADES.filter(u=>u.type==='tap').forEach(u=>{ v += (S.upgrades[u.id]||0)*u.add; });
   if (S.premium) v += 2;
+  v *= prestigeMult();
   return Math.max(1, v);
 }
 function critChance(){
@@ -924,6 +1004,8 @@ function incomePerSec(){
   UPGRADES.filter(u=>u.type==='income').forEach(u=>{ bonus += (S.upgrades[u.id]||0)*u.add; });
   inc *= (1 + bonus);
   if (S.premium) inc *= 1.5;
+  inc *= prestigeMult();
+  if (isWeekend()) inc *= 2;
   return inc;
 }
 function xpForLevel(l){ return 100 + (l-1)*150; }
@@ -936,9 +1018,7 @@ function addXp(n){
     S.diamonds += 1;
   }
 }
-function priceFor(base, mult, count){
-  return Math.floor(base * Math.pow(mult, count));
-}
+function priceFor(base, mult, count){ return Math.floor(base * Math.pow(mult, count)); }
 function hasBuilding(id){ return (S.buildings[id]||0) > 0; }
 
 /* ==================== ADMIN ACTIONS ==================== */
@@ -951,21 +1031,14 @@ function adminAction(cmd, val){
       else { S.coins += v; if (v>0) S.totalEarned += v; }
       toast((v>0?'+':'')+fmt(v)+' 🪙'); break;
     case 'diamonds':
-      S.diamonds = Math.max(0, S.diamonds + v);
-      toast('+'+v+' 💎'); break;
-    case 'premium-on':
-      S.premium = true; toast('⭐ Premium выдан'); break;
-    case 'premium-off':
-      S.premium = false; toast('Premium забран'); break;
-    case 'level':
-      S.level += v; S.xp = 0; toast('+'+v+' уровней'); break;
-    case 'xp':
-      addXp(v); toast('+'+fmt(v)+' XP'); break;
+      S.diamonds = Math.max(0, S.diamonds + v); toast('+'+v+' 💎'); break;
+    case 'premium-on': S.premium = true; toast('⭐ Premium выдан'); break;
+    case 'premium-off': S.premium = false; toast('Premium забран'); break;
+    case 'level': S.level += v; S.xp = 0; toast('+'+v+' уровней'); break;
+    case 'xp': addXp(v); toast('+'+fmt(v)+' XP'); break;
+    case 'prestige-add': S.prestige = (S.prestige||0) + v; toast('♻️ Престиж: ×'+prestigeMult().toFixed(1)); break;
     case 'all-buildings':
-      BUILDINGS.forEach(b=>{
-        S.buildings[b.id] = (S.buildings[b.id]||0) + 1;
-        S.ownedBuildings[b.id] = true;
-      });
+      BUILDINGS.forEach(b=>{ S.buildings[b.id] = (S.buildings[b.id]||0) + 1; S.ownedBuildings[b.id] = true; });
       toast('🏦 +1 ко всем зданиям'); break;
     case 'all-upgrades':
       UPGRADES.forEach(u=>{ S.upgrades[u.id] = (S.upgrades[u.id]||0) + (v||1); });
@@ -973,21 +1046,15 @@ function adminAction(cmd, val){
     case 'unlock-bg':
       BACKGROUNDS.forEach(b=>{ if (b.building) S.ownedBuildings[b.building] = true; });
       toast('🌄 Все фоны открыты'); break;
-    case 'unlock-all':
-      toast('🎨 Всё открыто (премиум выдаст всё)'); break;
-    case 'spin-reset':
-      S.lastSpin = 0; toast('🎰 Кулдаун сброшен'); break;
-    case 'save':
-      save(); toast('💾 Сохранено'); break;
-    case 'load':
-      (async ()=>{ await load(); renderAll(); toast('📂 Загружено'); })(); return;
+    case 'spin-reset': S.lastSpin = 0; toast('🎰 Кулдаун сброшен'); break;
+    case 'save': save(); toast('💾 Сохранено'); break;
+    case 'load': (async ()=>{ await load(); renderAll(); toast('📂 Загружено'); })(); return;
     case 'reset':
-      modal('<h3>Полный сброс?</h3><p>Весь прогресс будет удалён. Это действие <b>нельзя отменить</b>.</p>', [
+      modal('<h3>Полный сброс?</h3><p>Весь прогресс будет удалён. <b>Нельзя отменить.</b></p>', [
         {label:'Отмена', cls:'cancel'},
         {label:'Сбросить', cls:'ok', onClick:()=>{
           const isAdmin = IS_ADMIN;
-          S = defaultState();
-          save(); renderAll();
+          S = defaultState(); save(); renderAll();
           if (isAdmin) showAdminUI();
           toast('🗑️ Прогресс сброшен');
         }}
@@ -997,8 +1064,145 @@ function adminAction(cmd, val){
   save(); renderAll();
 }
 
+/* ==================== STREAK ==================== */
+const DAILY_REWARDS = [
+  {day:1, coins:1000,  diamonds:0},
+  {day:2, coins:2500,  diamonds:0},
+  {day:3, coins:5000,  diamonds:1},
+  {day:4, coins:10000, diamonds:1},
+  {day:5, coins:25000, diamonds:2},
+  {day:6, coins:50000, diamonds:3},
+  {day:7, coins:150000, diamonds:10}
+];
+function checkDailyStreak(){
+  const td = today();
+  const last = S.lastDailyDate || '';
+  // Сколько дней прошло с последнего захода
+  let daysSince = 999;
+  if (last){
+    const lastD = new Date(last + 'T00:00:00');
+    const todayD = new Date(td + 'T00:00:00');
+    daysSince = Math.round((todayD - lastD) / (1000*60*60*24));
+  }
+  // Обновление стрика
+  if (daysSince === 1){
+    // зашёл на следующий день — стрик растёт
+    S.streak = Math.min(7, (S.streak||0) + 1);
+  } else if (daysSince > 1 || last === ''){
+    // пропустил или первый раз — начинаем сначала
+    S.streak = 1;
+  }
+  // Если уже забирал сегодня — ничего не показываем
+  if (last === td) return;
+  // Показываем попап награды
+  showDailyPopup();
+}
+function showDailyPopup(){
+  const grid = $('#dailyGrid');
+  grid.innerHTML = '';
+  for (let i=1; i<=7; i++){
+    const r = DAILY_REWARDS[i-1];
+    const div = document.createElement('div');
+    let cls = 'daily-day';
+    if (i < S.streak) cls += ' passed';
+    else if (i === S.streak) cls += ' today';
+    div.className = cls;
+    div.innerHTML = `<div class="dd-ico">${i===7?'🎁':(r.diamonds?'💎':'🪙')}</div>${i}`;
+    div.title = r.coins ? (r.coins + ' монет' + (r.diamonds ? ' + ' + r.diamonds + ' 💎' : '')) : '';
+    grid.appendChild(div);
+  }
+  const cur = DAILY_REWARDS[Math.min(6, (S.streak||1)-1)];
+  $('#dailySub').innerHTML = `День <b>${S.streak||1}</b> / 7 · +${fmt(cur.coins)} 🪙${cur.diamonds?' +'+cur.diamonds+' 💎':''}`;
+  $('#dailyPopup').classList.add('show');
+}
+$('#dailyClaim').onclick = ()=>{
+  const cur = DAILY_REWARDS[Math.min(6, (S.streak||1)-1)];
+  S.coins += cur.coins;
+  S.totalEarned += cur.coins;
+  if (cur.diamonds) S.diamonds += cur.diamonds;
+  S.lastDailyDate = today();
+  save();
+  $('#dailyPopup').classList.remove('show');
+  renderAll();
+  toast('🎁 Награда получена! +'+fmt(cur.coins)+' 🪙' + (cur.diamonds?' +'+cur.diamonds+' 💎':''));
+};
+
+/* ==================== OFFLINE INCOME ==================== */
+function checkOfflineIncome(){
+  const now = Date.now();
+  const last = S.lastSeen || now;
+  const diff = (now - last) / 1000; // секунд
+  if (diff < 60) return; // меньше минуты — не показываем
+  const capped = Math.min(diff, 8*60*60); // максимум 8 часов
+  const income = incomePerSec() * capped;
+  if (income < 100) return; // если меньше 100 монет — не показываем
+  $('#offlineSum').textContent = '+' + fmt(income) + ' 🪙';
+  $('#offlinePopup').classList.add('show');
+  // обработчики
+  const take = (x2) => {
+    const sum = x2 ? income*2 : income;
+    S.coins += sum;
+    S.totalEarned += sum;
+    save(); renderAll();
+    $('#offlinePopup').classList.remove('show');
+    toast('💤 +' + fmt(sum) + ' 🪙');
+  };
+  $('#offlineTake').onclick = ()=>take(false);
+  $('#offlineX2').onclick = ()=>{
+    // имитация рекламы — просто даём x2
+    take(true);
+  };
+}
+
+/* ==================== DAILY QUESTS ==================== */
+function ensureDailyQuests(){
+  const td = today();
+  if (S.dailyQuestsDate !== td){
+    // новые квесты на сегодня
+    const pool = [...DAILY_QUEST_POOL];
+    const chosen = [];
+    for (let i=0; i<3 && pool.length; i++){
+      const idx = Math.floor(Math.random()*pool.length);
+      chosen.push(pool[idx].id);
+      pool.splice(idx,1);
+    }
+    S.dailyQuestsDate = td;
+    S.dailyQuests = {};
+    chosen.forEach(id=>{ S.dailyQuests[id] = 0; });
+    save();
+  }
+}
+function getDailyQuestDefs(){
+  return Object.keys(S.dailyQuests||{}).map(id => DAILY_QUEST_POOL.find(q=>q.id===id)).filter(Boolean);
+}
+function questProgress(q){
+  // прогресс за сегодня
+  const td = today();
+  if (q.type === 'tapsToday') return S.todayTaps || 0;
+  if (q.type === 'earnedToday') return S.todayEarned || 0;
+  if (q.type === 'spinsToday') return S.todaySpins || 0;
+  if (q.type === 'buildingsToday') return S.todayBuildings || 0;
+  if (q.type === 'casesToday') return S.todayCases || 0;
+  return 0;
+}
+function resetDailyCountersIfNeeded(){
+  const td = today();
+  if (S.todayDate !== td){
+    S.todayDate = td;
+    S.todayTaps = 0;
+    S.todayEarned = 0;
+    S.todaySpins = 0;
+    S.todayBuildings = 0;
+    S.todayCases = 0;
+    save();
+  }
+}
+
 /* ==================== RENDER ==================== */
 function renderAll(){
+  ensureDailyQuests();
+  resetDailyCountersIfNeeded();
+  renderWeekend();
   renderHome();
   renderUpgrades();
   renderBuildings();
@@ -1010,7 +1214,15 @@ function renderAll(){
   renderRouletteInfo();
   renderPrizes();
 }
-
+function renderWeekend(){
+  const b = $('#weekendBanner');
+  if (isWeekend()){
+    b.style.display = 'block';
+    b.textContent = '🔥 ВЫХОДНЫЕ: ×2 ДОХОД!';
+  } else {
+    b.style.display = 'none';
+  }
+}
 function renderHome(){
   $('#homeCoins').textContent = fmt(S.coins);
   $('#homePerSec').textContent = '+' + fmt(incomePerSec()) + '/с';
@@ -1022,6 +1234,9 @@ function renderHome(){
   const bar = $('#boostBar'); bar.innerHTML = '';
   if (S.premium){
     const el = document.createElement('div'); el.className='boost-pill prem'; el.textContent='⭐ PREMIUM'; bar.appendChild(el);
+  }
+  if (S.prestige > 0){
+    const el = document.createElement('div'); el.className='boost-pill prestige'; el.textContent='♻️ ×'+prestigeMult().toFixed(1); bar.appendChild(el);
   }
   if (IS_ADMIN){
     const el = document.createElement('div'); el.className='boost-pill admin'; el.textContent='👑 ADMIN'; bar.appendChild(el);
@@ -1035,10 +1250,7 @@ function renderHome(){
   const home = $('#tapZone');
   let url = '';
   if (S.bgCustom) url = S.bgCustom;
-  else {
-    const bg = BACKGROUNDS.find(b=>b.id===S.bg);
-    if (bg) url = bg.url;
-  }
+  else { const bg = BACKGROUNDS.find(b=>b.id===S.bg); if (bg) url = bg.url; }
   home.style.backgroundImage = url ? `url('${url}')` : '';
 }
 function renderUpgrades(){
@@ -1054,15 +1266,11 @@ function renderUpgrades(){
         <div class="item-name">${u.name} <span style="color:#8798AE;font-weight:500">ур.${count}</span></div>
         <div class="item-sub">${u.desc}</div>
       </div>
-      <button class="buy ${can?'':'off'}">
-        <img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png">${fmt(price)}
-      </button>`;
+      <button class="buy ${can?'':'off'}"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png">${fmt(price)}</button>`;
     div.querySelector('.buy').onclick = ()=>{
       if (S.coins < price){ toast('Недостаточно монет'); return; }
-      S.coins -= price;
-      S.upgrades[u.id] = count+1;
-      addXp(10);
-      save(); renderAll();
+      S.coins -= price; S.upgrades[u.id] = count+1;
+      addXp(10); save(); renderAll();
       toast('✅ '+u.name+' ур.'+(count+1));
     };
     list.appendChild(div);
@@ -1081,19 +1289,15 @@ function renderBuildings(){
         <div class="item-name">${b.name} <span style="color:#8798AE;font-weight:500">×${count}</span></div>
         <div class="item-sub">+<b>${fmt(b.inc)}</b>/сек за штуку</div>
       </div>
-      <button class="buy ${can?'':'off'}">
-        <img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png">${fmt(price)}
-      </button>`;
+      <button class="buy ${can?'':'off'}"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png">${fmt(price)}</button>`;
     div.querySelector('.buy').onclick = ()=>{
       if (S.coins < price){ toast('Недостаточно монет'); return; }
-      S.coins -= price;
-      S.buildings[b.id] = count+1;
+      S.coins -= price; S.buildings[b.id] = count+1;
+      S.todayBuildings = (S.todayBuildings||0) + 1;
       if (count === 0){
         S.ownedBuildings[b.id] = true;
         toast('🎉 Открыт фон «'+b.name+'»!');
-      } else {
-        toast('✅ '+b.name+' ×'+(count+1));
-      }
+      } else toast('✅ '+b.name+' ×'+(count+1));
       addXp(20); save(); renderAll();
     };
     list.appendChild(div);
@@ -1107,6 +1311,8 @@ function renderAchievements(){
     else if (a.stat==='totalEarned') val = S.totalEarned;
     else if (a.stat==='buildings') val = totalBuildings();
     else if (a.stat==='level') val = S.level;
+    else if (a.stat==='prestige') val = S.prestige||0;
+    else if (a.stat==='streak') val = S.streak||0;
     const done = S.achievements[a.id];
     const can = !done && val >= a.goal;
     const div = document.createElement('div'); div.className='item';
@@ -1130,47 +1336,93 @@ function renderAchievements(){
   });
 }
 
-let currentTaskTab = 'daily';
+let currentTaskTab = 'dailyQ';
 function renderTasks(){
   const list = $('#tasksList'); list.innerHTML = '';
-  const today = new Date().toISOString().slice(0,10);
-  if (S.dailyDate !== today){ S.dailyDate = today; S.dailyDone = {}; save(); }
+  const progressBlock = $('#dailyQuestProgress');
 
-  const arr = currentTaskTab==='daily' ? TASKS_DAILY : TASKS_REGULAR;
-  arr.forEach(t=>{
-    const isDaily = currentTaskTab==='daily';
-    const done = isDaily ? !!S.dailyDone[t.id] : false;
+  if (currentTaskTab === 'dailyQ'){
+    // Ежедневные квесты
+    const defs = getDailyQuestDefs();
+    let doneCount = 0;
+    defs.forEach(q=>{
+      const val = questProgress(q);
+      const isDone = S.dailyQuests[q.id] === 1;
+      if (isDone) doneCount++;
+      const can = !isDone && val >= q.goal;
+      const div = document.createElement('div'); div.className='item';
+      div.innerHTML = `
+        <div class="task-check ${isDone?'':'wait'}">${isDone?'✓':'○'}</div>
+        <div class="item-body">
+          <div class="item-name">${q.icon} ${q.name}</div>
+          <div class="item-sub">${isDone?'Получено':'Прогресс: '+Math.min(val,q.goal)+' / '+q.goal}</div>
+        </div>
+        <button class="buy ${isDone?'off':(can?'green-btn':'off')}">${
+          isDone?'✓':(q.reward.coins? fmt(q.reward.coins)+' 🪙' : '💎 '+q.reward.diamonds)
+        }</button>`;
+      div.querySelector('.buy').onclick = ()=>{
+        if (isDone) return;
+        if (!can){ toast('Ещё не выполнено'); return; }
+        S.dailyQuests[q.id] = 1;
+        if (q.reward.coins) S.coins += q.reward.coins;
+        if (q.reward.diamonds) S.diamonds += q.reward.diamonds;
+        save(); renderAll();
+        toast('🎁 Квест выполнен!');
+      };
+      list.appendChild(div);
+    });
 
-    let val = 0;
-    if (t.type==='buildings') val = totalBuildings();
-    else if (t.type==='earned') val = S.totalEarned;
-    else if (t.type==='level') val = S.level;
-    else if (t.type && t.type.startsWith('has:')) val = hasBuilding(t.type.split(':')[1]) ? 1 : 0;
-    else val = S.totalTaps;
-
-    const can = val >= t.goal;
-    const div = document.createElement('div'); div.className='item';
-    div.innerHTML = `
-      <div class="task-check ${done?'':'wait'}">${done?'✓':'○'}</div>
-      <div class="item-body">
-        <div class="item-name">${t.icon} ${t.name}</div>
-        <div class="item-sub">${done?'Получено':'Прогресс: '+Math.min(val,t.goal)+' / '+t.goal}</div>
-      </div>
-      <button class="buy ${done?'off':(can?'green-btn':'off')}">${
-        done?'✓':(t.reward.coins? fmt(t.reward.coins)+' 🪙' : '💎 '+t.reward.diamonds)
-      }</button>`;
-    div.querySelector('.buy').onclick = ()=>{
-      if (done) return;
-      if (!can){ toast('Ещё не выполнено'); return; }
-      if (isDaily) S.dailyDone[t.id] = true;
-      else S.tasksDone[t.id] = (S.tasksDone[t.id]||0)+1;
-      if (t.reward.coins) S.coins += t.reward.coins;
-      if (t.reward.diamonds) S.diamonds += t.reward.diamonds;
-      save(); renderAll();
-      toast('🎁 Награда получена!');
-    };
-    list.appendChild(div);
-  });
+    // прогресс-блок + бонус
+    progressBlock.style.display = 'block';
+    if (doneCount === 3 && !S.dailyBonusClaimed){
+      progressBlock.innerHTML = `<div style="font-weight:800;color:#31B545;font-size:13px;">🎉 Все квесты выполнены!</div>
+        <button class="buy green-btn" id="dailyBonusBtn" style="margin-top:8px;width:100%;justify-content:center;">Забрать бонус: 15 000 🪙 + 5 💎</button>`;
+      $('#dailyBonusBtn').onclick = ()=>{
+        if (S.dailyBonusClaimed) return;
+        S.dailyBonusClaimed = true;
+        S.coins += 15000; S.diamonds += 5;
+        save(); renderAll();
+        toast('🎁 Бонус за все квесты!');
+      };
+    } else if (S.dailyBonusClaimed){
+      progressBlock.innerHTML = `<div style="font-size:12.5px;color:#31B545;font-weight:700;">✅ Бонус за сегодня получен</div>`;
+    } else {
+      progressBlock.innerHTML = `<div style="font-size:12.5px;font-weight:700;">Ежедневные квесты: ${doneCount} / 3</div>
+        <div style="font-size:11px;color:#8798AE;margin-top:2px;">Выполни все 3 — получишь бонус 15 000 🪙 + 5 💎</div>`;
+    }
+  } else {
+    // Обычные задания
+    progressBlock.style.display = 'none';
+    const arr = TASKS_REGULAR;
+    arr.forEach(t=>{
+      const done = false;
+      let val = 0;
+      if (t.type==='buildings') val = totalBuildings();
+      else if (t.type==='earned') val = S.totalEarned;
+      else if (t.type==='level') val = S.level;
+      else if (t.type && t.type.startsWith('has:')) val = hasBuilding(t.type.split(':')[1]) ? 1 : 0;
+      else val = S.totalTaps;
+      const can = val >= t.goal;
+      const div = document.createElement('div'); div.className='item';
+      div.innerHTML = `
+        <div class="task-check wait">○</div>
+        <div class="item-body">
+          <div class="item-name">${t.icon} ${t.name}</div>
+          <div class="item-sub">Прогресс: ${Math.min(val,t.goal)} / ${t.goal}</div>
+        </div>
+        <button class="buy ${can?'green-btn':'off'}">${t.reward.coins? fmt(t.reward.coins)+' 🪙' : '💎 '+t.reward.diamonds}</button>`;
+      div.querySelector('.buy').onclick = ()=>{
+        if (!can){ toast('Ещё не выполнено'); return; }
+        if (S.tasksDone[t.id]){ toast('Уже получено'); return; }
+        S.tasksDone[t.id] = 1;
+        if (t.reward.coins) S.coins += t.reward.coins;
+        if (t.reward.diamonds) S.diamonds += t.reward.diamonds;
+        save(); renderAll();
+        toast('🎁 Награда получена!');
+      };
+      list.appendChild(div);
+    });
+  }
 }
 
 let currentShopTab = 'boosts';
@@ -1191,6 +1443,20 @@ function renderShop(){
         </div>
         <button class="buy ${can?'':'off'}"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png">${fmt(price)}</button>`;
       div.querySelector('.buy').onclick = ()=>{ if(S.coins<price){toast('Мало монет');return;} S.coins-=price; S.upgrades[u.id]=count+1; save(); renderAll(); };
+      list.appendChild(div);
+    });
+  }
+  else if (currentShopTab === 'cases'){
+    CASES.forEach(c=>{
+      const can = S.diamonds >= c.price;
+      const div = document.createElement('div'); div.className='case-card';
+      div.innerHTML = `
+        <div class="ci">${c.icon}</div>
+        <h3>${c.name}</h3>
+        <p>Случайный приз · ${c.price} 💎</p>
+        <button class="cbtn" ${can?'':'disabled'}>${can?'Открыть за '+c.price+' 💎':'Нужно '+c.price+' 💎'}</button>`;
+      const btn = div.querySelector('.cbtn');
+      if (can) btn.onclick = ()=>openCase(c);
       list.appendChild(div);
     });
   }
@@ -1222,8 +1488,7 @@ function renderShop(){
         {label:'Отмена', cls:'cancel'},
         {label:'Купить', cls:'ok', onClick:()=>{
           if (S.coins < 100000){ toast('Мало монет'); return; }
-          S.coins -= 100000;
-          S.premium = true;
+          S.coins -= 100000; S.premium = true;
           save(); renderAll();
           toast('⭐ Premium активирован!');
         }}
@@ -1232,9 +1497,9 @@ function renderShop(){
   }
   else if (currentShopTab === 'diamonds'){
     const items = [
-      {id:'dia1', name:'10 💎', price:50000,  gain:10},
-      {id:'dia2', name:'50 💎', price:220000, gain:50},
-      {id:'dia3', name:'200 💎', price:800000, gain:200}
+      {name:'10 💎', price:50000, gain:10},
+      {name:'50 💎', price:220000, gain:50},
+      {name:'200 💎', price:800000, gain:200}
     ];
     items.forEach(it=>{
       const can = S.coins >= it.price;
@@ -1254,6 +1519,34 @@ function renderShop(){
       list.appendChild(div);
     });
   }
+}
+
+/* ==================== OPEN CASE ==================== */
+function openCase(c){
+  if (S.diamonds < c.price){ toast('Мало алмазов'); return; }
+  S.diamonds -= c.price;
+  // Выбор приза по шансам
+  const total = c.prizes.reduce((a,p)=>a+p.chance,0);
+  let r = Math.random() * total;
+  let picked = c.prizes[0];
+  for (const p of c.prizes){
+    if (r < p.chance){ picked = p; break; }
+    r -= p.chance;
+  }
+  // Начисление
+  let msg = '';
+  if (picked.type === 'coins'){ S.coins += picked.value; S.totalEarned += picked.value; msg = '+'+fmt(picked.value)+' 🪙'; }
+  else if (picked.type === 'diamonds'){ S.diamonds += picked.value; msg = '+'+picked.value+' 💎'; }
+  else if (picked.type === 'premium'){ S.premium = true; msg = '⭐ PREMIUM!'; }
+  S.todayCases = (S.todayCases||0) + 1;
+  addXp(30);
+  save(); renderAll();
+  modal(
+    `<div class="win-icon-big">🎉</div>
+     <div class="win-title">${c.icon} ${c.name}</div>
+     <div class="win-reward ${picked.type==='premium'?'gold':(picked.type==='diamonds'?'blue':'gold')}">${msg}</div>`,
+    [{label:'Забрать', cls:'ok'}]
+  );
 }
 
 function renderProfile(){
@@ -1290,12 +1583,13 @@ function renderProfile(){
 
   $('#stCoins').textContent = fmt(S.coins);
   $('#stDiamonds').textContent = S.diamonds;
+  $('#stPrestige').textContent = '×'+prestigeMult().toFixed(1);
   $('#stIncome').textContent = fmt(incomePerSec())+'/с';
   const mins = Math.floor(S.playTime/60);
   $('#stTime').textContent = mins < 60 ? mins+' мин' : Math.floor(mins/60)+' ч';
   $('#stBuild').textContent = totalBuildings();
-  const doneTasks = Object.keys(S.tasksDone).length + Object.keys(S.dailyDone).length;
-  $('#stTasks').textContent = doneTasks + ' / ' + (TASKS_DAILY.length + TASKS_REGULAR.length);
+  const doneTasks = Object.keys(S.tasksDone).length;
+  $('#stTasks').textContent = doneTasks + ' / ' + TASKS_REGULAR.length;
 
   const rBtn = $('#renameBtn');
   if (rBtn){
@@ -1303,7 +1597,43 @@ function renderProfile(){
     rBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>` +
       (IS_ADMIN ? 'Сменить имя — бесплатно (ADMIN)' : 'Сменить имя — ' + fmt(price) + ' 🪙');
   }
+  // Престиж
+  const pBtn = $('#prestigeBtn');
+  const pLabel = $('#prestigeLabel');
+  const threshold = 1000000 * Math.pow(3, S.prestige||0);
+  if (S.coins >= threshold){
+    pBtn.style.opacity = '1';
+    pLabel.textContent = 'Престиж! Сбросить за ×' + ((1 + ((S.prestige||0)+1)*0.5).toFixed(1)) + ' доход';
+  } else {
+    pBtn.style.opacity = '.55';
+    pLabel.textContent = 'Престиж (нужно '+fmt(threshold)+' 🪙)';
+  }
 }
+
+$('#prestigeBtn').onclick = ()=>{
+  const threshold = 1000000 * Math.pow(3, S.prestige||0);
+  if (S.coins < threshold){
+    toast('Нужно ' + fmt(threshold) + ' 🪙');
+    return;
+  }
+  const newMult = (1 + ((S.prestige||0)+1)*0.5).toFixed(1);
+  modal(
+    `<h3>♻️ Престиж</h3>
+     <p>Ты сбросишь: <b>монеты, здания, апгрейды, уровни</b>.</p>
+     <p>Останутся: алмазы, премиум, аватарки, фоны, рекорды.</p>
+     <p>Получишь: <b>постоянный ×${newMult} к доходу и тапам</b>.</p>`,
+    [
+      {label:'Отмена', cls:'cancel'},
+      {label:'Сбросить', cls:'ok', onClick:()=>{
+        S.prestige = (S.prestige||0) + 1;
+        S.coins = 0; S.buildings = {}; S.upgrades = {};
+        S.xp = 0; S.level = 1;
+        save(); renderAll();
+        toast('♻️ Престиж! Теперь ×'+prestigeMult().toFixed(1));
+      }}
+    ]
+  );
+};
 
 function renderCustom(){
   const ag = $('#avatarGrid'); ag.innerHTML = '';
@@ -1352,53 +1682,34 @@ function renderCustom(){
     el.innerHTML = `<div class="bg-lbl">${b.name}</div><div class="bg-check">✓</div>`;
     el.onclick = ()=>{
       if (!unlocked){ toast(b.building?'Купите это здание':'Недоступно'); return; }
-      if (S.bg === b.id){
-        S.bg = 'default'; S.bgCustom = '';
-        save(); renderAll(); toast('Фон отключён');
-      } else {
-        S.bg = b.id; S.bgCustom = '';
-        save(); renderAll(); toast('Фон установлен');
-      }
+      if (S.bg === b.id){ S.bg = 'default'; S.bgCustom = ''; save(); renderAll(); toast('Фон отключён'); }
+      else { S.bg = b.id; S.bgCustom = ''; save(); renderAll(); toast('Фон установлен'); }
     };
     bg.appendChild(el);
   });
 }
 
 /* ==================== ROULETTE ==================== */
-let wheelAngle = 0;
-let spinning = false;
+let wheelAngle = 0, spinning = false;
 const canvas = $('#wheelCanvas');
 const ctx = canvas.getContext('2d');
-
 function drawWheel(){
   const cx = 300, cy = 300, r = 290;
   const n = WHEEL_PRIZES.length;
   const arc = (Math.PI*2)/n;
   ctx.clearRect(0,0,600,600);
   WHEEL_PRIZES.forEach((p,i)=>{
-    const start = i*arc;
-    const end = start+arc;
-    ctx.beginPath();
-    ctx.moveTo(cx,cy);
-    ctx.arc(cx,cy,r,start,end);
-    ctx.closePath();
-    ctx.fillStyle = p.color;
-    ctx.fill();
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-    ctx.save();
-    ctx.translate(cx,cy);
-    ctx.rotate(start+arc/2);
-    ctx.textAlign='right';
-    ctx.fillStyle='#fff';
+    const start = i*arc, end = start+arc;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,start,end); ctx.closePath();
+    ctx.fillStyle = p.color; ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.stroke();
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate(start+arc/2);
+    ctx.textAlign='right'; ctx.fillStyle='#fff';
     ctx.font='bold 24px -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif';
-    ctx.fillText(p.label, r-20, 8);
-    ctx.restore();
+    ctx.fillText(p.label, r-20, 8); ctx.restore();
   });
 }
 drawWheel();
-
 function canSpinFree(){
   if (IS_ADMIN) return true;
   const now = Date.now();
@@ -1430,17 +1741,16 @@ function renderPrizes(){
     g.appendChild(div);
   });
 }
-
 function spin(){
   if (spinning) return;
   const free = canSpinFree();
   if (!free && S.diamonds < 1){ toast('Нужен 1 💎 или подожди'); return; }
   if (!free) S.diamonds -= 1;
   S.lastSpin = Date.now();
+  S.todaySpins = (S.todaySpins||0) + 1;
   spinning = true;
   $('#spinBtn').disabled = true;
   $('#wheelPointer').classList.add('spinning');
-
   const n = WHEEL_PRIZES.length;
   const idx = Math.floor(Math.random()*n);
   const arc = 360/n;
@@ -1448,7 +1758,6 @@ function spin(){
   wheelAngle += targetAngle;
   canvas.style.transition = 'transform 4s cubic-bezier(.17,.67,.25,1)';
   canvas.style.transform = `rotate(${wheelAngle}deg)`;
-
   setTimeout(()=>{
     spinning = false;
     $('#spinBtn').disabled = false;
@@ -1457,7 +1766,7 @@ function spin(){
     let msg = '', cls = 'gold';
     if (prize.type==='coins'){ S.coins += prize.value; S.totalEarned += prize.value; msg = '+'+fmt(prize.value)+' 🪙'; cls='gold'; }
     else if (prize.type==='diamonds'){ S.diamonds += prize.value; msg = '+'+prize.value+' 💎'; cls='blue'; }
-    else if (prize.type==='boost'){ S.coins += 1000; msg = 'Буст x2 (символ) + 1000 🪙'; cls='green'; }
+    else if (prize.type==='boost'){ S.coins += 1000; msg = 'Буст x2 + 1000 🪙'; cls='green'; }
     else { msg = 'Пусто 😢'; cls='green'; }
     addXp(15);
     save(); renderAll();
@@ -1473,6 +1782,8 @@ function doTap(x, y){
   S.coins += gain;
   S.totalEarned += gain;
   S.totalTaps++;
+  S.todayTaps = (S.todayTaps||0) + 1;
+  S.todayEarned = (S.todayEarned||0) + gain;
   addXp(isCrit?3:1);
 
   const f = document.createElement('div');
@@ -1501,7 +1812,6 @@ function goTo(id){
 }
 $$('.nav-item').forEach(n=>n.onclick = ()=>goTo(n.dataset.go));
 $$('.dnav').forEach(n=>n.onclick = ()=>goTo(n.dataset.go));
-
 function openDrawer(){ $('#drawer').classList.add('open'); $('#overlay').classList.add('show'); }
 function closeDrawer(){ $('#drawer').classList.remove('open'); $('#overlay').classList.remove('show'); }
 $('#menuBtn').onclick = openDrawer;
@@ -1530,7 +1840,6 @@ $('#tapBtn').addEventListener('click', e=>{
   e.stopPropagation();
   doTap(e.clientX, e.clientY);
 });
-
 $('#coinLogo').addEventListener('click', e=>{
   e.stopPropagation();
   secretTap();
@@ -1542,11 +1851,9 @@ $$('[data-admin]').forEach(b=>{
 });
 
 /* ==================== RENAME ==================== */
-const NAME_MAX = 8;
-const NAME_MIN = 2;
+const NAME_MAX = 8, NAME_MIN = 2;
 const NAME_FIRST_FORBIDDEN = /^[@#₽&\-_()\=%"*':/!?+$€¥¢©®™~¿\[\]{}<>^¡`;÷\\|¦¬×§¶°]/;
 const NAME_ALLOWED = /^[A-Za-zА-Яа-яЁё0-9 _\-]+$/;
-
 function validateName(val){
   if (!val) return 'Введите имя';
   if (val.length < NAME_MIN) return 'Минимум ' + NAME_MIN + ' символа';
@@ -1556,12 +1863,10 @@ function validateName(val){
   if (!NAME_ALLOWED.test(val)) return 'Разрешены только буквы, цифры, пробел, _ и -';
   return null;
 }
-
 $('#renameBtn').onclick = ()=>{
   const price = IS_ADMIN ? 0 : (S.premium ? 45000 : 50000);
   const cur = S.name || 'КриптоКот';
   if (S.coins < price){ toast('Нужно ' + fmt(price) + ' 🪙'); return; }
-
   const content = document.getElementById('modalContent');
   const btns = document.getElementById('modalBtns');
   content.innerHTML = `
@@ -1571,8 +1876,7 @@ $('#renameBtn').onclick = ()=>{
       style="width:100%;padding:12px 14px;border:1.5px solid #E4EBF3;border-radius:12px;
              font-family:inherit;font-size:15px;text-align:center;outline:none;margin:6px 0 4px;">
     <p style="font-size:11px;color:#8798AE;text-align:center;margin-top:6px;line-height:1.5;">
-      ${NAME_MIN}–${NAME_MAX} символов.<br>
-      Начинается с буквы или цифры.<br>
+      ${NAME_MIN}–${NAME_MAX} символов.<br>Начинается с буквы или цифры.<br>
       Разрешены: буквы, цифры, пробел, <b>_</b> и <b>-</b>.
     </p>`;
   btns.innerHTML = '';
@@ -1586,19 +1890,31 @@ $('#renameBtn').onclick = ()=>{
     const err = validateName(val);
     if (err){ toast('⚠️ ' + err); return; }
     if (S.coins < price){ toast('Мало монет'); return; }
-    S.coins -= price;
-    S.name = val;
-    save(); renderAll();
-    closeModal();
+    S.coins -= price; S.name = val;
+    save(); renderAll(); closeModal();
     toast('✅ Имя изменено: ' + val);
   };
-  btns.appendChild(cancel);
-  btns.appendChild(ok);
+  btns.appendChild(cancel); btns.appendChild(ok);
   document.getElementById('modal').classList.add('show');
   setTimeout(()=>document.getElementById('renameInput')?.focus(), 150);
 };
 
-/* ==================== ROULETTE ==================== */
+/* ==================== PROMO ==================== */
+$('#promoBtn').onclick = ()=>{
+  const code = ($('#promoInput').value || '').trim().toUpperCase();
+  if (!code){ toast('Введи код'); return; }
+  if (S.usedPromos[code]){ toast('Код уже использован'); return; }
+  const p = PROMOS[code];
+  if (!p){ toast('Неверный код'); return; }
+  S.usedPromos[code] = 1;
+  if (p.coins){ S.coins += p.coins; S.totalEarned += p.coins; }
+  if (p.diamonds) S.diamonds += p.diamonds;
+  save(); renderAll();
+  $('#promoInput').value = '';
+  toast('🎟️ +' + fmt(p.coins||0) + ' 🪙' + (p.diamonds?' +'+p.diamonds+' 💎':''));
+};
+
+/* ==================== ROULETTE BTN ==================== */
 $('#spinBtn').onclick = spin;
 
 /* ==================== CUSTOM URL BG ==================== */
@@ -1612,13 +1928,13 @@ $('#applyBgUrl').onclick = ()=>{
 
 /* ==================== PROFILE BTNS ==================== */
 $('#inviteBtn').onclick = ()=>{
-  const link = 'https://t.me/share/url?url=' + encodeURIComponent('https://t.me/YourBot?start=ref') + '&text=' + encodeURIComponent('Играй в КриптоКот!');
+  const link = 'https://t.me/share/url?url=' + encodeURIComponent('https://t.me/TheCryptoCat_nowBot?startapp') + '&text=' + encodeURIComponent('Играй в КриптоКот!');
   if (tg?.openTelegramLink) tg.openTelegramLink(link);
   else window.open(link, '_blank');
 };
 $('#shareBtn').onclick = ()=>{
-  const text = 'Я заработал ' + fmt(S.coins) + ' монет в КриптоКот! Уровень ' + S.level + ' ⭐';
-  const url = 'https://t.me/share/url?url=' + encodeURIComponent('https://t.me/YourBot') + '&text=' + encodeURIComponent(text);
+  const text = 'Я заработал ' + fmt(S.coins) + ' монет в КриптоКот! Уровень ' + S.level + (S.prestige>0?' (Престиж ×'+prestigeMult().toFixed(1)+')':'') + ' ⭐';
+  const url = 'https://t.me/share/url?url=' + encodeURIComponent('https://t.me/TheCryptoCat_nowBot?startapp') + '&text=' + encodeURIComponent(text);
   if (tg?.openTelegramLink) tg.openTelegramLink(url);
   else window.open(url, '_blank');
 };
@@ -1632,23 +1948,29 @@ setInterval(()=>{
   if (inc > 0){
     S.coins += inc;
     S.totalEarned += inc;
+    S.todayEarned = (S.todayEarned||0) + inc;
     renderHome();
     $$('.coinVal').forEach(e=>e.textContent = fmt(S.coins));
   }
 }, 1000);
-
 setInterval(()=>{ renderRouletteInfo(); }, 1000);
 setInterval(()=>{ S.playTime++; save(); }, 1000);
 
 /* ==================== INIT ==================== */
 (async ()=>{
   await load();
+  ensureDailyQuests();
+  resetDailyCountersIfNeeded();
   renderAll();
   goTo('s-home');
   if (IS_ADMIN){
     showAdminUI();
     setTimeout(()=>toast('👑 Режим бога активирован'), 800);
   }
+  // Ежедневная награда
+  setTimeout(()=>{ checkDailyStreak(); }, 600);
+  // Оффлайн-доход
+  setTimeout(()=>{ checkOfflineIncome(); }, 1200);
 })();
 </script>
 <script src="https://zadano.github.io/mysite/track.js"></script>

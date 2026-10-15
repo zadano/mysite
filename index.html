@@ -20,8 +20,7 @@
   --bg:#FFFFFF;
   --bg-gradient:linear-gradient(180deg, #FFFFFF 0%, #F7F9FC 100%);
   --glow-color:rgba(51,144,236,.3);
-  --home-overlay: linear-gradient(180deg, rgba(15,42,71,.15) 0%, rgba(15,42,71,.55) 100%);
-  --home-bg:#FFFFFF;
+  --home-bg:linear-gradient(180deg, #FFFFFF 0%, #E8F2FE 100%);
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
@@ -186,7 +185,7 @@ body{
   color:#fff;font-size:11.5px;font-weight:700;backdrop-filter:blur(6px);
 }
 
-/* ===== HOME — теперь без картинки, чистый CSS под тему ===== */
+/* ===== HOME ===== */
 .home{
   position:relative;height:100%;display:flex;flex-direction:column;
   background:var(--home-bg);
@@ -195,8 +194,7 @@ body{
   transition:background .5s ease;
 }
 .home::before{
-  /* Декоративные круги под тему */
-  content:'';position:absolute;inset:0;pointer-events:none;
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:1;
   background:
     radial-gradient(circle at 20% 20%, var(--glow-color) 0%, transparent 45%),
     radial-gradient(circle at 85% 75%, var(--glow-color) 0%, transparent 45%);
@@ -241,6 +239,42 @@ body{
 @keyframes pulseGlow{
   0%,100%{box-shadow:0 2px 8px var(--glow-color);}
   50%{box-shadow:0 2px 20px var(--glow-color), 0 0 30px var(--glow-color);}
+}
+
+/* ===== КОТ НА ГЛАВНОЙ ===== */
+.home-cat{
+  position:relative;z-index:2;
+  display:flex;align-items:center;justify-content:center;
+  flex:1;min-height:0;
+  padding:8px 16px;
+  pointer-events:none;
+  overflow:hidden;
+}
+.home-cat img{
+  max-width:80%;
+  max-height:100%;
+  object-fit:contain;
+  filter:drop-shadow(0 12px 32px rgba(0,0,0,.25)) drop-shadow(0 0 24px var(--glow-color));
+  transition:filter .5s ease;
+  animation: catFloat 4s ease-in-out infinite;
+}
+@keyframes catFloat{
+  0%,100%{transform:translateY(0) scale(1);}
+  50%{transform:translateY(-14px) scale(1.03);}
+}
+/* Мягкое свечение вокруг кота */
+.home-cat::before{
+  content:'';position:absolute;
+  width:70%;height:70%;
+  border-radius:50%;
+  background:radial-gradient(circle, var(--glow-color) 0%, transparent 70%);
+  z-index:-1;
+  animation: catGlow 3s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes catGlow{
+  0%,100%{opacity:.4;transform:scale(1);}
+  50%{opacity:.8;transform:scale(1.08);}
 }
 .home-spacer{flex:1;min-height:0;}
 
@@ -651,6 +685,7 @@ body{
   .bal-num{font-size:38px;}
   .screen-head h2{font-size:19px;}
   .item-icon{width:42px;height:42px;flex:0 0 42px;font-size:20px;}
+  .home-cat img{max-width:85%;}
 }
 </style>
 </head>
@@ -680,6 +715,9 @@ body{
           <span id="homeDiamonds">3</span>
         </div>
         <div class="boost-bar" id="boostBar"></div>
+      </div>
+      <div class="home-cat">
+        <img src="https://i.postimg.cc/prm3LcGb/83FD1976-2AAA-4494-BE9C-0EAD67D50CFA.png" alt="КриптоКот">
       </div>
       <div class="home-spacer"></div>
     </div>
@@ -1172,13 +1210,13 @@ body{
       color:'linear-gradient(135deg,#FF5F6D,#FFC371,#47E5BC,#5B9BF8,#C471F5)',
       vars: {
         '--bg':'#1a0d2e',
-        '--card':'rgba(255,255,255,.1)',
+        '--card':'rgba(255,255,255,.12)',
         '--text':'#FFFFFF',
         '--text-2':'#E0D7FF',
-        '--line':'rgba(255,255,255,.15)',
+        '--line':'rgba(255,255,255,.18)',
         '--tg-blue':'#FF5F6D',
         '--tg-blue-hover':'#FF3D4F',
-        '--tg-blue-light':'rgba(255,95,109,.25)',
+        '--tg-blue-light':'rgba(255,95,109,.28)',
         '--muted':'#C4B5FD',
         '--glow-color':'rgba(196,113,245,.6)',
         '--bg-gradient':'linear-gradient(135deg, #FF5F6D 0%, #FFC371 25%, #47E5BC 50%, #5B9BF8 75%, #C471F5 100%)',
@@ -1297,16 +1335,14 @@ body{
   function applyTheme(){
     const tObj = THEMES.find(t => t.id === state.theme) || THEMES[0];
     const root = document.documentElement;
-    // Убираем inline-стили прошлой темы
     Object.keys(THEMES[0].vars).forEach(k => root.style.removeProperty(k));
-    // Применяем переменные новой темы
     for(const [k, v] of Object.entries(tObj.vars)){
       root.style.setProperty(k, v);
     }
-    // Форсируем перерисовку
     void document.body.offsetHeight;
 
-    // Специальная обработка для радужной темы — анимированный градиент
+    const catImg = document.querySelector('.home-cat img');
+    const rainbowThemes = ['purple','emerald','rose','amber','cyan','indigo'];
     if(state.theme === 'rainbow'){
       document.body.style.background = 'linear-gradient(135deg, #FF5F6D, #FFC371, #47E5BC, #5B9BF8, #C471F5, #FF5F6D)';
       document.body.style.backgroundSize = '400% 400%';
@@ -1314,6 +1350,9 @@ body{
       tapZone.style.background = 'linear-gradient(135deg, #FF5F6D, #FFC371, #47E5BC, #5B9BF8, #C471F5, #FF5F6D)';
       tapZone.style.backgroundSize = '400% 400%';
       tapZone.style.animation = 'rainbowShift 8s ease infinite';
+      if(catImg){
+        catImg.style.filter = 'drop-shadow(0 12px 32px rgba(0,0,0,.3)) drop-shadow(0 0 32px rgba(255,255,255,.7)) saturate(1.25)';
+      }
     } else {
       document.body.style.background = '';
       document.body.style.backgroundSize = '';
@@ -1321,6 +1360,13 @@ body{
       tapZone.style.background = '';
       tapZone.style.backgroundSize = '';
       tapZone.style.animation = '';
+      if(catImg){
+        if(state.theme === 'dark' || rainbowThemes.includes(state.theme)){
+          catImg.style.filter = 'drop-shadow(0 12px 32px rgba(0,0,0,.5)) drop-shadow(0 0 24px var(--glow-color)) brightness(.92)';
+        } else {
+          catImg.style.filter = '';
+        }
+      }
     }
 
     let meta = document.querySelector('meta[name="theme-color"]');
@@ -1995,9 +2041,7 @@ body{
     observer.observe(document.querySelector('.content'), { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
   }
 
-  // ============ INIT ============
   function init(){
-    // Удаляем все старые сохранения
     try{
       ['cryptocat_save_v6','cryptocat_save_v7','cryptocat_save_v8'].forEach(k => localStorage.removeItem(k));
     }catch(e){}
@@ -2024,8 +2068,6 @@ body{
     setInterval(renderBoostBar, 500);
     window.addEventListener('beforeunload', save);
     document.addEventListener('visibilitychange', ()=>{ if(document.hidden) save(); });
-
-    console.log('[КриптоКот] Инициализация. Тема:', state.theme, '| Премиум:', state.isPremium);
   }
 
   init();

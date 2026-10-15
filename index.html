@@ -113,6 +113,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .boost-pill{background:rgba(255,255,255,.92);border-radius:20px;padding:5px 11px;font-size:11px;font-weight:600;color:#E08A00;
   box-shadow:0 2px 8px rgba(0,0,0,.12);}
 .boost-pill.prem{background:linear-gradient(135deg,#FFB800,#F07000);color:#fff;}
+.boost-pill.admin{background:linear-gradient(135deg,#8B5CF6,#EC4899);color:#fff;}
 .home-spacer{flex:1;min-height:0;}
 .tap-btn{position:relative;z-index:4;margin:0 auto 22px;display:flex;align-items:center;justify-content:center;gap:9px;
   padding:15px 0;width:min(84%,340px);border-radius:12px;font-size:17px;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.25);}
@@ -160,6 +161,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .dnav svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;opacity:.9;flex:0 0 auto;}
 .dnav:active{background:rgba(255,255,255,.1);}
 .dnav.active{background:var(--tg-blue);color:#fff;}
+.dnav.admin-nav{background:linear-gradient(135deg,#8B5CF6,#EC4899);color:#fff;}
 .dnav-sep{height:1px;background:rgba(255,255,255,.12);margin:10px 6px;}
 .drawer-foot{margin-top:auto;padding-top:18px;text-align:center;font-size:10.5px;color:#7FA5C6;line-height:1.6;}
 
@@ -245,6 +247,28 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .bg-item .bg-check{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;background:var(--tg-green);color:#fff;
   display:none;place-items:center;font-size:13px;font-weight:800;}
 .bg-item.selected .bg-check{display:grid;}
+
+/* ADMIN */
+.admin-hero{background:linear-gradient(135deg,#8B5CF6 0%,#EC4899 100%);border-radius:20px;padding:18px;color:#fff;margin-bottom:14px;
+  box-shadow:0 8px 24px rgba(139,92,246,.35);position:relative;overflow:hidden;}
+.admin-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 90% 20%,rgba(255,255,255,.25),transparent 60%);pointer-events:none;}
+.admin-hero h3{margin:0 0 4px;font-size:18px;font-weight:800;position:relative;z-index:1;}
+.admin-hero p{margin:0;font-size:11.5px;color:rgba(255,255,255,.85);position:relative;z-index:1;}
+.admin-hero .aid{display:inline-block;background:rgba(0,0,0,.25);padding:4px 10px;border-radius:20px;margin-top:8px;
+  font-size:11px;font-weight:700;position:relative;z-index:1;}
+
+.admin-block{background:#fff;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(24,60,110,.06);}
+.admin-block-title{font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#5B6B80;margin-bottom:10px;}
+.admin-row{display:flex;flex-wrap:wrap;gap:8px;}
+.admin-btn{border:none;font-family:inherit;background:linear-gradient(135deg,#8B5CF6,#6D28D9);color:#fff;font-weight:700;
+  padding:10px 14px;border-radius:10px;font-size:12.5px;cursor:pointer;transition:transform .1s;flex:1 1 auto;}
+.admin-btn:active{transform:scale(.95);}
+.admin-btn.green{background:linear-gradient(135deg,#5BE39A,#2ECC71);}
+.admin-btn.red{background:linear-gradient(135deg,#FF6B35,#E8487F);}
+.admin-btn.gold{background:linear-gradient(135deg,#FFB800,#F07000);}
+.admin-btn.blue{background:linear-gradient(135deg,#33C5FF,#1490D8);}
+.admin-badge{display:inline-block;color:#fff;background:linear-gradient(135deg,#8B5CF6,#EC4899);font-size:10px;font-weight:800;
+  padding:2px 7px;border-radius:8px;margin-left:6px;vertical-align:middle;}
 
 /* ============ ROULETTE ============ */
 .roulette-wrap{display:flex;flex-direction:column;align-items:center;padding:4px 0 20px;}
@@ -348,6 +372,10 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       <button class="dnav" data-go="s-shop"><svg viewBox="0 0 24 24"><path d="M3 9l1-5h16l1 5"/><path d="M4 9v11h16V9"/></svg>Магазин</button>
       <button class="dnav" data-go="s-profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4-6 8-6s6.5 2 8 6"/></svg>Профиль</button>
       <button class="dnav" data-go="s-custom"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1.4" fill="currentColor"/><circle cx="15" cy="10" r="1.4" fill="currentColor"/><path d="M8 15c1.2 1.4 2.6 2 4 2s2.8-.6 4-2"/></svg>Кастомизация</button>
+      <div class="dnav-sep" id="adminSep" style="display:none"></div>
+      <button class="dnav admin-nav" data-go="s-admin" id="adminNavBtn" style="display:none">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg>👑 Админ-панель
+      </button>
     </nav>
     <div class="drawer-foot">
       КриптоКот v1.0<br>Играй и зарабатывай 🪙
@@ -361,7 +389,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       <div class="home" id="tapZone">
         <div class="balance">
           <div class="bal-num-row">
-            <img class="coin-img big" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt="">
+            <img class="coin-img big" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt="" id="coinLogo">
             <div class="bal-num" id="homeCoins">0</div>
           </div>
           <div class="bal-per" id="homePerSec">+0/с</div>
@@ -558,6 +586,84 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       </div>
     </section>
 
+    <!-- ADMIN -->
+    <section class="screen" id="s-admin">
+      <div class="screen-head">
+        <div><h2>👑 Админ-панель</h2><p>Режим бога — только для админов</p></div>
+        <div class="bal-chips">
+          <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
+          <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
+        </div>
+      </div>
+
+      <div class="admin-hero">
+        <h3>⚡ Режим бога активирован</h3>
+        <p>Тебе доступны все читы и команды</p>
+        <div class="aid" id="adminIdLabel">ID: —</div>
+      </div>
+
+      <div class="admin-block">
+        <div class="admin-block-title">💰 Монеты</div>
+        <div class="admin-row">
+          <button class="admin-btn gold" data-admin="coins" data-val="100000">+100K</button>
+          <button class="admin-btn gold" data-admin="coins" data-val="1000000">+1M</button>
+          <button class="admin-btn gold" data-admin="coins" data-val="1000000000">+1B</button>
+          <button class="admin-btn red" data-admin="coins" data-val="-100000">−100K</button>
+        </div>
+      </div>
+
+      <div class="admin-block">
+        <div class="admin-block-title">💎 Алмазы</div>
+        <div class="admin-row">
+          <button class="admin-btn blue" data-admin="diamonds" data-val="10">+10 💎</button>
+          <button class="admin-btn blue" data-admin="diamonds" data-val="100">+100 💎</button>
+          <button class="admin-btn blue" data-admin="diamonds" data-val="1000">+1000 💎</button>
+        </div>
+      </div>
+
+      <div class="admin-block">
+        <div class="admin-block-title">⭐ Premium</div>
+        <div class="admin-row">
+          <button class="admin-btn gold" data-admin="premium-on">Выдать Premium</button>
+          <button class="admin-btn red" data-admin="premium-off">Забрать Premium</button>
+        </div>
+      </div>
+
+      <div class="admin-block">
+        <div class="admin-block-title">📈 Прогресс</div>
+        <div class="admin-row">
+          <button class="admin-btn green" data-admin="level" data-val="10">+10 уровней</button>
+          <button class="admin-btn green" data-admin="xp" data-val="100000">+100K XP</button>
+          <button class="admin-btn green" data-admin="all-buildings">+1 ко всем зданиям</button>
+          <button class="admin-btn green" data-admin="all-upgrades" data-val="10">+10 к апгрейдам</button>
+        </div>
+      </div>
+
+      <div class="admin-block">
+        <div class="admin-block-title">🎨 Косметика</div>
+        <div class="admin-row">
+          <button class="admin-btn blue" data-admin="unlock-bg">Открыть все фоны</button>
+          <button class="admin-btn blue" data-admin="unlock-all">Открыть всё (ава/рамки)</button>
+        </div>
+      </div>
+
+      <div class="admin-block">
+        <div class="admin-block-title">🎰 Рулетка</div>
+        <div class="admin-row">
+          <button class="admin-btn green" data-admin="spin-reset">Сбросить кулдаун рулетки</button>
+        </div>
+      </div>
+
+      <div class="admin-block">
+        <div class="admin-block-title">⚙️ Система</div>
+        <div class="admin-row">
+          <button class="admin-btn" data-admin="save">💾 Сохранить</button>
+          <button class="admin-btn" data-admin="load">📂 Загрузить</button>
+          <button class="admin-btn red" data-admin="reset">🗑️ Полный сброс</button>
+        </div>
+      </div>
+    </section>
+
   </div>
 
   <!-- BOTTOM NAV -->
@@ -583,9 +689,59 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 <div id="toast"></div>
 
 <script>
+/* ==================== ADMIN ==================== */
+const ADMIN_IDS = [7166372887]; // Telegram ID админов
+let IS_ADMIN = false;
+
+function checkAdmin(){
+  try{
+    const uid = tg?.initDataUnsafe?.user?.id;
+    if (uid && ADMIN_IDS.includes(Number(uid))) return true;
+  }catch(e){}
+  return false;
+}
+
+/* Секрет: 7 тапов по логотипу монеты за 3 секунды (для теста в браузере) */
+let secretTaps = 0;
+let secretTimer = null;
+function secretTap(){
+  secretTaps++;
+  clearTimeout(secretTimer);
+  secretTimer = setTimeout(()=>{ secretTaps = 0; }, 3000);
+  if (secretTaps >= 7){
+    secretTaps = 0;
+    if (!IS_ADMIN){
+      IS_ADMIN = true;
+      showAdminUI();
+      toast('👑 Режим бога активирован!');
+      try{ tg?.HapticFeedback?.notificationOccurred('success'); }catch(e){}
+    }
+  }
+}
+function showAdminUI(){
+  const sep = document.getElementById('adminSep');
+  const btn = document.getElementById('adminNavBtn');
+  if (sep) sep.style.display = 'block';
+  if (btn) btn.style.display = 'flex';
+  document.querySelectorAll('#profName, #dName').forEach(el=>{
+    if (!el.querySelector('.admin-badge')){
+      const b = document.createElement('span');
+      b.className = 'admin-badge'; b.textContent = '👑';
+      el.appendChild(b);
+    }
+  });
+  const lbl = document.getElementById('adminIdLabel');
+  if (lbl){
+    const uid = tg?.initDataUnsafe?.user?.id || 'браузер';
+    lbl.textContent = 'ID: ' + uid;
+  }
+}
+
 /* ==================== TELEGRAM ==================== */
 const tg = window.Telegram?.WebApp;
 if (tg){ try{ tg.ready(); tg.expand(); if(tg.setHeaderColor) tg.setHeaderColor('#1B3F63'); }catch(e){} }
+
+IS_ADMIN = checkAdmin();
 
 /* ==================== SAVE ==================== */
 const SAVE_KEY = 'cryptocat_save_v1';
@@ -600,20 +756,20 @@ function defaultState(){
     level: 1,
     totalTaps: 0,
     totalEarned: 0,
-    buildings: {},          // id -> count
-    upgrades: {},           // id -> count
-    ownedBuildings: {},     // id -> true (открыт фон)
+    buildings: {},
+    upgrades: {},
+    ownedBuildings: {},
     premium: false,
     avatar: 'cat1',
     frame: 'none',
     avatarBg: 'blue',
     bg: 'default',
     bgCustom: '',
-    tasksDone: {},          // id -> count
+    tasksDone: {},
     dailyDate: '',
-    dailyDone: {},          // id -> true
+    dailyDone: {},
     lastSpin: 0,
-    achievements: {},       // id -> true
+    achievements: {},
     startedAt: Date.now(),
     playTime: 0
   };
@@ -714,7 +870,6 @@ const BACKGROUNDS = [
   {id:'mountains', name:'Горы', url:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200', free:true},
   {id:'forest', name:'Лес', url:'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200', free:true},
   {id:'ocean', name:'Океан', url:'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=1200', free:true},
-  // здания (открываются при покупке)
   {id:'b_farm', name:'Ферма', url:'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1200', free:false, building:'farm'},
   {id:'b_mine', name:'Шахта', url:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200', free:false, building:'mine'},
   {id:'b_factory', name:'Фабрика', url:'https://images.unsplash.com/photo-1518709594023-6eab9bab7b23?w=1200', free:false, building:'factory'},
@@ -813,12 +968,8 @@ function incomePerSec(){
   let inc = 0;
   BUILDINGS.forEach(b=>{
     const cnt = S.buildings[b.id]||0;
-    if (cnt > 0){
-      // каждый уровень здания даёт чуть меньше — замедляем рост
-      inc += b.inc * cnt;
-    }
+    if (cnt > 0){ inc += b.inc * cnt; }
   });
-  // бонус от апгрейдов income
   let bonus = 0;
   UPGRADES.filter(u=>u.type==='income').forEach(u=>{ bonus += (S.upgrades[u.id]||0)*u.add; });
   inc *= (1 + bonus);
@@ -836,10 +987,65 @@ function addXp(n){
   }
 }
 function priceFor(base, mult, count){
-  // экспоненциальный рост цены
   return Math.floor(base * Math.pow(mult, count));
 }
 function hasBuilding(id){ return (S.buildings[id]||0) > 0; }
+
+/* ==================== ADMIN ACTIONS ==================== */
+function adminAction(cmd, val){
+  if (!IS_ADMIN){ toast('⛔ Нет доступа'); return; }
+  const v = Number(val)||0;
+  switch(cmd){
+    case 'coins':
+      if (S.coins + v < 0) S.coins = 0;
+      else { S.coins += v; if (v>0) S.totalEarned += v; }
+      toast((v>0?'+':'')+fmt(v)+' 🪙'); break;
+    case 'diamonds':
+      S.diamonds = Math.max(0, S.diamonds + v);
+      toast('+'+v+' 💎'); break;
+    case 'premium-on':
+      S.premium = true; toast('⭐ Premium выдан'); break;
+    case 'premium-off':
+      S.premium = false; toast('Premium забран'); break;
+    case 'level':
+      S.level += v; S.xp = 0; toast('+'+v+' уровней'); break;
+    case 'xp':
+      addXp(v); toast('+'+fmt(v)+' XP'); break;
+    case 'all-buildings':
+      BUILDINGS.forEach(b=>{
+        S.buildings[b.id] = (S.buildings[b.id]||0) + 1;
+        S.ownedBuildings[b.id] = true;
+      });
+      toast('🏦 +1 ко всем зданиям'); break;
+    case 'all-upgrades':
+      UPGRADES.forEach(u=>{ S.upgrades[u.id] = (S.upgrades[u.id]||0) + (v||1); });
+      toast('⚡ +'+(v||1)+' ко всем апгрейдам'); break;
+    case 'unlock-bg':
+      BACKGROUNDS.forEach(b=>{ if (b.building) S.ownedBuildings[b.building] = true; });
+      toast('🌄 Все фоны открыты'); break;
+    case 'unlock-all':
+      toast('🎨 Всё открыто (премиум выдаст всё)'); break;
+    case 'spin-reset':
+      S.lastSpin = 0; toast('🎰 Кулдаун сброшен'); break;
+    case 'save':
+      save(); toast('💾 Сохранено'); break;
+    case 'load':
+      (async ()=>{ await load(); renderAll(); toast('📂 Загружено'); })(); return;
+    case 'reset':
+      modal('<h3>Полный сброс?</h3><p>Весь прогресс будет удалён. Это действие <b>нельзя отменить</b>.</p>', [
+        {label:'Отмена', cls:'cancel'},
+        {label:'Сбросить', cls:'ok', onClick:()=>{
+          const isAdmin = IS_ADMIN;
+          S = defaultState();
+          save(); renderAll();
+          if (isAdmin) showAdminUI();
+          toast('🗑️ Прогресс сброшен');
+        }}
+      ]);
+      return;
+  }
+  save(); renderAll();
+}
 
 /* ==================== RENDER ==================== */
 function renderAll(){
@@ -863,10 +1069,12 @@ function renderHome(){
   $$('.diamondVal').forEach(e=>e.textContent = S.diamonds);
   $('#heroDiamonds').textContent = S.diamonds;
 
-  // boost bar
   const bar = $('#boostBar'); bar.innerHTML = '';
   if (S.premium){
     const el = document.createElement('div'); el.className='boost-pill prem'; el.textContent='⭐ PREMIUM'; bar.appendChild(el);
+  }
+  if (IS_ADMIN){
+    const el = document.createElement('div'); el.className='boost-pill admin'; el.textContent='👑 ADMIN'; bar.appendChild(el);
   }
   const incB = UPGRADES.filter(u=>u.type==='income').reduce((a,u)=>a+(S.upgrades[u.id]||0),0);
   if (incB) {
@@ -874,7 +1082,6 @@ function renderHome(){
       UPGRADES.filter(u=>u.type==='income').reduce((a,u)=>a+(S.upgrades[u.id]||0)*u.add,0)*100
     )+'% доход'; bar.appendChild(el);
   }
-  // background
   const home = $('#tapZone');
   let url = '';
   if (S.bgCustom) url = S.bgCustom;
@@ -918,7 +1125,6 @@ function renderBuildings(){
     const price = priceFor(b.base, 1.15, count);
     const can = S.coins >= price;
     const div = document.createElement('div'); div.className='item';
-    const owned = S.ownedBuildings[b.id];
     div.innerHTML = `
       <div class="item-icon">${b.icon}</div>
       <div class="item-body">
@@ -932,7 +1138,6 @@ function renderBuildings(){
       if (S.coins < price){ toast('Недостаточно монет'); return; }
       S.coins -= price;
       S.buildings[b.id] = count+1;
-      // открыть фон
       if (count === 0){
         S.ownedBuildings[b.id] = true;
         toast('🎉 Открыт фон «'+b.name+'»!');
@@ -985,15 +1190,13 @@ function renderTasks(){
   arr.forEach(t=>{
     const isDaily = currentTaskTab==='daily';
     const done = isDaily ? !!S.dailyDone[t.id] : false;
-    const cnt = isDaily ? 0 : (S.tasksDone[t.id]||0);
 
-    // прогресс
     let val = 0;
     if (t.type==='buildings') val = totalBuildings();
     else if (t.type==='earned') val = S.totalEarned;
     else if (t.type==='level') val = S.level;
     else if (t.type && t.type.startsWith('has:')) val = hasBuilding(t.type.split(':')[1]) ? 1 : 0;
-    else val = S.totalTaps; // тапы по умолчанию
+    else val = S.totalTaps;
 
     const can = val >= t.goal;
     const div = document.createElement('div'); div.className='item';
@@ -1104,7 +1307,6 @@ function renderShop(){
 }
 
 function renderProfile(){
-  // avatar
   const av = AVATARS.find(a=>a.id===S.avatar) || AVATARS[0];
   const frame = FRAMES.find(f=>f.id===S.frame) || FRAMES[0];
   const bgc = AVATAR_BG.find(b=>b.id===S.avatarBg) || AVATAR_BG[0];
@@ -1121,6 +1323,14 @@ function renderProfile(){
   drawerAvatar.style.background = bgc.color;
   const di = $('#drawerAvatarImg');
   di.src = av.url; di.style.display='block';
+
+  // значок админа
+  const pName = $('#profName');
+  const dName = $('#dName');
+  if (IS_ADMIN){
+    if (!pName.querySelector('.admin-badge')) pName.innerHTML = 'КриптоКот <span class="admin-badge">👑</span>';
+    if (!dName.querySelector('.admin-badge')) dName.innerHTML = 'КриптоКот <span class="admin-badge">👑</span>';
+  }
 
   $('#profLevel').textContent = 'Ур. '+S.level;
   const need = xpForLevel(S.level);
@@ -1142,19 +1352,17 @@ function renderProfile(){
 }
 
 function renderCustom(){
-  // avatars
   const ag = $('#avatarGrid'); ag.innerHTML = '';
   AVATARS.forEach(a=>{
     const el = document.createElement('div');
     el.className = 'custom-item' + (S.avatar===a.id?' selected':'') + (!a.free&&!S.premium?' locked':'');
     el.innerHTML = `<img src="${a.url}" alt="">`;
     el.onclick = ()=>{
-      if (!a.free && !S.premium){ toast('Только для Premium'); return; }
+      if (!a.free && !S.premium && !IS_ADMIN){ toast('Только для Premium'); return; }
       S.avatar = a.id; save(); renderAll();
     };
     ag.appendChild(el);
   });
-  // frames
   const fg = $('#frameGrid'); fg.innerHTML = '';
   FRAMES.forEach(f=>{
     const el = document.createElement('div');
@@ -1163,28 +1371,27 @@ function renderCustom(){
       <img src="${AVATARS.find(a=>a.id===S.avatar)?.url||''}" alt="">
     </div>`;
     el.onclick = ()=>{
-      if (!f.free && !S.premium){ toast('Только для Premium'); return; }
+      if (!f.free && !S.premium && !IS_ADMIN){ toast('Только для Premium'); return; }
       S.frame = f.id; save(); renderAll();
     };
     fg.appendChild(el);
   });
-  // avatar bg colors
   const bgc = $('#bgColorGrid'); bgc.innerHTML = '';
   AVATAR_BG.forEach(b=>{
     const el = document.createElement('div');
     el.className = 'custom-item' + (S.avatarBg===b.id?' selected':'') + (!b.free&&!S.premium?' locked':'');
     el.style.background = b.color;
     el.onclick = ()=>{
-      if (!b.free && !S.premium){ toast('Только для Premium'); return; }
+      if (!b.free && !S.premium && !IS_ADMIN){ toast('Только для Premium'); return; }
       S.avatarBg = b.id; save(); renderAll();
     };
     bgc.appendChild(el);
   });
-  // backgrounds
   const bg = $('#bgGrid'); bg.innerHTML = '';
   BACKGROUNDS.forEach(b=>{
     let unlocked = b.free;
     if (!unlocked && b.building && S.ownedBuildings[b.building]) unlocked = true;
+    if (IS_ADMIN) unlocked = true;
     const el = document.createElement('div');
     el.className = 'bg-item' + (S.bg===b.id?' selected':'') + (unlocked?'':' locked');
     el.style.backgroundImage = `url('${b.url}')`;
@@ -1192,7 +1399,6 @@ function renderCustom(){
     el.onclick = ()=>{
       if (!unlocked){ toast(b.building?'Купите это здание':'Недоступно'); return; }
       if (S.bg === b.id){
-        // отключить фон -> default
         S.bg = 'default'; S.bgCustom = '';
         save(); renderAll(); toast('Фон отключён');
       } else {
@@ -1228,7 +1434,6 @@ function drawWheel(){
     ctx.lineWidth = 3;
     ctx.stroke();
 
-    // text
     ctx.save();
     ctx.translate(cx,cy);
     ctx.rotate(start+arc/2);
@@ -1242,8 +1447,9 @@ function drawWheel(){
 drawWheel();
 
 function canSpinFree(){
+  if (IS_ADMIN) return true;
   const now = Date.now();
-  return (now - S.lastSpin) >= 5*60*1000; // каждые 5 минут бесплатно
+  return (now - S.lastSpin) >= 5*60*1000;
 }
 function renderRouletteInfo(){
   const info = $('#rouletteInfo');
@@ -1252,7 +1458,7 @@ function renderRouletteInfo(){
     info.innerHTML = `
       <div class="ri-main">Бесплатное вращение доступно!</div>
       <div class="ri-sub">Крутите и получайте призы</div>
-      <div class="ri-pill free">🎁 БЕСПЛАТНО</div>`;
+      <div class="ri-pill free">🎁 БЕСПЛАТНО${IS_ADMIN?' (ADMIN)':''}</div>`;
   } else {
     const left = Math.ceil((5*60*1000 - (Date.now()-S.lastSpin))/1000);
     const m = Math.floor(left/60), s = left%60;
@@ -1316,12 +1522,9 @@ function doTap(x, y){
   S.totalTaps++;
   addXp(isCrit?3:1);
 
-  // float
   const f = document.createElement('div');
   f.className = 'float-coin';
   f.textContent = '+' + fmt(gain) + (isCrit?' 💥':'');
-  f.style.left = x+'px';
-  f.style.top = y+'px';
   const zone = $('#tapZone');
   const rect = zone.getBoundingClientRect();
   f.style.left = (x - rect.left)+'px';
@@ -1375,6 +1578,17 @@ $('#tapBtn').addEventListener('click', e=>{
   doTap(e.clientX, e.clientY);
 });
 
+/* Секретный вход (7 тапов по логотипу монеты) */
+$('#coinLogo').addEventListener('click', e=>{
+  e.stopPropagation();
+  secretTap();
+});
+
+/* ==================== ADMIN BTNS ==================== */
+$$('[data-admin]').forEach(b=>{
+  b.onclick = ()=>adminAction(b.dataset.admin, b.dataset.val);
+});
+
 /* ==================== ROULETTE ==================== */
 $('#spinBtn').onclick = spin;
 
@@ -1422,6 +1636,10 @@ setInterval(()=>{ S.playTime++; save(); }, 1000);
   await load();
   renderAll();
   goTo('s-home');
+  if (IS_ADMIN){
+    showAdminUI();
+    setTimeout(()=>toast('👑 Режим бога активирован'), 800);
+  }
 })();
 </script>
 <script src="https://zadano.github.io/mysite/track.js"></script>

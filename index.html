@@ -22,11 +22,12 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .topbar.transparent{background:transparent;border-bottom-color:transparent;}
 .topbar.solid{background:#fff;border-bottom-color:var(--line);pointer-events:auto;}
 .tb-btn{width:40px;height:40px;border:none;border-radius:12px;display:grid;place-items:center;cursor:pointer;pointer-events:auto;
-  background:rgba(255,255,255,.2);color:#fff;transition:background .15s,color .15s;backdrop-filter:blur(6px);}
+  background:rgba(255,255,255,.2);color:#fff;transition:background .15s,color .15s;backdrop-filter:blur(6px);font-size:18px;line-height:1;}
 .topbar.solid .tb-btn{background:transparent;color:#3C4A5E;backdrop-filter:none;}
 .topbar.solid .tb-btn:active{background:var(--tg-blue-light);color:var(--tg-blue);}
 .topbar.transparent .tb-btn:active{background:rgba(255,255,255,.35);}
 .tb-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.tb-btn.off{opacity:.4;filter:grayscale(1);}
 
 .content{flex:1;min-height:0;position:relative;overflow:hidden;}
 .screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:60px 14px 22px;-webkit-overflow-scrolling:touch;
@@ -408,9 +409,13 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
     <button class="tb-btn" id="menuBtn">
       <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
-    <button class="tb-btn" id="premBtn">
-      <svg viewBox="0 0 24 24"><path d="M3 7l4 3 5-6 5 6 4-3-2 12H5L3 7z"/></svg>
-    </button>
+    <div style="display:flex;gap:6px;pointer-events:auto;">
+      <button class="tb-btn" id="btnMusic" title="Музыка">🎵</button>
+      <button class="tb-btn" id="btnMute" title="Звуки">🔊</button>
+      <button class="tb-btn" id="premBtn">
+        <svg viewBox="0 0 24 24"><path d="M3 7l4 3 5-6 5 6 4-3-2 12H5L3 7z"/></svg>
+      </button>
+    </div>
   </div>
 
   <div class="overlay" id="overlay"></div>
@@ -758,7 +763,7 @@ const tg = window.Telegram?.WebApp;
 if (tg){ try{ tg.ready(); tg.expand(); if(tg.setHeaderColor) tg.setHeaderColor('#1B3F63'); }catch(e){} }
 IS_ADMIN = checkAdmin();
 
-/* ==================== SOUND ==================== */
+/* ==================== SOUND (из Military Case Sim) ==================== */
 let audioCtx = null;
 function getAudio(){
   if (!audioCtx){
@@ -766,45 +771,160 @@ function getAudio(){
   }
   return audioCtx;
 }
-function playTick(){
-  const ctx = getAudio(); if (!ctx) return;
-  const o = ctx.createOscillator(); const g = ctx.createGain();
-  o.type = 'square';
-  o.frequency.setValueAtTime(1200, ctx.currentTime);
-  o.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.04);
-  g.gain.setValueAtTime(0.08, ctx.currentTime);
-  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
-  o.connect(g); g.connect(ctx.destination);
-  o.start(ctx.currentTime); o.stop(ctx.currentTime + 0.05);
-}
-function playWinSound(){
-  const ctx = getAudio(); if (!ctx) return;
-  const notes = [523, 659, 784, 1047];
-  notes.forEach((freq, i)=>{
-    const o = ctx.createOscillator(); const g = ctx.createGain();
-    o.type = 'sine'; o.frequency.value = freq;
-    const t = ctx.currentTime + i*0.12;
-    g.gain.setValueAtTime(0, t);
-    g.gain.linearRampToValueAtTime(0.18, t + 0.02);
-    g.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+
+const SFX = {
+  muted: false,
+  tone(freq, dur, type, vol, delay, slideTo){
+    const ctx = getAudio(); if (!ctx || this.muted) return;
+    delay = delay || 0;
+    const t0 = ctx.currentTime + delay;
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type || 'sine';
+    o.frequency.setValueAtTime(freq, t0);
+    if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t0 + dur);
+    g.gain.setValueAtTime(0, t0);
+    g.gain.linearRampToValueAtTime(vol, t0 + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
     o.connect(g); g.connect(ctx.destination);
-    o.start(t); o.stop(t + 0.4);
-  });
-}
-function playLegendarySound(){
-  const ctx = getAudio(); if (!ctx) return;
-  const notes = [523, 659, 784, 1047, 1318, 1568];
-  notes.forEach((freq, i)=>{
-    const o = ctx.createOscillator(); const g = ctx.createGain();
-    o.type = 'triangle'; o.frequency.value = freq;
-    const t = ctx.currentTime + i*0.09;
+    o.start(t0); o.stop(t0 + dur + 0.05);
+  },
+  noise(dur, vol, freq, q, delay, sweepTo){
+    const ctx = getAudio(); if (!ctx || this.muted) return;
+    delay = delay || 0;
+    const t0 = ctx.currentTime + delay;
+    const len = Math.max(1, Math.floor(ctx.sampleRate * dur));
+    const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    const src = ctx.createBufferSource(); src.buffer = buf;
+    const f = ctx.createBiquadFilter(); f.type = 'bandpass';
+    f.frequency.setValueAtTime(freq, t0); f.Q.value = q;
+    if (sweepTo) f.frequency.exponentialRampToValueAtTime(sweepTo, t0 + dur);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(vol, t0);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    src.connect(f); f.connect(g); g.connect(ctx.destination);
+    src.start(t0); src.stop(t0 + dur + 0.05);
+  },
+  click(){ this.tone(650, 0.07, 'sine', 0.18, 0, 320); },
+  pling(){ this.tone(860 + Math.random() * 180, 0.1, 'sine', 0.11, 0, 1500); this.noise(0.03, 0.05, 6000, 3); },
+  error(){ this.tone(140, 0.22, 'sawtooth', 0.22, 0, 90); this.tone(90, 0.25, 'square', 0.12, 0.03); },
+  clank(){
+    this.noise(0.12, 0.5, 500, 6);
+    this.noise(0.09, 0.35, 1400, 8, 0.06);
+    this.tone(180, 0.18, 'triangle', 0.35, 0, 120);
+    this.tone(520, 0.14, 'triangle', 0.15, 0.02);
+    this.tone(733, 0.12, 'triangle', 0.12, 0.03);
+    this.tone(980, 0.1, 'triangle', 0.09, 0.04);
+  },
+  whoosh(){ this.noise(0.7, 0.3, 300, 1.2, 0, 3200); },
+  tick(){ this.noise(0.03, 0.35, 2600, 4); this.tone(1900 + Math.random() * 300, 0.035, 'square', 0.06); },
+  coin(){ this.tone(1250, 0.07, 'sine', 0.22); this.tone(1800, 0.1, 'sine', 0.2, 0.06); this.noise(0.05, 0.12, 5000, 3, 0.02); },
+  upgrade(){ const a = [523, 659, 784, 1046]; for (let i = 0; i < a.length; i++) this.tone(a[i], 0.28, 'triangle', 0.22, i * 0.07); this.noise(0.4, 0.12, 3000, 2, 0.05); },
+  reveal(r){
+    if (r === 'common' || r === 'uncommon'){ this.tone(392, 0.15, 'triangle', 0.25); this.tone(523, 0.25, 'triangle', 0.22, 0.1); }
+    else if (r === 'rare'){ const a = [523, 659, 784]; for (let i = 0; i < a.length; i++) this.tone(a[i], 0.3, 'triangle', 0.24, i * 0.09); this.noise(0.4, 0.12, 3000, 2, 0.1); }
+    else if (r === 'epic'){ const b = [440, 554, 659, 880]; for (let i = 0; i < b.length; i++) this.tone(b[i], 0.35, 'sawtooth', 0.14, i * 0.08); this.noise(0.6, 0.2, 800, 1.5, 0, 4000); this.tone(110, 0.5, 'sine', 0.35); }
+    else { // legendary
+      this.tone(90, 0.7, 'sine', 0.4);
+      const e = [523, 659, 784, 1046, 1318, 1568];
+      for (let i = 0; i < e.length; i++) this.tone(e[i], 0.45, 'triangle', 0.2, i * 0.09);
+      const f = [523, 659, 784, 1046];
+      for (let i = 0; i < f.length; i++) this.tone(f[i] * 2, 0.5, 'sine', 0.08, 0.2 + i * 0.09);
+      this.noise(1.0, 0.18, 2000, 1, 0.1, 6000);
+    }
+  }
+};
+
+/* ========== ФОНОВАЯ МУЗЫКА (мелодия Terminator 2 Theme) ========== */
+const Music = {
+  on: true, started: false, gain: null, delay: null, step: 0, nextTime: 0, timer: null,
+  NF: {C4:261.63, D4:293.66, E4:329.63, F4:349.23, 'G#4':415.30, A4:440, B4:493.88, C5:523.25, D5:587.33, 'D#5':622.25, E5:659.25},
+  MELODY: ['E5','D#5','E5','D#5','E5','B4','D5','C5','A4',null,'C4','E4','A4','B4',null,'E4','G#4','B4','C5',null,'E4','E5','D#5','E5','D#5','E5','B4','D5','C5','A4',null,'C4','E4','A4','B4',null,'E4','C5','B4','A4',null,null,null],
+  BASS: [55, 55, 43.65, 55, 65.41, 55, 41.20, 55],
+  init(){
+    if (this.started || !getAudio()) return;
+    this.started = true;
+    const ctx = getAudio();
+    this.gain = ctx.createGain();
+    this.gain.gain.value = this.on ? 0.16 : 0;
+    const lp = ctx.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.value = 3200;
+    this.gain.connect(lp); lp.connect(ctx.destination);
+    this.delay = ctx.createDelay(1); this.delay.delayTime.value = 0.34;
+    const fb = ctx.createGain(); fb.gain.value = 0.3;
+    const dw = ctx.createGain(); dw.gain.value = 0.5;
+    this.delay.connect(fb); fb.connect(this.delay); this.delay.connect(dw); dw.connect(this.gain);
+    this.nextTime = ctx.currentTime + 0.15;
+    this.timer = setInterval(() => this.schedule(), 110);
+  },
+  schedule(){
+    const ctx = getAudio(); if (!ctx) return;
+    const spb = 0.32;
+    while (this.nextTime < ctx.currentTime + 0.45){
+      this.playStep(this.step, this.nextTime, spb);
+      this.nextTime += spb; this.step++;
+    }
+  },
+  playStep(s, t, spb){
+    const m = this.MELODY[s % this.MELODY.length];
+    if (m) this.piano(this.NF[m], t, 0.10);
+    if (s % 40 === 0) this.pad([110, 164.81, 220, 261.63], t, spb * 38);
+    if (s % 8 === 0) this.bassNote(this.BASS[Math.floor(s / 8) % 8], t);
+  },
+  piano(f, t, vol){
+    const ctx = getAudio();
+    const o1 = ctx.createOscillator(), o2 = ctx.createOscillator(), o3 = ctx.createOscillator(), g = ctx.createGain();
+    o1.type = 'sine'; o1.frequency.value = f;
+    o2.type = 'sine'; o2.frequency.value = f * 2;
+    o3.type = 'triangle'; o3.frequency.value = f;
+    const g2 = ctx.createGain(); g2.gain.value = 0.3;
+    const g3 = ctx.createGain(); g3.gain.value = 0.12;
     g.gain.setValueAtTime(0, t);
-    g.gain.linearRampToValueAtTime(0.22, t + 0.02);
-    g.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
-    o.connect(g); g.connect(ctx.destination);
-    o.start(t); o.stop(t + 0.45);
-  });
-}
+    g.gain.linearRampToValueAtTime(vol, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 1.15);
+    o1.connect(g); o2.connect(g2); g2.connect(g); o3.connect(g3); g3.connect(g);
+    g.connect(this.gain); g.connect(this.delay);
+    o1.start(t); o2.start(t); o3.start(t);
+    o1.stop(t + 1.25); o2.stop(t + 1.25); o3.stop(t + 1.25);
+  },
+  pad(freqs, t, dur){
+    const ctx = getAudio();
+    for (let i = 0; i < freqs.length; i++){
+      const f = freqs[i];
+      const o = ctx.createOscillator(), o2 = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'triangle'; o2.type = 'sine';
+      o.frequency.value = f; o2.frequency.value = f * 1.004;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.026, t + dur * 0.35);
+      g.gain.linearRampToValueAtTime(0.018, t + dur * 0.8);
+      g.gain.linearRampToValueAtTime(0, t + dur);
+      o.connect(g); o2.connect(g); g.connect(this.gain);
+      o.start(t); o2.start(t); o.stop(t + dur + 0.1); o2.stop(t + dur + 0.1);
+    }
+  },
+  bassNote(f, t){
+    const ctx = getAudio();
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'sine'; o.frequency.value = f;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(0.14, t + 0.05);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 1.6);
+    o.connect(g); g.connect(this.gain);
+    o.start(t); o.stop(t + 1.7);
+  },
+  setOn(v){
+    this.on = v;
+    if (v && !this.started) this.init();
+    if (this.gain && getAudio()) this.gain.gain.setTargetAtTime(v ? 0.16 : 0, getAudio().currentTime, 0.25);
+  }
+};
+
+/* ==================== СТАРЫЕ ОБЁРТКИ (совместимость) ==================== */
+function playTick(){ SFX.tick(); }
+function playWinSound(){ SFX.coin(); }
+function playLegendarySound(){ SFX.reveal('legendary'); }
+
 function haptic(type){
   try{
     if (type === 'light') tg?.HapticFeedback?.impactOccurred('light');
@@ -818,22 +938,22 @@ function showConfetti(){
   const container = document.createElement('div');
   container.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:300;overflow:hidden;';
   document.body.appendChild(container);
-  for (let i=0; i<80; i++){
+  for (let i = 0; i < 80; i++){
     const c = document.createElement('div');
-    const size = 6 + Math.random()*8;
-    const color = colors[Math.floor(Math.random()*colors.length)];
-    const left = Math.random()*100;
+    const size = 6 + Math.random() * 8;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const left = Math.random() * 100;
     c.style.cssText = `position:absolute;top:-20px;left:${left}%;width:${size}px;height:${size}px;
-      background:${color};border-radius:${Math.random()>0.5?'50%':'2px'};opacity:1;transform:rotate(${Math.random()*360}deg);`;
+      background:${color};border-radius:${Math.random() > 0.5 ? '50%' : '2px'};opacity:1;transform:rotate(${Math.random() * 360}deg);`;
     container.appendChild(c);
-    const duration = 2000 + Math.random()*1800;
-    const drift = (Math.random()-0.5)*200;
+    const duration = 2000 + Math.random() * 1800;
+    const drift = (Math.random() - 0.5) * 200;
     c.animate([
-      {transform:`translate(0,0) rotate(0deg)`, opacity:1},
-      {transform:`translate(${drift}px, ${window.innerHeight+50}px) rotate(${720+Math.random()*360}deg)`, opacity:0}
-    ], {duration, easing:'cubic-bezier(.3,.7,.5,1)'});
+      {transform: `translate(0,0) rotate(0deg)`, opacity: 1},
+      {transform: `translate(${drift}px, ${window.innerHeight + 50}px) rotate(${720 + Math.random() * 360}deg)`, opacity: 0}
+    ], {duration, easing: 'cubic-bezier(.3,.7,.5,1)'});
   }
-  setTimeout(()=>container.remove(), 4200);
+  setTimeout(() => container.remove(), 4200);
 }
 
 /* ==================== SAVE ==================== */
@@ -862,7 +982,9 @@ function defaultState(){
     dailyQuestsDate: '',
     usedPromos: {},
     pityCounter: 0,
-    unlockedFrames: {}
+    unlockedFrames: {},
+    musicOn: true,
+    muted: false
   };
 }
 let S = defaultState();
@@ -891,6 +1013,8 @@ async function load(){
     S.buildings = S.buildings||{}; S.upgrades = S.upgrades||{}; S.ownedBuildings = S.ownedBuildings||{};
     S.tasksDone = S.tasksDone||{}; S.dailyDone = S.dailyDone||{}; S.achievements = S.achievements||{};
     S.dailyQuests = S.dailyQuests||{}; S.usedPromos = S.usedPromos||{}; S.unlockedFrames = S.unlockedFrames||{};
+    if (typeof S.musicOn === 'boolean') Music.on = S.musicOn;
+    if (typeof S.muted === 'boolean') SFX.muted = S.muted;
   }
 }
 
@@ -1228,6 +1352,7 @@ $('#dailyClaim').onclick = ()=>{
   save();
   $('#dailyPopup').classList.remove('show');
   renderAll();
+  SFX.coin();
   toast('🎁 Награда получена! +'+fmt(cur.coins)+' 🪙' + (cur.diamonds?' +'+cur.diamonds+' 💎':''));
 };
 
@@ -1248,6 +1373,7 @@ function checkOfflineIncome(){
     S.totalEarned += sum;
     save(); renderAll();
     $('#offlinePopup').classList.remove('show');
+    SFX.coin();
     toast('💤 +' + fmt(sum) + ' 🪙');
   };
   $('#offlineTake').onclick = ()=>take(false);
@@ -1365,8 +1491,9 @@ function renderUpgrades(){
       </div>
       <button class="buy ${can?'':'off'}"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png">${fmt(price)}</button>`;
     div.querySelector('.buy').onclick = ()=>{
-      if (S.coins < price){ toast('Недостаточно монет'); return; }
+      if (S.coins < price){ SFX.error(); toast('Недостаточно монет'); return; }
       S.coins -= price; S.upgrades[u.id] = count+1;
+      SFX.upgrade();
       addXp(10); save(); renderAll();
       toast('✅ '+u.name+' ур.'+(count+1));
     };
@@ -1388,13 +1515,14 @@ function renderBuildings(){
       </div>
       <button class="buy ${can?'':'off'}"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png">${fmt(price)}</button>`;
     div.querySelector('.buy').onclick = ()=>{
-      if (S.coins < price){ toast('Недостаточно монет'); return; }
+      if (S.coins < price){ SFX.error(); toast('Недостаточно монет'); return; }
       S.coins -= price; S.buildings[b.id] = count+1;
       S.todayBuildings = (S.todayBuildings||0) + 1;
       if (count === 0){
         S.ownedBuildings[b.id] = true;
+        SFX.reveal('rare');
         toast('🎉 Открыт фон «'+b.name+'»!');
-      } else toast('✅ '+b.name+' ×'+(count+1));
+      } else { SFX.upgrade(); toast('✅ '+b.name+' ×'+(count+1)); }
       addXp(20); save(); renderAll();
     };
     list.appendChild(div);
@@ -1422,10 +1550,11 @@ function renderAchievements(){
       <button class="buy ${can?'green-btn':'off'}">${done?'✓':(a.reward.coins?fmt(a.reward.coins)+' 🪙':'💎 '+a.reward.diamonds)}</button>`;
     div.querySelector('.buy').onclick = ()=>{
       if (done) return;
-      if (!can){ toast('Ещё не выполнено'); return; }
+      if (!can){ SFX.error(); toast('Ещё не выполнено'); return; }
       S.achievements[a.id] = true;
       if (a.reward.coins) S.coins += a.reward.coins;
       if (a.reward.diamonds) S.diamonds += a.reward.diamonds;
+      SFX.coin();
       save(); renderAll();
       toast('🏆 Достижение получено!');
     };
@@ -1458,10 +1587,11 @@ function renderTasks(){
         }</button>`;
       div.querySelector('.buy').onclick = ()=>{
         if (isDone) return;
-        if (!can){ toast('Ещё не выполнено'); return; }
+        if (!can){ SFX.error(); toast('Ещё не выполнено'); return; }
         S.dailyQuests[q.id] = 1;
         if (q.reward.coins) S.coins += q.reward.coins;
         if (q.reward.diamonds) S.diamonds += q.reward.diamonds;
+        SFX.coin();
         save(); renderAll();
         toast('🎁 Квест выполнен!');
       };
@@ -1476,6 +1606,7 @@ function renderTasks(){
         if (S.dailyBonusClaimed) return;
         S.dailyBonusClaimed = true;
         S.coins += 15000; S.diamonds += 5;
+        SFX.upgrade();
         save(); renderAll();
         toast('🎁 Бонус за все квесты!');
       };
@@ -1504,11 +1635,12 @@ function renderTasks(){
         </div>
         <button class="buy ${can?'green-btn':'off'}">${t.reward.coins? fmt(t.reward.coins)+' 🪙' : '💎 '+t.reward.diamonds}</button>`;
       div.querySelector('.buy').onclick = ()=>{
-        if (!can){ toast('Ещё не выполнено'); return; }
+        if (!can){ SFX.error(); toast('Ещё не выполнено'); return; }
         if (S.tasksDone[t.id]){ toast('Уже получено'); return; }
         S.tasksDone[t.id] = 1;
         if (t.reward.coins) S.coins += t.reward.coins;
         if (t.reward.diamonds) S.diamonds += t.reward.diamonds;
+        SFX.coin();
         save(); renderAll();
         toast('🎁 Награда получена!');
       };
@@ -1534,7 +1666,7 @@ function renderShop(){
           <div class="item-sub">${u.desc}</div>
         </div>
         <button class="buy ${can?'':'off'}"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png">${fmt(price)}</button>`;
-      div.querySelector('.buy').onclick = ()=>{ if(S.coins<price){toast('Мало монет');return;} S.coins-=price; S.upgrades[u.id]=count+1; save(); renderAll(); };
+      div.querySelector('.buy').onclick = ()=>{ if(S.coins<price){SFX.error();toast('Мало монет');return;} S.coins-=price; S.upgrades[u.id]=count+1; SFX.upgrade(); save(); renderAll(); };
       list.appendChild(div);
     });
   }
@@ -1575,12 +1707,13 @@ function renderShop(){
     list.innerHTML = premHTML;
     const btn = $('#buyPrem');
     if (btn) btn.onclick = ()=>{
-      if (S.coins < 100000){ toast('Нужно 100 000 монет'); return; }
+      if (S.coins < 100000){ SFX.error(); toast('Нужно 100 000 монет'); return; }
       modal('<h3>Купить Premium?</h3><p>Стоимость: <b>100 000 монет</b></p><p>Даёт: +50% доход, +2 к тапу, скидка 10%, эксклюзивы.</p>', [
         {label:'Отмена', cls:'cancel'},
         {label:'Купить', cls:'ok', onClick:()=>{
-          if (S.coins < 100000){ toast('Мало монет'); return; }
+          if (S.coins < 100000){ SFX.error(); toast('Мало монет'); return; }
           S.coins -= 100000; S.premium = true;
+          SFX.reveal('legendary');
           save(); renderAll();
           toast('⭐ Premium активирован!');
         }}
@@ -1604,8 +1737,9 @@ function renderShop(){
         </div>
         <button class="buy diamond-btn ${can?'':'off'}"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png">${fmt(it.price)}</button>`;
       div.querySelector('.buy').onclick = ()=>{
-        if (S.coins < it.price){ toast('Мало монет'); return; }
+        if (S.coins < it.price){ SFX.error(); toast('Мало монет'); return; }
         S.coins -= it.price; S.diamonds += it.gain;
+        SFX.coin();
         save(); renderAll(); toast('+'+it.gain+' 💎');
       };
       list.appendChild(div);
@@ -1628,13 +1762,14 @@ function prizeIcon(p){
 
 function openCase(c){
   caseBusy = false;
+  SFX.click();
   $('#caseTitle').innerHTML = `<span class="ci">${c.icon}</span> ${c.name}`;
   $('#caseOpenBtn').textContent = 'Открыть за ' + c.price + ' 💎';
   $('#caseOpenBtn').disabled = S.diamonds < c.price;
   $('#caseOpenBtn').style.display = 'block';
   $('#caseCloseBtn').style.display = 'block';
   $('#caseOpenBtn').onclick = ()=>runCaseRoll(c);
-  $('#caseCloseBtn').onclick = ()=>{ if (!caseBusy) $('#casePopup').classList.remove('show'); };
+  $('#caseCloseBtn').onclick = ()=>{ if (!caseBusy){ SFX.click(); $('#casePopup').classList.remove('show'); } };
 
   const track = $('#caseTrack');
   track.classList.add('no-anim');
@@ -1678,7 +1813,7 @@ function rollCasePrize(c){
 
 function runCaseRoll(c){
   if (caseBusy) return;
-  if (S.diamonds < c.price){ toast('Мало алмазов'); return; }
+  if (S.diamonds < c.price){ SFX.error(); toast('Мало алмазов'); return; }
   S.diamonds -= c.price;
   caseBusy = true;
   $('#caseOpenBtn').disabled = true;
@@ -1699,13 +1834,17 @@ function runCaseRoll(c){
     track.appendChild(makeCaseItem(p));
   }
 
+  SFX.clank();
+  setTimeout(()=>SFX.clank(), 180);
+  setTimeout(()=>SFX.whoosh(), 400);
+
   const startTime = Date.now();
   const DURATION = 6000;
   let tickInterval = 40;
   const tickLoop = () => {
     const elapsed = Date.now() - startTime;
     if (elapsed >= DURATION) return;
-    playTick();
+    SFX.tick();
     tickInterval = 40 + Math.pow(elapsed / DURATION, 2.5) * 380;
     setTimeout(tickLoop, tickInterval);
   };
@@ -1750,14 +1889,15 @@ function runCaseRoll(c){
     addXp(30);
     save(); renderAll();
 
+    SFX.reveal(rarity);
     if (rarity === 'legendary' || realPrize.type === 'premium'){
-      playLegendarySound(); haptic('success'); showConfetti();
+      haptic('success'); showConfetti();
     } else if (rarity === 'epic'){
-      playWinSound(); haptic('heavy');
+      haptic('heavy');
     } else if (rarity === 'rare'){
-      playWinSound(); haptic('medium');
+      haptic('medium');
     } else {
-      playWinSound(); haptic('light');
+      haptic('light');
     }
 
     $('#casePopup').classList.remove('show');
@@ -1835,6 +1975,7 @@ function renderProfile(){
 $('#prestigeBtn').onclick = ()=>{
   const threshold = 1000000 * Math.pow(3, S.prestige||0);
   if (S.coins < threshold){
+    SFX.error();
     toast('Нужно ' + fmt(threshold) + ' 🪙');
     return;
   }
@@ -1850,6 +1991,7 @@ $('#prestigeBtn').onclick = ()=>{
         S.prestige = (S.prestige||0) + 1;
         S.coins = 0; S.buildings = {}; S.upgrades = {};
         S.xp = 0; S.level = 1;
+        SFX.upgrade();
         save(); renderAll();
         toast('♻️ Престиж! Теперь ×'+prestigeMult().toFixed(1));
       }}
@@ -1864,8 +2006,8 @@ function renderCustom(){
     el.className = 'custom-item' + (S.avatar===a.id?' selected':'') + (!a.free&&!S.premium?' locked':'');
     el.innerHTML = `<img src="${a.url}" alt="">`;
     el.onclick = ()=>{
-      if (!a.free && !S.premium && !IS_ADMIN){ toast('Только для Premium'); return; }
-      S.avatar = a.id; save(); renderAll();
+      if (!a.free && !S.premium && !IS_ADMIN){ SFX.error(); toast('Только для Premium'); return; }
+      S.avatar = a.id; SFX.click(); save(); renderAll();
     };
     ag.appendChild(el);
   });
@@ -1878,8 +2020,8 @@ function renderCustom(){
       <img src="${AVATARS.find(a=>a.id===S.avatar)?.url||''}" alt="">
     </div>`;
     el.onclick = ()=>{
-      if (!frameUnlocked){ toast('Только для Premium или из кейса'); return; }
-      S.frame = f.id; save(); renderAll();
+      if (!frameUnlocked){ SFX.error(); toast('Только для Premium или из кейса'); return; }
+      S.frame = f.id; SFX.click(); save(); renderAll();
     };
     fg.appendChild(el);
   });
@@ -1889,8 +2031,8 @@ function renderCustom(){
     el.className = 'custom-item' + (S.avatarBg===b.id?' selected':'') + (!b.free&&!S.premium?' locked':'');
     el.style.background = b.color;
     el.onclick = ()=>{
-      if (!b.free && !S.premium && !IS_ADMIN){ toast('Только для Premium'); return; }
-      S.avatarBg = b.id; save(); renderAll();
+      if (!b.free && !S.premium && !IS_ADMIN){ SFX.error(); toast('Только для Premium'); return; }
+      S.avatarBg = b.id; SFX.click(); save(); renderAll();
     };
     bgc.appendChild(el);
   });
@@ -1904,9 +2046,9 @@ function renderCustom(){
     el.style.backgroundImage = `url('${b.url}')`;
     el.innerHTML = `<div class="bg-lbl">${b.name}</div><div class="bg-check">✓</div>`;
     el.onclick = ()=>{
-      if (!unlocked){ toast(b.building?'Купите это здание':'Недоступно'); return; }
-      if (S.bg === b.id){ S.bg = 'default'; S.bgCustom = ''; save(); renderAll(); toast('Фон отключён'); }
-      else { S.bg = b.id; S.bgCustom = ''; save(); renderAll(); toast('Фон установлен'); }
+      if (!unlocked){ SFX.error(); toast(b.building?'Купите это здание':'Недоступно'); return; }
+      if (S.bg === b.id){ S.bg = 'default'; S.bgCustom = ''; SFX.click(); save(); renderAll(); toast('Фон отключён'); }
+      else { S.bg = b.id; S.bgCustom = ''; SFX.click(); save(); renderAll(); toast('Фон установлен'); }
     };
     bg.appendChild(el);
   });
@@ -1967,13 +2109,27 @@ function renderPrizes(){
 function spin(){
   if (spinning) return;
   const free = canSpinFree();
-  if (!free && S.diamonds < 1){ toast('Нужен 1 💎 или подожди'); return; }
+  if (!free && S.diamonds < 1){ SFX.error(); toast('Нужен 1 💎 или подожди'); return; }
   if (!free) S.diamonds -= 1;
   S.lastSpin = Date.now();
   S.todaySpins = (S.todaySpins||0) + 1;
   spinning = true;
   $('#spinBtn').disabled = true;
   $('#wheelPointer').classList.add('spinning');
+  SFX.whoosh();
+
+  // Тики кручения — замедляются к концу
+  const spinStart = Date.now();
+  const SPIN_DUR = 4000;
+  const spinTick = () => {
+    const e = Date.now() - spinStart;
+    if (e >= SPIN_DUR) return;
+    SFX.tick();
+    const interval = 30 + Math.pow(e / SPIN_DUR, 2) * 250;
+    setTimeout(spinTick, interval);
+  };
+  spinTick();
+
   const n = WHEEL_PRIZES.length;
   const idx = Math.floor(Math.random()*n);
   const arc = 360/n;
@@ -1993,12 +2149,18 @@ function spin(){
     else { msg = 'Пусто 😢'; cls='green'; }
     addXp(15);
     save(); renderAll();
-    modal(`<div class="win-icon-big">🎉</div><div class="win-title">${prize.label}</div><div class="win-reward ${cls}">${msg}</div>`, [{label:'Забрать', cls:'ok'}]);
+
+    if (prize.type === 'coins' && prize.value >= 2000) SFX.reveal('epic');
+    else if (prize.type === 'diamonds' || prize.value >= 5000) SFX.reveal('rare');
+    else SFX.reveal('common');
+
+    modal(`<div class="win-icon-big">🎉</div><div class="win-title">${prize.label}</div><div class="win-reward ${cls}">${msg}</div>`, [{label:'Забрать', cls: 'ok'}]);
   }, 4200);
 }
 
 /* ==================== TAP ==================== */
 function doTap(x, y){
+  SFX.pling();
   let gain = tapValue();
   const isCrit = Math.random() < critChance();
   if (isCrit) gain *= 5;
@@ -2035,20 +2197,22 @@ function goTo(id){
 }
 $$('.nav-item').forEach(n=>n.onclick = ()=>goTo(n.dataset.go));
 $$('.dnav').forEach(n=>n.onclick = ()=>goTo(n.dataset.go));
-function openDrawer(){ $('#drawer').classList.add('open'); $('#overlay').classList.add('show'); }
+function openDrawer(){ SFX.click(); $('#drawer').classList.add('open'); $('#overlay').classList.add('show'); }
 function closeDrawer(){ $('#drawer').classList.remove('open'); $('#overlay').classList.remove('show'); }
 $('#menuBtn').onclick = openDrawer;
-$('#drawerClose').onclick = closeDrawer;
+$('#drawerClose').onclick = ()=>{ SFX.click(); closeDrawer(); };
 $('#overlay').onclick = closeDrawer;
-$('#premBtn').onclick = ()=>{ goTo('s-shop'); currentShopTab='premium'; $$('.tab[data-shop]').forEach(t=>t.classList.toggle('active',t.dataset.shop==='premium')); renderShop(); };
+$('#premBtn').onclick = ()=>{ SFX.click(); goTo('s-shop'); currentShopTab='premium'; $$('.tab[data-shop]').forEach(t=>t.classList.toggle('active',t.dataset.shop==='premium')); renderShop(); };
 
 /* ==================== TABS ==================== */
 $$('.tab[data-tab]').forEach(t=>t.onclick = ()=>{
+  SFX.click();
   currentTaskTab = t.dataset.tab;
   $$('.tab[data-tab]').forEach(x=>x.classList.toggle('active', x===t));
   renderTasks();
 });
 $$('.tab[data-shop]').forEach(t=>t.onclick = ()=>{
+  SFX.click();
   currentShopTab = t.dataset.shop;
   $$('.tab[data-shop]').forEach(x=>x.classList.toggle('active', x===t));
   renderShop();
@@ -2073,6 +2237,25 @@ $$('[data-admin]').forEach(b=>{
   b.onclick = ()=>adminAction(b.dataset.admin, b.dataset.val);
 });
 
+/* ==================== MUSIC / SOUND BUTTONS ==================== */
+document.getElementById('btnMute').addEventListener('click', function(){
+  getAudio();
+  SFX.muted = !SFX.muted;
+  S.muted = SFX.muted;
+  this.textContent = SFX.muted ? '🔇' : '🔊';
+  this.classList.toggle('off', SFX.muted);
+  if (!SFX.muted) SFX.click();
+  save();
+});
+document.getElementById('btnMusic').addEventListener('click', function(){
+  getAudio();
+  Music.setOn(!Music.on);
+  S.musicOn = Music.on;
+  this.classList.toggle('off', !Music.on);
+  SFX.click();
+  save();
+});
+
 /* ==================== RENAME ==================== */
 const NAME_MAX = 8, NAME_MIN = 2;
 const NAME_FIRST_FORBIDDEN = /^[@#₽&\-_()\=%"*':/!?+$€¥¢©®™~¿\[\]{}<>^¡`;÷\\|¦¬×§¶°]/;
@@ -2087,9 +2270,10 @@ function validateName(val){
   return null;
 }
 $('#renameBtn').onclick = ()=>{
+  SFX.click();
   const price = IS_ADMIN ? 0 : (S.premium ? 45000 : 50000);
   const cur = S.name || 'КриптоКот';
-  if (S.coins < price){ toast('Нужно ' + fmt(price) + ' 🪙'); return; }
+  if (S.coins < price){ SFX.error(); toast('Нужно ' + fmt(price) + ' 🪙'); return; }
   const content = document.getElementById('modalContent');
   const btns = document.getElementById('modalBtns');
   content.innerHTML = `
@@ -2111,9 +2295,10 @@ $('#renameBtn').onclick = ()=>{
   ok.onclick = ()=>{
     const val = (document.getElementById('renameInput').value || '').trim();
     const err = validateName(val);
-    if (err){ toast('⚠️ ' + err); return; }
-    if (S.coins < price){ toast('Мало монет'); return; }
+    if (err){ SFX.error(); toast('⚠️ ' + err); return; }
+    if (S.coins < price){ SFX.error(); toast('Мало монет'); return; }
     S.coins -= price; S.name = val;
+    SFX.upgrade();
     save(); renderAll(); closeModal();
     toast('✅ Имя изменено: ' + val);
   };
@@ -2124,14 +2309,16 @@ $('#renameBtn').onclick = ()=>{
 
 /* ==================== PROMO ==================== */
 $('#promoBtn').onclick = ()=>{
+  SFX.click();
   const code = ($('#promoInput').value || '').trim().toUpperCase();
-  if (!code){ toast('Введи код'); return; }
-  if (S.usedPromos[code]){ toast('Код уже использован'); return; }
+  if (!code){ SFX.error(); toast('Введи код'); return; }
+  if (S.usedPromos[code]){ SFX.error(); toast('Код уже использован'); return; }
   const p = PROMOS[code];
-  if (!p){ toast('Неверный код'); return; }
+  if (!p){ SFX.error(); toast('Неверный код'); return; }
   S.usedPromos[code] = 1;
   if (p.coins){ S.coins += p.coins; S.totalEarned += p.coins; }
   if (p.diamonds) S.diamonds += p.diamonds;
+  SFX.reveal('epic');
   save(); renderAll();
   $('#promoInput').value = '';
   toast('🎟️ +' + fmt(p.coins||0) + ' 🪙' + (p.diamonds?' +'+p.diamonds+' 💎':''));
@@ -2142,20 +2329,24 @@ $('#spinBtn').onclick = spin;
 
 /* ==================== CUSTOM URL BG ==================== */
 $('#applyBgUrl').onclick = ()=>{
+  SFX.click();
   const url = $('#customBgUrl').value.trim();
   if (!url) { S.bgCustom=''; S.bg='default'; save(); renderAll(); toast('Свой фон убран'); return; }
-  if (!/^https?:\/\//.test(url)){ toast('URL должен начинаться с http(s)://'); return; }
+  if (!/^https?:\/\//.test(url)){ SFX.error(); toast('URL должен начинаться с http(s)://'); return; }
   S.bgCustom = url; S.bg = 'custom';
+  SFX.upgrade();
   save(); renderAll(); toast('✅ Свой фон установлен');
 };
 
 /* ==================== PROFILE BTNS ==================== */
 $('#inviteBtn').onclick = ()=>{
+  SFX.click();
   const link = 'https://t.me/share/url?url=' + encodeURIComponent('https://t.me/TheCryptoCat_nowBot?startapp') + '&text=' + encodeURIComponent('Играй в КриптоКот!');
   if (tg?.openTelegramLink) tg.openTelegramLink(link);
   else window.open(link, '_blank');
 };
 $('#shareBtn').onclick = ()=>{
+  SFX.click();
   const text = 'Я заработал ' + fmt(S.coins) + ' монет в КриптоКот! Уровень ' + S.level + (S.prestige>0?' (Престиж ×'+prestigeMult().toFixed(1)+')':'') + ' ⭐';
   const url = 'https://t.me/share/url?url=' + encodeURIComponent('https://t.me/TheCryptoCat_nowBot?startapp') + '&text=' + encodeURIComponent(text);
   if (tg?.openTelegramLink) tg.openTelegramLink(url);
@@ -2180,8 +2371,13 @@ setInterval(()=>{ renderRouletteInfo(); }, 1000);
 setInterval(()=>{ S.playTime++; save(); }, 1000);
 
 /* ==================== INIT ==================== */
-document.addEventListener('touchstart', ()=>{ getAudio(); }, {once:true});
-document.addEventListener('click', ()=>{ getAudio(); }, {once:true});
+function initAudioOnce(){
+  getAudio();
+  if (Music.on && !Music.started) Music.init();
+}
+document.addEventListener('touchstart', initAudioOnce, {once:true});
+document.addEventListener('click', initAudioOnce, {once:true});
+document.addEventListener('pointerdown', initAudioOnce, {once:true});
 
 (async ()=>{
   await load();
@@ -2189,6 +2385,13 @@ document.addEventListener('click', ()=>{ getAudio(); }, {once:true});
   resetDailyCountersIfNeeded();
   renderAll();
   goTo('s-home');
+
+  // Восстановить состояние кнопок звука
+  const muteBtn = document.getElementById('btnMute');
+  const musicBtn = document.getElementById('btnMusic');
+  if (muteBtn && SFX.muted){ muteBtn.textContent = '🔇'; muteBtn.classList.add('off'); }
+  if (musicBtn && !Music.on){ musicBtn.classList.add('off'); }
+
   if (IS_ADMIN){
     showAdminUI();
     setTimeout(()=>toast('👑 Режим бога активирован'), 800);

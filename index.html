@@ -115,14 +115,137 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
   box-shadow:0 4px 14px rgba(232,72,127,.5);pointer-events:none;animation:weekendPulse 2s ease-in-out infinite;}
 @keyframes weekendPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.02);}}
 
-.daily-popup,.offline-popup,.case-popup{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;
-  opacity:0;visibility:hidden;transition:.25s;}
-.daily-popup.show,.offline-popup.show,.case-popup.show{opacity:1;visibility:visible;}
-.daily-card,.offline-card{background:#fff;border-radius:22px;padding:22px;max-width:340px;width:100%;text-align:center;
+/* TAP SKINS */
+.tap-skin-fire{background:linear-gradient(135deg,#FF6B35,#E8487F)!important;color:#fff!important;}
+.tap-skin-ice{background:linear-gradient(135deg,#87CEEB,#4A90E2)!important;color:#fff!important;}
+.tap-skin-neon{background:linear-gradient(135deg,#00F0FF,#8B5CF6)!important;color:#fff!important;}
+.tap-skin-royal{background:linear-gradient(135deg,#FFD700,#8B5CF6)!important;color:#3D2800!important;}
+.tap-skin-gold{background:linear-gradient(135deg,#FFD700,#F07000)!important;color:#3D2800!important;}
+
+/* PET PANEL */
+.pet-panel{background:linear-gradient(135deg,#fff,#F4F7FB);border:2px solid rgba(255,159,67,.4);border-radius:16px;padding:14px 16px;margin-bottom:14px;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(255,159,67,.15);}
+.pet-panel-inner{position:relative;z-index:1;display:flex;gap:16px;align-items:center;flex-wrap:wrap;}
+.pet-avatar-wrap{position:relative;width:110px;height:110px;flex-shrink:0;border-radius:50%;padding:4px;background:conic-gradient(from 0deg,#ff9f43,#ff6b9d,#b98cff,#6ee79a,#ffd740,#ff9f43);animation:petRainbow 4s linear infinite;box-shadow:0 0 24px rgba(255,159,67,.4);transition:box-shadow .4s;}
+@keyframes petRainbow{to{filter:hue-rotate(360deg);}}
+.pet-avatar-wrap.sad-glow{background:conic-gradient(from 0deg,#556677,#8899aa,#556677,#8899aa,#556677);animation:petSpin 6s linear infinite;box-shadow:0 0 24px rgba(100,120,150,.5);}
+.pet-avatar-wrap.happy-glow{box-shadow:0 0 40px rgba(255,215,64,.8),0 0 60px rgba(255,107,157,.5);}
+@keyframes petSpin{to{transform:rotate(360deg);}}
+.pet-avatar-inner{width:100%;height:100%;border-radius:50%;background:#1c1533;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+.pet-avatar-img{width:100%;height:100%;object-fit:cover;border-radius:50%;transition:filter .3s;}
+.pet-avatar-img.happy{animation:petHappy .6s ease-in-out infinite;}
+.pet-avatar-img.sad{animation:petSad 2s ease-in-out infinite;filter:brightness(.85) saturate(.8);}
+@keyframes petHappy{0%,100%{transform:scale(1) rotate(0);}25%{transform:scale(1.06) rotate(-3deg);}75%{transform:scale(1.06) rotate(3deg);}}
+@keyframes petSad{0%,100%{transform:translateY(0);}50%{transform:translateY(3px);}}
+.pet-fire{position:absolute;top:-8px;right:-8px;font-size:1.8rem;filter:drop-shadow(0 0 10px #ff9f43);animation:fireFlicker .6s ease-in-out infinite alternate;z-index:5;}
+@keyframes fireFlicker{from{transform:scale(1) rotate(-5deg);}to{transform:scale(1.15) rotate(5deg);}}
+.pet-hearts{position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);font-size:1.6rem;animation:heartsFloat 3s ease-out infinite;filter:drop-shadow(0 0 8px #ff6b9d);z-index:6;}
+@keyframes heartsFloat{0%{opacity:0;transform:translateX(-50%) translateY(0) scale(.5);}30%{opacity:1;transform:translateX(-50%) translateY(-15px) scale(1.2);}100%{opacity:0;transform:translateX(-50%) translateY(-40px) scale(.8);}}
+.pet-info{flex:1;min-width:180px;}
+.pet-name-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;}
+.pet-name{font-size:1rem;font-weight:700;color:#ff9f43;text-shadow:0 0 12px rgba(255,159,67,.5);}
+.pet-name-edit{width:26px;height:26px;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.9);color:var(--muted);font-size:.75rem;cursor:pointer;}
+.pet-name-edit:hover{background:rgba(255,159,67,.15);color:#ff9f43;border-color:rgba(255,159,67,.5);}
+.pet-status{font-size:.68rem;color:var(--muted);margin-bottom:8px;min-height:1.2em;}
+.pet-status b{color:#ff9f43;}
+.pet-hunger-bar{height:16px;border-radius:8px;background:rgba(0,0,0,.08);border:1px solid var(--line);overflow:hidden;margin-bottom:10px;position:relative;}
+.pet-hunger-fill{height:100%;border-radius:7px;transition:width .5s ease,background .5s ease;background:linear-gradient(90deg,#ff5566,#ff9f43,#6ee79a);}
+.pet-hunger-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.8);letter-spacing:1px;}
+.pet-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.btn-pet{padding:9px 16px;border:none;border-radius:10px;font-size:.7rem;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:6px;font-family:inherit;}
+.btn-pet.feed{background:linear-gradient(135deg,#ff9f43,#e67e22);color:#fff;}
+.btn-pet.feed:active{transform:scale(.97);}
+.btn-pet.gift{background:linear-gradient(135deg,#6ee79a,#2ecc71);color:#fff;}
+.btn-pet.gift:active{transform:scale(.97);}
+.btn-pet.adopt{background:linear-gradient(135deg,#b98cff,#6a2cc9);color:#fff;}
+.btn-pet.adopt:active{transform:scale(.97);}
+.btn-pet:disabled{opacity:.4;cursor:not-allowed;}
+.pet-no-pet{text-align:center;padding:10px 0;}
+.pet-no-pet .pnp-emoji{font-size:3rem;margin-bottom:8px;opacity:.6;}
+.pet-no-pet .pnp-text{font-size:.75rem;color:var(--muted);margin-bottom:12px;line-height:1.4;}
+
+/* PET FOOD SHOP */
+.food-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;}
+.food-card{background:#fff;border:1.5px solid rgba(255,159,67,.3);border-radius:14px;padding:12px 10px;text-align:center;cursor:pointer;transition:all .2s;}
+.food-card:hover{transform:translateY(-3px);border-color:#ff9f43;box-shadow:0 8px 22px rgba(255,159,67,.25);}
+.food-card .fc-emoji{font-size:2rem;line-height:1;margin-bottom:6px;}
+.food-card .fc-name{font-size:.68rem;font-weight:700;margin-bottom:4px;line-height:1.2;height:2.4em;overflow:hidden;}
+.food-card .fc-price{font-size:.78rem;font-weight:700;color:#ff9f43;margin-bottom:2px;}
+.food-card .fc-power{font-size:.58rem;color:#6ee79a;}
+.food-inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;}
+.food-inv-card{background:#fff;border:1.5px solid rgba(255,159,67,.3);border-radius:12px;padding:12px 10px;text-align:center;}
+.food-inv-card .fic-emoji{font-size:2rem;line-height:1;margin-bottom:6px;}
+.food-inv-card .fic-name{font-size:.68rem;font-weight:700;margin-bottom:4px;}
+.food-inv-card .fic-count{font-size:.58rem;color:var(--muted);margin-bottom:8px;}
+.btn-feed-pet{width:100%;padding:7px;border:none;border-radius:8px;font-size:.62rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#ff9f43,#e67e22);color:#fff;font-family:inherit;text-transform:uppercase;}
+.btn-feed-pet:disabled{opacity:.4;cursor:not-allowed;}
+
+/* SKINS GRID */
+.skins-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;}
+.skin-card{background:#fff;border:2px solid var(--line);border-radius:14px;padding:10px;text-align:center;cursor:pointer;transition:all .2s;position:relative;}
+.skin-card:hover{transform:translateY(-3px);}
+.skin-card.selected{border-color:var(--tg-blue);box-shadow:0 0 0 3px var(--tg-blue-light);}
+.skin-preview{width:100%;height:60px;border-radius:10px;margin-bottom:8px;display:grid;place-items:center;font-size:20px;font-weight:800;color:#fff;}
+.skin-name{font-size:.72rem;font-weight:700;margin-bottom:4px;}
+.skin-price{font-size:.68rem;font-weight:700;color:#8B5CF6;}
+.skin-price.owned{color:#31B545;}
+.skin-card.locked::after{content:'🔒';position:absolute;inset:0;background:rgba(0,0,0,.35);border-radius:12px;display:grid;place-items:center;font-size:24px;color:#fff;}
+
+/* PRESTIGE SHOP */
+.prestige-shop{background:linear-gradient(135deg,#2A1600,#3D2300);border-radius:16px;padding:16px;color:#fff;margin-bottom:12px;}
+.prestige-shop h3{margin:0 0 6px;font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px;}
+.prestige-stars{display:inline-flex;align-items:center;gap:5px;background:rgba(255,215,64,.15);padding:4px 10px;border-radius:20px;font-size:13px;font-weight:800;color:#FFD700;}
+.perk-card{background:rgba(255,255,255,.08);border-radius:12px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;}
+.perk-card.owned{background:rgba(94,227,154,.15);border:1px solid rgba(94,227,154,.4);}
+.perk-icon{font-size:26px;flex-shrink:0;}
+.perk-body{flex:1;}
+.perk-name{font-size:.8rem;font-weight:700;margin-bottom:2px;}
+.perk-desc{font-size:.65rem;color:rgba(255,255,255,.7);}
+.perk-buy{padding:8px 14px;border:none;border-radius:8px;font-family:inherit;font-weight:800;font-size:.7rem;cursor:pointer;background:linear-gradient(135deg,#FFD700,#F07000);color:#3D2800;white-space:nowrap;}
+.perk-buy:disabled{background:#3A4763;color:#8798AE;cursor:not-allowed;}
+
+/* ACHIEVEMENT CHAINS */
+.chain-card{background:#fff;border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:0 1px 4px rgba(24,60,110,.06);}
+.chain-title{font-size:13.5px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.chain-steps{display:flex;gap:6px;flex-wrap:wrap;}
+.chain-step{flex:1;min-width:60px;padding:10px 6px;border-radius:10px;background:#EEF3F8;text-align:center;font-size:11px;font-weight:700;color:#8798AE;}
+.chain-step.done{background:linear-gradient(135deg,#5BE39A,#2ECC71);color:#fff;}
+.chain-step.active{background:linear-gradient(135deg,#FFB800,#F07000);color:#fff;box-shadow:0 0 0 3px rgba(255,184,0,.35);}
+.chain-step .cs-ico{font-size:18px;display:block;margin-bottom:2px;}
+
+/* WEEKLY QUESTS */
+.weekly-block{background:linear-gradient(135deg,#8B5CF6,#EC4899);border-radius:16px;padding:14px;color:#fff;margin-bottom:12px;}
+.weekly-block h3{margin:0 0 8px;font-size:15px;font-weight:800;display:flex;align-items:center;gap:6px;}
+.weekly-row{background:rgba(255,255,255,.15);border-radius:10px;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:10px;}
+.weekly-row:last-child{margin-bottom:0;}
+.weekly-row.done{background:rgba(94,227,154,.3);}
+.weekly-ico{font-size:20px;}
+.weekly-info{flex:1;min-width:0;}
+.weekly-name{font-size:12.5px;font-weight:700;margin-bottom:2px;}
+.weekly-prog{font-size:10.5px;color:rgba(255,255,255,.8);}
+.weekly-claim{padding:7px 12px;border:none;border-radius:8px;font-family:inherit;font-weight:800;font-size:11px;cursor:pointer;background:#fff;color:#8B5CF6;}
+.weekly-claim:disabled{background:rgba(255,255,255,.3);color:rgba(255,255,255,.6);cursor:not-allowed;}
+
+/* LEVEL REWARDS */
+.level-rewards{background:#fff;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(24,60,110,.06);}
+.level-rewards h3{margin:0 0 10px;font-size:13.5px;font-weight:700;}
+.level-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);}
+.level-row:last-child{border-bottom:none;}
+.level-badge{width:36px;height:36px;flex:0 0 36px;border-radius:10px;display:grid;place-items:center;font-weight:800;font-size:13px;background:linear-gradient(135deg,#FFB800,#F07000);color:#fff;}
+.level-badge.locked{background:#E9F0F7;color:#A2AFC2;}
+.level-info{flex:1;font-size:12.5px;}
+.level-info b{display:block;font-weight:700;}
+.level-info span{color:var(--muted);font-size:11px;}
+.level-status{font-size:11px;font-weight:700;color:var(--muted);}
+.level-status.ready{color:#31B545;}
+
+/* DAILY POPUP */
+.daily-popup,.offline-popup,.case-popup,.pet-name-popup{position:fixed;inset:0;background:rgba(10,22,40,.7);z-index:100;
+  display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:.25s;}
+.daily-popup.show,.offline-popup.show,.case-popup.show,.pet-name-popup.show{opacity:1;visibility:visible;}
+.daily-card,.offline-card,.pet-name-card{background:#fff;border-radius:22px;padding:22px;max-width:340px;width:100%;text-align:center;
   transform:scale(.9);transition:.3s cubic-bezier(.3,1.4,.5,1);}
-.daily-popup.show .daily-card,.offline-popup.show .offline-card{transform:scale(1);}
-.daily-card h3,.offline-card h3{margin:0 0 6px;font-size:18px;font-weight:800;}
-.daily-card p,.offline-card p{margin:0 0 14px;font-size:12px;color:var(--muted);line-height:1.4;}
+.daily-popup.show .daily-card,.offline-popup.show .offline-card,.pet-name-popup.show .pet-name-card{transform:scale(1);}
+.daily-card h3,.offline-card h3,.pet-name-card h3{margin:0 0 6px;font-size:18px;font-weight:800;}
 .daily-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:16px;}
 .daily-day{aspect-ratio:1;border-radius:10px;background:#EEF3F8;display:flex;flex-direction:column;align-items:center;justify-content:center;
   font-size:10px;font-weight:700;color:#8798AE;border:2px solid transparent;padding:2px;}
@@ -132,12 +255,13 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 @keyframes dayPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
 .daily-claim{width:100%;padding:15px;border:none;border-radius:14px;font-family:inherit;font-weight:800;font-size:15px;
   background:linear-gradient(135deg,#FFB800,#F07000);color:#fff;cursor:pointer;}
-.daily-claim:active{transform:scale(.97);}
+
 .offline-card .oi{font-size:56px;margin-bottom:8px;display:inline-block;}
 .offline-card .osum{font-size:26px;font-weight:900;color:#E8A317;margin:10px 0 4px;}
 .offline-card .obtn{width:100%;padding:14px;border:none;border-radius:12px;font-family:inherit;font-weight:800;font-size:14px;
   background:var(--tg-blue);color:#fff;cursor:pointer;}
 .offline-card .obtn.x2{background:linear-gradient(135deg,#FFB800,#F07000);margin-bottom:8px;}
+
 .case-card{background:linear-gradient(135deg,#2A1600,#3D2300);border-radius:18px;padding:18px;color:#fff;margin-bottom:12px;text-align:center;
   box-shadow:0 8px 24px rgba(255,184,0,.25);position:relative;overflow:hidden;}
 .case-card .ci{font-size:48px;position:relative;z-index:1;animation:caseShake 2.4s ease-in-out infinite;}
@@ -147,17 +271,20 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .case-card .cbtn{width:100%;padding:13px;border:none;border-radius:12px;font-family:inherit;font-weight:800;font-size:14px;
   background:linear-gradient(135deg,#FFB800,#F07000);color:#fff;cursor:pointer;position:relative;z-index:1;}
 .case-card .cbtn:disabled{background:#8798AE;cursor:not-allowed;}
+.case-card.seasonal{background:linear-gradient(135deg,#1B5E20,#2E7D32);}
+.case-card.seasonal .cbtn{background:linear-gradient(135deg,#66BB6A,#2E7D32);}
+
 .case-popup{background:rgba(5,12,25,.94);z-index:200;}
 .case-wrap{width:100%;max-width:360px;text-align:center;position:relative;}
 .case-title{color:#fff;font-size:18px;font-weight:800;margin-bottom:14px;}
 .case-title .ci{font-size:26px;display:inline-block;animation:caseShake 2.4s ease-in-out infinite;}
 .case-pointer{width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;
   border-top:22px solid #FF3B30;margin:0 auto 4px;filter:drop-shadow(0 3px 8px rgba(255,59,48,.6));z-index:3;position:relative;}
-.case-pointer::after{content:'';position:absolute;top:-28px;left:-6px;width:12px;height:12px;background:#FF3B30;
-  border-radius:50%;box-shadow:0 0 14px #FF3B30;}
-.case-window{position:relative;overflow:hidden;border-radius:16px;
-  background:linear-gradient(180deg,#1B2A44 0%,#0F172A 100%);
-  border:3px solid rgba(255,184,0,.4);}
+.case-pointer::after{content:'';position:absolute;top:-28px;left:-6px;width:12px;height:12px;background:#FF3B30;border-radius:50%;box-shadow:0 0 14px #FF3B30;}
+.case-window{position:relative;overflow:hidden;border-radius:16px;background:linear-gradient(180deg,#1B2A44 0%,#0F172A 100%);border:3px solid rgba(255,184,0,.4);}
+.case-window::before,.case-window::after{content:'';position:absolute;top:0;bottom:0;width:60px;z-index:2;pointer-events:none;}
+.case-window::before{left:0;background:linear-gradient(90deg,rgba(15,23,42,.95),transparent);}
+.case-window::after{right:0;background:linear-gradient(270deg,rgba(15,23,42,.95),transparent);}
 .case-center-line{position:absolute;top:0;bottom:0;left:50%;width:2px;background:rgba(255,59,48,.35);z-index:2;pointer-events:none;}
 .case-track{display:flex;gap:8px;padding:14px 0;transition:transform 6s cubic-bezier(.15,.85,.15,1);will-change:transform;}
 .case-track.no-anim{transition:none;}
@@ -182,7 +309,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .modal-card{background:#fff;border-radius:18px;padding:22px;width:100%;max-width:330px;transform:scale(.92);
   transition:.22s cubic-bezier(.3,1.3,.5,1);text-align:center;max-height:80%;overflow-y:auto;}
 .modal.show .modal-card{transform:scale(1);}
-.modal-card h3{margin:0 0 10px;font-size:18px;font-weight:700;}
+.modal-card h3{margin:0 0 10px;font-size:18px;font-weight:700;letter-spacing:-.3px;}
 .modal-card p{margin:0 0 9px;font-size:13px;color:#5B6B80;line-height:1.5;text-align:left;}
 .modal-card p b{color:#0F172A;}
 .modal-btns{display:flex;gap:8px;margin-top:14px;}
@@ -192,42 +319,43 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .win-icon-big{font-size:72px;line-height:1;margin:8px 0 14px;animation:winPop .6s cubic-bezier(.2,1.4,.4,1);display:inline-block;}
 @keyframes winPop{0%{transform:scale(0) rotate(-180deg);opacity:0;}60%{transform:scale(1.15) rotate(10deg);opacity:1;}100%{transform:scale(1) rotate(0);}}
 .win-title{margin:0 0 8px;font-size:16px;font-weight:700;color:#0F172A;}
-.win-reward{font-size:22px;font-weight:900;margin:10px 0 14px;}
+.win-reward{font-size:22px;font-weight:900;margin:10px 0 14px;letter-spacing:-.5px;}
 .win-reward.gold{color:#E8A317;}
 .win-reward.blue{color:#1490D8;}
 .win-reward.green{color:#31B545;}
+
 #toast{position:absolute;left:50%;top:72px;transform:translate(-50%,-14px);z-index:70;background:rgba(16,36,58,.94);color:#fff;
-  font-size:13px;font-weight:500;padding:11px 18px;border-radius:12px;opacity:0;visibility:hidden;transition:.25s;pointer-events:none;
-  max-width:88%;text-align:center;}
+  font-size:13px;font-weight:500;padding:11px 18px;border-radius:12px;opacity:0;visibility:hidden;transition:.25s;pointer-events:none;max-width:88%;text-align:center;}
 #toast.show{opacity:1;visibility:visible;transform:translate(-50%,0);}
+
 .profile-card{background:#fff;border-radius:18px;padding:18px;text-align:center;box-shadow:0 1px 4px rgba(24,60,110,.06);margin-bottom:12px;}
 .profile-card .avatar{width:86px;height:86px;font-size:44px;margin:0 auto 10px;background:#2B7FD4;}
-.p-name{font-size:19px;font-weight:700;}
+.p-name{font-size:19px;font-weight:700;letter-spacing:-.4px;}
 .p-lvl{font-size:12.5px;color:var(--muted);font-weight:500;margin-top:3px;}
 .p-bar{height:8px;border-radius:8px;background:#EEF3F8;overflow:hidden;margin:14px 0 7px;}
 .p-bar i{display:block;height:100%;border-radius:8px;background:var(--tg-blue);transition:width .35s;}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px;}
 .stat{background:#fff;border-radius:14px;padding:13px 8px;text-align:center;box-shadow:0 1px 4px rgba(24,60,110,.06);}
-.stat b{display:block;font-size:16px;font-weight:700;}
+.stat b{display:block;font-size:16px;font-weight:700;letter-spacing:-.4px;}
 .stat span{display:block;font-size:10px;color:var(--muted);margin-top:3px;font-weight:500;}
 .stat-list{background:#fff;border-radius:16px;padding:6px 14px;box-shadow:0 1px 4px rgba(24,60,110,.06);margin-bottom:12px;}
 .stat-row{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid var(--line);font-size:13px;}
 .stat-row:last-child{border-bottom:none;}
 .stat-row svg{width:19px;height:19px;stroke:#8798AE;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto;}
 .stat-row span{flex:1;color:#5B6B80;font-weight:500;}
-.stat-row b{font-weight:600;}
-.btn-primary{width:100%;padding:15px;border-radius:12px;font-size:15px;display:flex;align-items:center;justify-content:center;gap:9px;}
+.stat-row b{font-weight:600;letter-spacing:-.2px;}
+.btn-primary{width:100%;padding:15px;border-radius:12px;font-size:15px;display:flex;align-items:center;justify-content:center;gap:9px;font-family:inherit;cursor:pointer;}
 .btn-primary svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-.btn-invite{background:linear-gradient(135deg,#2AABEE,#229ED9);}
-.btn-rename{background:linear-gradient(135deg,#8B5CF6,#6D28D9);}
-.btn-prestige{background:linear-gradient(135deg,#5BE39A,#2ECC71);}
-.btn-dust{background:linear-gradient(135deg,#8798AE,#5B6B80);}
+.btn-invite{background:linear-gradient(135deg,#2AABEE,#229ED9);box-shadow:0 4px 12px rgba(34,158,217,.35);}
+.btn-rename{background:linear-gradient(135deg,#8B5CF6,#6D28D9);box-shadow:0 4px 12px rgba(139,92,246,.35);}
+.btn-prestige{background:linear-gradient(135deg,#5BE39A,#2ECC71);box-shadow:0 4px 12px rgba(46,204,113,.35);}
+.btn-dust{background:linear-gradient(135deg,#8798AE,#5B6B80);box-shadow:0 4px 12px rgba(90,110,140,.35);}
+
 .custom-block{background:#fff;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(24,60,110,.06);}
 .custom-title{font-size:13.5px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
 .custom-title .lock{font-size:11px;color:#fff;background:linear-gradient(135deg,#FFB800,#F07000);padding:3px 8px;border-radius:8px;font-weight:700;}
 .custom-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
-.custom-item{position:relative;aspect-ratio:1;border-radius:14px;overflow:hidden;cursor:pointer;border:3px solid transparent;
-  background:#EEF3F8;display:grid;place-items:center;font-size:22px;transition:transform .12s;}
+.custom-item{position:relative;aspect-ratio:1;border-radius:14px;overflow:hidden;cursor:pointer;border:3px solid transparent;background:#EEF3F8;display:grid;place-items:center;font-size:22px;}
 .custom-item img{width:100%;height:100%;object-fit:cover;}
 .custom-item.selected{border-color:var(--tg-blue);box-shadow:0 0 0 3px var(--tg-blue-light);}
 .custom-item.locked::after{content:'🔒';position:absolute;inset:0;background:rgba(0,0,0,.45);display:grid;place-items:center;font-size:22px;}
@@ -239,23 +367,13 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .url-row input{flex:1;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-family:inherit;font-size:12px;outline:none;}
 .url-row button{border:none;font-family:inherit;background:var(--tg-blue);color:#fff;border-radius:10px;padding:0 14px;font-size:12.5px;font-weight:700;cursor:pointer;}
 .bg-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
-.bg-item{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;cursor:pointer;border:3px solid transparent;
-  background:#EEF3F8;background-size:cover;background-position:center;}
+.bg-item{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;cursor:pointer;border:3px solid transparent;background:#EEF3F8;background-size:cover;background-position:center;}
 .bg-item.selected{border-color:var(--tg-blue);}
-.bg-item .bg-lbl{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.75));
-  color:#fff;font-size:10.5px;font-weight:700;padding:14px 8px 6px;text-align:left;}
+.bg-item .bg-lbl{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.75));color:#fff;font-size:10.5px;font-weight:700;padding:14px 8px 6px;text-align:left;}
 .bg-item.locked::after{content:'🔒';position:absolute;inset:0;background:rgba(0,0,0,.5);display:grid;place-items:center;font-size:26px;color:#fff;}
-.bg-item .bg-check{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;background:var(--tg-green);color:#fff;
-  display:none;place-items:center;font-size:13px;font-weight:800;}
+.bg-item .bg-check{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;background:var(--tg-green);color:#fff;display:none;place-items:center;font-size:13px;font-weight:800;}
 .bg-item.selected .bg-check{display:grid;}
-.prem-card{background:linear-gradient(135deg,#2A1600,#3D2300);border-radius:18px;padding:16px;color:#fff;margin-bottom:12px;
-  box-shadow:0 8px 24px rgba(255,184,0,.25);}
-.prem-card h3{margin:0 0 6px;font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px;}
-.prem-card ul{margin:8px 0 12px;padding-left:18px;font-size:12px;line-height:1.6;color:rgba(255,255,255,.85);}
-.prem-card .prem-price{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:800;color:#FFB800;margin-bottom:10px;}
-.prem-card .prem-btn{width:100%;padding:13px;border:none;border-radius:12px;font-family:inherit;font-weight:800;font-size:14px;
-  background:linear-gradient(135deg,#FFB800,#F07000);color:#fff;cursor:pointer;}
-.prem-card.owned{background:linear-gradient(135deg,#0F2A47,#1B3F63);}
+
 .admin-hero{background:linear-gradient(135deg,#8B5CF6 0%,#EC4899 100%);border-radius:20px;padding:18px;color:#fff;margin-bottom:14px;}
 .admin-hero h3{margin:0 0 4px;font-size:18px;font-weight:800;}
 .admin-hero p{margin:0;font-size:11.5px;color:rgba(255,255,255,.85);}
@@ -263,30 +381,25 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .admin-block{background:#fff;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(24,60,110,.06);}
 .admin-block-title{font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#5B6B80;margin-bottom:10px;}
 .admin-row{display:flex;flex-wrap:wrap;gap:8px;}
-.admin-btn{border:none;font-family:inherit;background:linear-gradient(135deg,#8B5CF6,#6D28D9);color:#fff;font-weight:700;
-  padding:10px 14px;border-radius:10px;font-size:12.5px;cursor:pointer;flex:1 1 auto;}
+.admin-btn{border:none;font-family:inherit;background:linear-gradient(135deg,#8B5CF6,#6D28D9);color:#fff;font-weight:700;padding:10px 14px;border-radius:10px;font-size:12.5px;cursor:pointer;flex:1 1 auto;}
 .admin-btn.green{background:linear-gradient(135deg,#5BE39A,#2ECC71);}
 .admin-btn.red{background:linear-gradient(135deg,#FF6B35,#E8487F);}
 .admin-btn.gold{background:linear-gradient(135deg,#FFB800,#F07000);}
 .admin-btn.blue{background:linear-gradient(135deg,#33C5FF,#1490D8);}
-.admin-badge{display:inline-block;color:#fff;background:linear-gradient(135deg,#8B5CF6,#EC4899);font-size:10px;font-weight:800;
-  padding:2px 7px;border-radius:8px;margin-left:6px;vertical-align:middle;}
+.admin-badge{display:inline-block;color:#fff;background:linear-gradient(135deg,#8B5CF6,#EC4899);font-size:10px;font-weight:800;padding:2px 7px;border-radius:8px;margin-left:6px;vertical-align:middle;}
+
 .roulette-wrap{display:flex;flex-direction:column;align-items:center;padding:4px 0 20px;}
 .roulette-title{text-align:center;margin-bottom:18px;}
 .roulette-title h2{margin:0 0 4px;font-size:22px;font-weight:800;}
 .roulette-title p{margin:0;font-size:12.5px;color:var(--muted);}
 .wheel-container{position:relative;width:300px;height:300px;margin:0 auto 20px;}
-.wheel-glow{position:absolute;inset:-20px;border-radius:50%;background:radial-gradient(circle,rgba(51,197,255,.35) 0%,rgba(51,197,255,0) 65%);
-  animation:wheelPulse 2.4s ease-in-out infinite;pointer-events:none;}
-@keyframes wheelPulse{0%,100%{opacity:.55;}50%{opacity:.95;}}
-.wheel-pointer{position:absolute;top:-14px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:17px solid transparent;
-  border-right:17px solid transparent;border-top:26px solid #E8487F;z-index:5;}
+.wheel-glow{position:absolute;inset:-20px;border-radius:50%;background:radial-gradient(circle,rgba(51,197,255,.35) 0%,rgba(51,197,255,0) 65%);animation:wheelPulse 2.4s ease-in-out infinite;pointer-events:none;}
+@keyframes wheelPulse{0%,100%{opacity:.55;transform:scale(1);}50%{opacity:.95;transform:scale(1.08);}}
+.wheel-pointer{position:absolute;top:-14px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:17px solid transparent;border-right:17px solid transparent;border-top:26px solid #E8487F;z-index:5;transform-origin:50% 0;}
 .wheel-pointer.spinning{animation:pointerTick .12s linear infinite;}
 @keyframes pointerTick{0%{transform:translateX(-50%) rotate(-10deg);}50%{transform:translateX(-50%) rotate(10deg);}100%{transform:translateX(-50%) rotate(-10deg);}}
 #wheelCanvas{position:relative;z-index:1;width:300px;height:300px;border-radius:50%;display:block;}
-.spin-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:92px;height:92px;border-radius:50%;border:5px solid #fff;
-  background:linear-gradient(135deg,#3390EC,#1E7DB8);color:#fff;font-family:inherit;font-weight:800;cursor:pointer;z-index:4;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:0;}
+.spin-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:92px;height:92px;border-radius:50%;border:5px solid #fff;background:linear-gradient(135deg,#3390EC,#1E7DB8);color:#fff;font-family:inherit;font-weight:800;cursor:pointer;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:0;}
 .spin-center:disabled{background:linear-gradient(135deg,#8798AE,#5B6B80);}
 .spin-center .sc-ico{font-size:26px;line-height:1;}
 .spin-center .sc-txt{font-size:11px;font-weight:800;text-transform:uppercase;}
@@ -307,28 +420,23 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .task-check.wait{background:#E9F0F7;color:#A2AFC2;}
 .tabs{display:flex;gap:6px;margin-bottom:13px;background:#E4EBF3;padding:4px;border-radius:12px;overflow-x:auto;}
 .tabs::-webkit-scrollbar{height:0;}
-.tab{flex:1;border:none;font-family:inherit;padding:9px 4px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;
-  background:transparent;color:#8798AE;white-space:nowrap;}
+.tab{flex:1;border:none;font-family:inherit;padding:9px 4px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:#8798AE;white-space:nowrap;}
 .tab.active{background:#fff;color:var(--tg-blue);box-shadow:0 1px 3px rgba(24,60,110,.12);}
-.drawer{position:absolute;top:0;left:0;bottom:0;width:min(82%,320px);z-index:50;background:#1B3F63;transform:translateX(-102%);
-  transition:transform .28s cubic-bezier(.3,.9,.3,1);display:flex;flex-direction:column;color:#fff;overflow-y:auto;
-  padding:14px 14px calc(18px + env(safe-area-inset-bottom,0px));}
+
+.drawer{position:absolute;top:0;left:0;bottom:0;width:min(82%,320px);z-index:50;background:#1B3F63;transform:translateX(-102%);transition:transform .28s cubic-bezier(.3,.9,.3,1);display:flex;flex-direction:column;color:#fff;overflow-y:auto;padding:14px 14px calc(18px + env(safe-area-inset-bottom,0px));}
 .drawer.open{transform:translateX(0);}
 .drawer::-webkit-scrollbar{width:0;}
-.drawer-close{align-self:flex-end;width:36px;height:36px;border:none;border-radius:10px;background:rgba(255,255,255,.1);color:#fff;
-  font-size:17px;cursor:pointer;display:grid;place-items:center;font-family:inherit;}
+.drawer-close{align-self:flex-end;width:36px;height:36px;border:none;border-radius:10px;background:rgba(255,255,255,.1);color:#fff;font-size:17px;cursor:pointer;display:grid;place-items:center;font-family:inherit;}
 .drawer-head{display:flex;flex-direction:column;align-items:center;text-align:center;padding:2px 0 16px;}
-.avatar{width:74px;height:74px;border-radius:50%;display:grid;place-items:center;font-size:38px;background:#2B7FD4;margin-bottom:10px;
-  border:2px solid rgba(255,255,255,.2);overflow:hidden;}
+.avatar{width:74px;height:74px;border-radius:50%;display:grid;place-items:center;font-size:38px;background:#2B7FD4;margin-bottom:10px;border:2px solid rgba(255,255,255,.2);overflow:hidden;}
 .avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
-.d-name{font-size:17px;font-weight:700;}
+.d-name{font-size:17px;font-weight:700;letter-spacing:-.3px;}
 .d-lvl{font-size:12px;color:#9CC3E4;font-weight:500;margin-top:2px;}
 .d-bar{width:150px;height:6px;border-radius:6px;background:rgba(255,255,255,.16);margin-top:9px;overflow:hidden;}
 .d-bar i{display:block;height:100%;border-radius:6px;background:var(--tg-blue);transition:width .3s;}
 .d-xp{font-size:10.5px;color:#8FB6D8;margin-top:5px;font-weight:500;}
 .drawer-nav{display:flex;flex-direction:column;gap:3px;margin-top:4px;}
-.dnav{display:flex;align-items:center;gap:12px;background:none;border:none;font-family:inherit;color:#D8E8F6;font-size:14.5px;
-  font-weight:500;padding:12px 13px;border-radius:10px;cursor:pointer;text-align:left;}
+.dnav{display:flex;align-items:center;gap:12px;background:none;border:none;font-family:inherit;color:#D8E8F6;font-size:14.5px;font-weight:500;padding:12px 13px;border-radius:10px;cursor:pointer;text-align:left;}
 .dnav svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;opacity:.9;flex:0 0 auto;}
 .dnav.active{background:var(--tg-blue);color:#fff;}
 .dnav.admin-nav{background:linear-gradient(135deg,#8B5CF6,#EC4899);color:#fff;}
@@ -336,19 +444,19 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .drawer-foot{margin-top:auto;padding-top:18px;text-align:center;font-size:10.5px;color:#7FA5C6;line-height:1.6;}
 .overlay{position:absolute;inset:0;background:rgba(10,22,40,.5);opacity:0;visibility:hidden;transition:.24s;z-index:40;}
 .overlay.show{opacity:1;visibility:visible;}
+
 .bottomnav{flex:0 0 auto;display:flex;background:#fff;border-top:1px solid var(--line);padding:7px 2px calc(7px + env(safe-area-inset-bottom,0px));z-index:6;}
-.nav-item{flex:1;background:none;border:none;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:2px;
-  color:#A2AFC2;font-size:9.5px;font-weight:500;padding:5px 0;cursor:pointer;border-radius:12px;}
+.nav-item{flex:1;background:none;border:none;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:2px;color:#A2AFC2;font-size:9.5px;font-weight:500;padding:5px 0;cursor:pointer;border-radius:12px;transition:color .16s;}
 .nav-item svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
 .nav-item.active{color:var(--tg-blue);}
 .nav-item.nav-roulette{color:#E8A317;}
 .nav-item.nav-roulette svg{stroke:#E8A317;}
+
 .promo-row{display:flex;gap:6px;margin-top:10px;}
 .promo-row input{flex:1;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-family:inherit;font-size:13px;outline:none;text-transform:uppercase;}
 .promo-row button{border:none;font-family:inherit;background:linear-gradient(135deg,#5BE39A,#2ECC71);color:#fff;border-radius:10px;padding:0 18px;font-size:13px;font-weight:800;cursor:pointer;}
 </style>
-</head>
-<body>
+</head><body>
 <div id="app">
 
   <div class="topbar transparent" id="topbar">
@@ -378,10 +486,12 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       <button class="dnav" data-go="s-home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Главная</button>
       <button class="dnav" data-go="s-upgrades"><svg viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L10 22l9-11.5h-6.5z"/></svg>Улучшения</button>
       <button class="dnav" data-go="s-buildings"><svg viewBox="0 0 24 24"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6"/></svg>Постройки</button>
+      <button class="dnav" data-go="s-pet"><svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="4"/><circle cx="6" cy="14" r="2"/><circle cx="18" cy="14" r="2"/></svg>🐾 Питомец</button>
       <button class="dnav" data-go="s-achievements"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M9 13.5 7 22l5-3 5 3-2-8.5"/></svg>Достижения</button>
       <button class="dnav" data-go="s-tasks"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M8 12.2l2.6 2.6L16.2 9"/></svg>Задания</button>
       <button class="dnav" data-go="s-roulette"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>Рулетка</button>
       <button class="dnav" data-go="s-shop"><svg viewBox="0 0 24 24"><path d="M3 9l1-5h16l1 5"/><path d="M4 9v11h16V9"/></svg>Магазин</button>
+      <button class="dnav" data-go="s-skins"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>🎨 Скины</button>
       <button class="dnav" data-go="s-inventory"><svg viewBox="0 0 24 24"><path d="M4 7h16l-1.5 12.5a2 2 0 0 1-2 1.5H7.5a2 2 0 0 1-2-1.5z"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg>🎒 Инвентарь</button>
       <button class="dnav" data-go="s-profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4-6 8-6s6.5 2 8 6"/></svg>Профиль</button>
       <button class="dnav" data-go="s-custom"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1.4" fill="currentColor"/><circle cx="15" cy="10" r="1.4" fill="currentColor"/><path d="M8 15c1.2 1.4 2.6 2 4 2s2.8-.6 4-2"/></svg>Кастомизация</button>
@@ -420,7 +530,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 
     <section class="screen" id="s-roulette">
       <div class="roulette-wrap">
-        <div class="roulette-title"><h2>🎡 Рулетка удачи</h2><p>Испытай удачу!</p></div>
+        <div class="roulette-title"><h2>🎡 Рулетка удачи</h2><p>Испытай удачу — призы ждут!</p></div>
         <div class="wheel-container">
           <div class="wheel-glow"></div>
           <div class="wheel-pointer" id="wheelPointer"></div>
@@ -434,7 +544,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
     </section>
 
     <section class="screen" id="s-upgrades">
-      <div class="screen-head"><div><h2>Улучшения</h2><p>Увеличивай доход</p></div>
+      <div class="screen-head"><div><h2>Улучшения</h2><p>Увеличивай доход и открывай новые возможности</p></div>
         <div class="bal-chips">
           <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
           <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
@@ -444,7 +554,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
     </section>
 
     <section class="screen" id="s-buildings">
-      <div class="screen-head"><div><h2>Постройки</h2><p>Пассивный доход</p></div>
+      <div class="screen-head"><div><h2>Постройки</h2><p>Построй здания и получай пассивный доход</p></div>
         <div class="bal-chips">
           <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
           <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
@@ -453,18 +563,49 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       <div class="list" id="buildingsList"></div>
     </section>
 
-    <section class="screen" id="s-achievements">
-      <div class="screen-head"><div><h2>Достижения</h2><p>Награды</p></div>
+    <!-- PET -->
+    <section class="screen" id="s-pet">
+      <div class="screen-head"><div><h2>🐾 Питомец</h2><p>Корми, играй и получай подарки</p></div>
         <div class="bal-chips">
           <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
           <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
         </div>
       </div>
-      <div class="list" id="achievementsList"></div>
+      <section class="pet-panel" id="petPanel">
+        <div class="pet-panel-inner" id="petPanelInner"></div>
+      </section>
+      <div class="custom-block">
+        <div class="custom-title">🍖 Еда питомца (<span id="foodInvCount">0</span>)</div>
+        <div class="food-inv-grid" id="foodInvGrid">
+          <div style="text-align:center;padding:14px;color:#8798AE;font-size:12px;">Еды нет. Купи в магазине!</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKINS -->
+    <section class="screen" id="s-skins">
+      <div class="screen-head"><div><h2>🎨 Скины кнопки</h2><p>Меняй внешний вид кнопки тапа</p></div>
+        <div class="bal-chips">
+          <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
+          <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
+        </div>
+      </div>
+      <div class="skins-grid" id="skinsGrid"></div>
+    </section>
+
+    <section class="screen" id="s-achievements">
+      <div class="screen-head"><div><h2>Достижения</h2><p>Выполняй достижения и получай награды</p></div>
+        <div class="bal-chips">
+          <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
+          <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
+        </div>
+      </div>
+      <div id="chainsBox"></div>
+      <div class="list" id="achievementsList" style="margin-top:14px;"></div>
     </section>
 
     <section class="screen" id="s-tasks">
-      <div class="screen-head"><div><h2>Задания</h2><p>Награды</p></div>
+      <div class="screen-head"><div><h2>Задания</h2><p>Выполняй задания и получай награды</p></div>
         <div class="bal-chips">
           <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
           <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
@@ -472,6 +613,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       </div>
       <div class="tabs">
         <button class="tab active" data-tab="dailyQ">Ежедневные</button>
+        <button class="tab" data-tab="weeklyQ">Недельные</button>
         <button class="tab" data-tab="regular">Обычные</button>
       </div>
       <div id="dailyQuestProgress" style="background:#fff;border-radius:14px;padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 4px rgba(24,60,110,.06);display:none;"></div>
@@ -489,6 +631,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       <div class="tabs">
         <button class="tab active" data-shop="boosts">Бусты</button>
         <button class="tab" data-shop="cases">🎁 Кейсы</button>
+        <button class="tab" data-shop="food">🍖 Еда</button>
         <button class="tab" data-shop="premium">⭐ Премиум</button>
         <button class="tab" data-shop="diamonds">💎</button>
       </div>
@@ -496,7 +639,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
     </section>
 
     <section class="screen" id="s-inventory">
-      <div class="screen-head"><div><h2>🎒 Инвентарь</h2><p>Всё, что выпало</p></div>
+      <div class="screen-head"><div><h2>🎒 Инвентарь</h2><p>Всё, что выпало из кейсов</p></div>
         <div class="bal-chips">
           <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
           <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
@@ -519,7 +662,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
           <div class="item-icon">🎟️</div>
           <div class="item-body">
             <div class="item-name">Билеты <span style="color:#8798AE;font-weight:500" id="invTickets">×0</span></div>
-            <div class="item-sub">Бесплатное вращение</div>
+            <div class="item-sub">Дают <b>бесплатное вращение</b> рулетки</div>
           </div>
         </div>
       </div>
@@ -538,7 +681,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
     </section>
 
     <section class="screen" id="s-profile">
-      <div class="screen-head"><div><h2>Профиль</h2><p>Статистика</p></div>
+      <div class="screen-head"><div><h2>Профиль</h2><p>Твоя статистика и прогресс</p></div>
         <div class="bal-chips">
           <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
           <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
@@ -562,16 +705,29 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
         <div class="stat-row"><svg viewBox="0 0 24 24"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6"/></svg><span>Построено зданий</span><b id="stBuild">0</b></div>
         <div class="stat-row"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M8 12.2l2.6 2.6L16.2 9"/></svg><span>Заданий выполнено</span><b id="stTasks">0 / 0</b></div>
       </div>
+
       <div class="custom-block">
         <div class="custom-title">🎟️ Промокод</div>
         <div class="promo-row">
-          <input type="text" id="promoInput" placeholder="Введи промокод">
+          <input type="text" id="promoInput" placeholder="Введи код">
           <button id="promoBtn">ОК</button>
         </div>
       </div>
+
+      <div class="prestige-shop">
+        <h3>💎 Престиж-магазин <span class="prestige-stars" id="prestigeStarsLabel">⭐ 0</span></h3>
+        <div id="perksList"></div>
+      </div>
+
+      <div class="level-rewards">
+        <h3>🏅 Награды за уровни</h3>
+        <div id="levelRewardsList"></div>
+      </div>
+
       <button class="btn-primary btn-dust" id="sellDustBtn" style="margin-bottom:10px;">
         🍃 Продать пыль (<span id="dustCount">0</span> × 10 🪙)
       </button>
+
       <button class="btn-primary btn-prestige" id="prestigeBtn" style="margin-bottom:10px;">
         <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9"/><path d="M21 3v6h-6"/></svg>
         <span id="prestigeLabel">Престиж</span>
@@ -586,7 +742,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       </button>
       <button class="btn-primary" id="shareBtn">
         <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
-        Поделиться
+        Поделиться результатами
       </button>
     </section>
 
@@ -608,7 +764,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
     </section>
 
     <section class="screen" id="s-admin">
-      <div class="screen-head"><div><h2>👑 Админ-панель</h2><p>Только для админов</p></div>
+      <div class="screen-head"><div><h2>👑 Админ-панель</h2><p>Режим бога — только для админов</p></div>
         <div class="bal-chips">
           <div class="bal-chip"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt=""><b class="coinVal">0</b></div>
           <div class="bal-chip chip-d"><span class="diamond-ico">💎</span><b class="diamondVal">3</b></div>
@@ -616,7 +772,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       </div>
       <div class="admin-hero">
         <h3>⚡ Режим бога активирован</h3>
-        <p>Все читы доступны</p>
+        <p>Тебе доступны все читы и команды</p>
         <div class="aid" id="adminIdLabel">ID: —</div>
       </div>
       <div class="admin-block"><div class="admin-block-title">💰 Монеты</div><div class="admin-row">
@@ -632,7 +788,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       </div></div>
       <div class="admin-block"><div class="admin-block-title">⭐ Premium</div><div class="admin-row">
         <button class="admin-btn gold" data-admin="premium-on">Выдать Premium</button>
-        <button class="admin-btn red" data-admin="premium-off">Забрать</button>
+        <button class="admin-btn red" data-admin="premium-off">Забрать Premium</button>
       </div></div>
       <div class="admin-block"><div class="admin-block-title">📈 Прогресс</div><div class="admin-row">
         <button class="admin-btn green" data-admin="level" data-val="10">+10 уровней</button>
@@ -640,6 +796,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
         <button class="admin-btn green" data-admin="all-buildings">+1 ко всем зданиям</button>
         <button class="admin-btn green" data-admin="all-upgrades" data-val="10">+10 к апгрейдам</button>
         <button class="admin-btn green" data-admin="prestige-add" data-val="1">+1 престиж</button>
+        <button class="admin-btn green" data-admin="star-add" data-val="10">+10 ⭐ престижа</button>
       </div></div>
       <div class="admin-block"><div class="admin-block-title">🎁 Бонусы</div><div class="admin-row">
         <button class="admin-btn blue" data-admin="boost2x">×2 на 1ч</button>
@@ -651,14 +808,19 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       </div></div>
       <div class="admin-block"><div class="admin-block-title">🎨 Косметика</div><div class="admin-row">
         <button class="admin-btn blue" data-admin="unlock-bg">Открыть все фоны</button>
+        <button class="admin-btn blue" data-admin="unlock-skins">Открыть все скины</button>
+      </div></div>
+      <div class="admin-block"><div class="admin-block-title">🐾 Питомец</div><div class="admin-row">
+        <button class="admin-btn blue" data-admin="pet-spawn">Дать питомца</button>
+        <button class="admin-btn blue" data-admin="pet-feed-full">Покормить полностью</button>
       </div></div>
       <div class="admin-block"><div class="admin-block-title">🎰 Рулетка</div><div class="admin-row">
-        <button class="admin-btn green" data-admin="spin-reset">Сброс кулдауна</button>
+        <button class="admin-btn green" data-admin="spin-reset">Сбросить кулдаун</button>
       </div></div>
       <div class="admin-block"><div class="admin-block-title">⚙️ Система</div><div class="admin-row">
         <button class="admin-btn" data-admin="save">💾 Сохранить</button>
         <button class="admin-btn" data-admin="load">📂 Загрузить</button>
-        <button class="admin-btn red" data-admin="reset">🗑️ Сброс</button>
+        <button class="admin-btn red" data-admin="reset">🗑️ Полный сброс</button>
       </div></div>
     </section>
 
@@ -668,7 +830,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
     <button class="nav-item active" data-go="s-home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Главная</button>
     <button class="nav-item" data-go="s-buildings"><svg viewBox="0 0 24 24"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6"/></svg>Здания</button>
     <button class="nav-item nav-roulette" data-go="s-roulette"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>Рулетка</button>
-    <button class="nav-item" data-go="s-tasks"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M8 12.2l2.6 2.6L16.2 9"/></svg>Задания</button>
+    <button class="nav-item" data-go="s-pet"><svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="4"/><circle cx="6" cy="14" r="2"/><circle cx="18" cy="14" r="2"/></svg>Питомец</button>
     <button class="nav-item" data-go="s-shop"><svg viewBox="0 0 24 24"><path d="M3 9l1-5h16l1 5"/><path d="M4 9v11h16V9"/></svg>Магазин</button>
   </nav>
 
@@ -679,7 +841,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 <div class="daily-popup" id="dailyPopup">
   <div class="daily-card">
     <h3>🔥 Ежедневная награда</h3>
-    <p id="dailySub">Заходи каждый день!</p>
+    <p id="dailySub">Заходи каждый день — награда растёт!</p>
     <div class="daily-grid" id="dailyGrid"></div>
     <button class="daily-claim" id="dailyClaim">Забрать</button>
   </div>
@@ -690,7 +852,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
     <div class="oi">💤</div>
     <h3>Пока тебя не было…</h3>
     <div class="osum" id="offlineSum">+0 🪙</div>
-    <p>Забрать доход?</p>
+    <p>Твои здания работали, пока ты отдыхал.<br>Забрать доход?</p>
     <button class="obtn x2" id="offlineX2">🎬 Забрать ×2</button>
     <button class="obtn" id="offlineTake">Забрать</button>
   </div>
@@ -709,13 +871,24 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
   </div>
 </div>
 
-<div id="toast"></div>
+<div class="pet-name-popup" id="petNamePopup">
+  <div class="pet-name-card">
+    <h3>✏️ Имя питомца</h3>
+    <p style="margin:0 0 12px;font-size:12.5px;color:#8798AE;">Цена смены: <b>10 000 🪙</b></p>
+    <input id="petNewNameInput" type="text" maxlength="12" value=""
+      style="width:100%;padding:12px 14px;border:1.5px solid #E4EBF3;border-radius:12px;
+             font-family:inherit;font-size:15px;text-align:center;outline:none;margin:6px 0 4px;">
+    <div class="modal-btns">
+      <button class="cancel" id="petNameCancel" style="background:#E9F0F7;color:#5B6B80;">Отмена</button>
+      <button class="ok" id="petNameOk" style="background:var(--tg-blue);color:#fff;">Сменить</button>
+    </div>
+  </div>
+</div>
 
-<script>
-/* ==================== ADMIN — ДВА ID ==================== */
-const ADMIN_IDS = [6278296308, 7166372887];
+<div id="toast"></div><script>
+/* ==================== ADMIN — ТРИ ID ==================== */
+const ADMIN_IDS = [6278296308, 7166372887, 8496536632];
 let IS_ADMIN = false;
-
 function checkAdmin(){
   try{
     const uid = tg?.initDataUnsafe?.user?.id;
@@ -797,6 +970,7 @@ const SFX = {
   tick(){ this.noise(0.03, 0.35, 2600, 4); this.tone(1900 + Math.random() * 300, 0.035, 'square', 0.06); },
   coin(){ this.tone(1250, 0.07, 'sine', 0.22); this.tone(1800, 0.1, 'sine', 0.2, 0.06); this.noise(0.05, 0.12, 5000, 3, 0.02); },
   upgrade(){ const a = [523, 659, 784, 1046]; for (let i = 0; i < a.length; i++) this.tone(a[i], 0.28, 'triangle', 0.22, i * 0.07); this.noise(0.4, 0.12, 3000, 2, 0.05); },
+  pet(){ this.tone(800, 0.1, 'sine', 0.15); this.tone(1000, 0.12, 'sine', 0.12, 0.08); this.tone(1200, 0.15, 'sine', 0.1, 0.16); },
   reveal(r){
     if (r === 'common' || r === 'uncommon'){ this.tone(392, 0.15, 'triangle', 0.25); this.tone(523, 0.25, 'triangle', 0.22, 0.1); }
     else if (r === 'rare'){ const a = [523, 659, 784]; for (let i = 0; i < a.length; i++) this.tone(a[i], 0.3, 'triangle', 0.24, i * 0.09); this.noise(0.4, 0.12, 3000, 2, 0.1); }
@@ -927,8 +1101,8 @@ function showConfetti(){
 }
 
 /* ==================== SAVE ==================== */
-const SAVE_KEY = 'cryptocat_save_v1';
-const CLOUD_KEY = 'cryptocat_save_v1';
+const SAVE_KEY = 'cryptocat_save_v2';
+const CLOUD_KEY = 'cryptocat_save_v2';
 let saveBusy = false;
 
 function defaultState(){
@@ -943,24 +1117,30 @@ function defaultState(){
     lastSpin: 0, achievements: {},
     name: 'КриптоКот',
     startedAt: Date.now(), playTime: 0,
-    streak: 0,
-    lastDailyDate: '',
+    streak: 0, lastDailyDate: '',
     lastSeen: Date.now(),
-    prestige: 0,
-    lastPrestige: 0,
-    dailyQuests: {},
-    dailyQuestsDate: '',
+    prestige: 0, lastPrestige: 0,
+    prestigeStars: 0, ownedPerks: {},
+    dailyQuests: {}, dailyQuestsDate: '',
+    weeklyQuests: {}, weeklyQuestsDate: '',
     usedPromos: {},
     pityCounter: 0,
     unlockedFrames: {},
-    musicOn: true,
-    muted: false,
-    activeBoosts: {},
-    boostTapUntil: 0,
-    discount: 0,
-    tickets: 0,
-    dust: 0,
-    premiumUntil: 0
+    musicOn: true, muted: false,
+    activeBoosts: {}, boostTapUntil: 0,
+    discount: 0, tickets: 0, dust: 0, premiumUntil: 0,
+    // Питомец
+    pet: null,
+    petFood: {},
+    // Скины
+    tapSkin: 'default',
+    ownedSkins: { default: true },
+    // Награды за уровни
+    claimedLevels: {},
+    // Цепочки
+    chains: {},
+    // Кастомный фон кнопки тапа
+    customTapUrl: ''
   };
 }
 let S = defaultState();
@@ -989,7 +1169,9 @@ async function load(){
     S.buildings = S.buildings||{}; S.upgrades = S.upgrades||{}; S.ownedBuildings = S.ownedBuildings||{};
     S.tasksDone = S.tasksDone||{}; S.dailyDone = S.dailyDone||{}; S.achievements = S.achievements||{};
     S.dailyQuests = S.dailyQuests||{}; S.usedPromos = S.usedPromos||{}; S.unlockedFrames = S.unlockedFrames||{};
-    S.activeBoosts = S.activeBoosts||{};
+    S.activeBoosts = S.activeBoosts||{}; S.petFood = S.petFood||{}; S.ownedSkins = S.ownedSkins||{default:true};
+    S.claimedLevels = S.claimedLevels||{}; S.chains = S.chains||{}; S.ownedPerks = S.ownedPerks||{};
+    S.weeklyQuests = S.weeklyQuests||{};
     if (typeof S.musicOn === 'boolean') Music.on = S.musicOn;
     if (typeof S.muted === 'boolean') SFX.muted = S.muted;
   }
@@ -1065,6 +1247,91 @@ const BACKGROUNDS = [
   {id:'b_exchange', name:'Биржа', url:'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200', free:false, building:'exchange'}
 ];
 
+const TAP_SKINS = [
+  {id:'default', name:'Стандарт', cls:'', price:0, free:true, icon:'💰'},
+  {id:'fire', name:'Огонь', cls:'tap-skin-fire', price:50, free:false, icon:'🔥'},
+  {id:'ice', name:'Лёд', cls:'tap-skin-ice', price:50, free:false, icon:'❄️'},
+  {id:'neon', name:'Неон', cls:'tap-skin-neon', price:100, free:false, icon:'⚡'},
+  {id:'royal', name:'Королевский', cls:'tap-skin-royal', price:200, free:false, icon:'👑'},
+  {id:'gold', name:'Золотой', cls:'tap-skin-gold', price:300, free:false, icon:'🪙'}
+];
+
+const PET_FOOD = [
+  {id:'bread',emoji:'🍞',name:'Хлеб',price:500,power:20},
+  {id:'meat',emoji:'🍖',name:'Мясо',price:2000,power:40},
+  {id:'fish',emoji:'🐟',name:'Рыба',price:5000,power:60},
+  {id:'chicken',emoji:'🍗',name:'Курица',price:15000,power:80},
+  {id:'steak',emoji:'🥩',name:'Стейк',price:50000,power:100},
+  {id:'sushi',emoji:'🍣',name:'Суши',price:150000,power:120},
+  {id:'cake',emoji:'🍰',name:'Тортик',price:500000,power:150},
+  {id:'lobster',emoji:'🦞',name:'Лобстер',price:2000000,power:200}
+];
+
+const PET_NAMES = ['Барсик','Мурзик','Рекс','Бублик','Пушок','Снежок','Тимка','Лео','Макс','Симба','Рыжик','Васька','Дымка','Клёпа','Зефир'];
+
+const PERKS = [
+  {id:'inc10', name:'+10% доход', desc:'Постоянный множитель к доходу', cost:3, icon:'💤'},
+  {id:'tap5', name:'+5 к тапу', desc:'Каждый тап даёт +5 монет', cost:5, icon:'👆'},
+  {id:'crit10', name:'+10% крит', desc:'Шанс крита +10%', cost:8, icon:'💥'},
+  {id:'offline2', name:'Оффлайн ×2', desc:'Оффлайн-доход ×2', cost:12, icon:'💤'},
+  {id:'autotap', name:'Авто-тап', desc:'1 тап/сек автоматически', cost:20, icon:'🤖'}
+];
+
+const ACHIEVEMENT_CHAINS = [
+  {id:'chain_tap', name:'Тапальщик', icon:'👆', steps:[100,1000,10000,100000], stat:'totalTaps',
+   rewards:[{coins:1000},{coins:10000},{diamonds:5},{diamonds:25}]},
+  {id:'chain_earn', name:'Богатей', icon:'💰', steps:[10000,100000,1000000,10000000], stat:'totalEarned',
+   rewards:[{coins:2000,diamonds:1},{coins:20000,diamonds:3},{diamonds:15},{diamonds:50}]},
+  {id:'chain_build', name:'Строитель', icon:'🏗️', steps:[1,5,20,50], stat:'buildings',
+   rewards:[{coins:500},{coins:5000},{diamonds:5},{diamonds:20}]},
+  {id:'chain_lvl', name:'Прокачка', icon:'⭐', steps:[5,10,25,50], stat:'level',
+   rewards:[{diamonds:2},{diamonds:5},{diamonds:15},{diamonds:40}]}
+];
+
+const WEEKLY_QUESTS = [
+  {id:'w_tap5000', name:'Сделать 5 000 тапов', icon:'👆', goal:5000, stat:'weeklyTaps', reward:{coins:50000, diamonds:5}},
+  {id:'w_earn1m', name:'Заработать 1 000 000', icon:'💰', goal:1000000, stat:'weeklyEarned', reward:{coins:100000, diamonds:10}},
+  {id:'w_cases10', name:'Открыть 10 кейсов', icon:'🎁', goal:10, stat:'weeklyCases', reward:{diamonds:15}},
+  {id:'w_spin7', name:'Крутить рулетку 7 раз', icon:'🎡', goal:7, stat:'weeklySpins', reward:{coins:30000, diamonds:8}}
+];
+
+const LEVEL_REWARDS = [
+  {lvl:5, type:'case', value:'case_bronze', name:'Бронзовый кейс', icon:'🎁'},
+  {lvl:10, type:'case', value:'case_silver', name:'Серебряный кейс', icon:'📦'},
+  {lvl:15, type:'skin', value:'fire', name:'Скин «Огонь»', icon:'🔥'},
+  {lvl:20, type:'case', value:'case_gold', name:'Золотой кейс', icon:'🏆'},
+  {lvl:25, type:'skin', value:'neon', name:'Скин «Неон»', icon:'⚡'},
+  {lvl:30, type:'diamonds', value:50, name:'50 💎', icon:'💎'},
+  {lvl:40, type:'skin', value:'royal', name:'Скин «Королевский»', icon:'👑'},
+  {lvl:50, type:'premium', value:1, name:'⭐ PREMIUM', icon:'⭐'}
+];
+
+const ACHIEVEMENTS = [
+  {id:'a_tap1', name:'Первый тап', icon:'👆', goal:1, stat:'totalTaps', reward:{coins:100}},
+  {id:'a_tap100', name:'100 тапов', icon:'✋', goal:100, stat:'totalTaps', reward:{coins:500}},
+  {id:'a_tap1k', name:'1 000 тапов', icon:'🔥', goal:1000, stat:'totalTaps', reward:{coins:5000, diamonds:1}},
+  {id:'a_earn1k', name:'Первая 1000', icon:'🪙', goal:1000, stat:'totalEarned', reward:{coins:500}},
+  {id:'a_earn100k', name:'100 000 монет', icon:'💰', goal:100000, stat:'totalEarned', reward:{diamonds:3}},
+  {id:'a_build1', name:'Первое здание', icon:'🏠', goal:1, stat:'buildings', reward:{coins:1000}},
+  {id:'a_build10', name:'10 зданий', icon:'🏙️', goal:10, stat:'buildings', reward:{diamonds:2}},
+  {id:'a_lvl5', name:'5 уровень', icon:'⭐', goal:5, stat:'level', reward:{diamonds:2}},
+  {id:'a_prestige1', name:'Первый престиж', icon:'♻️', goal:1, stat:'prestige', reward:{diamonds:10}},
+  {id:'a_streak7', name:'Стрик 7 дней', icon:'🔥', goal:7, stat:'streak', reward:{diamonds:15}},
+  {id:'a_pet', name:'Завёл питомца', icon:'🐾', goal:1, stat:'hasPet', reward:{coins:5000}},
+  {id:'a_skin', name:'Первый скин', icon:'🎨', goal:1, stat:'hasSkin', reward:{diamonds:3}}
+];
+
+const DAILY_QUEST_POOL = [
+  {id:'dq_tap300',  name:'300 тапов',    icon:'👆', goal:300,    reward:{coins:2000},  type:'tapsToday'},
+  {id:'dq_tap1000', name:'1000 тапов',   icon:'🔥', goal:1000,   reward:{coins:6000},  type:'tapsToday'},
+  {id:'dq_spin1',   name:'Крутить рулетку', icon:'🎡', goal:1,   reward:{coins:3000},  type:'spinsToday'},
+  {id:'dq_build1',  name:'Купить здание', icon:'🏠', goal:1,     reward:{coins:4000, diamonds:1}, type:'buildingsToday'},
+  {id:'dq_case1',   name:'Открыть кейс', icon:'🎁', goal:1,      reward:{diamonds:2},  type:'casesToday'},
+  {id:'dq_earn5k',  name:'Заработать 5000', icon:'🪙', goal:5000, reward:{coins:2500}, type:'earnedToday'},
+  {id:'dq_earn20k', name:'Заработать 20000', icon:'💰', goal:20000, reward:{coins:8000, diamonds:1}, type:'earnedToday'},
+  {id:'dq_feedpet', name:'Покормить питомца', icon:'🍖', goal:1, reward:{coins:3000}, type:'feedsToday'}
+];
+
 const TASKS_DAILY = [
   {id:'d_tap100',  name:'Сделать 100 тапов',   icon:'👆', goal:100,   reward:{coins:500}},
   {id:'d_tap500',  name:'Сделать 500 тапов',   icon:'✋', goal:500,   reward:{coins:3000}},
@@ -1081,29 +1348,6 @@ const TASKS_REGULAR = [
   {id:'r_lvl5',    name:'Достичь 5 уровня',    icon:'⭐', goal:5,    reward:{diamonds:3}, type:'level'},
   {id:'r_lvl10',   name:'Достичь 10 уровня',   icon:'🌟', goal:10,   reward:{diamonds:8}, type:'level'},
   {id:'r_bank',    name:'Купить Банк',          icon:'🏦', goal:1,    reward:{coins:50000}, type:'has:bank'}
-];
-
-const DAILY_QUEST_POOL = [
-  {id:'dq_tap300',  name:'300 тапов',    icon:'👆', goal:300,    reward:{coins:2000},  type:'tapsToday'},
-  {id:'dq_tap1000', name:'1000 тапов',   icon:'🔥', goal:1000,   reward:{coins:6000},  type:'tapsToday'},
-  {id:'dq_spin1',   name:'Крутить рулетку', icon:'🎡', goal:1,   reward:{coins:3000},  type:'spinsToday'},
-  {id:'dq_build1',  name:'Купить здание', icon:'🏠', goal:1,     reward:{coins:4000, diamonds:1}, type:'buildingsToday'},
-  {id:'dq_case1',   name:'Открыть кейс', icon:'🎁', goal:1,      reward:{diamonds:2},  type:'casesToday'},
-  {id:'dq_earn5k',  name:'Заработать 5000', icon:'🪙', goal:5000, reward:{coins:2500}, type:'earnedToday'},
-  {id:'dq_earn20k', name:'Заработать 20000', icon:'💰', goal:20000, reward:{coins:8000, diamonds:1}, type:'earnedToday'}
-];
-
-const ACHIEVEMENTS = [
-  {id:'a_tap1', name:'Первый тап', icon:'👆', goal:1, stat:'totalTaps', reward:{coins:100}},
-  {id:'a_tap100', name:'100 тапов', icon:'✋', goal:100, stat:'totalTaps', reward:{coins:500}},
-  {id:'a_tap1k', name:'1 000 тапов', icon:'🔥', goal:1000, stat:'totalTaps', reward:{coins:5000, diamonds:1}},
-  {id:'a_earn1k', name:'Первая 1000', icon:'🪙', goal:1000, stat:'totalEarned', reward:{coins:500}},
-  {id:'a_earn100k', name:'100 000 монет', icon:'💰', goal:100000, stat:'totalEarned', reward:{diamonds:3}},
-  {id:'a_build1', name:'Первое здание', icon:'🏠', goal:1, stat:'buildings', reward:{coins:1000}},
-  {id:'a_build10', name:'10 зданий', icon:'🏙️', goal:10, stat:'buildings', reward:{diamonds:2}},
-  {id:'a_lvl5', name:'5 уровень', icon:'⭐', goal:5, stat:'level', reward:{diamonds:2}},
-  {id:'a_prestige1', name:'Первый престиж', icon:'♻️', goal:1, stat:'prestige', reward:{diamonds:10}},
-  {id:'a_streak7', name:'Стрик 7 дней', icon:'🔥', goal:7, stat:'streak', reward:{diamonds:15}}
 ];
 
 const WHEEL_PRIZES = [
@@ -1223,6 +1467,12 @@ function today(){
   const d = new Date();
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
+function thisWeek(){
+  const d = new Date();
+  const yearStart = new Date(d.getFullYear(), 0, 1);
+  const week = Math.ceil(((d - yearStart) / 86400000 + yearStart.getDay() + 1) / 7);
+  return d.getFullYear() + '-W' + week;
+}
 function isWeekend(){
   const d = new Date().getDay();
   return d === 0 || d === 6;
@@ -1231,6 +1481,9 @@ function isWeekend(){
 /* ==================== STATE HELPERS ==================== */
 function totalBuildings(){ return Object.values(S.buildings).reduce((a,b)=>a+b,0); }
 function prestigeMult(){ return 1 + (S.prestige||0) * 0.5; }
+function perkBonus(key){
+  return S.ownedPerks && S.ownedPerks[key] ? 1 : 0;
+}
 function hasBoost(key){ return ((S.activeBoosts || {})[key] || 0) > Date.now(); }
 function boostRemaining(key){ return Math.max(0, ((S.activeBoosts || {})[key] || 0) - Date.now()); }
 function getBoostMult(){
@@ -1251,10 +1504,18 @@ function formatBoostTime(ms){
   if (h > 0) return h + 'ч ' + m + 'м';
   return m + ':' + String(s).padStart(2, '0');
 }
+function petBonusIncome(){
+  if (!S.pet) return 1;
+  const h = S.pet.hunger / 100;
+  let bonus = 1 + h * 0.3;
+  if ((S.pet.fireUntil||0) > Date.now()) bonus *= 1.25;
+  return bonus;
+}
 function tapValue(){
   let v = 1;
   UPGRADES.filter(u=>u.type==='tap').forEach(u=>{ v += (S.upgrades[u.id]||0)*u.add; });
   if (isPremiumActive()) v += 2;
+  if (perkBonus('tap5')) v += 5;
   v += getTapBoostBonus();
   v *= prestigeMult();
   return Math.max(1, v);
@@ -1262,6 +1523,7 @@ function tapValue(){
 function critChance(){
   let c = 0;
   UPGRADES.filter(u=>u.type==='crit').forEach(u=>{ c += (S.upgrades[u.id]||0)*u.add; });
+  if (perkBonus('crit10')) c += 0.10;
   return Math.min(0.5, c);
 }
 function incomePerSec(){
@@ -1274,8 +1536,10 @@ function incomePerSec(){
   UPGRADES.filter(u=>u.type==='income').forEach(u=>{ bonus += (S.upgrades[u.id]||0)*u.add; });
   inc *= (1 + bonus);
   if (isPremiumActive()) inc *= 1.5;
+  if (perkBonus('inc10')) inc *= 1.10;
   inc *= prestigeMult();
   inc *= getBoostMult();
+  inc *= petBonusIncome();
   if (isWeekend()) inc *= 2;
   return inc;
 }
@@ -1309,6 +1573,7 @@ function adminAction(cmd, val){
     case 'level': S.level += v; S.xp = 0; toast('+'+v+' уровней'); break;
     case 'xp': addXp(v); toast('+'+fmt(v)+' XP'); break;
     case 'prestige-add': S.prestige = (S.prestige||0) + v; toast('♻️ Престиж: ×'+prestigeMult().toFixed(1)); break;
+    case 'star-add': S.prestigeStars = (S.prestigeStars||0) + v; toast('⭐ +'+v+' звёзд'); break;
     case 'all-buildings':
       BUILDINGS.forEach(b=>{ S.buildings[b.id] = (S.buildings[b.id]||0) + 1; S.ownedBuildings[b.id] = true; });
       toast('🏦 +1 ко всем зданиям'); break;
@@ -1336,11 +1601,21 @@ function adminAction(cmd, val){
     case 'unlock-bg':
       BACKGROUNDS.forEach(b=>{ if (b.building) S.ownedBuildings[b.building] = true; });
       toast('🌄 Все фоны открыты'); break;
+    case 'unlock-skins':
+      TAP_SKINS.forEach(sk=>{ S.ownedSkins[sk.id] = true; });
+      toast('🎨 Все скины открыты'); break;
+    case 'pet-spawn':
+      if (!S.pet){ spawnPet(); toast('🐾 Питомец выдан'); }
+      else toast('Питомец уже есть');
+      break;
+    case 'pet-feed-full':
+      if (S.pet){ S.pet.hunger = 100; S.pet.lastFed = now; save(); renderAll(); toast('🍖 Питомец сыт'); }
+      break;
     case 'spin-reset': S.lastSpin = 0; toast('🎰 Кулдаун сброшен'); break;
     case 'save': save(); toast('💾 Сохранено'); break;
     case 'load': (async ()=>{ await load(); renderAll(); toast('📂 Загружено'); })(); return;
     case 'reset':
-      modal('<h3>Полный сброс?</h3><p>Весь прогресс будет удалён.</p>', [
+      modal('<h3>Полный сброс?</h3><p>Весь прогресс будет удалён. <b>Нельзя отменить.</b></p>', [
         {label:'Отмена', cls:'cancel'},
         {label:'Сбросить', cls:'ok', onClick:()=>{
           const isAdmin = IS_ADMIN;
@@ -1354,7 +1629,130 @@ function adminAction(cmd, val){
   save(); renderAll();
 }
 
-/* ==================== STREAK ==================== */
+/* ==================== PET ==================== */
+const PET_HUNGER_DECAY = 100 / (24*60*60*1000); // 100% за 24 часа
+const PET_FIRE_AFTER = 24*60*60*1000;
+const PET_DISAPPEAR_AFTER = 3*24*60*60*1000;
+
+function spawnPet(){
+  const name = PET_NAMES[Math.floor(Math.random()*PET_NAMES.length)];
+  S.pet = {
+    name: name,
+    hunger: 100,
+    lastFed: Date.now(),
+    bornAt: Date.now(),
+    fireUntil: 0,
+    totalFed: 0,
+    lastGift: 0
+  };
+  save();
+  renderAll();
+  SFX.pet();
+  spawnParticles('#ff9f43', 60);
+}
+
+function updatePet(){
+  if (!S.pet) return;
+  const now = Date.now();
+  const dt = now - (S.pet.lastFed || now);
+  const decayed = dt * PET_HUNGER_DECAY;
+  S.pet.hunger = Math.max(0, 100 - decayed);
+  if (S.pet.hunger <= 0 && (now - S.pet.lastFed) > PET_DISAPPEAR_AFTER){
+    toast('😢 Питомец убежал от голода…');
+    S.pet = null;
+    save();
+  }
+  if ((now - S.pet.bornAt) > PET_FIRE_AFTER && !S.pet.fireUntil){
+    S.pet.fireUntil = now + 24*60*60*1000;
+  }
+}
+
+function feedPet(foodId){
+  if (!S.pet) return;
+  const food = PET_FOOD.find(f=>f.id===foodId);
+  if (!food) return;
+  if (!S.petFood[foodId] || S.petFood[foodId] <= 0) return;
+  if (S.pet.hunger >= 100) { toast('Питомец сыт'); return; }
+  S.petFood[foodId]--;
+  if (S.petFood[foodId] <= 0) delete S.petFood[foodId];
+  updatePet();
+  S.pet.hunger = Math.min(100, S.pet.hunger + food.power);
+  S.pet.lastFed = Date.now();
+  S.pet.totalFed++;
+  S.todayFeeds = (S.todayFeeds||0) + 1;
+  SFX.pet();
+  spawnParticles('#ff9f43', 50);
+  save(); renderAll();
+}
+
+function givePetGift(){
+  if (!S.pet) return;
+  const now = Date.now();
+  if ((S.pet.fireUntil||0) <= now) { toast('Сначала получите огонёк'); return; }
+  if ((now - (S.pet.lastGift||0)) < 24*60*60*1000) { toast('Подарок будет завтра'); return; }
+  S.pet.lastGift = now;
+  const gifts = [
+    {coins: 10000},
+    {coins: 50000},
+    {diamonds: 3},
+    {diamonds: 5, coins: 25000},
+    {coins: 100000}
+  ];
+  const g = gifts[Math.floor(Math.random()*gifts.length)];
+  if (g.coins) { S.coins += g.coins; S.totalEarned += g.coins; }
+  if (g.diamonds) S.diamonds += g.diamonds;
+  SFX.upgrade();
+  spawnParticles('#6ee79a', 100);
+  const txt = (g.coins?'+'+fmt(g.coins)+' 🪙 ':'') + (g.diamonds?'+'+g.diamonds+' 💎':'');
+  modal(`<div class="win-icon-big">🎁</div><div class="win-title">Подарок от питомца!</div><div class="win-reward green">${txt}</div>`, [{label:'Забрать', cls:'ok'}]);
+  save(); renderAll();
+}
+
+/* ==================== PRESTIGE SHOP ==================== */
+function buyPerk(perkId){
+  const perk = PERKS.find(p=>p.id===perkId);
+  if (!perk) return;
+  if (S.ownedPerks[perkId]) return;
+  if ((S.prestigeStars||0) < perk.cost){ SFX.error(); toast('Нужно '+perk.cost+' ⭐'); return; }
+  S.prestigeStars -= perk.cost;
+  S.ownedPerks[perkId] = true;
+  SFX.upgrade();
+  toast('✅ Куплено: '+perk.name);
+  save(); renderAll();
+}
+
+/* ==================== LEVEL REWARDS ==================== */
+function claimLevelReward(lvl){
+  const r = LEVEL_REWARDS.find(x=>x.lvl===lvl);
+  if (!r) return;
+  if (S.claimedLevels[lvl]) return;
+  if (S.level < lvl) { toast('Нужен '+lvl+' уровень'); return; }
+  S.claimedLevels[lvl] = true;
+  if (r.type === 'case'){
+    const c = CASES.find(c=>c.id===r.value);
+    if (c) openCase(c);
+  } else if (r.type === 'skin'){
+    S.ownedSkins[r.value] = true;
+    toast('🎨 Скин открыт: '+r.name);
+  } else if (r.type === 'diamonds'){
+    S.diamonds += r.value;
+    toast('+'+r.value+' 💎');
+  } else if (r.type === 'premium'){
+    S.premium = true;
+    toast('⭐ PREMIUM!');
+  }
+  SFX.upgrade();
+  save(); renderAll();
+}
+
+/* ==================== INIT ==================== */
+function initAudioOnce(){
+  getAudio();
+  if (Music.on && !Music.started) Music.init();
+}
+document.addEventListener('touchstart', initAudioOnce, {once:true});
+document.addEventListener('click', initAudioOnce, {once:true});
+document.addEventListener('pointerdown', initAudioOnce, {once:true});/* ==================== STREAK ==================== */
 const DAILY_REWARDS = [
   {day:1, coins:1000,  diamonds:0},
   {day:2, coins:2500,  diamonds:0},
@@ -1394,7 +1792,7 @@ function showDailyPopup(){
   $('#dailySub').innerHTML = `День <b>${S.streak||1}</b> / 7 · +${fmt(cur.coins)} 🪙${cur.diamonds?' +'+cur.diamonds+' 💎':''}`;
   $('#dailyPopup').classList.add('show');
 }
-$('#dailyClaim').onclick = ()=>{
+document.getElementById('dailyClaim').onclick = ()=>{
   const cur = DAILY_REWARDS[Math.min(6, (S.streak||1)-1)];
   S.coins += cur.coins; S.totalEarned += cur.coins;
   if (cur.diamonds) S.diamonds += cur.diamonds;
@@ -1411,8 +1809,9 @@ function checkOfflineIncome(){
   const last = S.lastSeen || now;
   const diff = (now - last) / 1000;
   if (diff < 60) return;
-  const capped = Math.min(diff, 8*60*60);
-  const income = incomePerSec() * capped;
+  let capped = Math.min(diff, 8*60*60);
+  let income = incomePerSec() * capped;
+  if (perkBonus('offline2')) income *= 2;
   if (income < 100) return;
   $('#offlineSum').textContent = '+' + fmt(income) + ' 🪙';
   $('#offlinePopup').classList.add('show');
@@ -1427,7 +1826,7 @@ function checkOfflineIncome(){
   $('#offlineX2').onclick = ()=>take(true);
 }
 
-/* ==================== DAILY QUESTS ==================== */
+/* ==================== QUESTS ==================== */
 function ensureDailyQuests(){
   const td = today();
   if (S.dailyQuestsDate !== td){
@@ -1444,6 +1843,19 @@ function ensureDailyQuests(){
     save();
   }
 }
+function ensureWeeklyQuests(){
+  const w = thisWeek();
+  if (S.weeklyQuestsDate !== w){
+    S.weeklyQuestsDate = w;
+    S.weeklyQuests = {};
+    WEEKLY_QUESTS.forEach(q=>{ S.weeklyQuests[q.id] = 0; });
+    S.weeklyTaps = 0;
+    S.weeklyEarned = 0;
+    S.weeklyCases = 0;
+    S.weeklySpins = 0;
+    save();
+  }
+}
 function getDailyQuestDefs(){
   return Object.keys(S.dailyQuests||{}).map(id => DAILY_QUEST_POOL.find(q=>q.id===id)).filter(Boolean);
 }
@@ -1453,6 +1865,14 @@ function questProgress(q){
   if (q.type === 'spinsToday') return S.todaySpins || 0;
   if (q.type === 'buildingsToday') return S.todayBuildings || 0;
   if (q.type === 'casesToday') return S.todayCases || 0;
+  if (q.type === 'feedsToday') return S.todayFeeds || 0;
+  return 0;
+}
+function weeklyProgress(q){
+  if (q.stat === 'weeklyTaps') return S.weeklyTaps || 0;
+  if (q.stat === 'weeklyEarned') return S.weeklyEarned || 0;
+  if (q.stat === 'weeklyCases') return S.weeklyCases || 0;
+  if (q.stat === 'weeklySpins') return S.weeklySpins || 0;
   return 0;
 }
 function resetDailyCountersIfNeeded(){
@@ -1460,7 +1880,7 @@ function resetDailyCountersIfNeeded(){
   if (S.todayDate !== td){
     S.todayDate = td;
     S.todayTaps = 0; S.todayEarned = 0; S.todaySpins = 0;
-    S.todayBuildings = 0; S.todayCases = 0;
+    S.todayBuildings = 0; S.todayCases = 0; S.todayFeeds = 0;
     save();
   }
 }
@@ -1468,12 +1888,17 @@ function resetDailyCountersIfNeeded(){
 /* ==================== RENDER ==================== */
 function renderAll(){
   ensureDailyQuests();
+  ensureWeeklyQuests();
   resetDailyCountersIfNeeded();
+  updatePet();
   renderWeekend();
   renderHome();
   renderUpgrades();
   renderBuildings();
+  renderPet();
+  renderSkins();
   renderAchievements();
+  renderChains();
   renderTasks();
   renderShop();
   renderInventory();
@@ -1494,6 +1919,12 @@ function renderHome(){
   $$('.coinVal').forEach(e=>e.textContent = fmt(S.coins));
   $$('.diamondVal').forEach(e=>e.textContent = S.diamonds);
   $('#heroDiamonds').textContent = S.diamonds;
+
+  // Скин кнопки
+  const tapBtn = $('#tapBtn');
+  tapBtn.className = 'tap-btn';
+  const skin = TAP_SKINS.find(s=>s.id===S.tapSkin);
+  if (skin && skin.cls) tapBtn.classList.add(skin.cls);
 
   const bar = $('#boostBar'); bar.innerHTML = '';
   if (isPremiumActive()){
@@ -1611,6 +2042,153 @@ function renderBuildings(){
     list.appendChild(div);
   });
 }
+
+/* ==================== PET RENDER ==================== */
+function renderPet(){
+  updatePet();
+  const inner = $('#petPanelInner');
+  if (!inner) return;
+
+  if (!S.pet){
+    inner.innerHTML = `
+      <div class="pet-no-pet" style="width:100%">
+        <div class="pnp-emoji">🐾</div>
+        <div class="pnp-text">У вас нет питомца.<br>Заведите друга за 5 000 🪙!</div>
+        <button class="btn-pet adopt" id="adoptPetBtn">🐾 ЗАВЕСТИ ПИТОМЦА — 5 000 🪙</button>
+      </div>`;
+    const b = document.getElementById('adoptPetBtn');
+    if (b) b.onclick = ()=>{
+      if (S.coins < 5000){ SFX.error(); toast('Нужно 5 000 🪙'); return; }
+      S.coins -= 5000;
+      spawnPet();
+      toast('🐾 Питомец заведён!');
+    };
+    return;
+  }
+
+  const now = Date.now();
+  const hunger = Math.round(S.pet.hunger);
+  const hungry = hunger < 40;
+  const hasFire = (S.pet.fireUntil||0) > now;
+  const giftReady = hasFire && (now - (S.pet.lastGift||0)) >= 24*60*60*1000;
+  const moodClass = hungry ? ' sad' : ' happy';
+  const wrapClass = 'pet-avatar-wrap' + (hungry ? ' sad-glow' : ' happy-glow');
+  const statusText = hungry
+    ? '😢 <b style="color:#ff5566">Голоден! Срочно покорми!</b>'
+    : hasFire
+      ? '🔥 Огонёк активен! Голод: '+hunger+'%'
+      : '⏳ Огонёк появится через '+formatBoostTime(24*60*60*1000 - (now - (S.pet.bornAt||now)));
+
+  inner.innerHTML = `
+    <div class="${wrapClass}">
+      <div class="pet-avatar-inner">
+        <img class="pet-avatar-img${moodClass}" src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=300" alt="">
+      </div>
+      ${hasFire?'<div class="pet-fire">🔥</div>':''}
+      ${!hungry?'<div class="pet-hearts">💕</div>':''}
+    </div>
+    <div class="pet-info">
+      <div class="pet-name-row">
+        <span class="pet-name">${S.pet.name}</span>
+        <button class="pet-name-edit" id="editPetName">✏️</button>
+      </div>
+      <div class="pet-status">${statusText}</div>
+      <div class="pet-hunger-bar">
+        <div class="pet-hunger-fill" style="width:${hunger}%"></div>
+        <div class="pet-hunger-label">🍖 ${hunger}%</div>
+      </div>
+      <div class="pet-actions">
+        <button class="btn-pet feed" id="openPetFood">🍖 КОРМИТЬ</button>
+        ${hasFire?'<button class="btn-pet gift" id="petGiftBtn"'+(giftReady?'':' disabled')+'>🎁 '+(giftReady?'ПОДАРОК':'ЖДАТЬ')+'</button>':''}
+      </div>
+    </div>`;
+
+  const openFood = document.getElementById('openPetFood');
+  if (openFood) openFood.onclick = ()=>renderPetFoodModal();
+  const giftBtn = document.getElementById('petGiftBtn');
+  if (giftBtn) giftBtn.onclick = givePetGift;
+  const nameEdit = document.getElementById('editPetName');
+  if (nameEdit) nameEdit.onclick = ()=>{
+    document.getElementById('petNewNameInput').value = S.pet.name;
+    document.getElementById('petNamePopup').classList.add('show');
+  };
+  renderFoodInventory();
+}
+
+function renderFoodInventory(){
+  const grid = $('#foodInvGrid');
+  if (!grid) return;
+  const cnt = $('#foodInvCount');
+  const ids = Object.keys(S.petFood||{}).filter(k=>S.petFood[k]>0);
+  if (cnt) cnt.textContent = ids.reduce((s,k)=>s+(S.petFood[k]||0),0);
+  if (!ids.length){
+    grid.innerHTML = '<div style="text-align:center;padding:14px;color:#8798AE;font-size:12px;">Еды нет. Купи в магазине!</div>';
+    return;
+  }
+  grid.innerHTML = '';
+  ids.forEach(fid=>{
+    const food = PET_FOOD.find(f=>f.id===fid);
+    if (!food) return;
+    const card = document.createElement('div');
+    card.className = 'food-inv-card';
+    card.innerHTML = `
+      <div class="fic-emoji">${food.emoji}</div>
+      <div class="fic-name">${food.name}</div>
+      <div class="fic-count">×${S.petFood[fid]}</div>
+      <button class="btn-feed-pet" data-food="${food.id}">🍖 Кормить</button>`;
+    card.querySelector('.btn-feed-pet').onclick = ()=>feedPet(food.id);
+    grid.appendChild(card);
+  });
+}
+
+function renderPetFoodModal(){
+  const list = $('#shopList');
+  // переходим в магазин на вкладку еда
+  goTo('s-shop');
+  currentShopTab = 'food';
+  $$('.tab[data-shop]').forEach(t=>t.classList.toggle('active',t.dataset.shop==='food'));
+  renderShop();
+}
+
+/* ==================== SKINS RENDER ==================== */
+function renderSkins(){
+  const grid = $('#skinsGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  TAP_SKINS.forEach(sk=>{
+    const owned = sk.free || S.ownedSkins[sk.id];
+    const selected = S.tapSkin === sk.id;
+    const card = document.createElement('div');
+    card.className = 'skin-card' + (selected?' selected':'') + (!owned?' locked':'');
+    card.innerHTML = `
+      <div class="skin-preview ${sk.cls||'tap-skin-gold'}" style="${!sk.cls?'background:linear-gradient(135deg,#2AABEE,#1E96D6);':''}">${sk.icon||'💰'}</div>
+      <div class="skin-name">${sk.name}</div>
+      <div class="skin-price ${owned?'owned':''}">${owned?(selected?'✅ Выбран':'Куплен'):sk.price+' 💎'}</div>`;
+    card.onclick = ()=>{
+      if (!owned){
+        if (S.diamonds < sk.price){ SFX.error(); toast('Нужно '+sk.price+' 💎'); return; }
+        modal(`<h3>Купить скин?</h3><p>Название: <b>${sk.name}</b></p><p>Цена: <b>${sk.price} 💎</b></p>`, [
+          {label:'Отмена', cls:'cancel'},
+          {label:'Купить', cls:'ok', onClick:()=>{
+            if (S.diamonds < sk.price){ toast('Мало алмазов'); return; }
+            S.diamonds -= sk.price;
+            S.ownedSkins[sk.id] = true;
+            S.tapSkin = sk.id;
+            SFX.upgrade(); save(); renderAll();
+            toast('🎨 Скин установлен!');
+          }}
+        ]);
+      } else {
+        S.tapSkin = sk.id;
+        SFX.click(); save(); renderAll();
+        toast('🎨 Скин установлен');
+      }
+    };
+    grid.appendChild(card);
+  });
+}
+
+/* ==================== ACHIEVEMENTS ==================== */
 function renderAchievements(){
   const list = $('#achievementsList'); list.innerHTML = '';
   ACHIEVEMENTS.forEach(a=>{
@@ -1621,6 +2199,8 @@ function renderAchievements(){
     else if (a.stat==='level') val = S.level;
     else if (a.stat==='prestige') val = S.prestige||0;
     else if (a.stat==='streak') val = S.streak||0;
+    else if (a.stat==='hasPet') val = S.pet ? 1 : 0;
+    else if (a.stat==='hasSkin') val = Object.keys(S.ownedSkins||{}).length > 1 ? 1 : 0;
     const done = S.achievements[a.id];
     const can = !done && val >= a.goal;
     const div = document.createElement('div'); div.className='item';
@@ -1643,7 +2223,56 @@ function renderAchievements(){
     list.appendChild(div);
   });
 }
+function chainStat(stat){
+  if (stat==='totalTaps') return S.totalTaps;
+  if (stat==='totalEarned') return S.totalEarned;
+  if (stat==='buildings') return totalBuildings();
+  if (stat==='level') return S.level;
+  return 0;
+}
+function renderChains(){
+  const box = $('#chainsBox');
+  if (!box) return;
+  box.innerHTML = '';
+  ACHIEVEMENT_CHAINS.forEach(ch=>{
+    const val = chainStat(ch.stat);
+    const card = document.createElement('div'); card.className='chain-card';
+    let stepsHTML = '';
+    ch.steps.forEach((step, idx)=>{
+      const claimed = S.chains[ch.id+'_'+idx];
+      const active = !claimed && val >= step;
+      const cls = 'chain-step' + (claimed?' done':'') + (active?' active':'');
+      stepsHTML += `<div class="${cls}">
+        <span class="cs-ico">${claimed?'✅':(active?'🎁':'🔒')}</span>
+        ${fmt(step)}
+      </div>`;
+    });
+    card.innerHTML = `<div class="chain-title">${ch.icon} ${ch.name}</div><div class="chain-steps">${stepsHTML}</div>`;
+    // Кнопки получения
+    ch.steps.forEach((step, idx)=>{
+      const claimed = S.chains[ch.id+'_'+idx];
+      const active = !claimed && val >= step;
+      if (active){
+        const btn = document.createElement('button');
+        btn.className = 'buy green-btn';
+        btn.style.marginTop = '8px';
+        btn.textContent = 'Забрать награду';
+        const reward = ch.rewards[idx];
+        btn.onclick = ()=>{
+          S.chains[ch.id+'_'+idx] = true;
+          if (reward.coins) { S.coins += reward.coins; S.totalEarned += reward.coins; }
+          if (reward.diamonds) S.diamonds += reward.diamonds;
+          SFX.upgrade(); save(); renderAll();
+          toast('🎁 Награда получена!');
+        };
+        card.appendChild(btn);
+      }
+    });
+    box.appendChild(card);
+  });
+}
 
+/* ==================== TASKS ==================== */
 let currentTaskTab = 'dailyQ';
 function renderTasks(){
   const list = $('#tasksList'); list.innerHTML = '';
@@ -1679,7 +2308,7 @@ function renderTasks(){
       list.appendChild(div);
     });
     progressBlock.style.display = 'block';
-    if (doneCount === 3 && !S.dailyBonusClaimed){
+    if (doneCount === defs.length && defs.length > 0 && !S.dailyBonusClaimed){
       progressBlock.innerHTML = `<div style="font-weight:800;color:#31B545;font-size:13px;">🎉 Все квесты выполнены!</div>
         <button class="buy green-btn" id="dailyBonusBtn" style="margin-top:8px;width:100%;justify-content:center;">Забрать бонус: 15 000 🪙 + 5 💎</button>`;
       $('#dailyBonusBtn').onclick = ()=>{
@@ -1692,9 +2321,36 @@ function renderTasks(){
     } else if (S.dailyBonusClaimed){
       progressBlock.innerHTML = `<div style="font-size:12.5px;color:#31B545;font-weight:700;">✅ Бонус за сегодня получен</div>`;
     } else {
-      progressBlock.innerHTML = `<div style="font-size:12.5px;font-weight:700;">Ежедневные квесты: ${doneCount} / 3</div>
-        <div style="font-size:11px;color:#8798AE;margin-top:2px;">Выполни все 3 — получишь бонус 15 000 🪙 + 5 💎</div>`;
+      progressBlock.innerHTML = `<div style="font-size:12.5px;font-weight:700;">Ежедневные квесты: ${doneCount} / ${defs.length}</div>
+        <div style="font-size:11px;color:#8798AE;margin-top:2px;">Выполни все — получишь бонус</div>`;
     }
+  } else if (currentTaskTab === 'weeklyQ'){
+    progressBlock.style.display = 'none';
+    WEEKLY_QUESTS.forEach(q=>{
+      const val = weeklyProgress(q);
+      const isDone = S.weeklyQuests[q.id] === 1;
+      const can = !isDone && val >= q.goal;
+      const div = document.createElement('div'); div.className='item';
+      div.innerHTML = `
+        <div class="task-check ${isDone?'':'wait'}">${isDone?'✓':'○'}</div>
+        <div class="item-body">
+          <div class="item-name">${q.icon} ${q.name}</div>
+          <div class="item-sub">${isDone?'Получено':'Прогресс: '+Math.min(val,q.goal)+' / '+q.goal}</div>
+        </div>
+        <button class="buy ${isDone?'off':(can?'green-btn':'off')}">${
+          isDone?'✓':(q.reward.coins? fmt(q.reward.coins)+' 🪙' : '💎 '+q.reward.diamonds)
+        }</button>`;
+      div.querySelector('.buy').onclick = ()=>{
+        if (isDone) return;
+        if (!can){ SFX.error(); toast('Ещё не выполнено'); return; }
+        S.weeklyQuests[q.id] = 1;
+        if (q.reward.coins) S.coins += q.reward.coins;
+        if (q.reward.diamonds) S.diamonds += q.reward.diamonds;
+        SFX.coin(); save(); renderAll();
+        toast('🎁 Недельный квест выполнен!');
+      };
+      list.appendChild(div);
+    });
   } else {
     progressBlock.style.display = 'none';
     TASKS_REGULAR.forEach(t=>{
@@ -1727,6 +2383,7 @@ function renderTasks(){
   }
 }
 
+/* ==================== SHOP ==================== */
 let currentShopTab = 'boosts';
 function renderShop(){
   const list = $('#shopList'); list.innerHTML = '';
@@ -1758,6 +2415,27 @@ function renderShop(){
         <button class="cbtn" ${can?'':'disabled'}>${can?'Открыть за '+c.price+' 💎':'Нужно '+c.price+' 💎'}</button>`;
       const btn = div.querySelector('.cbtn');
       if (can) btn.onclick = ()=>openCase(c);
+      list.appendChild(div);
+    });
+  }
+  else if (currentShopTab === 'food'){
+    PET_FOOD.forEach(f=>{
+      const can = S.coins >= f.price;
+      const div = document.createElement('div'); div.className='item';
+      div.innerHTML = `
+        <div class="item-icon">${f.emoji}</div>
+        <div class="item-body">
+          <div class="item-name">${f.name} <span style="color:#8798AE;font-weight:500">+${f.power}</span></div>
+          <div class="item-sub">Для питомца · запас: ${(S.petFood[f.id]||0)}</div>
+        </div>
+        <button class="buy ${can?'':'off'}"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png">${fmt(f.price)}</button>`;
+      div.querySelector('.buy').onclick = ()=>{
+        if (S.coins < f.price){ SFX.error(); toast('Мало монет'); return; }
+        S.coins -= f.price;
+        S.petFood[f.id] = (S.petFood[f.id]||0) + 1;
+        SFX.coin(); save(); renderAll();
+        toast('🍖 Куплено: '+f.name);
+      };
       list.appendChild(div);
     });
   }
@@ -1826,6 +2504,7 @@ function renderShop(){
   }
 }
 
+/* ==================== INVENTORY ==================== */
 function renderInventory(){
   const dustEl = $('#invDust');
   if (dustEl) dustEl.textContent = '×' + (S.dust || 0);
@@ -1838,86 +2517,34 @@ function renderInventory(){
     let any = false;
     if ((S.premiumUntil||0) > now && !S.premium){
       any = true;
-      const el = document.createElement('div');
-      el.className = 'item';
-      el.innerHTML = `
-        <div class="item-icon">⭐</div>
-        <div class="item-body">
-          <div class="item-name">⭐ Premium (временный)</div>
-          <div class="item-sub">Осталось: <b>${formatBoostTime(S.premiumUntil - now)}</b></div>
-        </div>`;
+      const el = document.createElement('div'); el.className='item';
+      el.innerHTML = `<div class="item-icon">⭐</div><div class="item-body"><div class="item-name">⭐ Premium (временный)</div><div class="item-sub">Осталось: <b>${formatBoostTime(S.premiumUntil-now)}</b></div></div>`;
       boosts.appendChild(el);
     }
     if (S.premium){
       any = true;
-      const el = document.createElement('div');
-      el.className = 'item';
-      el.innerHTML = `
-        <div class="item-icon">⭐</div>
-        <div class="item-body">
-          <div class="item-name">⭐ Premium</div>
-          <div class="item-sub">Куплен навсегда</div>
-        </div>`;
+      const el = document.createElement('div'); el.className='item';
+      el.innerHTML = `<div class="item-icon">⭐</div><div class="item-body"><div class="item-name">⭐ Premium</div><div class="item-sub">Навсегда</div></div>`;
       boosts.appendChild(el);
     }
-    if (hasBoost('boost5x')){
-      any = true;
-      const el = document.createElement('div');
-      el.className = 'item';
-      el.innerHTML = `
-        <div class="item-icon">⚡</div>
-        <div class="item-body">
-          <div class="item-name">⚡ Буст дохода ×5</div>
-          <div class="item-sub">Осталось: <b>${formatBoostTime(boostRemaining('boost5x'))}</b></div>
-        </div>`;
-      boosts.appendChild(el);
-    }
-    if (hasBoost('boost3x')){
-      any = true;
-      const el = document.createElement('div');
-      el.className = 'item';
-      el.innerHTML = `
-        <div class="item-icon">⚡</div>
-        <div class="item-body">
-          <div class="item-name">⚡ Буст дохода ×3</div>
-          <div class="item-sub">Осталось: <b>${formatBoostTime(boostRemaining('boost3x'))}</b></div>
-        </div>`;
-      boosts.appendChild(el);
-    }
-    if (hasBoost('boost2x')){
-      any = true;
-      const el = document.createElement('div');
-      el.className = 'item';
-      el.innerHTML = `
-        <div class="item-icon">⚡</div>
-        <div class="item-body">
-          <div class="item-name">⚡ Буст дохода ×2</div>
-          <div class="item-sub">Осталось: <b>${formatBoostTime(boostRemaining('boost2x'))}</b></div>
-        </div>`;
-      boosts.appendChild(el);
-    }
+    ['boost5x','boost3x','boost2x'].forEach(k=>{
+      if (hasBoost(k)){
+        any = true;
+        const el = document.createElement('div'); el.className='item';
+        el.innerHTML = `<div class="item-icon">⚡</div><div class="item-body"><div class="item-name">⚡ Буст ${k==='boost5x'?'×5':k==='boost3x'?'×3':'×2'}</div><div class="item-sub">Осталось: <b>${formatBoostTime(boostRemaining(k))}</b></div></div>`;
+        boosts.appendChild(el);
+      }
+    });
     if (getTapBoostBonus() > 0){
       any = true;
-      const el = document.createElement('div');
-      el.className = 'item';
-      el.innerHTML = `
-        <div class="item-icon">🔥</div>
-        <div class="item-body">
-          <div class="item-name">🔥 Мега-тап (+10)</div>
-          <div class="item-sub">Осталось: <b>${formatBoostTime(S.boostTapUntil - now)}</b></div>
-        </div>`;
+      const el = document.createElement('div'); el.className='item';
+      el.innerHTML = `<div class="item-icon">🔥</div><div class="item-body"><div class="item-name">🔥 Мега-тап</div><div class="item-sub">Осталось: <b>${formatBoostTime(S.boostTapUntil-now)}</b></div></div>`;
       boosts.appendChild(el);
     }
     if (S.discount > 0){
       any = true;
-      const el = document.createElement('div');
-      el.className = 'item';
-      el.innerHTML = `
-        <div class="item-icon">🏦</div>
-        <div class="item-body">
-          <div class="item-name">🏦 Скидка ${S.discount}%</div>
-          <div class="item-sub">На следующую покупку здания</div>
-        </div>`;
+      const el = document.createElement('div'); el.className='item';
+      el.innerHTML = `<div class="item-icon">🏦</div><div class="item-body"><div class="item-name">🏦 Скидка ${S.discount}%</div></div>`;
       boosts.appendChild(el);
     }
     if (!any){
@@ -1934,9 +2561,7 @@ function renderInventory(){
       unlocked.forEach(f=>{
         const el = document.createElement('div');
         el.className = 'custom-item frame';
-        el.innerHTML = `<div class="frame-inner" style="border:3px solid ${f.color.startsWith('linear')?'#2AABEE':f.color}; background:${f.color.startsWith('linear')?f.color:(f.color==='transparent'?'#2B7FD4':f.color)}">
-          <img src="${AVATARS.find(a=>a.id===S.avatar)?.url||''}" alt="">
-        </div>`;
+        el.innerHTML = `<div class="frame-inner" style="border:3px solid ${f.color.startsWith('linear')?'#2AABEE':f.color}; background:${f.color.startsWith('linear')?f.color:(f.color==='transparent'?'#2B7FD4':f.color)}"><img src="${AVATARS.find(a=>a.id===S.avatar)?.url||''}" alt=""></div>`;
         fEl.appendChild(el);
       });
     }
@@ -2069,69 +2694,22 @@ function runCaseRoll(c){
     caseBusy = false;
     let msg = '';
     const now = Date.now();
-    if (realPrize.type === 'coins'){
-      S.coins += realPrize.value; S.totalEarned += realPrize.value;
-      msg = '+'+fmt(realPrize.value)+' 🪙';
-    }
-    else if (realPrize.type === 'diamonds'){
-      S.diamonds += realPrize.value;
-      msg = '+'+realPrize.value+' 💎';
-    }
-    else if (realPrize.type === 'premium'){
-      S.premium = true; msg = '⭐ PREMIUM навсегда!';
-    }
-    else if (realPrize.type === 'premiumTimed'){
-      const mins = realPrize.value;
-      const cur = S.premiumUntil || 0;
-      S.premiumUntil = Math.max(cur, now) + mins * 60 * 1000;
-      const days = Math.round(mins / 60 / 24);
-      msg = '⭐ Premium на ' + days + ' дня!';
-    }
-    else if (realPrize.type === 'frame'){
-      if (!S.unlockedFrames) S.unlockedFrames = {};
-      S.unlockedFrames[realPrize.value] = 1;
-      msg = '🎨 Рамка открыта!';
-    }
-    else if (realPrize.type === 'bg'){
-      const bg = BACKGROUNDS.find(b => b.id === realPrize.value);
-      if (bg && bg.building) S.ownedBuildings[bg.building] = true;
-      msg = '🌄 Фон открыт!';
-    }
-    else if (realPrize.type === 'boost2x'){
-      if (!S.activeBoosts) S.activeBoosts = {};
-      const cur = S.activeBoosts['boost2x'] || 0;
-      S.activeBoosts['boost2x'] = Math.max(cur, now) + realPrize.value * 60 * 1000;
-      msg = '⚡ Буст ×2 на ' + realPrize.value + ' мин!';
-    }
-    else if (realPrize.type === 'boost5x'){
-      if (!S.activeBoosts) S.activeBoosts = {};
-      const cur = S.activeBoosts['boost5x'] || 0;
-      S.activeBoosts['boost5x'] = Math.max(cur, now) + realPrize.value * 60 * 1000;
-      msg = '⚡ Буст ×5 на ' + realPrize.value + ' мин!';
-    }
-    else if (realPrize.type === 'boostTap'){
-      const cur = S.boostTapUntil || 0;
-      S.boostTapUntil = Math.max(cur, now) + 10 * 60 * 1000;
-      msg = '🔥 Мега-тап +10 на 10 мин!';
-    }
-    else if (realPrize.type === 'ticket'){
-      S.tickets = (S.tickets || 0) + realPrize.value;
-      msg = '🎟️ +' + realPrize.value + ' билет(ов)!';
-    }
-    else if (realPrize.type === 'discount10'){
-      S.discount = 10;
-      msg = '🏦 Скидка 10% на след. здание!';
-    }
-    else if (realPrize.type === 'discount25'){
-      S.discount = 25;
-      msg = '🏦 Скидка 25% на след. здание!';
-    }
-    else if (realPrize.type === 'dust'){
-      S.dust = (S.dust || 0) + realPrize.value;
-      msg = '🍃 Пыль ×' + realPrize.value;
-    }
+    if (realPrize.type === 'coins'){ S.coins += realPrize.value; S.totalEarned += realPrize.value; msg = '+'+fmt(realPrize.value)+' 🪙'; }
+    else if (realPrize.type === 'diamonds'){ S.diamonds += realPrize.value; msg = '+'+realPrize.value+' 💎'; }
+    else if (realPrize.type === 'premium'){ S.premium = true; msg = '⭐ PREMIUM навсегда!'; }
+    else if (realPrize.type === 'premiumTimed'){ const mins = realPrize.value; const cur = S.premiumUntil || 0; S.premiumUntil = Math.max(cur, now) + mins * 60 * 1000; const days = Math.round(mins / 60 / 24); msg = '⭐ Premium на ' + days + ' дня!'; }
+    else if (realPrize.type === 'frame'){ if (!S.unlockedFrames) S.unlockedFrames = {}; S.unlockedFrames[realPrize.value] = 1; msg = '🎨 Рамка открыта!'; }
+    else if (realPrize.type === 'bg'){ const bg = BACKGROUNDS.find(b => b.id === realPrize.value); if (bg && bg.building) S.ownedBuildings[bg.building] = true; msg = '🌄 Фон открыт!'; }
+    else if (realPrize.type === 'boost2x'){ if (!S.activeBoosts) S.activeBoosts = {}; S.activeBoosts['boost2x'] = Math.max(S.activeBoosts['boost2x']||0, now) + realPrize.value * 60 * 1000; msg = '⚡ Буст ×2 на ' + realPrize.value + ' мин!'; }
+    else if (realPrize.type === 'boost5x'){ if (!S.activeBoosts) S.activeBoosts = {}; S.activeBoosts['boost5x'] = Math.max(S.activeBoosts['boost5x']||0, now) + realPrize.value * 60 * 1000; msg = '⚡ Буст ×5 на ' + realPrize.value + ' мин!'; }
+    else if (realPrize.type === 'boostTap'){ S.boostTapUntil = Math.max(S.boostTapUntil||0, now) + 10 * 60 * 1000; msg = '🔥 Мега-тап +10 на 10 мин!'; }
+    else if (realPrize.type === 'ticket'){ S.tickets = (S.tickets || 0) + realPrize.value; msg = '🎟️ +' + realPrize.value + ' билет(ов)!'; }
+    else if (realPrize.type === 'discount10'){ S.discount = 10; msg = '🏦 Скидка 10%!'; }
+    else if (realPrize.type === 'discount25'){ S.discount = 25; msg = '🏦 Скидка 25%!'; }
+    else if (realPrize.type === 'dust'){ S.dust = (S.dust || 0) + realPrize.value; msg = '🍃 Пыль ×' + realPrize.value; }
     else { msg = '😢 Пусто'; }
     S.todayCases = (S.todayCases||0) + 1;
+    S.weeklyCases = (S.weeklyCases||0) + 1;
     addXp(30);
     save(); renderAll();
     SFX.reveal(rarity);
@@ -2142,16 +2720,15 @@ function runCaseRoll(c){
     else { haptic('light'); }
     $('#casePopup').classList.remove('show');
     const emoji = rarity === 'legendary' ? '🎉' : (rarity === 'epic' ? '✨' : '🎁');
-    modal(
-      `<div class="win-icon-big">${emoji}</div>
+    modal(`<div class="win-icon-big">${emoji}</div>
        <div class="win-title">${c.icon} ${c.name}</div>
        <div class="win-reward ${realPrize.type==='premium'||realPrize.type==='premiumTimed'?'gold':(realPrize.type==='diamonds'?'blue':'gold')}">${msg}</div>
        <div style="font-size:11px;color:#8798AE;margin-top:-4px;">Редкость: ${rarity.toUpperCase()}</div>`,
-      [{label:'Забрать', cls:'ok'}]
-    );
+      [{label:'Забрать', cls:'ok'}]);
   }, 6300);
 }
 
+/* ==================== PROFILE ==================== */
 function renderProfile(){
   const av = AVATARS.find(a=>a.id===S.avatar) || AVATARS[0];
   const frame = FRAMES.find(f=>f.id===S.frame) || FRAMES[0];
@@ -2203,52 +2780,53 @@ function renderProfile(){
   }
   const dustEl = $('#dustCount');
   if (dustEl) dustEl.textContent = S.dust || 0;
+  const starsLbl = $('#prestigeStarsLabel');
+  if (starsLbl) starsLbl.textContent = '⭐ ' + (S.prestigeStars||0);
+  renderPerks();
+  renderLevelRewards();
+}
+function renderPerks(){
+  const box = $('#perksList');
+  if (!box) return;
+  box.innerHTML = '';
+  PERKS.forEach(p=>{
+    const owned = S.ownedPerks[p.id];
+    const card = document.createElement('div'); card.className='perk-card' + (owned?' owned':'');
+    card.innerHTML = `
+      <div class="perk-icon">${p.icon}</div>
+      <div class="perk-body">
+        <div class="perk-name">${p.name}${owned?' ✅':''}</div>
+        <div class="perk-desc">${p.desc}</div>
+      </div>
+      <button class="perk-buy" ${owned?'disabled':''}>${owned?'Куплено':'⭐ '+p.cost}</button>`;
+    card.querySelector('.perk-buy').onclick = ()=>buyPerk(p.id);
+    box.appendChild(card);
+  });
+}
+function renderLevelRewards(){
+  const box = $('#levelRewardsList');
+  if (!box) return;
+  box.innerHTML = '';
+  LEVEL_REWARDS.forEach(r=>{
+    const unlocked = S.level >= r.lvl;
+    const claimed = S.claimedLevels[r.lvl];
+    const row = document.createElement('div'); row.className='level-row';
+    row.innerHTML = `
+      <div class="level-badge${unlocked?'':' locked'}">${r.lvl}</div>
+      <div class="level-info">
+        <b>${r.icon} ${r.name}</b>
+        <span>Уровень ${r.lvl}</span>
+      </div>
+      <div class="level-status ${unlocked&&!claimed?'ready':''}">${claimed?'✅':(unlocked?'🎁 Забрать':'🔒')}</div>`;
+    if (unlocked && !claimed){
+      row.style.cursor = 'pointer';
+      row.onclick = ()=>claimLevelReward(r.lvl);
+    }
+    box.appendChild(row);
+  });
 }
 
-$('#sellDustBtn').onclick = ()=>{
-  SFX.click();
-  const d = S.dust || 0;
-  if (d <= 0){ SFX.error(); toast('Пыли нет'); return; }
-  const total = d * 10;
-  S.dust = 0;
-  S.coins += total; S.totalEarned += total;
-  SFX.coin(); save(); renderAll();
-  toast('🍃 +' + fmt(total) + ' 🪙 за пыль');
-};
-const invSellDust = document.getElementById('invSellDust');
-if (invSellDust) invSellDust.onclick = ()=>{
-  SFX.click();
-  const d = S.dust || 0;
-  if (d <= 0){ SFX.error(); toast('Пыли нет'); return; }
-  const total = d * 10;
-  S.dust = 0;
-  S.coins += total; S.totalEarned += total;
-  SFX.coin(); save(); renderAll();
-  toast('🍃 +' + fmt(total) + ' 🪙 за пыль');
-};
-
-$('#prestigeBtn').onclick = ()=>{
-  const threshold = 1000000 * Math.pow(3, S.prestige||0);
-  if (S.coins < threshold){ SFX.error(); toast('Нужно ' + fmt(threshold) + ' 🪙'); return; }
-  const newMult = (1 + ((S.prestige||0)+1)*0.5).toFixed(1);
-  modal(
-    `<h3>♻️ Престиж</h3>
-     <p>Ты сбросишь: <b>монеты, здания, апгрейды, уровни</b>.</p>
-     <p>Останутся: алмазы, премиум, аватарки, фоны, рекорды.</p>
-     <p>Получишь: <b>постоянный ×${newMult} к доходу и тапам</b>.</p>`,
-    [
-      {label:'Отмена', cls:'cancel'},
-      {label:'Сбросить', cls:'ok', onClick:()=>{
-        S.prestige = (S.prestige||0) + 1;
-        S.coins = 0; S.buildings = {}; S.upgrades = {};
-        S.xp = 0; S.level = 1;
-        SFX.upgrade(); save(); renderAll();
-        toast('♻️ Престиж! Теперь ×'+prestigeMult().toFixed(1));
-      }}
-    ]
-  );
-};
-
+/* ==================== CUSTOMIZATION ==================== */
 function renderCustom(){
   const ag = $('#avatarGrid'); ag.innerHTML = '';
   AVATARS.forEach(a=>{
@@ -2363,11 +2941,12 @@ function spin(){
   const free = canSpinFree();
   if (!free && S.diamonds < 1){ SFX.error(); toast('Нужен 1 💎 или подожди'); return; }
   if (!free){
-    if ((S.tickets || 0) > 0){ S.tickets -= 1; toast('🎟️ Билет использован ('+S.tickets+' ост.)'); }
+    if ((S.tickets || 0) > 0){ S.tickets -= 1; toast('🎟️ Билет использован'); }
     else S.diamonds -= 1;
   }
   S.lastSpin = Date.now();
   S.todaySpins = (S.todaySpins||0) + 1;
+  S.weeklySpins = (S.weeklySpins||0) + 1;
   spinning = true;
   $('#spinBtn').disabled = true;
   $('#wheelPointer').classList.add('spinning');
@@ -2416,6 +2995,8 @@ function doTap(x, y){
   S.coins += gain; S.totalEarned += gain; S.totalTaps++;
   S.todayTaps = (S.todayTaps||0) + 1;
   S.todayEarned = (S.todayEarned||0) + gain;
+  S.weeklyTaps = (S.weeklyTaps||0) + 1;
+  S.weeklyEarned = (S.weeklyEarned||0) + gain;
   addXp(isCrit?3:1);
   const f = document.createElement('div');
   f.className = 'float-coin';
@@ -2524,8 +3105,7 @@ $('#renameBtn').onclick = ()=>{
       style="width:100%;padding:12px 14px;border:1.5px solid #E4EBF3;border-radius:12px;
              font-family:inherit;font-size:15px;text-align:center;outline:none;margin:6px 0 4px;">
     <p style="font-size:11px;color:#8798AE;text-align:center;margin-top:6px;line-height:1.5;">
-      ${NAME_MIN}–${NAME_MAX} символов.<br>Начинается с буквы или цифры.<br>
-      Разрешены: буквы, цифры, пробел, <b>_</b> и <b>-</b>.
+      ${NAME_MIN}–${NAME_MAX} символов.<br>Начинается с буквы или цифры.
     </p>`;
   btns.innerHTML = '';
   const cancel = document.createElement('button');
@@ -2545,6 +3125,21 @@ $('#renameBtn').onclick = ()=>{
   btns.appendChild(cancel); btns.appendChild(ok);
   document.getElementById('modal').classList.add('show');
   setTimeout(()=>document.getElementById('renameInput')?.focus(), 150);
+};
+
+/* ==================== PET NAME ==================== */
+$('#petNameCancel').onclick = ()=>$('#petNamePopup').classList.remove('show');
+$('#petNameOk').onclick = ()=>{
+  const price = 10000;
+  if (!S.pet) return;
+  const val = ($('#petNewNameInput').value || '').trim();
+  if (val.length < 2 || val.length > 12){ SFX.error(); toast('Имя 2–12 символов'); return; }
+  if (S.coins < price){ SFX.error(); toast('Нужно 10 000 🪙'); return; }
+  S.coins -= price;
+  S.pet.name = val;
+  SFX.upgrade(); save(); renderAll();
+  $('#petNamePopup').classList.remove('show');
+  toast('✅ Имя питомца: ' + val);
 };
 
 /* ==================== PROMO ==================== */
@@ -2587,8 +3182,53 @@ $('#applyBgUrl').onclick = ()=>{
   const url = $('#customBgUrl').value.trim();
   if (!url) { S.bgCustom=''; S.bg='default'; save(); renderAll(); toast('Свой фон убран'); return; }
   if (!/^https?:\/\//.test(url)){ SFX.error(); toast('URL должен начинаться с http(s)://'); return; }
-  S.bgCustom = url; S.bg = 'custom'; SFX.upgrade(); save(); renderAll();
-  toast('✅ Свой фон установлен');
+  S.bgCustom = url; S.bg = 'custom';
+  SFX.upgrade(); save(); renderAll(); toast('✅ Свой фон установлен');
+};
+
+/* ==================== DUST SELL ==================== */
+$('#sellDustBtn').onclick = ()=>{
+  SFX.click();
+  const d = S.dust || 0;
+  if (d <= 0){ SFX.error(); toast('Пыли нет'); return; }
+  const total = d * 10;
+  S.dust = 0; S.coins += total; S.totalEarned += total;
+  SFX.coin(); save(); renderAll();
+  toast('🍃 +' + fmt(total) + ' 🪙');
+};
+$('#invSellDust').onclick = ()=>{
+  SFX.click();
+  const d = S.dust || 0;
+  if (d <= 0){ SFX.error(); toast('Пыли нет'); return; }
+  const total = d * 10;
+  S.dust = 0; S.coins += total; S.totalEarned += total;
+  SFX.coin(); save(); renderAll();
+  toast('🍃 +' + fmt(total) + ' 🪙');
+};
+
+/* ==================== PRESTIGE ==================== */
+$('#prestigeBtn').onclick = ()=>{
+  const threshold = 1000000 * Math.pow(3, S.prestige||0);
+  if (S.coins < threshold){ SFX.error(); toast('Нужно ' + fmt(threshold) + ' 🪙'); return; }
+  const newMult = (1 + ((S.prestige||0)+1)*0.5).toFixed(1);
+  const starsReward = 1 + Math.floor((S.prestige||0));
+  modal(
+    `<h3>♻️ Престиж</h3>
+     <p>Ты сбросишь: <b>монеты, здания, апгрейды, уровни</b>.</p>
+     <p>Останутся: алмазы, премиум, аватарки, фоны, скины, питомец, рекорды.</p>
+     <p>Получишь: <b>×${newMult} к доходу</b> и <b>⭐ ${starsReward} звёзд престижа</b> для престиж-магазина.</p>`,
+    [
+      {label:'Отмена', cls:'cancel'},
+      {label:'Сбросить', cls:'ok', onClick:()=>{
+        S.prestige = (S.prestige||0) + 1;
+        S.prestigeStars = (S.prestigeStars||0) + starsReward;
+        S.coins = 0; S.buildings = {}; S.upgrades = {};
+        S.xp = 0; S.level = 1;
+        SFX.upgrade(); save(); renderAll();
+        toast('♻️ Престиж! ×'+prestigeMult().toFixed(1)+' и +'+starsReward+' ⭐');
+      }}
+    ]
+  );
 };
 
 /* ==================== PROFILE BTNS ==================== */
@@ -2600,13 +3240,13 @@ $('#inviteBtn').onclick = ()=>{
 };
 $('#shareBtn').onclick = ()=>{
   SFX.click();
-  const text = 'Я заработал ' + fmt(S.coins) + ' монет в КриптоКот! Уровень ' + S.level + (S.prestige>0?' (Престиж ×'+prestigeMult().toFixed(1)+')':'') + ' ⭐';
+  const text = 'Я заработал ' + fmt(S.coins) + ' монет в КриптоКот! Уровень ' + S.level + ' ⭐';
   const url = 'https://t.me/share/url?url=' + encodeURIComponent('https://t.me/TheCryptoCat_nowBot?startapp') + '&text=' + encodeURIComponent(text);
   if (tg?.openTelegramLink) tg.openTelegramLink(url);
   else window.open(url, '_blank');
 };
 
-/* ==================== MODAL CLOSE ON BG ==================== */
+/* ==================== MODAL CLOSE ==================== */
 $('#modal').onclick = e=>{ if (e.target.id==='modal') closeModal(); };
 
 /* ==================== GAME LOOP ==================== */
@@ -2615,26 +3255,20 @@ setInterval(()=>{
   if (inc > 0){
     S.coins += inc; S.totalEarned += inc;
     S.todayEarned = (S.todayEarned||0) + inc;
+    S.weeklyEarned = (S.weeklyEarned||0) + inc;
     renderHome();
     $$('.coinVal').forEach(e=>e.textContent = fmt(S.coins));
   }
 }, 1000);
 setInterval(()=>{ renderRouletteInfo(); }, 1000);
-setInterval(()=>{ renderHome(); if ($('#s-inventory').classList.contains('active')) renderInventory(); }, 1000);
+setInterval(()=>{ renderHome(); updatePet(); if ($('#s-inventory').classList.contains('active')) renderInventory(); if ($('#s-pet').classList.contains('active')) renderPet(); }, 1000);
 setInterval(()=>{ S.playTime++; save(); }, 1000);
 
 /* ==================== INIT ==================== */
-function initAudioOnce(){
-  getAudio();
-  if (Music.on && !Music.started) Music.init();
-}
-document.addEventListener('touchstart', initAudioOnce, {once:true});
-document.addEventListener('click', initAudioOnce, {once:true});
-document.addEventListener('pointerdown', initAudioOnce, {once:true});
-
 (async ()=>{
   await load();
   ensureDailyQuests();
+  ensureWeeklyQuests();
   resetDailyCountersIfNeeded();
   renderAll();
   goTo('s-home');

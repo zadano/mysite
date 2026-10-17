@@ -65,8 +65,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .buy.diamond-btn:active{background:#1490D8;}
 .buy.green-btn{background:linear-gradient(135deg,#5BE39A,#2ECC71);}
 .buy.green-btn:active{background:#28B863;}
-.buy.blue-btn{background:linear-gradient(135deg,#33C5FF,#1490D8);}
-.buy.red-btn{background:linear-gradient(135deg,#FF6B35,#E8487F);}
 .pbar{height:6px;border-radius:6px;background:#E9F0F7;overflow:hidden;margin-top:6px;}
 .pbar i{display:block;height:100%;border-radius:6px;background:var(--tg-blue);transition:width .3s;}
 .ptxt{font-size:10.5px;color:var(--muted);margin-top:4px;font-weight:500;}
@@ -450,11 +448,6 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .clan-hero h3{position:relative;margin:0 0 6px;font-size:20px;font-weight:900;z-index:1;}
 .clan-hero .ctag{position:relative;display:inline-block;background:rgba(255,255,255,.15);padding:3px 10px;border-radius:8px;font-size:12px;font-weight:800;margin-bottom:10px;z-index:1;}
 .clan-hero .cinfo{position:relative;font-size:12px;color:rgba(255,255,255,.8);z-index:1;}
-.clan-avatar-pick{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:10px;}
-.clan-avatar-pick img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:50%;border:2px solid transparent;cursor:pointer;}
-.clan-avatar-pick img.selected{border-color:var(--tg-blue);box-shadow:0 0 0 3px var(--tg-blue-light);}
-.clan-bank-row{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;margin-top:10px;position:relative;z-index:1;}
-.clan-bank-row b{font-size:15px;}
 </style>
 </head><body>
 <div id="app">
@@ -640,27 +633,13 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
       </div>
     </section>
 
-    <!-- ==================== КЛАН (НОВЫЙ) ==================== -->
     <section class="screen" id="s-clan">
-      <div class="screen-head"><div><h2>🛡️ Клан</h2><p>Объединяйся, тапай вместе, выполняй квесты</p></div></div>
-
+      <div class="screen-head"><div><h2>🛡️ Клан</h2><p>Объединяйся с другими игроками</p></div></div>
       <div id="clanMain" style="display:none;">
         <div class="clan-hero" id="clanHero"></div>
-        <button class="btn-primary" id="clanTapBtn" style="background:linear-gradient(135deg,#5BE39A,#2ECC71);margin-bottom:10px;">👆 Тапнуть в банк клана</button>
-        <div class="custom-block">
-          <div class="custom-title">🎯 Квесты клана</div>
-          <div id="clanQuestsBox"></div>
-        </div>
         <div class="custom-block">
           <div class="custom-title">💰 Банк клана</div>
-          <div class="clan-bank-row" style="background:#F4F7FB;color:#0F172A;">
-            <span style="font-size:22px;">🏦</span>
-            <div style="flex:1;">
-              <div style="font-size:11px;color:#8798AE;">Общий баланс</div>
-              <b id="clanBankVal" style="font-size:16px;">0 🪙</b>
-            </div>
-            <button class="buy green-btn" id="clanDonateBtn">Пополнить (1 000 🪙)</button>
-          </div>
+          <button class="btn-primary btn-prestige" id="clanDonateBtn">Пополнить (мин. 1 000 🪙)</button>
         </div>
         <div class="custom-block">
           <div class="custom-title">👥 Участники (<span id="clanMembersCount">0</span>)</div>
@@ -668,37 +647,18 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
         </div>
         <button class="btn-primary" id="clanLeaveBtn" style="background:linear-gradient(135deg,#FF6B35,#E8487F);">Покинуть клан</button>
       </div>
-
       <div id="clanNone">
         <div class="custom-block">
-          <div class="custom-title">🛡️ Создать свой клан <span class="lock">500 000 🪙</span></div>
+          <div class="custom-title">🛡️ Создать свой клан</div>
+          <p style="font-size:12px;color:#8798AE;margin:0 0 10px;">Стоимость: <b>500 000 🪙</b></p>
           <div class="url-row"><input type="text" id="clanNameInput" placeholder="Название клана" maxlength="20"></div>
           <div class="url-row"><input type="text" id="clanTagInput" placeholder="ТЕГ (2-5 символов)" maxlength="5" style="text-transform:uppercase;"></div>
-
-          <div style="font-size:12px;font-weight:700;margin:12px 0 4px;color:#5B6B80;">🖼️ Аватарка клана</div>
-          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
-            <label style="display:flex;align-items:center;gap:6px;background:#EEF3F8;padding:9px 12px;border-radius:10px;font-size:12px;color:#5B6B80;cursor:pointer;font-weight:600;">
-              📁 Из галереи
-              <input type="file" id="clanAvatarInput" accept="image/*" style="display:none;">
-            </label>
-            <span style="font-size:11px;color:#8798AE;">или выбери из готовых:</span>
-          </div>
-          <div class="clan-avatar-pick" id="clanAvatarPick"></div>
-
-          <div class="admin-row" style="margin-top:12px;">
-            <button class="admin-btn green" id="clanCreateOpen">🌐 Создать открытый</button>
-            <button class="admin-btn blue" id="clanCreateClosed">🔒 Создать закрытый</button>
-          </div>
-          <div style="font-size:11px;color:#8798AE;margin-top:8px;line-height:1.4;">
-            🌐 В открытый клан вступают сразу.<br>
-            🔒 В закрытый — по заявке (лидер одобряет).
-          </div>
+          <button class="btn-primary btn-prestige" id="clanCreateBtn" style="margin-top:10px;">Создать клан</button>
         </div>
-
         <div class="custom-block">
-          <div class="custom-title">🔍 Все кланы</div>
+          <div class="custom-title">🔍 Вступить в клан</div>
           <div class="list" id="clanTopList">
-            <div style="text-align:center;padding:20px;color:#8798AE;font-size:12px;">Загрузка…</div>
+            <div style="text-align:center;padding:20px;color:#8798AE;font-size:12px;">В разработке</div>
           </div>
         </div>
       </div>
@@ -1016,7 +976,8 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 
 <div id="pushToast"></div>
 <div id="toast"></div>
-<script>/* ============================================================
+<script>
+/* ============================================================
    SUPABASE — облачное сохранение
    ============================================================ */
 const SUPABASE_URL = 'https://bhvgrabogixbcdpahftw.supabase.co';
@@ -1254,28 +1215,6 @@ let lastLoadOk = false;
 function getInitData(){ return tg?.initData || ''; }
 function getMyId(){ return Number(tg?.initDataUnsafe?.user?.id || 0); }
 
-async function registerInLeaderboard(){
-  const myId = getMyId();
-  if (!myId) return;
-  const u = tg?.initDataUnsafe?.user || {};
-  try{
-    const { error } = await sb.from('saves').upsert({
-      telegram_id: myId,
-      first_name: u.first_name || 'Игрок',
-      username: u.username || null,
-      avatar: S.avatar || 'cat1',
-      level: S.level || 1,
-      coins: Math.floor(S.coins || 0),
-      prestige: S.prestige || 0,
-      total_earned: Math.floor(S.totalEarned || 0),
-      save_data: S,
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'telegram_id' });
-    if (error) console.warn('registerInLeaderboard:', error.message);
-    else console.log('✅ Игрок зарегистрирован в топе');
-  }catch(e){ console.warn('registerInLeaderboard failed:', e); }
-}
-
 function save(){
   S.lastSeen = Date.now();
   try{ localStorage.setItem(SAVE_KEY, JSON.stringify(S)); }catch(e){}
@@ -1292,22 +1231,19 @@ async function doSaveCloud(){
   const myId = getMyId();
   if (!myId) return;
   const u = tg?.initDataUnsafe?.user || {};
-  try{
-    const { error } = await sb.from('saves').upsert({
-      telegram_id: myId,
-      first_name: u.first_name || 'Игрок',
-      username: u.username || null,
-      avatar: S.avatar || 'cat1',
-      level: S.level || 1,
-      coins: Math.floor(S.coins || 0),
-      prestige: S.prestige || 0,
-      total_earned: Math.floor(S.totalEarned || 0),
-      save_data: S,
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'telegram_id' });
-    if (error) console.warn('Cloud save failed:', error.message);
-    else console.log('✅ Сохранено в облако (и в топе)');
-  }catch(e){ console.warn('Cloud save failed:', e); }
+  const { error } = await sb.rpc('upsert_save', {
+    p_telegram_id: myId,
+    p_save: S,
+    p_first_name: u.first_name || null,
+    p_username: u.username || null,
+    p_avatar: S.avatar || 'cat1',
+    p_level: S.level || 1,
+    p_coins: Math.floor(S.coins || 0),
+    p_prestige: S.prestige || 0,
+    p_total_earned: Math.floor(S.totalEarned || 0)
+  });
+  if (error) console.warn('Cloud save failed:', error.message);
+  else console.log('✅ Сохранено в облако');
 }
 
 async function load(){
@@ -2122,7 +2058,6 @@ async function loadLeaderboard(type){
     const { data, error } = await sb
       .from('saves')
       .select('telegram_id, first_name, username, avatar, level, coins, prestige')
-      .gt('coins', 0)
       .order(orderBy, { ascending: false })
       .limit(50);
     if (error) throw new Error(error.message);
@@ -2197,295 +2132,22 @@ async function loadReferrals(){
 }
 async function registerReferral(){ console.log('Реферал (в разработке)'); }
 
-/* ==================== CLANS ==================== */
-const CLAN_CREATE_COST = 500000;
-const CLAN_AVATARS = [
-  'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=200',
-  'https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=200',
-  'https://images.unsplash.com/photo-1519052537078-e6302a4968d4?w=200',
-  'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=200',
-  'https://images.unsplash.com/photo-1612536057832-2ff7ead58194?w=200',
-  'https://images.unsplash.com/photo-1605568427561-40dd23c2acea?w=200',
-  'https://images.unsplash.com/photo-1552053831-71594a27632d?w=200',
-  'https://images.unsplash.com/photo-1517849845537-4d257902454a?w=200',
-  'https://images.unsplash.com/photo-1474511320723-9a56873867b5?w=200',
-  'https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=200',
-  'https://images.unsplash.com/photo-1564466809058-bf4114d55352?w=200',
-  'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=200'
-];
-let MY_CLAN = null;
-let MY_ROLE = null;
-let CLAN_POLL = null;
-let CLAN_AVATAR_CHOICE = null;
-
-function renderClanAvatarPicker(){
-  const box = document.getElementById('clanAvatarPick');
-  if (!box) return;
-  box.innerHTML = '';
-  CLAN_AVATARS.forEach((url, i)=>{
-    const img = document.createElement('img');
-    img.src = url;
-    img.dataset.url = url;
-    if (CLAN_AVATAR_CHOICE === url) img.classList.add('selected');
-    img.onclick = ()=>{
-      CLAN_AVATAR_CHOICE = url;
-      box.querySelectorAll('img').forEach(x=>x.classList.toggle('selected', x.dataset.url === url));
-    };
-    box.appendChild(img);
-  });
-  if (!CLAN_AVATAR_CHOICE) CLAN_AVATAR_CHOICE = CLAN_AVATARS[0];
-  box.querySelectorAll('img').forEach(x=>x.classList.toggle('selected', x.dataset.url === CLAN_AVATAR_CHOICE));
-}
-
-async function loadMyClan(){
-  const myId = getMyId();
-  if (!myId) return;
-  const main = document.getElementById('clanMain');
-  const none = document.getElementById('clanNone');
-  try{
-    const { data: mem } = await sb.from('clan_members')
-      .select('clan_id, role, clans(*)')
-      .eq('telegram_id', myId)
-      .maybeSingle();
-    if (mem && mem.clans){
-      MY_CLAN = mem.clans;
-      MY_ROLE = mem.role;
-      main.style.display = 'block';
-      none.style.display = 'none';
-      await renderClan();
-      startClanPoll();
-      return;
-    }
-  }catch(e){ console.warn('loadMyClan:', e); }
-  MY_CLAN = null; MY_ROLE = null;
-  main.style.display = 'none';
-  none.style.display = 'block';
-  stopClanPoll();
-  renderClanAvatarPicker();
-  loadClanTop();
-}
-
-function startClanPoll(){
-  stopClanPoll();
-  CLAN_POLL = setInterval(()=>{ if (MY_CLAN && document.getElementById('s-clan').classList.contains('active')) renderClan(); }, 5000);
-}
-function stopClanPoll(){ if (CLAN_POLL){ clearInterval(CLAN_POLL); CLAN_POLL = null; } }
-
-async function renderClan(){
-  if (!MY_CLAN) return;
-  const myId = getMyId();
-  const hero = document.getElementById('clanHero');
-  const av = MY_CLAN.avatar_url || CLAN_AVATARS[0];
-  hero.innerHTML = `
-    <div style="display:flex;align-items:center;gap:12px;position:relative;z-index:1;">
-      <img src="${av}" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.5);">
-      <div>
-        <h3 style="margin:0;">${escapeHtml(MY_CLAN.name)}</h3>
-        <span class="ctag">[${escapeHtml(MY_CLAN.tag)}]</span>
-        <div class="cinfo" style="margin-top:4px;">${MY_CLAN.is_private?'🔒 Закрытый':'🌐 Открытый'}</div>
-      </div>
-    </div>
-    <div class="clan-bank-row">
-      <span style="font-size:22px;">🏦</span>
-      <div style="flex:1;">
-        <div style="font-size:11px;color:rgba(255,255,255,.7);">Общий банк</div>
-        <b>${fmt(MY_CLAN.bank||0)} 🪙</b>
-      </div>
-    </div>`;
-  const bankVal = document.getElementById('clanBankVal');
-  if (bankVal) bankVal.textContent = fmt(MY_CLAN.bank||0) + ' 🪙';
-
-  // участники
-  const memBox = document.getElementById('clanMembers');
-  const { data: members } = await sb.from('clan_members')
-    .select('telegram_id, first_name, username, role, joined_at')
-    .eq('clan_id', MY_CLAN.id)
-    .order('joined_at', {ascending:true});
-  document.getElementById('clanMembersCount').textContent = (members||[]).length;
-  memBox.innerHTML = '';
-  (members||[]).forEach(m=>{
-    const div = document.createElement('div'); div.className = 'item';
-    const roleBadge = m.role === 'owner' ? '<span style="background:#FFB800;color:#fff;font-size:9px;padding:2px 6px;border-radius:6px;margin-left:6px;font-weight:800;">👑 ЛИДЕР</span>' : '';
-    div.innerHTML = `<div class="item-icon" style="background:#EEF3F8;font-size:18px;display:grid;place-items:center;">🐱</div><div class="item-body"><div class="item-name">${escapeHtml(m.first_name||'Игрок')}${roleBadge}</div><div class="item-sub">${m.username?'@'+escapeHtml(m.username):'ID: '+m.telegram_id}</div></div>`;
-    memBox.appendChild(div);
-  });
-
-  // заявки (только владелец)
-  document.querySelectorAll('.clan-req-block').forEach(x=>x.remove());
-  if (MY_ROLE === 'owner'){
-    const { data: reqs } = await sb.from('clan_requests').select('*').eq('clan_id', MY_CLAN.id).order('created_at');
-    if (reqs && reqs.length){
-      const reqBox = document.createElement('div'); reqBox.className='custom-block clan-req-block';
-      reqBox.innerHTML = `<div class="custom-title">📥 Заявки в клан (${reqs.length})</div>`;
-      reqs.forEach(r=>{
-        const row = document.createElement('div'); row.className='item'; row.style.marginBottom='6px';
-        row.innerHTML = `<div class="item-icon" style="background:#EEF3F8;">👤</div><div class="item-body"><div class="item-name">${escapeHtml(r.first_name||'Игрок')}</div><div class="item-sub">@${escapeHtml(r.username||'—')}</div></div><button class="buy green-btn" data-accept="${r.telegram_id}">✅</button><button class="buy red-btn" data-decline="${r.telegram_id}">✕</button>`;
-        row.querySelector('[data-accept]').onclick = ()=>acceptClanRequest(r.telegram_id);
-        row.querySelector('[data-decline]').onclick = ()=>declineClanRequest(r.telegram_id);
-        reqBox.appendChild(row);
-      });
-      const mainEl = document.getElementById('clanMain');
-      mainEl.insertBefore(reqBox, mainEl.firstChild);
-    }
-  }
-
-  // квесты
-  const qBox = document.getElementById('clanQuestsBox');
-  if (qBox){
-    const w = thisWeek();
-    await sb.from('clan_quests').upsert([
-      {clan_id:MY_CLAN.id, quest_key:'weekly_bank', week_key:w, progress:0, goal:500000, reward_coins:100000, reward_diamonds:10},
-      {clan_id:MY_CLAN.id, quest_key:'weekly_taps', week_key:w, progress:0, goal:10000, reward_coins:50000, reward_diamonds:5}
-    ], {onConflict:'clan_id,quest_key,week_key', ignoreDuplicates:true});
-    const { data: quests } = await sb.from('clan_quests').select('*').eq('clan_id', MY_CLAN.id).eq('week_key', w);
-    qBox.innerHTML = '';
-    const defs = [
-      {key:'weekly_bank', name:'Общий банк', goal:500000, rc:100000, rd:10, icon:'🏦'},
-      {key:'weekly_taps', name:'Совместные тапы', goal:10000, rc:50000, rd:5, icon:'👆'}
-    ];
-    defs.forEach(d=>{
-      const q = (quests||[]).find(x=>x.quest_key===d.key);
-      const prog = q ? q.progress : 0;
-      const pct = Math.min(100, Math.floor(prog/d.goal*100));
-      const claimed = q && q.claimed;
-      const div = document.createElement('div'); div.className='chain-card'; div.style.marginBottom='8px';
-      div.innerHTML = `<div class="chain-title">${d.icon} ${d.name}</div>
-        <div class="pbar"><i style="width:${pct}%;background:linear-gradient(90deg,#5BE39A,#2ECC71);"></i></div>
-        <div class="ptxt">${fmt(prog)} / ${fmt(d.goal)}</div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
-          <span style="font-size:11px;color:#31B545;font-weight:700;">+${fmt(d.rc)} 🪙 +${d.rd} 💎</span>
-          ${pct>=100 && !claimed ? `<button class="buy green-btn" data-claimquest="${d.key}">${MY_ROLE==='owner'?'Забрать':'Ждёт лидера'}</button>` : (claimed?'<span style="font-size:11px;color:#8798AE;font-weight:700;">✅ Получено</span>':'')}
-        </div>`;
-      const cb = div.querySelector('[data-claimquest]');
-      if (cb && MY_ROLE === 'owner') cb.onclick = ()=>claimClanQuest(d);
-      qBox.appendChild(div);
-    });
-  }
-}
-
-async function clanTap(){
-  if (!MY_CLAN) return;
-  const gain = Math.max(1, Math.floor(tapValue() * 0.1));
-  try{
-    await sb.rpc('clan_tap', { p_clan_id: MY_CLAN.id, p_telegram_id: getMyId(), p_coins: gain });
-    // прогресс тапов
-    const w = thisWeek();
-    const { data: q } = await sb.from('clan_quests').select('*').eq('clan_id',MY_CLAN.id).eq('quest_key','weekly_taps').eq('week_key',w).maybeSingle();
-    if (q) await sb.from('clan_quests').update({progress: Math.min(q.goal, (q.progress||0) + 1)}).eq('id', q.id);
-    MY_CLAN.bank = (MY_CLAN.bank||0) + gain;
-    const bankVal = document.getElementById('clanBankVal');
-    if (bankVal) bankVal.textContent = fmt(MY_CLAN.bank) + ' 🪙';
-    SFX.tapSound(S.tapSkin);
-    toast('👆 +'+fmt(gain)+' в банк клана');
-  }catch(e){ console.warn(e); toast('Ошибка тапа'); }
-}
-
-async function claimClanQuest(d){
-  if (MY_ROLE !== 'owner'){ toast('Только лидер'); return; }
-  const w = thisWeek();
-  const { data: q } = await sb.from('clan_quests').select('*').eq('clan_id',MY_CLAN.id).eq('quest_key',d.key).eq('week_key',w).maybeSingle();
-  if (!q || q.claimed || q.progress < d.goal){ toast('Не готово'); return; }
-  await sb.from('clan_quests').update({claimed:true}).eq('id', q.id);
-  S.coins += d.rc; S.totalEarned += d.rc; S.diamonds += d.rd;
-  SFX.upgrade(); save(); renderAll(); toast('🎁 Клан-квест забран!'); renderClan();
-}
-
-async function createClan(isPrivate){
-  const name = (document.getElementById('clanNameInput').value||'').trim();
-  const tag = (document.getElementById('clanTagInput').value||'').trim().toUpperCase();
-  if (name.length < 2){ toast('Название от 2 символов'); return; }
-  if (tag.length < 2 || tag.length > 5){ toast('ТЕГ 2–5 символов'); return; }
-  if (S.coins < CLAN_CREATE_COST){ SFX.error(); toast('Нужно '+fmt(CLAN_CREATE_COST)+' 🪙'); return; }
-  const myId = getMyId(); if (!myId) return;
-  const fileInput = document.getElementById('clanAvatarInput');
-  let avatarUrl = CLAN_AVATAR_CHOICE || CLAN_AVATARS[0];
-  if (fileInput && fileInput.files && fileInput.files[0]){
-    const file = fileInput.files[0];
-    if (file.size > 900000){ toast('Файл больше 900KB — уменьши'); return; }
-    avatarUrl = await new Promise(res=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.readAsDataURL(file); });
-  }
-  const u = tg?.initDataUnsafe?.user || {};
-  try{
-    const { data: clan, error } = await sb.from('clans').insert({
-      name, tag, avatar_url: avatarUrl, is_private: isPrivate, owner_id: myId, bank: 0
-    }).select().single();
-    if (error){ toast('Ошибка: '+error.message); return; }
-    await sb.from('clan_members').insert({clan_id: clan.id, telegram_id: myId, first_name: u.first_name||'Игрок', username: u.username||null, role:'owner'});
-    S.coins -= CLAN_CREATE_COST; save();
-    MY_CLAN = clan; MY_ROLE = 'owner';
-    toast(isPrivate?'🔒 Закрытый клан создан!':'🌐 Открытый клан создан!');
-    loadMyClan();
-  }catch(e){ console.warn(e); toast('Ошибка создания'); }
-}
-
+/* ==================== CLANS (заглушка) ==================== */
 async function loadClanTop(){
   const box = document.getElementById('clanTopList');
-  if (!box) return;
-  try{
-    const { data: clans } = await sb.from('clans').select('id, name, tag, avatar_url, is_private, bank, owner_id').order('bank', {ascending:false}).limit(30);
-    if (!clans || !clans.length){ box.innerHTML = '<div style="text-align:center;padding:20px;color:#8798AE;font-size:12px;">Кланов пока нет. Создай первый!</div>'; return; }
-    box.innerHTML = '';
-    clans.forEach(c=>{
-      const div = document.createElement('div'); div.className='item';
-      const av = c.avatar_url || CLAN_AVATARS[0];
-      div.innerHTML = `<div class="item-icon" style="border-radius:50%;overflow:hidden;background:#EEF3F8;"><img src="${av}" style="width:100%;height:100%;object-fit:cover;"></div><div class="item-body"><div class="item-name">${escapeHtml(c.name)} <span style="color:#8798AE;font-weight:500">[${escapeHtml(c.tag)}]</span></div><div class="item-sub">${c.is_private?'🔒 Закрытый':'🌐 Открытый'} · Банк: ${fmt(c.bank||0)} 🪙</div></div><button class="buy ${c.is_private?'blue-btn':'green-btn'}" data-join="${c.id}" data-private="${c.is_private?1:0}">${c.is_private?'Заявка':'Вступить'}</button>`;
-      div.querySelector('[data-join]').onclick = ()=>joinClan(c.id, !!c.is_private);
-      box.appendChild(div);
-    });
-  }catch(e){ console.warn(e); box.innerHTML = '<div style="text-align:center;padding:20px;color:#E8487F;font-size:12px;">Ошибка загрузки кланов</div>'; }
+  if (box) box.innerHTML = '<div style="text-align:center;padding:20px;color:#8798AE;font-size:12px;">В разработке</div>';
 }
-
-async function joinClan(clanId, isPrivate){
-  const myId = getMyId(); if (!myId) return;
-  const u = tg?.initDataUnsafe?.user || {};
-  const { data: existing } = await sb.from('clan_members').select('clan_id').eq('telegram_id', myId).maybeSingle();
-  if (existing){ toast('Ты уже в клане'); return; }
-  if (!isPrivate){
-    const { error } = await sb.from('clan_members').insert({clan_id: clanId, telegram_id: myId, first_name: u.first_name||'Игрок', username: u.username||null, role:'member'});
-    if (error){ toast('Ошибка: '+error.message); return; }
-    toast('✅ Вступил в клан'); loadMyClan();
-  } else {
-    const { error } = await sb.from('clan_requests').upsert({clan_id: clanId, telegram_id: myId, first_name: u.first_name||'Игрок', username: u.username||null}, {onConflict:'clan_id,telegram_id'});
-    if (error){ toast('Ошибка: '+error.message); return; }
-    toast('📨 Заявка отправлена — жди одобрения лидера');
-  }
+async function loadMyClan(){
+  const main = document.getElementById('clanMain');
+  const none = document.getElementById('clanNone');
+  if (main) main.style.display = 'none';
+  if (none) none.style.display = 'block';
+  loadClanTop();
 }
-
-async function acceptClanRequest(tid){
-  if (MY_ROLE !== 'owner') return;
-  const { data: req } = await sb.from('clan_requests').select('*').eq('clan_id', MY_CLAN.id).eq('telegram_id', tid).maybeSingle();
-  if (!req) return;
-  await sb.from('clan_members').insert({clan_id: MY_CLAN.id, telegram_id: tid, first_name: req.first_name, username: req.username, role:'member'});
-  await sb.from('clan_requests').delete().eq('clan_id', MY_CLAN.id).eq('telegram_id', tid);
-  toast('✅ Принят в клан'); renderClan();
-}
-async function declineClanRequest(tid){
-  await sb.from('clan_requests').delete().eq('clan_id', MY_CLAN.id).eq('telegram_id', tid);
-  toast('Заявка отклонена'); renderClan();
-}
-
-async function clanDonate(){
-  if (!MY_CLAN) return;
-  const amt = 1000;
-  if (S.coins < amt){ toast('Мало монет'); return; }
-  S.coins -= amt;
-  try{
-    await sb.from('clans').update({bank: (MY_CLAN.bank||0) + amt}).eq('id', MY_CLAN.id);
-    const w = thisWeek();
-    const { data: q } = await sb.from('clan_quests').select('*').eq('clan_id',MY_CLAN.id).eq('quest_key','weekly_bank').eq('week_key',w).maybeSingle();
-    if (q) await sb.from('clan_quests').update({progress: Math.min(q.goal, (q.progress||0) + amt)}).eq('id', q.id);
-    MY_CLAN.bank = (MY_CLAN.bank||0) + amt;
-    SFX.coin(); save(); toast('🏦 +'+fmt(amt)+' в банк'); renderClan();
-  }catch(e){ console.warn(e); toast('Ошибка'); }
-}
-
-async function clanLeave(){
-  if (!MY_CLAN) return;
-  if (MY_ROLE === 'owner'){ toast('Лидер не может выйти. Передай клан (в разработке)'); return; }
-  const myId = getMyId();
-  await sb.from('clan_members').delete().eq('clan_id', MY_CLAN.id).eq('telegram_id', myId);
-  toast('👋 Вышел из клана'); MY_CLAN=null; MY_ROLE=null; loadMyClan();
-}
+async function joinClan(){ toast('В разработке'); }
+document.getElementById('clanCreateBtn').onclick = ()=>{ toast('В разработке'); };
+document.getElementById('clanLeaveBtn').onclick = ()=>{ toast('В разработке'); };
+document.getElementById('clanDonateBtn').onclick = ()=>{ toast('В разработке'); };
 
 /* ==================== SKINS ==================== */
 function renderSkins(){
@@ -3199,13 +2861,6 @@ document.getElementById('refShareBtn').onclick = ()=>{
   else window.open(link, '_blank');
 };
 
-/* ==================== CLAN BTNS ==================== */
-document.getElementById('clanTapBtn').onclick = clanTap;
-document.getElementById('clanDonateBtn').onclick = clanDonate;
-document.getElementById('clanLeaveBtn').onclick = clanLeave;
-document.getElementById('clanCreateOpen').onclick = ()=>createClan(false);
-document.getElementById('clanCreateClosed').onclick = ()=>createClan(true);
-
 /* ==================== MUSIC / SOUND ==================== */
 document.getElementById('btnMute').addEventListener('click', function(){
   getAudio(); SFX.muted = !SFX.muted; S.muted = SFX.muted;
@@ -3382,7 +3037,6 @@ window.addEventListener('visibilitychange', ()=>{ if (document.visibilityState =
   ensureDailyQuests(); ensureWeeklyQuests(); resetDailyCountersIfNeeded();
   renderAll();
   goTo('s-home');
-  await registerInLeaderboard();
   const muteBtn = document.getElementById('btnMute');
   const musicBtn = document.getElementById('btnMusic');
   if (muteBtn && SFX.muted){ muteBtn.textContent = '🔇'; muteBtn.classList.add('off'); }

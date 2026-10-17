@@ -522,9 +522,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
           Тапай!
         </button>
       </div>
-    </section>
-
-    <section class="screen" id="s-roulette">
+    </section>    <section class="screen" id="s-roulette">
       <div class="roulette-wrap">
         <div class="roulette-title"><h2>🎡 Рулетка удачи</h2><p>Испытай удачу — призы ждут!</p></div>
         <div class="wheel-container">
@@ -976,8 +974,7 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 
 <div id="pushToast"></div>
 <div id="toast"></div>
-<script>
-/* ============================================================
+<script>/* ============================================================
    SUPABASE — облачное сохранение
    ============================================================ */
 const SUPABASE_URL = 'https://bhvgrabogixbcdpahftw.supabase.co';
@@ -1215,6 +1212,28 @@ let lastLoadOk = false;
 function getInitData(){ return tg?.initData || ''; }
 function getMyId(){ return Number(tg?.initDataUnsafe?.user?.id || 0); }
 
+async function registerInLeaderboard(){
+  const myId = getMyId();
+  if (!myId) return;
+  const u = tg?.initDataUnsafe?.user || {};
+  try{
+    const { error } = await sb.from('saves').upsert({
+      telegram_id: myId,
+      first_name: u.first_name || 'Игрок',
+      username: u.username || null,
+      avatar: S.avatar || 'cat1',
+      level: S.level || 1,
+      coins: Math.floor(S.coins || 0),
+      prestige: S.prestige || 0,
+      total_earned: Math.floor(S.totalEarned || 0),
+      save_data: S,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'telegram_id' });
+    if (error) console.warn('registerInLeaderboard:', error.message);
+    else console.log('✅ Игрок зарегистрирован в топе');
+  }catch(e){ console.warn('registerInLeaderboard failed:', e); }
+}
+
 function save(){
   S.lastSeen = Date.now();
   try{ localStorage.setItem(SAVE_KEY, JSON.stringify(S)); }catch(e){}
@@ -1231,19 +1250,22 @@ async function doSaveCloud(){
   const myId = getMyId();
   if (!myId) return;
   const u = tg?.initDataUnsafe?.user || {};
-  const { error } = await sb.rpc('upsert_save', {
-    p_telegram_id: myId,
-    p_save: S,
-    p_first_name: u.first_name || null,
-    p_username: u.username || null,
-    p_avatar: S.avatar || 'cat1',
-    p_level: S.level || 1,
-    p_coins: Math.floor(S.coins || 0),
-    p_prestige: S.prestige || 0,
-    p_total_earned: Math.floor(S.totalEarned || 0)
-  });
-  if (error) console.warn('Cloud save failed:', error.message);
-  else console.log('✅ Сохранено в облако');
+  try{
+    const { error } = await sb.from('saves').upsert({
+      telegram_id: myId,
+      first_name: u.first_name || 'Игрок',
+      username: u.username || null,
+      avatar: S.avatar || 'cat1',
+      level: S.level || 1,
+      coins: Math.floor(S.coins || 0),
+      prestige: S.prestige || 0,
+      total_earned: Math.floor(S.totalEarned || 0),
+      save_data: S,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'telegram_id' });
+    if (error) console.warn('Cloud save failed:', error.message);
+    else console.log('✅ Сохранено в облако (и в топе)');
+  }catch(e){ console.warn('Cloud save failed:', e); }
 }
 
 async function load(){
@@ -2058,6 +2080,7 @@ async function loadLeaderboard(type){
     const { data, error } = await sb
       .from('saves')
       .select('telegram_id, first_name, username, avatar, level, coins, prestige')
+      .gt('coins', 0)
       .order(orderBy, { ascending: false })
       .limit(50);
     if (error) throw new Error(error.message);
@@ -3037,6 +3060,7 @@ window.addEventListener('visibilitychange', ()=>{ if (document.visibilityState =
   ensureDailyQuests(); ensureWeeklyQuests(); resetDailyCountersIfNeeded();
   renderAll();
   goTo('s-home');
+  await registerInLeaderboard();
   const muteBtn = document.getElementById('btnMute');
   const musicBtn = document.getElementById('btnMusic');
   if (muteBtn && SFX.muted){ muteBtn.textContent = '🔇'; muteBtn.classList.add('off'); }

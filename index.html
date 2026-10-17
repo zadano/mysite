@@ -2131,109 +2131,24 @@ async function loadReferrals(){
   document.getElementById('refList').innerHTML = '<div style="text-align:center;padding:20px;color:#8798AE;font-size:12px;">В разработке</div>';
 }
 async function registerReferral(){ console.log('Реферал (в разработке)'); }
-/* ==================== CLANS ==================== */ async function loadClanTop(){ const box = document.getElementById('clanTopList'); if (!box) return; box.innerHTML = '<div style="text-align:center;padding:14px;color:#8798AE;font-size:12px;">Загрузка...</div>';
-try{ const { data, error } = await sb.from('clans').select('*').order('bank', { ascending: false }).limit(20); if (error) throw error;
-if (!data || !data.length){
-  box.innerHTML = '<div style="text-align:center;padding:20px;color:#8798AE;font-size:12px;">Кланов пока нет. Создай первый!</div>';
-  return;
+
+/* ==================== CLANS (заглушка) ==================== */
+async function loadClanTop(){
+  const box = document.getElementById('clanTopList');
+  if (box) box.innerHTML = '<div style="text-align:center;padding:20px;color:#8798AE;font-size:12px;">В разработке</div>';
 }
-
-// Подтягиваем количество участников
-const clanIds = data.map(c => c.id);
-const { data: members } = await sb.from('clan_members').select('clan_id').in('clan_id', clanIds);
-const counts = {};
-(members || []).forEach(m => { counts[m.clan_id] = (counts[m.clan_id] || 0) + 1; });
-
-box.innerHTML = '';
-data.forEach(c => {
-  const div = document.createElement('div'); div.className = 'item';
-  div.innerHTML = `
-    <div class="item-icon" style="background:linear-gradient(135deg,#1B3F63,#0F2A47);color:#fff;font-size:24px;">${c.icon || '🛡️'}</div>
-    <div class="item-body">
-      <div class="item-name">￼{escapeHtml(c.tag)}]</span></div>
-      <div class="item-sub">👥 ￼{fmt(c.bank)}</b> 🪙</div>
-    </div>
-    <button class="buy green-btn" data-join-clan="${c.id}">Вступить</button>`;
-  div.querySelector('.buy').onclick = ()=>joinClan(c.id);
-  box.appendChild(div);
-});
-}catch(e){ box.innerHTML = '<div style="text-align:center;padding:20px;color:#E8487F;font-size:12px;">Ошибка загрузки</div>'; } }
-async function loadMyClan(){ const myId = getMyId(); const main = document.getElementById('clanMain'); const none = document.getElementById('clanNone'); if (!myId) return;
-try{ const { data: me, error } = await sb.from('clan_members').select('clan_id, role, contributed').eq('telegram_id', myId).maybeSingle();
-if (!me){
-  main.style.display = 'none'; none.style.display = 'block';
+async function loadMyClan(){
+  const main = document.getElementById('clanMain');
+  const none = document.getElementById('clanNone');
+  if (main) main.style.display = 'none';
+  if (none) none.style.display = 'block';
   loadClanTop();
-  return;
 }
+async function joinClan(){ toast('В разработке'); }
+document.getElementById('clanCreateBtn').onclick = ()=>{ toast('В разработке'); };
+document.getElementById('clanLeaveBtn').onclick = ()=>{ toast('В разработке'); };
+document.getElementById('clanDonateBtn').onclick = ()=>{ toast('В разработке'); };
 
-const { data: clan } = await sb.from('clans').select('*').eq('id', me.clan_id).single();
-const { data: members } = await sb.from('clan_members').select('telegram_id, role, contributed').eq('clan_id', me.clan_id);
-const ids = (members || []).map(m => m.telegram_id);
-const { data: profiles } = await sb.from('saves').select('telegram_id, first_name, avatar, level').in('telegram_id', ids);
-
-main.style.display = 'block'; none.style.display = 'none';
-
-document.getElementById('clanHero').innerHTML = `
-  <div style="position:relative;z-index:1;">
-    <div style="font-size:36px;margin-bottom:4px;">${clan.icon || '🛡️'}</div>
-    <h3>${escapeHtml(clan.name)}</h3>
-    <span class="ctag">[${escapeHtml(clan.tag)}]</span>
-    <div class="cinfo">
-      👥 ${members.length} участников · 💰 Банк: ${fmt(clan.bank)} 🪙<br>
-      Твоя роль: <b>${me.role === 'owner' ? '👑 Владелец' : '👤 Участник'}</b>
-    </div>
-  </div>`;
-
-document.getElementById('clanMembersCount').textContent = members.length;
-const mb = document.getElementById('clanMembers');
-mb.innerHTML = '';
-members.forEach(m => {
-  const p = (profilesnst { data: profiles } = await sb.from('saves').select{};
-  const av = AVATARS.find(a=>a.id===p.avatar) || AVATARS[0];
-  const div = document.createElement('div'); div.className = 'item';
-  div.innerHTML = `
-    <div class="item-icon" style="width:38px;height:38px;flex:0 0 38px;border-radius:50%;overflow:hidden;">
-      <img src="${av.url}" style="width:100%;height:100%;object-fit:cover;">
-    </div>
-    <div class="item-body">
-      <div class="item-name">${m.role === 'owner' ? '👑' : '👤'} ${escapeHtml(p.first_name || 'Участник')}</div>
-      <div class="item-sub">Ур. ￼{fmt(m.contributed)}</b> 🪙</div>
-    </div>`;
-  mb.appendChild(div);
-});
-}catch(e){ console.error(e); main.style.display = 'none'; none.style.display = 'block'; loadClanTop(); } }
-async function joinClan(clanId){ const myId = getMyId(); if (!myId) return; try{ const { error } = await sb.rpc('join_clan_rpc', { p_telegram_id: myId, p_clan_id: clanId }); if (error){ if (error.message.
-
-includes('Already in clan')) toast('⛔ Ты уже в клане'); else toast('Ошибка: ' + error.message); return; } SFX.upgrade(); toast('🛡️ Ты вступил в клан!'); loadMyClan(); }catch(e){ toast('Ошибка соединения'); } }
-// Обработчик создания клана document.getElementById('clanCreateBtn').onclick = async ()=>{ const myId = getMyId(); if (!myId) return;
-const name = document.getElementById('clanNameInput').value.trim(); const tag = document.getElementById('clanTagInput').value.trim().toUpperCase();
-if (!nameid);
-  box.appendChild(div);
-});
-}catch(e){ box.innerHTML = '<div style="text-align:center;tag.length < 2 || tag.length > 5){ SFX.error(); toast('Некорректная длина'); return; } if (S.coins < 500000){ SFX.error(); toast('Нужно 500 000 🪙'); return; }
-try{ const { data, error } = await sb.rpc('create_clan', { p_owner_id: myId, p_name: name, p_tag: tag, p_icon: '🛡️' });
-if (error){
-  if (error.message.includes('Name or tag taken')) toast('❌ Имя или тег заняты');
-  else if (error.message.includes('Already in clan')) toast('Ты уже в клане');
-  else toast('Ошибка: ' + error.message);
-  return;
-}
-
-S.coins -= 500000;
-SFX.upgrade(); showConfetti();
-save(); renderAll();
-toast('🛡️ Клан создан!');
-loadMyClan();
-}catch(e){ toast('Ошибка соединения'); } };
-// Выход из клана document.getElementById('clanLeaveBtn').onclick = async ()=>{ if (!confirm('Выйти из клана?')) return; const myId = getMyId(); try{ // Удаляем себя из участников const { error } = await sb.from('clan_members').delete().eq('telegram_id', myId); if (error) throw error; toast('👋 Вышел из клана'); loadMyClan(); }catch(e){ toast('Ошибка: ' + e.message); } };
-// Донат в банк document.getElementById('clanDonateBtn').onclick = async ()=>{ const myId = getMyId(); const amountStr = prompt('Сколько монет внести в банк клана? (мин. 1 000)', '10000'); if (!amountStr) return;
-const amount = Number(amountStr); if (!amount || amount < 1000){ SFX.error(); toast('Минимум 1 000 🪙'); return; } if (S.coins < amount){ SFX.error(); toast('Мало монет'); return; }
-try{ const { error } = await sb.rpc('donate_clan', { p_telegram_id: myId, p_amount: amount }); if (error) throw error;
-S.coins -= amount;
-SFX.coin(); save(); renderAll();
-toast('💰 +' + fmt(amount) + ' в банк клана');
-loadMyClan();
-}catch(e){ toast('Ошибка: ' + e.message); } };
 /* ==================== SKINS ==================== */
 function renderSkins(){
   const grid = $('#skinsGrid'); if (!grid) return;

@@ -1081,7 +1081,7 @@ function showChoicePopup(picks){
   picks.forEach(p=>{
     const btn = document.createElement('button');
     btn.style.cssText = 'display:flex;align-items:center;gap:12px;padding:14px 16px;border:2px solid #E4EBF3;border-radius:14px;background:#fff;font-family:inherit;cursor:pointer;text-align:left;transition:.15s;';
-    btn.innerHTML = <span style="font-size:28px">${p.icon}</span><span style="font-size:14px;font-weight:700;color:#0F172A">${p.label}</span>;
+    btn.innerHTML = `<span style="font-size:28px">${p.icon}</span><span style="font-size:14px;font-weight:700;color:#0F172A">${p.label}</span>`;
     btn.onmouseenter = ()=>btn.style.borderColor = '#2AABEE';
     btn.onmouseleave = ()=>btn.style.borderColor = '#E4EBF3';
     btn.onclick = ()=>pickChoice(p);
@@ -1155,7 +1155,7 @@ function renderChestPrizes(){
   CHEST_PRIZES.slice().sort((a,b)=>b.w-a.w).forEach(p=>{
     const d = document.createElement('div');
     d.className = 'prize-card';
-    d.innerHTML = <div class="prize-ico" style="background:#E8A31722;color:#E8A317">${p.icon}</div><div class="prize-info"><div class="prize-label">${p.label}</div><div class="prize-desc">${p.w}% шанс</div></div>;
+    d.innerHTML = `<div class="prize-ico" style="background:#E8A31722;color:#E8A317">${p.icon}</div><div class="prize-info"><div class="prize-label">${p.label}</div><div class="prize-desc">${p.w}% шанс</div></div>`;
     g.appendChild(d);
   });
 }
@@ -1177,11 +1177,11 @@ function openChest(){
     else if (picked.type === 'diamonds'){ S.diamonds += picked.value; msg = '+' + picked.value + ' 💎'; }
     else if (picked.type === 'ticket'){ S.tickets = (S.tickets||0) + picked.value; msg = '+' + picked.value + ' 🎟️'; }
     else if (picked.type === 'boost2x'){ if (!S.activeBoosts) S.activeBoosts = {}; S.activeBoosts['boost2x'] = Math.max(S.activeBoosts['boost2x']||0, now) + picked.value * 60000; msg = '⚡ Буст ×2 на ' + picked.value + ' мин!'; }
-    else if (picked.type === 'petFood'){ S.petFood = S.petFood  {}; S.petFood[picked.value] = (S.petFood[picked.value]0) + 1; msg = '🍖 Мясо для питомца!'; }
+    else if (picked.type === 'petFood'){ S.petFood = S.petFood || {}; S.petFood[picked.value] = (S.petFood[picked.value]||0) + 1; msg = '🍖 Мясо для питомца!'; }
     else if (picked.type === 'frame'){ if (!S.unlockedFrames) S.unlockedFrames = {}; S.unlockedFrames[picked.value] = 1; msg = '🎨 Рамка открыта!'; }
     SFX.reveal('rare'); showConfetti();
     save(); renderAll();
-    modal(<div class="win-icon-big">🎁</div><div class="win-title">Сундук удачи!</div><div class="win-reward gold">${msg}</div>, [{label:'Забрать', cls:'ok'}]);
+    modal(`<div class="win-icon-big">🎁</div><div class="win-title">Сундук удачи!</div><div class="win-reward gold">${msg}</div>`, [{label:'Забрать', cls:'ok'}]);
   }, 900);
 }
 
@@ -1208,8 +1208,8 @@ let audioCtx = null;
 function getAudio(){ if (!audioCtx){ try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){} } return audioCtx; }
 const SFX = {
   muted: false,
-  tone(freq, dur, type, vol, delay, slideTo){ const ctx = getAudio(); if (!ctx  this.muted) return; delay = delay  0; const t0 = ctx.currentTime + delay; const o = ctx.createOscillator(), g = ctx.createGain(); o.type = type || 'sine'; o.frequency.setValueAtTime(freq, t0); if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t0 + dur); g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(vol, t0 + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur); o.connect(g); g.connect(ctx.destination); o.start(t0); o.stop(t0 + dur + 0.05); },
-  noise(dur, vol, freq, q, delay, sweepTo){ const ctx = getAudio(); if (!ctx  this.muted) return; delay = delay  0; const t0 = ctx.currentTime + delay; const len = Math.max(1, Math.floor(ctx.sampleRate * dur)); const buf = ctx.createBuffer(1, len, ctx.sampleRate); const d = buf.getChannelData(0); for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1; const src = ctx.createBufferSource(); src.buffer = buf; const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.setValueAtTime(freq, t0); f.Q.value = q; if (sweepTo) f.frequency.exponentialRampToValueAtTime(sweepTo, t0 + dur); const g = ctx.createGain(); g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur); src.connect(f); f.connect(g); g.connect(ctx.destination); src.start(t0); src.stop(t0 + dur + 0.05); },
+  tone(freq, dur, type, vol, delay, slideTo){ const ctx = getAudio(); if (!ctx || this.muted) return; delay = delay || 0; const t0 = ctx.currentTime + delay; const o = ctx.createOscillator(), g = ctx.createGain(); o.type = type || 'sine'; o.frequency.setValueAtTime(freq, t0); if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t0 + dur); g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(vol, t0 + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur); o.connect(g); g.connect(ctx.destination); o.start(t0); o.stop(t0 + dur + 0.05); },
+  noise(dur, vol, freq, q, delay, sweepTo){ const ctx = getAudio(); if (!ctx || this.muted) return; delay = delay || 0; const t0 = ctx.currentTime + delay; const len = Math.max(1, Math.floor(ctx.sampleRate * dur)); const buf = ctx.createBuffer(1, len, ctx.sampleRate); const d = buf.getChannelData(0); for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1; const src = ctx.createBufferSource(); src.buffer = buf; const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.setValueAtTime(freq, t0); f.Q.value = q; if (sweepTo) f.frequency.exponentialRampToValueAtTime(sweepTo, t0 + dur); const g = ctx.createGain(); g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur); src.connect(f); f.connect(g); g.connect(ctx.destination); src.start(t0); src.stop(t0 + dur + 0.05); },
   tapSound(skin){ if (skin === 'fire'){ this.noise(0.08, 0.25, 400, 3, 0, 1200); this.tone(120, 0.06, 'sawtooth', 0.1); } else if (skin === 'ice'){ this.tone(2400, 0.09, 'sine', 0.2); this.tone(3200, 0.12, 'sine', 0.15, 0.02); } else if (skin === 'neon'){ this.tone(1800, 0.06, 'square', 0.12, 0, 2600); this.tone(2600, 0.05, 'square', 0.08, 0.03); } else if (skin === 'royal'){ [523,659,784].forEach((f,i)=>this.tone(f, 0.15, 'triangle', 0.15, i*0.03)); } else if (skin === 'gold'){ this.tone(1500, 0.05, 'sine', 0.22); this.tone(2200, 0.08, 'sine', 0.18, 0.03); } else { this.tone(650 + Math.random()*180, 0.07, 'sine', 0.18, 0, 320); } },
   click(){ this.tone(650, 0.07, 'sine', 0.18, 0, 320); },
   pling(){ this.tone(860 + Math.random() * 180, 0.1, 'sine', 0.11, 0, 1500); this.noise(0.03, 0.05, 6000, 3); },
@@ -1248,11 +1248,11 @@ function showConfetti(){
     const size = 6 + Math.random() * 8;
     const color = colors[Math.floor(Math.random() * colors.length)];
     const left = Math.random() * 100;
-    c.style.cssText = position:absolute;top:-20px;left:${left}%;width:${size}px;height:${size}px;background:${color};border-radius:${Math.random() > 0.5 ? '50%' : '2px'};opacity:1;transform:rotate(${Math.random() * 360}deg);;
+    c.style.cssText = `position:absolute;top:-20px;left:${left}%;width:${size}px;height:${size}px;background:${color};border-radius:${Math.random() > 0.5 ? '50%' : '2px'};opacity:1;transform:rotate(${Math.random() * 360}deg);`;
     container.appendChild(c);
     const duration = 2000 + Math.random() * 1800;
     const drift = (Math.random() - 0.5) * 200;
-    c.animate([{transform: translate(0,0) rotate(0deg), opacity: 1},{transform: translate(${drift}px, ${window.innerHeight + 50}px) rotate(${720 + Math.random() * 360}deg), opacity: 0}], {duration, easing: 'cubic-bezier(.3,.7,.5,1)'});
+    c.animate([{transform: `translate(0,0) rotate(0deg)`, opacity: 1},{transform: `translate(${drift}px, ${window.innerHeight + 50}px) rotate(${720 + Math.random() * 360}deg)`, opacity: 0}], {duration, easing: 'cubic-bezier(.3,.7,.5,1)'});
   }
   setTimeout(() => container.remove(), 4200);
 }
@@ -1323,11 +1323,11 @@ async function load(){
 
 function applySave(data){
   S = Object.assign(defaultState(), data);
-  S.buildings = S.buildings{}; S.upgrades = S.upgrades{}; S.ownedBuildings = S.ownedBuildings||{};
-  S.tasksDone = S.tasksDone{}; S.dailyDone = S.dailyDone{}; S.achievements = S.achievements||{};
-  S.dailyQuests = S.dailyQuests{}; S.usedPromos = S.usedPromos{}; S.unlockedFrames = S.unlockedFrames||{};
-  S.activeBoosts = S.activeBoosts{}; S.petFood = S.petFood{}; S.ownedSkins = S.ownedSkins||{default:true};
-  S.claimedLevels = S.claimedLevels{}; S.chains = S.chains{}; S.ownedPerks = S.ownedPerks||{};
+  S.buildings = S.buildings||{}; S.upgrades = S.upgrades||{}; S.ownedBuildings = S.ownedBuildings||{};
+  S.tasksDone = S.tasksDone||{}; S.dailyDone = S.dailyDone||{}; S.achievements = S.achievements||{};
+  S.dailyQuests = S.dailyQuests||{}; S.usedPromos = S.usedPromos||{}; S.unlockedFrames = S.unlockedFrames||{};
+  S.activeBoosts = S.activeBoosts||{}; S.petFood = S.petFood||{}; S.ownedSkins = S.ownedSkins||{default:true};
+  S.claimedLevels = S.claimedLevels||{}; S.chains = S.chains||{}; S.ownedPerks = S.ownedPerks||{};
   S.weeklyQuests = S.weeklyQuests||{};
   if (data.pet && !Array.isArray(data.pets)){
     S.pets = [data.pet, null, null];
@@ -1597,11 +1597,11 @@ function escapeHtml(s){ return String(s).replace(/[<>&"']/g, c => ({'<':'&lt;','
 function totalBuildings(){ return Object.values(S.buildings).reduce((a,b)=>a+b,0); }
 function prestigeMult(){ return 1 + (S.prestige||0) * 0.5; }
 function perkBonus(key){ return S.ownedPerks && S.ownedPerks[key] ? 1 : 0; }
-function hasBoost(key){ return ((S.activeBoosts  {})[key]  0) > Date.now(); }
-function boostRemaining(key){ return Math.max(0, ((S.activeBoosts  {})[key]  0) - Date.now()); }
+function hasBoost(key){ return ((S.activeBoosts || {})[key] || 0) > Date.now(); }
+function boostRemaining(key){ return Math.max(0, ((S.activeBoosts || {})[key] || 0) - Date.now()); }
 function getBoostMult(){ let m = 1; if (hasBoost('boost2x')) m *= 2; if (hasBoost('boost5x')) m *= 5; if (hasBoost('boost3x')) m *= 3; return m; }
 function getTapBoostBonus(){ return (S.boostTapUntil || 0) > Date.now() ? 10 : 0; }
-function isPremiumActive(){ return S.premium  (S.premiumUntil  0) > Date.now(); }
+function isPremiumActive(){ return S.premium || (S.premiumUntil || 0) > Date.now(); }
 function formatBoostTime(ms){ if (ms <= 0) return ''; const total = Math.floor(ms / 1000); const h = Math.floor(total / 3600); const m = Math.floor((total % 3600) / 60); const s = total % 60; if (h > 0) return h + 'ч ' + m + 'м'; return m + ':' + String(s).padStart(2, '0'); }
 function tapValue(){
   let v = 1;
@@ -1662,13 +1662,13 @@ function adminAction(cmd, val){
     case 'prestige-add': S.prestige = (S.prestige||0) + v; toast('♻️ Престиж: ×'+prestigeMult().toFixed(1)); break;
     case 'star-add': S.prestigeStars = (S.prestigeStars||0) + v; toast('⭐ +'+v+' звёзд'); break;
     case 'all-buildings': BUILDINGS.forEach(b=>{ S.buildings[b.id] = (S.buildings[b.id]||0) + 1; S.ownedBuildings[b.id] = true; }); toast('🏦 +1 ко всем зданиям'); break;
-    case 'all-upgrades': UPGRADES.forEach(u=>{ S.upgrades[u.id] = (S.upgrades[u.id]0) + (v1); }); toast('⚡ +'+(v||1)+' ко всем апгрейдам'); break;
+    case 'all-upgrades': UPGRADES.forEach(u=>{ S.upgrades[u.id] = (S.upgrades[u.id]||0) + (v||1); }); toast('⚡ +'+(v||1)+' ко всем апгрейдам'); break;
     case 'boost2x': if (!S.activeBoosts) S.activeBoosts = {}; S.activeBoosts['boost2x'] = Math.max(S.activeBoosts['boost2x']||0, now) + 60*60*1000; toast('⚡ Буст ×2 на 1 час'); break;
     case 'boost3x': if (!S.activeBoosts) S.activeBoosts = {}; S.activeBoosts['boost3x'] = Math.max(S.activeBoosts['boost3x']||0, now) + 60*60*1000; toast('⚡ Буст ×3 на 1 час'); break;
     case 'boost5x': if (!S.activeBoosts) S.activeBoosts = {}; S.activeBoosts['boost5x'] = Math.max(S.activeBoosts['boost5x']||0, now) + 30*60*1000; toast('⚡ Буст ×5 на 30 мин'); break;
-    case 'tickets': S.tickets = (S.tickets0) + (v1); toast('🎟️ +'+(v||1)+' билетов'); break;
+    case 'tickets': S.tickets = (S.tickets||0) + (v||1); toast('🎟️ +'+(v||1)+' билетов'); break;
     case 'discount': S.discount = v||10; toast('🏦 Скидка '+S.discount+'%'); break;
-    case 'dust': S.dust = (S.dust0) + (v1); toast('🍃 +'+(v||1)+' пыли'); break;
+    case 'dust': S.dust = (S.dust||0) + (v||1); toast('🍃 +'+(v||1)+' пыли'); break;
     case 'unlock-bg': BACKGROUNDS.forEach(b=>{ if (b.building) S.ownedBuildings[b.building] = true; }); toast('🌄 Все фоны открыты'); break;
     case 'unlock-skins': TAP_SKINS.forEach(sk=>{ S.ownedSkins[sk.id] = true; }); toast('🎨 Все скины открыты'); break;
     case 'pet-spawn':{ const slot = S.pets.findIndex(p => !p); if (slot === -1){ toast('Нет свободных слотов'); break; } spawnPetInSlot(slot, 'dragon'); toast('🐉 Дракон выдан'); break; }
@@ -1764,7 +1764,7 @@ function givePetGift(slot){
   if (g.diamonds) S.diamonds += g.diamonds;
   SFX.upgrade();
   const txt = (g.coins?'+'+fmt(g.coins)+' 🪙 ':'') + (g.diamonds?'+'+g.diamonds+' 💎':'');
-  modal(<div class="win-icon-big">🎁</div><div class="win-title">Подарок от ${p.name}!</div><div class="win-reward green">${txt}</div>, [{label:'Забрать', cls:'ok'}]);
+  modal(`<div class="win-icon-big">🎁</div><div class="win-title">Подарок от ${p.name}!</div><div class="win-reward green">${txt}</div>`, [{label:'Забрать', cls:'ok'}]);
   save(); renderAll();
 }
 function buyPet(breedId){
@@ -1779,7 +1779,7 @@ function buyPet(breedId){
 }
 function releasePet(slot){
   const p = S.pets[slot]; if (!p) return;
-  modal(<h3>Отпустить ${p.name}?</h3><p>Питомец исчезнет. <b>Нельзя вернуть.</b></p>, [{label:'Отмена', cls:'cancel'},{label:'Отпустить', cls:'ok', onClick:()=>{ S.pets[slot] = null; save(); renderAll(); toast('👋 Питомец отпущен'); }}]);
+  modal(`<h3>Отпустить ${p.name}?</h3><p>Питомец исчезнет. <b>Нельзя вернуть.</b></p>`, [{label:'Отмена', cls:'cancel'},{label:'Отпустить', cls:'ok', onClick:()=>{ S.pets[slot] = null; save(); renderAll(); toast('👋 Питомец отпущен'); }}]);
 }
 function renamePet(slot){
   const p = S.pets[slot]; if (!p) return;
@@ -1855,11 +1855,11 @@ function showDailyPopup(){
     if (i < S.streak) cls += ' passed';
     else if (i === S.streak) cls += ' today';
     div.className = cls;
-    div.innerHTML = <div class="dd-ico">${i===7?'🎁':(r.diamonds?'💎':'🪙')}</div>${i};
+    div.innerHTML = `<div class="dd-ico">${i===7?'🎁':(r.diamonds?'💎':'🪙')}</div>${i}`;
     grid.appendChild(div);
   }
   const cur = DAILY_REWARDS[Math.min(6, (S.streak||1)-1)];
-  $('#dailySub').innerHTML = День <b>${S.streak||1}</b> / 7 · +${fmt(cur.coins)} 🪙${cur.diamonds?' +'+cur.diamonds+' 💎':''};
+  $('#dailySub').innerHTML = `День <b>${S.streak||1}</b> / 7 · +${fmt(cur.coins)} 🪙${cur.diamonds?' +'+cur.diamonds+' 💎':''}`;
   $('#dailyPopup').classList.add('show');
 }
 document.getElementById('dailyClaim').onclick = ()=>{
@@ -1990,7 +1990,7 @@ function renderHome(){
   let url = '';
   if (S.bgCustom) url = S.bgCustom;
   else { const bg = BACKGROUNDS.find(b=>b.id===S.bg); if (bg) url = bg.url; }
-  home.style.backgroundImage = url ? url('${url}') : '';
+  home.style.backgroundImage = url ? `url('${url}')` : '';
 }
 function renderUpgrades(){
   const list = $('#upgradesList'); list.innerHTML = '';
@@ -1999,7 +1999,7 @@ function renderUpgrades(){
     const price = priceFor(u.base, u.mult, count);
     const can = S.coins >= price;
     const div = document.createElement('div'); div.className='item';
-    div.innerHTML = <div class="item-icon">${u.icon}</div><div class="item-body"><div class="item-name">${u.name} <span style="color:#8798AE;font-weight:500">ур.${count}</span></div><div class="item-sub">${u.desc}</div></div><button class="buy ${can?'':'off'}"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png">${fmt(price)}</button>;
+    div.innerHTML = `<div class="item-icon">${u.icon}</div><div class="item-body"><div class="item-name">${u.name} <span style="color:#8798AE;font-weight:500">ур.${count}</span></div><div class="item-sub">${u.desc}</div></div><button class="buy ${can?'':'off'}"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png">${fmt(price)}</button>`;
     div.querySelector('.buy').onclick = ()=>{
       if (S.coins < price){ SFX.error(); toast('Недостаточно монет'); return; }
       S.coins -= price; S.upgrades[u.id] = count+1;
@@ -2017,7 +2017,7 @@ function renderBuildings(){
     if (S.discount > 0) price = Math.floor(price * (1 - S.discount/100));
     const can = S.coins >= price;
     const div = document.createElement('div'); div.className='item';
-    div.innerHTML = <div class="item-icon">${b.icon}</div><div class="item-body"><div class="item-name">${b.name} <span style="color:#8798AE;font-weight:500">×${count}</span></div><div class="item-sub">+<b>${fmt(b.inc)}</b>/сек за штуку${S.discount>0?' <span style="color:#31B545;font-weight:700">(−'+S.discount+'%)</span>':''}</div></div><button class="buy ${can?'':'off'}"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png">${fmt(price)}</button>;
+    div.innerHTML = `<div class="item-icon">${b.icon}</div><div class="item-body"><div class="item-name">${b.name} <span style="color:#8798AE;font-weight:500">×${count}</span></div><div class="item-sub">+<b>${fmt(b.inc)}</b>/сек за штуку${S.discount>0?' <span style="color:#31B545;font-weight:700">(−'+S.discount+'%)</span>':''}</div></div><button class="buy ${can?'':'off'}"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png">${fmt(price)}</button>`;
     div.querySelector('.buy').onclick = ()=>{
       if (S.coins < price){ SFX.error(); toast('Недостаточно монет'); return; }
       const usedDiscount = S.discount;
@@ -2038,7 +2038,7 @@ function renderPet(){
   S.pets.forEach((p, i)=>{
     html += '<div class="pet-slot" style="background:#fff;border-radius:16px;padding:12px;border:2px solid ' + (p ? 'rgba(255,159,67,.4)' : '#E4EBF3') + ';">';
     if (!p){
-      html += <div style="display:flex;align-items:center;gap:12px;"><div style="width:66px;height:66px;border-radius:50%;background:#EEF3F8;display:grid;place-items:center;font-size:32px;flex-shrink:0;">➕</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;margin-bottom:4px;">Слот ${i+1} — пусто</div><div style="font-size:11px;color:#8798AE;">Купи питомца в магазине</div></div><button class="buy" style="background:linear-gradient(135deg,#b98cff,#6a2cc9);" data-buypet-slot="${i}">+ Питомец</button></div>;
+      html += `<div style="display:flex;align-items:center;gap:12px;"><div style="width:66px;height:66px;border-radius:50%;background:#EEF3F8;display:grid;place-items:center;font-size:32px;flex-shrink:0;">➕</div><div style="flex:1;"><div style="font-size:13px;font-weight:700;margin-bottom:4px;">Слот ${i+1} — пусто</div><div style="font-size:11px;color:#8798AE;">Купи питомца в магазине</div></div><button class="buy" style="background:linear-gradient(135deg,#b98cff,#6a2cc9);" data-buypet-slot="${i}">+ Питомец</button></div>`;
     } else {
       const breed = breedOf(p.breed);
       const hunger = Math.round(p.hunger);
@@ -2046,7 +2046,7 @@ function renderPet(){
       const hasFire = (p.fireUntil||0) > Date.now();
       const giftReady = hasFire && (Date.now() - (p.lastGift||0)) >= 24*60*60*1000;
       const bonusColor = breed?.bonus.type === 'income' ? '#31B545' : breed?.bonus.type === 'tap' ? '#8B5CF6' : breed?.bonus.type === 'luck' ? '#E8487F' : breed?.bonus.type === 'diamonds' ? '#1490D8' : '#ff9f43';
-      html += <div style="display:flex;align-items:center;gap:12px;"><div class="pet-avatar-wrap${hungry?' sad-glow':' happy-glow'}" style="width:66px;height:66px;padding:3px;"><div class="pet-avatar-inner"><img class="pet-avatar-img${hungry?' sad':' happy'}" src="${breed?.img || ''}" alt=""></div>${hasFire?'<div class="pet-fire" style="font-size:1.1rem;top:-4px;right:-4px;">🔥</div>':''}</div><div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><span style="font-size:14px;font-weight:800;color:#ff9f43;">${breed?.emoji||'🐾'} ${p.name}</span><button class="pet-name-edit" data-petrename="${i}" style="width:22px;height:22px;font-size:11px;">✏️</button><button class="pet-name-edit" data-petrelease="${i}" style="width:22px;height:22px;font-size:11px;background:#FFE5E5;color:#E8487F;">🗑️</button></div><div style="font-size:11px;color:#8798AE;margin-bottom:6px;">${breed?.name||''} · <b style="color:${bonusColor};">${breed?.desc||''}</b></div><div class="pet-hunger-bar" style="height:12px;margin-bottom:8px;"><div class="pet-hunger-fill" style="width:${hunger}%"></div><div class="pet-hunger-label" style="font-size:.55rem;">🍖 ${hunger}%</div></div><div style="display:flex;gap:6px;flex-wrap:wrap;"><button class="btn-pet feed" data-petfeed="${i}" style="padding:6px 10px;font-size:.6rem;">🍖 Кормить</button>${hasFire?<button class="btn-pet gift" data-petgift="${i}" style="padding:6px 10px;font-size:.6rem;" ${giftReady?'':'disabled'}>🎁 ${giftReady?'Подарок':'Ждать'}</button>:''}</div></div></div>;
+      html += `<div style="display:flex;align-items:center;gap:12px;"><div class="pet-avatar-wrap${hungry?' sad-glow':' happy-glow'}" style="width:66px;height:66px;padding:3px;"><div class="pet-avatar-inner"><img class="pet-avatar-img${hungry?' sad':' happy'}" src="${breed?.img || ''}" alt=""></div>${hasFire?'<div class="pet-fire" style="font-size:1.1rem;top:-4px;right:-4px;">🔥</div>':''}</div><div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><span style="font-size:14px;font-weight:800;color:#ff9f43;">${breed?.emoji||'🐾'} ${p.name}</span><button class="pet-name-edit" data-petrename="${i}" style="width:22px;height:22px;font-size:11px;">✏️</button><button class="pet-name-edit" data-petrelease="${i}" style="width:22px;height:22px;font-size:11px;background:#FFE5E5;color:#E8487F;">🗑️</button></div><div style="font-size:11px;color:#8798AE;margin-bottom:6px;">${breed?.name||''} · <b style="color:${bonusColor};">${breed?.desc||''}</b></div><div class="pet-hunger-bar" style="height:12px;margin-bottom:8px;"><div class="pet-hunger-fill" style="width:${hunger}%"></div><div class="pet-hunger-label" style="font-size:.55rem;">🍖 ${hunger}%</div></div><div style="display:flex;gap:6px;flex-wrap:wrap;"><button class="btn-pet feed" data-petfeed="${i}" style="padding:6px 10px;font-size:.6rem;">🍖 Кормить</button>${hasFire?`<button class="btn-pet gift" data-petgift="${i}" style="padding:6px 10px;font-size:.6rem;" ${giftReady?'':'disabled'}>🎁 ${giftReady?'Подарок':'Ждать'}</button>`:''}</div></div></div>`;
     }
     html += '</div>';
   });
@@ -2063,13 +2063,13 @@ function openPetFeedMenu(slot){
   const p = S.pets[slot]; if (!p) return;
   const ids = Object.keys(S.petFood||{}).filter(k=>S.petFood[k]>0);
   if (!ids.length){ SFX.error(); toast('Еды нет. Купи в магазине!'); return; }
-  let html = <h3>🍖 Покормить ${p.name}</h3>;
-  html += <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">;
+  let html = `<h3>🍖 Покормить ${p.name}</h3>`;
+  html += `<div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">`;
   ids.forEach(fid=>{
     const food = PET_FOOD.find(f=>f.id===fid); if (!food) return;
-    html += <button class="buy" style="width:100%;justify-content:space-between;padding:12px 14px;background:#EEF3F8;color:#0F172A;" data-feed-slot="${slot}" data-feed-food="${food.id}"><span>${food.emoji} ${food.name} <span style="color:#8798AE;">(+${food.power})</span></span><span style="color:#ff9f43;font-weight:800;">×${S.petFood[fid]}</span></button>;
+    html += `<button class="buy" style="width:100%;justify-content:space-between;padding:12px 14px;background:#EEF3F8;color:#0F172A;" data-feed-slot="${slot}" data-feed-food="${food.id}"><span>${food.emoji} ${food.name} <span style="color:#8798AE;">(+${food.power})</span></span><span style="color:#ff9f43;font-weight:800;">×${S.petFood[fid]}</span></button>`;
   });
-  html += </div>;
+  html += `</div>`;
   modal(html, [{label:'Отмена', cls:'cancel'}]);
   setTimeout(()=>{
     document.querySelectorAll('[data-feed-slot]').forEach(b=>{
@@ -2087,7 +2087,7 @@ function renderFoodInventory(){
   ids.forEach(fid=>{
     const food = PET_FOOD.find(f=>f.id===fid); if (!food) return;
     const card = document.createElement('div'); card.className = 'food-inv-card';
-    card.innerHTML = <div class="fic-emoji">${food.emoji}</div><div class="fic-name">${food.name}</div><div class="fic-count">×${S.petFood[fid]}</div><button class="btn-feed-pet" data-food="${food.id}">🍖 Покормить всех</button>;
+    card.innerHTML = `<div class="fic-emoji">${food.emoji}</div><div class="fic-name">${food.name}</div><div class="fic-count">×${S.petFood[fid]}</div><button class="btn-feed-pet" data-food="${food.id}">🍖 Покормить всех</button>`;
     card.querySelector('.btn-feed-pet').onclick = ()=>feedAllPets(food.id);
     grid.appendChild(card);
   });
@@ -2113,7 +2113,7 @@ async function loadLeaderboard(type){
     if (error) throw new Error(error.message);
     lbCache[type] = (data || []).map(r => ({
       id: r.telegram_id,
-      name: r.fir r.username rname || 'Игрок',
+      name: r.first_name || r.username || 'Игрок',
       avatar: r.avatar || 'cat1',
       level: r.level || 1,
       coins: Number(r.coins || 0),
@@ -2135,7 +2135,7 @@ async function loadLeaderboard(type){
       const { count } = await sb.from('saves').select('*', { count: 'exact', head: true }).gt(orderBy, myVal);
       const { count: total } = await sb.from('saves').select('*', { count: 'exact', head: true });
       const t = document.getElementById('myRankText');
-      if (t) t.textContent = Твоё место: #${(count || 0) + 1} из ${total || 0};
+      if (t) t.textContent = `Твоё место: #${(count || 0) + 1} из ${total || 0}`;
     }
   }catch(e){}
 }
@@ -2156,7 +2156,7 @@ function renderLeaderboard(list){
     if (lbTab === 'coins') statVal = fmt(u.coins||0) + ' 🪙';
     else if (lbTab === 'level') statVal = 'Ур. ' + (u.level||1);
     else if (lbTab === 'prestige') statVal = '×' + (1 + (u.prestige||0) * 0.5).toFixed(1);
-    div.innerHTML = <div class="lb-rank top${place<=3?place:''}">${medal}</div><div class="item-icon" style="width:38px;height:38px;flex:0 0 38px;border-radius:50%;overflow:hidden;"><img src="${av.url}" style="width:100%;height:100%;object-fit:cover;"></div><div class="item-body"><div class="item-name">${escapeHtml(u.name||'Игрок')}${isMe?' <span style="color:#FFB800;font-size:10px;">(ты)</span>':''}</div><div class="item-sub">${statVal}</div></div>;
+    div.innerHTML = `<div class="lb-rank top${place<=3?place:''}">${medal}</div><div class="item-icon" style="width:38px;height:38px;flex:0 0 38px;border-radius:50%;overflow:hidden;"><img src="${av.url}" style="width:100%;height:100%;object-fit:cover;"></div><div class="item-body"><div class="item-name">${escapeHtml(u.name||'Игрок')}${isMe?' <span style="color:#FFB800;font-size:10px;">(ты)</span>':''}</div><div class="item-sub">${statVal}</div></div>`;
     box.appendChild(div);
   });
 }
@@ -2181,7 +2181,24 @@ async function loadReferrals(){
   document.getElementById('refList').innerHTML = '<div style="text-align:center;padding:20px;color:#8798AE;font-size:12px;">В разработке</div>';
 }
 async function registerReferral(){ console.log('Реферал (в разработке)'); }
-/* ==================== CLANS ==================== */async function loadClanTop(){  const box = document.getElementById('clanTopList');  if (!box) return;  box.innerHTML = '<div style="text-align:center;padding:14px;color:#8798AE;font-size:12px;">Загрузка...</div>';  try{    const { data, error } = await sb.from('clans').select('*').order('bank', { ascending: false }).limit(20);    if (error) throw error;    if (!data || !data.length){      box.innerHTML = '<div style="text-align:center;padding:20px;color:#8798AE;font-size:12px;">Кланов пока нет. Создай первый!</div>';      return;    }    // Подтягиваем количество участников    const clanIds = data.map(c => c.id);    const { data: members } = await sb.from('clan_members').select('clan_id').in('clan_id', clanIds);    const counts = {};    (members || []).forEach(m => { counts[m.clan_id] = (counts[m.clan_id] || 0) + 1; });    box.innerHTML = '';    data.forEach(c => {      const div = document.createElement('div');      div.className = 'item';      div.innerHTML = `        <div class="item-icon" style="background:linear-gradient(135deg,#1B3F63,#0F2A47);color:#fff;font-size:24px;">${c.icon || '🛡️'}</div>        <div class="item-body">          <div class="item-name">[${escapeHtml(c.tag)}] ${escapeHtml(c.name)}</div>          <div class="item-sub">👥 ${counts[c.id] || 0} участников · 💰 <b>${fmt(c.bank)}</b> 🪙</div>        </div>        <button class="buy green-btn" data-join-clan="${c.id}">Вступить</button>`;      div.querySelector('.buy').onclick = ()=>joinClan(c.id);      box.appendChild(div);    });  }catch(e){    console.error(e);    box.innerHTML = '<div style="text-align:center;padding:20px;color:#E8487F;font-size:12px;">Ошибка загрузки</div>';  }}async function loadMyClan(){  const myId = getMyId();  const main = document.getElementById('clanMain');  const none = document.getElementById('clanNone');  if (!myId || !main || !none) return;  try{    const { data: me, error: meErr } = await sb.from('clan_members').select('clan_id, role, contributed').eq('telegram_id', myId).maybeSingle();    if (meErr) throw meErr;    if (!me){      main.style.display = 'none';      none.style.display = 'block';      loadClanTop();      return;    }    const { data: clan } = await sb.from('clans').select('*').eq('id', me.clan_id).single();    if (!clan){ main.style.display = 'none'; none.style.display = 'block'; loadClanTop(); return; }    const { data: members } = await sb.from('clan_members').select('telegram_id, role, contributed').eq('clan_id', me.clan_id);    const ids = (members || []).map(m => m.telegram_id);        // Безопасный запрос профилей    const { data: profiles } = await sb.from('saves').select('telegram_id, first_name, avatar, level').in('telegram_id', ids);    const profilesMap = {};    (profiles || []).forEach(p => { profilesMap[p.telegram_id] = p; });    main.style.display = 'block';    none.style.display = 'none';    document.getElementById('clanHero').innerHTML = `      <div style="position:relative;z-index:1;">        <div style="font-size:36px;margin-bottom:4px;">${clan.icon || '🛡️'}</div>        <h3>${escapeHtml(clan.name)}</h3>        <span class="ctag">[${escapeHtml(clan.tag)}]</span>        <div class="cinfo">          👥 ${members.length} участников · 💰 Банк: <b>${fmt(clan.bank)}</b> 🪙<br>          Твоя роль: <b>${me.role === 'owner' ? '👑 Владелец' : '👤 Участник'}</b>        </div>      </div>`;    document.getElementById('clanMembersCount').textContent = members.length;    const mb = document.getElementById('clanMembers');    mb.innerHTML = '';        members.forEach(m => {      const p = profilesMap[m.telegram_id] || { first_name: 'Игрок', avatar: 'cat1', level: 1 };      const av = AVATARS.find(a=>a.id===p.avatar) || AVATARS[0];      const div = document.createElement('div');      div.className = 'item';      div.innerHTML = `        <div class="item-icon" style="width:38px;height:38px;flex:0 0 38px;border-radius:50%;overflow:hidden;">          <img src="${av.url}" style="width:100%;height:100%;object-fit:cover;">        </div>        <div class="item-body">          <div class="item-name">${m.role === 'owner' ? '👑' : '👤'} ${escapeHtml(p.first_name || 'Участник')}</div>          <div class="item-sub">Ур. ${p.level || 1} · Внёс: <b>${fmt(m.contributed)}</b> 🪙</div>        </div>`;      mb.appendChild(div);    });  }catch(e){    console.error(e);    main.style.display = 'none';    none.style.display = 'block';    loadClanTop();  }}async function joinClan(clanId){  const myId = getMyId();  if (!myId) return;  try{    const { error } = await sb.rpc('join_clan_rpc', { p_telegram_id: myId, p_clan_id: clanId });    if (error){      if (error.message.includes('Already in clan')) toast('⛔ Ты уже в клане');      else toast('Ошибка: ' + error.message);      return;    }    SFX.upgrade();    toast('🛡️ Ты вступил в клан!');    loadMyClan();  }catch(e){    toast('Ошибка соединения');  }}// Обработчик создания кланаdocument.getElementById('clanCreateBtn').onclick = async ()=>{  const myId = getMyId();  if (!myId) return;  const name = document.getElementById('clanNameInput').value.trim();  const tag = document.getElementById('clanTagInput').value.trim().toUpperCase();  if (name.length < 3 || name.length > 20){ SFX.error(); toast('Название: 3-20 символов'); return; }  if (tag.length < 2 || tag.length > 5){ SFX.error(); toast('Тег: 2-5 символов'); return; }  if (S.coins < 500000){ SFX.error(); toast('Нужно 500 000 🪙'); return; }  try{    const { data, error } = await sb.rpc('create_clan', { p_owner_id: myId, p_name: name, p_tag: tag, p_icon: '🛡️' });    if (error){      if (error.message.includes('Name or tag taken')) toast('❌ Имя или тег заняты');      else if (error.message.includes('Already in clan')) toast('Ты уже в клане');      else toast('Ошибка: ' + error.message);      return;    }    S.coins -= 500000;    SFX.upgrade(); showConfetti();    save(); renderAll();    toast('🛡️ Клан создан!');    loadMyClan();  }catch(e){    toast('Ошибка соединения');  }};// Выход из кланаdocument.getElementById('clanLeaveBtn').onclick = async ()=>{  if (!confirm('Выйти из клана?')) return;  const myId = getMyId();  try{    const { error } = await sb.from('clan_members').delete().eq('telegram_id', myId);    if (error) throw error;    toast('👋 Вышел из клана');    loadMyClan();  }catch(e){    toast('Ошибка: ' + e.message);  }};// Донат в банкdocument.getElementById('clanDonateBtn').onclick = async ()=>{  const myId = getMyId();  const amountStr = prompt('Сколько монет внести в банк клана? (мин. 1 000)', '10000');  if (!amountStr) return;  const amount = Number(amountStr);  if (!amount || amount < 1000){ SFX.error(); toast('Минимум 1 000 🪙'); return; }  if (S.coins < amount){ SFX.error(); toast('Мало монет'); return; }  try{    const { error } = await sb.rpc('donate_clan', { p_telegram_id: myId, p_amount: amount });    if (error) throw error;    S.coins -= amount;    SFX.coin(); save(); renderAll();    toast('💰 +' + fmt(amount) + ' в банк клана');    loadMyClan();  }catch(e){    toast('Ошибка: ' + e.message);  }};
+
+/* ==================== CLANS ==================== */
+async function loadClanTop(){
+  const box = document.getElementById('clanTopList');
+  if (box) box.innerHTML = '<div style="text-align:center;padding:20px;color:#8798AE;font-size:12px;">В разработке</div>';
+}
+async function loadMyClan(){
+  const main = document.getElementById('clanMain');
+  const none = document.getElementById('clanNone');
+  if (main) main.style.display = 'none';
+  if (none) none.style.display = 'block';
+  loadClanTop();
+}
+async function joinClan(){ toast('В разработке'); }
+document.getElementById('clanCreateBtn').onclick = ()=>{ toast('В разработке'); };
+document.getElementById('clanLeaveBtn').onclick = ()=>{ toast('В разработке'); };
+document.getElementById('clanDonateBtn').onclick = ()=>{ toast('В разработке'); };
+
 /* ==================== SKINS ==================== */
 function renderSkins(){
   const grid = $('#skinsGrid'); if (!grid) return;
@@ -2191,11 +2208,11 @@ function renderSkins(){
     const selected = S.tapSkin === sk.id;
     const card = document.createElement('div');
     card.className = 'skin-card' + (selected?' selected':'') + (!owned?' locked':'');
-    card.innerHTML = <div class="skin-preview ${sk.cls||'tap-skin-gold'}" style="${!sk.cls?'background:linear-gradient(135deg,#2AABEE,#1E96D6);':''}">${sk.icon||'💰'}</div><div class="skin-name">${sk.name}</div><div class="skin-price ${owned?'owned':''}">${owned?(selected?'✅ Выбран':'Куплен'):sk.price+' 💎'}</div>;
+    card.innerHTML = `<div class="skin-preview ${sk.cls||'tap-skin-gold'}" style="${!sk.cls?'background:linear-gradient(135deg,#2AABEE,#1E96D6);':''}">${sk.icon||'💰'}</div><div class="skin-name">${sk.name}</div><div class="skin-price ${owned?'owned':''}">${owned?(selected?'✅ Выбран':'Куплен'):sk.price+' 💎'}</div>`;
     card.onclick = ()=>{
       if (!owned){
         if (S.diamonds < sk.price){ SFX.error(); toast('Нужно '+sk.price+' 💎'); return; }
-        modal(<h3>Купить скин?</h3><p>Название: <b>${sk.name}</b></p><p>Цена: <b>${sk.price} 💎</b></p>, [{label:'Отмена', cls:'cancel'},{label:'Купить', cls:'ok', onClick:()=>{ if (S.diamonds < sk.price){ toast('Мало алмазов'); return; } S.diamonds -= sk.price; S.ownedSkins[sk.id] = true; S.tapSkin = sk.id; SFX.upgrade(); save(); renderAll(); toast('🎨 Скин установлен!'); }}]);
+        modal(`<h3>Купить скин?</h3><p>Название: <b>${sk.name}</b></p><p>Цена: <b>${sk.price} 💎</b></p>`, [{label:'Отмена', cls:'cancel'},{label:'Купить', cls:'ok', onClick:()=>{ if (S.diamonds < sk.price){ toast('Мало алмазов'); return; } S.diamonds -= sk.price; S.ownedSkins[sk.id] = true; S.tapSkin = sk.id; SFX.upgrade(); save(); renderAll(); toast('🎨 Скин установлен!'); }}]);
       } else { S.tapSkin = sk.id; SFX.click(); save(); renderAll(); toast('🎨 Скин установлен'); }
     };
     grid.appendChild(card);
@@ -2218,7 +2235,7 @@ function renderAchievements(){
     const done = S.achievements[a.id];
     const can = !done && val >= a.goal;
     const div = document.createElement('div'); div.className='item';
-    div.innerHTML = <div class="task-check ${done?'':'wait'}">${done?'✓':'○'}</div><div class="item-body"><div class="item-name">${a.icon} ${a.name}</div><div class="item-sub">${done?'Получено':'Прогресс: '+Math.min(val,a.goal)+' / '+a.goal}</div></div><button class="buy ${can?'green-btn':'off'}">${done?'✓':(a.reward.coins?fmt(a.reward.coins)+' 🪙':'💎 '+a.reward.diamonds)}</button>;
+    div.innerHTML = `<div class="task-check ${done?'':'wait'}">${done?'✓':'○'}</div><div class="item-body"><div class="item-name">${a.icon} ${a.name}</div><div class="item-sub">${done?'Получено':'Прогресс: '+Math.min(val,a.goal)+' / '+a.goal}</div></div><button class="buy ${can?'green-btn':'off'}">${done?'✓':(a.reward.coins?fmt(a.reward.coins)+' 🪙':'💎 '+a.reward.diamonds)}</button>`;
     div.querySelector('.buy').onclick = ()=>{
       if (done) return;
       if (!can){ SFX.error(); toast('Ещё не выполнено'); return; }
@@ -2248,9 +2265,9 @@ function renderChains(){
       const claimed = S.chains[ch.id+'_'+idx];
       const active = !claimed && val >= step;
       const cls = 'chain-step' + (claimed?' done':'') + (active?' active':'');
-      stepsHTML += <div class="${cls}"><span class="cs-ico">${claimed?'✅':(active?'🎁':'🔒')}</span>${fmt(step)}</div>;
+      stepsHTML += `<div class="${cls}"><span class="cs-ico">${claimed?'✅':(active?'🎁':'🔒')}</span>${fmt(step)}</div>`;
     });
-    card.innerHTML = <div class="chain-title">${ch.icon} ${ch.name}</div><div class="chain-steps">${stepsHTML}</div>;
+    card.innerHTML = `<div class="chain-title">${ch.icon} ${ch.name}</div><div class="chain-steps">${stepsHTML}</div>`;
     ch.steps.forEach((step, idx)=>{
       const claimed = S.chains[ch.id+'_'+idx];
       const active = !claimed && val >= step;
@@ -2285,7 +2302,7 @@ function renderTasks(){
       if (isDone) doneCount++;
       const can = !isDone && val >= q.goal;
       const div = document.createElement('div'); div.className='item';
-      div.innerHTML = <div class="task-check ${isDone?'':'wait'}">${isDone?'✓':'○'}</div><div class="item-body"><div class="item-name">${q.icon} ${q.name}</div><div class="item-sub">${isDone?'Получено':'Прогресс: '+Math.min(val,q.goal)+' / '+q.goal}</div></div><button class="buy ${isDone?'off':(can?'green-btn':'off')}">${isDone?'✓':(q.reward.coins? fmt(q.reward.coins)+' 🪙' : '💎 '+q.reward.diamonds)}</button>;
+      div.innerHTML = `<div class="task-check ${isDone?'':'wait'}">${isDone?'✓':'○'}</div><div class="item-body"><div class="item-name">${q.icon} ${q.name}</div><div class="item-sub">${isDone?'Получено':'Прогресс: '+Math.min(val,q.goal)+' / '+q.goal}</div></div><button class="buy ${isDone?'off':(can?'green-btn':'off')}">${isDone?'✓':(q.reward.coins? fmt(q.reward.coins)+' 🪙' : '💎 '+q.reward.diamonds)}</button>`;
       div.querySelector('.buy').onclick = ()=>{
         if (isDone) return;
         if (!can){ SFX.error(); toast('Ещё не выполнено'); return; }
@@ -2298,16 +2315,16 @@ function renderTasks(){
     });
     progressBlock.style.display = 'block';
     if (doneCount === defs.length && defs.length > 0 && !S.dailyBonusClaimed){
-      progressBlock.innerHTML = <div style="font-weight:800;color:#31B545;font-size:13px;">🎉 Все квесты выполнены!</div><button class="buy green-btn" id="dailyBonusBtn" style="margin-top:8px;width:100%;justify-content:center;">Забрать бонус: 15 000 🪙 + 5 💎</button>;
+      progressBlock.innerHTML = `<div style="font-weight:800;color:#31B545;font-size:13px;">🎉 Все квесты выполнены!</div><button class="buy green-btn" id="dailyBonusBtn" style="margin-top:8px;width:100%;justify-content:center;">Забрать бонус: 15 000 🪙 + 5 💎</button>`;
       $('#dailyBonusBtn').onclick = ()=>{
         if (S.dailyBonusClaimed) return;
         S.dailyBonusClaimed = true; S.coins += 15000; S.diamonds += 5;
         SFX.upgrade(); save(); renderAll(); toast('🎁 Бонус за все квесты!');
       };
     } else if (S.dailyBonusClaimed){
-      progressBlock.innerHTML = <div style="font-size:12.5px;color:#31B545;font-weight:700;">✅ Бонус за сегодня получен</div>;
+      progressBlock.innerHTML = `<div style="font-size:12.5px;color:#31B545;font-weight:700;">✅ Бонус за сегодня получен</div>`;
     } else {
-      progressBlock.innerHTML = <div style="font-size:12.5px;font-weight:700;">Ежедневные квесты: ${doneCount} / ${defs.length}</div><div style="font-size:11px;color:#8798AE;margin-top:2px;">Выполни все — получишь бонус</div>;
+      progressBlock.innerHTML = `<div style="font-size:12.5px;font-weight:700;">Ежедневные квесты: ${doneCount} / ${defs.length}</div><div style="font-size:11px;color:#8798AE;margin-top:2px;">Выполни все — получишь бонус</div>`;
     }
   } else if (currentTaskTab === 'weeklyQ'){
     progressBlock.style.display = 'none';
@@ -2316,7 +2333,7 @@ function renderTasks(){
       const isDone = S.weeklyQuests[q.id] === 1;
       const can = !isDone && val >= q.goal;
       const div = document.createElement('div'); div.className='item';
-      div.innerHTML = <div class="task-check ${isDone?'':'wait'}">${isDone?'✓':'○'}</div><div class="item-body"><div class="item-name">${q.icon} ${q.name}</div><div class="item-sub">${isDone?'Получено':'Прогресс: '+Math.min(val,q.goal)+' / '+q.goal}</div></div><button class="buy ${isDone?'off':(can?'green-btn':'off')}">${isDone?'✓':(q.reward.coins? fmt(q.reward.coins)+' 🪙' : '💎 '+q.reward.diamonds)}</button>;
+      div.innerHTML = `<div class="task-check ${isDone?'':'wait'}">${isDone?'✓':'○'}</div><div class="item-body"><div class="item-name">${q.icon} ${q.name}</div><div class="item-sub">${isDone?'Получено':'Прогресс: '+Math.min(val,q.goal)+' / '+q.goal}</div></div><button class="buy ${isDone?'off':(can?'green-btn':'off')}">${isDone?'✓':(q.reward.coins? fmt(q.reward.coins)+' 🪙' : '💎 '+q.reward.diamonds)}</button>`;
       div.querySelector('.buy').onclick = ()=>{
         if (isDone) return;
         if (!can){ SFX.error(); toast('Ещё не выполнено'); return; }
@@ -2338,7 +2355,7 @@ function renderTasks(){
       else val = S.totalTaps;
       const can = val >= t.goal;
       const div = document.createElement('div'); div.className='item';
-      div.innerHTML = <div class="task-check wait">○</div><div class="item-body"><div class="item-name">${t.icon} ${t.name}</div><div class="item-sub">Прогресс: ${Math.min(val,t.goal)} / ${t.goal}</div></div><button class="buy ${can?'green-btn':'off'}">${t.reward.coins? fmt(t.reward.coins)+' 🪙' : '💎 '+t.reward.diamonds}</button>;
+      div.innerHTML = `<div class="task-check wait">○</div><div class="item-body"><div class="item-name">${t.icon} ${t.name}</div><div class="item-sub">Прогресс: ${Math.min(val,t.goal)} / ${t.goal}</div></div><button class="buy ${can?'green-btn':'off'}">${t.reward.coins? fmt(t.reward.coins)+' 🪙' : '💎 '+t.reward.diamonds}</button>`;
       div.querySelector('.buy').onclick = ()=>{
         if (!can){ SFX.error(); toast('Ещё не выполнено'); return; }
         if (S.tasksDone[t.id]){ toast('Уже получено'); return; }
@@ -2362,7 +2379,7 @@ function renderShop(){
       const price = priceFor(u.base, u.mult, count);
       const can = S.coins >= price;
       const div = document.createElement('div'); div.className='item';
-      div.innerHTML = <div class="item-icon">${u.icon}</div><div class="item-body"><div class="item-name">${u.name} ур.${count}</div><div class="item-sub">${u.desc}</div></div><button class="buy ${can?'':'off'}"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png">${fmt(price)}</button>;
+      div.innerHTML = `<div class="item-icon">${u.icon}</div><div class="item-body"><div class="item-name">${u.name} ур.${count}</div><div class="item-sub">${u.desc}</div></div><button class="buy ${can?'':'off'}"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png">${fmt(price)}</button>`;
       div.querySelector('.buy').onclick = ()=>{ if(S.coins<price){SFX.error();toast('Мало монет');return;} S.coins-=price; S.upgrades[u.id]=count+1; SFX.upgrade(); save(); renderAll(); };
       list.appendChild(div);
     });
@@ -2370,7 +2387,7 @@ function renderShop(){
     CASES.forEach(c=>{
       const can = S.diamonds >= c.price;
       const div = document.createElement('div'); div.className='case-card';
-      div.innerHTML = <div class="ci">${c.icon}</div><h3>${c.name}</h3><p>Случайный приз · ${c.price} 💎</p><button class="cbtn" ${can?'':'disabled'}>${can?'Открыть за '+c.price+' 💎':'Нужно '+c.price+' 💎'}</button>;
+      div.innerHTML = `<div class="ci">${c.icon}</div><h3>${c.name}</h3><p>Случайный приз · ${c.price} 💎</p><button class="cbtn" ${can?'':'disabled'}>${can?'Открыть за '+c.price+' 💎':'Нужно '+c.price+' 💎'}</button>`;
       const btn = div.querySelector('.cbtn');
       if (can) btn.onclick = ()=>openCase(c);
       list.appendChild(div);
@@ -2384,7 +2401,7 @@ function renderShop(){
       div.style.border = b.premium ? '2px solid rgba(255,184,0,.5)' : '';
       const priceStr = b.currency === 'coins' ? fmt(b.price)+' 🪙' : b.price+' 💎';
       const badge = b.premium ? '<span style="background:linear-gradient(135deg,#FFB800,#F07000);color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:6px;margin-left:6px;">PREMIUM</span>' : '';
-      div.innerHTML = <div class="item-icon" style="background:${b.premium?'linear-gradient(135deg,#FFF4D0,#FFE29E)':'#EEF3F8'};"><img src="${b.img}" style="width:100%;height:100%;object-fit:cover;"></div><div class="item-body"><div class="item-name">${b.emoji} ${b.name}${badge}</div><div class="item-sub">${b.desc}${owned?' · <b style="color:#31B545">Уже есть</b>':''}</div></div><button class="buy ${can&&!locked&&!owned?'':'off'}" style="${locked?'background:#8798AE;':''}">${owned?'✅ Есть':(locked?'🔒 '+priceStr:priceStr)}</button>;
+      div.innerHTML = `<div class="item-icon" style="background:${b.premium?'linear-gradient(135deg,#FFF4D0,#FFE29E)':'#EEF3F8'};"><img src="${b.img}" style="width:100%;height:100%;object-fit:cover;"></div><div class="item-body"><div class="item-name">${b.emoji} ${b.name}${badge}</div><div class="item-sub">${b.desc}${owned?' · <b style="color:#31B545">Уже есть</b>':''}</div></div><button class="buy ${can&&!locked&&!owned?'':'off'}" style="${locked?'background:#8798AE;':''}">${owned?'✅ Есть':(locked?'🔒 '+priceStr:priceStr)}</button>`;
       const btn = div.querySelector('.buy');
       if (can && !locked && !owned){ btn.onclick = ()=>buyPet(b.id); }
       else { btn.onclick = ()=>{ if (locked) toast('⭐ Только для Premium'); else if (owned) toast('Уже заведён'); else toast('Мало ресурсов'); }; }
@@ -2394,7 +2411,7 @@ function renderShop(){
     PET_FOOD.forEach(f=>{
       const can = S.coins >= f.price;
       const div = document.createElement('div'); div.className='item';
-      div.innerHTML = <div class="item-icon">${f.emoji}</div><div class="item-body"><div class="item-name">${f.name} <span style="color:#8798AE;font-weight:500">+${f.power}</span></div><div class="item-sub">Для питомцев · запас: ${(S.petFood[f.id]||0)}</div></div><button class="buy ${can?'':'off'}"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png">${fmt(f.price)}</button>;
+      div.innerHTML = `<div class="item-icon">${f.emoji}</div><div class="item-body"><div class="item-name">${f.name} <span style="color:#8798AE;font-weight:500">+${f.power}</span></div><div class="item-sub">Для питомцев · запас: ${(S.petFood[f.id]||0)}</div></div><button class="buy ${can?'':'off'}"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png">${fmt(f.price)}</button>`;
       div.querySelector('.buy').onclick = ()=>{
         if (S.coins < f.price){ SFX.error(); toast('Мало монет'); return; }
         S.coins -= f.price; S.petFood[f.id] = (S.petFood[f.id]||0) + 1;
@@ -2404,8 +2421,8 @@ function renderShop(){
     });
   } else if (currentShopTab === 'premium'){
     const premHTML = isPremiumActive()
-      ? <div class="prem-card owned"><h3>⭐ Premium активен</h3><p style="margin:0 0 10px;font-size:12px;color:rgba(255,255,255,.8);line-height:1.5;">+50% к доходу · +2 к тапу · скидка 10% · эксклюзивы<br><b style="color:#FFD700;">Доступ к премиум-питомцам</b></p><div style="font-size:12px;color:#5BE39A;font-weight:700;">${S.premium?'✅ Куплен навсегда':'⏱ Осталось '+formatBoostTime(S.premiumUntil-Date.now())}</div></div>
-      : <div class="prem-card"><h3>⭐ Premium</h3><ul><li>+50% к пассивному доходу</li><li>+2 монеты за тап</li><li>Скидка 10% на покупки</li><li>Эксклюзивные рамки и фоны</li><li style="color:#FFD700;font-weight:700;">🐉🦄🔥 Премиум-питомцы</li></ul><div class="prem-price">🪙 500 000 монет</div><button class="prem-btn" id="buyPrem">Купить Premium</button></div>;
+      ? `<div class="prem-card owned"><h3>⭐ Premium активен</h3><p style="margin:0 0 10px;font-size:12px;color:rgba(255,255,255,.8);line-height:1.5;">+50% к доходу · +2 к тапу · скидка 10% · эксклюзивы<br><b style="color:#FFD700;">Доступ к премиум-питомцам</b></p><div style="font-size:12px;color:#5BE39A;font-weight:700;">${S.premium?'✅ Куплен навсегда':'⏱ Осталось '+formatBoostTime(S.premiumUntil-Date.now())}</div></div>`
+      : `<div class="prem-card"><h3>⭐ Premium</h3><ul><li>+50% к пассивному доходу</li><li>+2 монеты за тап</li><li>Скидка 10% на покупки</li><li>Эксклюзивные рамки и фоны</li><li style="color:#FFD700;font-weight:700;">🐉🦄🔥 Премиум-питомцы</li></ul><div class="prem-price">🪙 500 000 монет</div><button class="prem-btn" id="buyPrem">Купить Premium</button></div>`;
     list.innerHTML = premHTML;
     const btn = $('#buyPrem');
     if (btn) btn.onclick = ()=>{
@@ -2421,7 +2438,7 @@ function renderShop(){
     items.forEach(it=>{
       const can = S.coins >= it.price;
       const div = document.createElement('div'); div.className='item';
-      div.innerHTML = <div class="item-icon">💎</div><div class="item-body"><div class="item-name">${it.name}</div><div class="item-sub">Обмен монет на алмазы</div></div><button class="buy diamond-btn ${can?'':'off'}"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png">${fmt(it.price)}</button>;
+      div.innerHTML = `<div class="item-icon">💎</div><div class="item-body"><div class="item-name">${it.name}</div><div class="item-sub">Обмен монет на алмазы</div></div><button class="buy diamond-btn ${can?'':'off'}"><img class="coin-img" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png">${fmt(it.price)}</button>`;
       div.querySelector('.buy').onclick = ()=>{
         if (S.coins < it.price){ SFX.error(); toast('Мало монет'); return; }
         S.coins -= it.price; S.diamonds += it.gain;
@@ -2440,13 +2457,13 @@ function renderInventory(){
   if (boosts){
     boosts.innerHTML = '';
     const now = Date.now(); let any = false;
-    if ((S.premiumUntil||0) > now && !S.premium){ any = true; const el = document.createElement('div'); el.className='item'; el.innerHTML = <div class="item-icon">⭐</div><div class="item-body"><div class="item-name">⭐ Premium (временный)</div><div class="item-sub">Осталось: <b>${formatBoostTime(S.premiumUntil-now)}</b></div></div>; boosts.appendChild(el); }
-    if (S.premium){ any = true; const el = document.createElement('div'); el.className='item'; el.innerHTML = <div class="item-icon">⭐</div><div class="item-body"><div class="item-name">⭐ Premium</div><div class="item-sub">Навсегда</div></div>; boosts.appendChild(el); }
+    if ((S.premiumUntil||0) > now && !S.premium){ any = true; const el = document.createElement('div'); el.className='item'; el.innerHTML = `<div class="item-icon">⭐</div><div class="item-body"><div class="item-name">⭐ Premium (временный)</div><div class="item-sub">Осталось: <b>${formatBoostTime(S.premiumUntil-now)}</b></div></div>`; boosts.appendChild(el); }
+    if (S.premium){ any = true; const el = document.createElement('div'); el.className='item'; el.innerHTML = `<div class="item-icon">⭐</div><div class="item-body"><div class="item-name">⭐ Premium</div><div class="item-sub">Навсегда</div></div>`; boosts.appendChild(el); }
     ['boost5x','boost3x','boost2x'].forEach(k=>{
-      if (hasBoost(k)){ any = true; const el = document.createElement('div'); el.className='item'; el.innerHTML = <div class="item-icon">⚡</div><div class="item-body"><div class="item-name">⚡ Буст ${k==='boost5x'?'×5':k==='boost3x'?'×3':'×2'}</div><div class="item-sub">Осталось: <b>${formatBoostTime(boostRemaining(k))}</b></div></div>; boosts.appendChild(el); }
+      if (hasBoost(k)){ any = true; const el = document.createElement('div'); el.className='item'; el.innerHTML = `<div class="item-icon">⚡</div><div class="item-body"><div class="item-name">⚡ Буст ${k==='boost5x'?'×5':k==='boost3x'?'×3':'×2'}</div><div class="item-sub">Осталось: <b>${formatBoostTime(boostRemaining(k))}</b></div></div>`; boosts.appendChild(el); }
     });
-    if (getTapBoostBonus() > 0){ any = true; const el = document.createElement('div'); el.className='item'; el.innerHTML = <div class="item-icon">🔥</div><div class="item-body"><div class="item-name">🔥 Мега-тап</div><div class="item-sub">Осталось: <b>${formatBoostTime(S.boostTapUntil-now)}</b></div></div>; boosts.appendChild(el); }
-    if (S.discount > 0){ any = true; const el = document.createElement('div'); el.className='item'; el.innerHTML = <div class="item-icon">🏦</div><div class="item-body"><div class="item-name">🏦 Скидка ${S.discount}%</div></div>; boosts.appendChild(el); }
+    if (getTapBoostBonus() > 0){ any = true; const el = document.createElement('div'); el.className='item'; el.innerHTML = `<div class="item-icon">🔥</div><div class="item-body"><div class="item-name">🔥 Мега-тап</div><div class="item-sub">Осталось: <b>${formatBoostTime(S.boostTapUntil-now)}</b></div></div>`; boosts.appendChild(el); }
+    if (S.discount > 0){ any = true; const el = document.createElement('div'); el.className='item'; el.innerHTML = `<div class="item-icon">🏦</div><div class="item-body"><div class="item-name">🏦 Скидка ${S.discount}%</div></div>`; boosts.appendChild(el); }
     if (!any) boosts.innerHTML = '<div style="text-align:center;padding:14px;color:#8798AE;font-size:12px;">Нет активных бустов</div>';
   }
   const fEl = $('#invFrames');
@@ -2457,7 +2474,7 @@ function renderInventory(){
     else {
       unlocked.forEach(f=>{
         const el = document.createElement('div'); el.className = 'custom-item frame';
-        el.innerHTML = <div class="frame-inner" style="border:3px solid ${f.color.startsWith('linear')?'#2AABEE':f.color}; background:${f.color.startsWith('linear')?f.color:(f.color==='transparent'?'#2B7FD4':f.color)}"><img src="${AVATARS.find(a=>a.id===S.avatar)?.url||''}" alt=""></div>;
+        el.innerHTML = `<div class="frame-inner" style="border:3px solid ${f.color.startsWith('linear')?'#2AABEE':f.color}; background:${f.color.startsWith('linear')?f.color:(f.color==='transparent'?'#2B7FD4':f.color)}"><img src="${AVATARS.find(a=>a.id===S.avatar)?.url||''}" alt=""></div>`;
         fEl.appendChild(el);
       });
     }
@@ -2470,8 +2487,8 @@ function renderInventory(){
     else {
       owned.forEach(b=>{
         const el = document.createElement('div'); el.className = 'bg-item';
-        el.style.backgroundImage = url('${b.url}');
-        el.innerHTML = <div class="bg-lbl">${b.name}</div>;
+        el.style.backgroundImage = `url('${b.url}')`;
+        el.innerHTML = `<div class="bg-lbl">${b.name}</div>`;
         bEl.appendChild(el);
       });
     }
@@ -2497,7 +2514,7 @@ function prizeIcon(p){
 function openCase(c){
   caseBusy = false;
   SFX.click();
-  $('#caseTitle').innerHTML = <span class="ci">${c.icon}</span> ${c.name};
+  $('#caseTitle').innerHTML = `<span class="ci">${c.icon}</span> ${c.name}`;
   $('#caseOpenBtn').textContent = 'Открыть за ' + c.price + ' 💎';
   $('#caseOpenBtn').disabled = S.diamonds < c.price;
   $('#caseOpenBtn').style.display = 'block';
@@ -2522,7 +2539,7 @@ function randomCasePrizeVisual(c){
 function makeCaseItem(p){
   const el = document.createElement('div');
   el.className = 'case-item rar-' + rarityOf(p);
-  el.innerHTML = <div class="ico">${prizeIcon(p)}</div><div class="lbl">${p.label}</div>;
+  el.innerHTML = `<div class="ico">${prizeIcon(p)}</div><div class="lbl">${p.label}</div>`;
   return el;
 }
 function rollCasePrize(c){
@@ -2572,7 +2589,7 @@ function runCaseRoll(c){
     const windowCenter = windowEl.offsetWidth/2;
     const jitter = (Math.random() - 0.5) * 30;
     const shift = winCenter - windowCenter + jitter;
-    track.style.transform = translateX(-${shift}px);
+    track.style.transform = `translateX(-${shift}px)`;
   });
   setTimeout(()=>{
     caseBusy = false;
@@ -2595,13 +2612,13 @@ function runCaseRoll(c){
     S.weeklyCases = (S.weeklyCases||0) + 1;
     addXp(30); save(); renderAll();
     SFX.reveal(rarity);
-    if (rarity  realPrize.type === 'premium' === 'premium' || realPrize.type === 'premiumTimed'){ haptic('success'); showConfetti(); }
+    if (rarity === 'legendary' || realPrize.type === 'premium' || realPrize.type === 'premiumTimed'){ haptic('success'); showConfetti(); }
     else if (rarity === 'epic'){ haptic('heavy'); }
     else if (rarity === 'rare'){ haptic('medium'); }
     else { haptic('light'); }
     $('#casePopup').classList.remove('show');
     const emoji = rarity === 'legendary' ? '🎉' : (rarity === 'epic' ? '✨' : '🎁');
-    modal(<div class="win-icon-big">${emoji}</div><div class="win-title">${c.icon} ${c.name}</div><div class="win-reward ${realPrize.type==='premium'||realPrize.type==='premiumTimed'?'gold':(realPrize.type==='diamonds'?'blue':'gold')}">${msg}</div><div style="font-size:11px;color:#8798AE;margin-top:-4px;">Редкость: ${rarity.toUpperCase()}</div>, [{label:'Забрать', cls:'ok'}]);
+    modal(`<div class="win-icon-big">${emoji}</div><div class="win-title">${c.icon} ${c.name}</div><div class="win-reward ${realPrize.type==='premium'||realPrize.type==='premiumTimed'?'gold':(realPrize.type==='diamonds'?'blue':'gold')}">${msg}</div><div style="font-size:11px;color:#8798AE;margin-top:-4px;">Редкость: ${rarity.toUpperCase()}</div>`, [{label:'Забрать', cls:'ok'}]);
   }, 6300);
 }
 
@@ -2612,7 +2629,7 @@ function renderProfile(){
   const bgc = AVATAR_BG.find(b=>b.id===S.avatarBg) || AVATAR_BG[0];
   const profAvatar = $('#profAvatar');
   profAvatar.style.background = bgc.color;
-  profAvatar.style.border = frame.id==='none' ? 'none' : 3px solid ${frame.color.startsWith('linear')?'#2AABEE':frame.color};
+  profAvatar.style.border = frame.id==='none' ? 'none' : `3px solid ${frame.color.startsWith('linear')?'#2AABEE':frame.color}`;
   if (frame.color.startsWith('linear')) profAvatar.style.backgroundImage = frame.color;
   else profAvatar.style.backgroundImage = 'none';
   const pi = $('#profAvatarImg'); pi.src = av.url; pi.style.display = 'block';
@@ -2620,7 +2637,7 @@ function renderProfile(){
   drawerAvatar.style.background = bgc.color;
   const di = $('#drawerAvatarImg'); di.src = av.url; di.style.display='block';
   const t = getTitle();
-  const titleHTML = <span style="display:inline-flex;align-items:center;gap:4px;background:${t.color}22;color:${t.color};padding:2px 8px;border-radius:8px;font-size:10.5px;font-weight:800;margin-left:6px;vertical-align:middle;">${t.icon} ${t.name}</span>;
+  const titleHTML = `<span style="display:inline-flex;align-items:center;gap:4px;background:${t.color}22;color:${t.color};padding:2px 8px;border-radius:8px;font-size:10.5px;font-weight:800;margin-left:6px;vertical-align:middle;">${t.icon} ${t.name}</span>`;
   const name = (S.name || 'КриптоКот') + (IS_ADMIN ? ' <span class="admin-badge">👑</span>' : '') + titleHTML;
   $('#profName').innerHTML = name;
   $('#dName').innerHTML = name;
@@ -2643,7 +2660,7 @@ function renderProfile(){
   const rBtn = $('#renameBtn');
   if (rBtn){
     const price = IS_ADMIN ? 0 : (S.premium ? 45000 : 50000);
-    rBtn.innerHTML = <span class="material-symbols-rounded ico-sm">edit</span> + (IS_ADMIN ? 'Сменить имя — бесплатно (ADMIN)' : 'Сменить имя — ' + fmt(price) + ' 🪙');
+    rBtn.innerHTML = `<span class="material-symbols-rounded ico-sm">edit</span>` + (IS_ADMIN ? 'Сменить имя — бесплатно (ADMIN)' : 'Сменить имя — ' + fmt(price) + ' 🪙');
   }
   const pBtn = $('#prestigeBtn');
   const pLabel = $('#prestigeLabel');
@@ -2660,7 +2677,7 @@ function renderPerks(){
   PERKS.forEach(p=>{
     const owned = S.ownedPerks[p.id];
     const card = document.createElement('div'); card.className='perk-card' + (owned?' owned':'');
-    card.innerHTML = <div class="perk-icon">${p.icon}</div><div class="perk-body"><div class="perk-name">${p.name}${owned?' ✅':''}</div><div class="perk-desc">${p.desc}</div></div><button class="perk-buy" ${owned?'disabled':''}>${owned?'Куплено':'⭐ '+p.cost}</button>;
+    card.innerHTML = `<div class="perk-icon">${p.icon}</div><div class="perk-body"><div class="perk-name">${p.name}${owned?' ✅':''}</div><div class="perk-desc">${p.desc}</div></div><button class="perk-buy" ${owned?'disabled':''}>${owned?'Куплено':'⭐ '+p.cost}</button>`;
     card.querySelector('.perk-buy').onclick = ()=>buyPerk(p.id);
     box.appendChild(card);
   });
@@ -2672,7 +2689,7 @@ function renderLevelRewards(){
     const unlocked = S.level >= r.lvl;
     const claimed = S.claimedLevels[r.lvl];
     const row = document.createElement('div'); row.className='level-row';
-    row.innerHTML = <div class="level-badge${unlocked?'':' locked'}">${r.lvl}</div><div class="level-info"><b>${r.icon} ${r.name}</b><span>Уровень ${r.lvl}</span></div><div class="level-status ${unlocked&&!claimed?'ready':''}">${claimed?'✅':(unlocked?'🎁 Забрать':'🔒')}</div>;
+    row.innerHTML = `<div class="level-badge${unlocked?'':' locked'}">${r.lvl}</div><div class="level-info"><b>${r.icon} ${r.name}</b><span>Уровень ${r.lvl}</span></div><div class="level-status ${unlocked&&!claimed?'ready':''}">${claimed?'✅':(unlocked?'🎁 Забрать':'🔒')}</div>`;
     if (unlocked && !claimed){ row.style.cursor = 'pointer'; row.onclick = ()=>claimLevelReward(r.lvl); }
     box.appendChild(row);
   });
@@ -2684,16 +2701,16 @@ function renderCustom(){
   AVATARS.forEach(a=>{
     const el = document.createElement('div');
     el.className = 'custom-item' + (S.avatar===a.id?' selected':'') + (!a.free&&!isPremiumActive()?' locked':'');
-    el.innerHTML = <img src="${a.url}" alt="">;
+    el.innerHTML = `<img src="${a.url}" alt="">`;
     el.onclick = ()=>{ if (!a.free && !isPremiumActive() && !IS_ADMIN){ SFX.error(); toast('Только для Premium'); return; } S.avatar = a.id; SFX.click(); save(); renderAll(); };
     ag.appendChild(el);
   });
   const fg = $('#frameGrid'); fg.innerHTML = '';
   FRAMES.forEach(f=>{
-    const frameUn isPremiumActive() emiumActive() || (S.unlockedFrames && S.unlockedFrames[f.id]) || IS_ADMIN;
+    const frameUnlocked = f.free || isPremiumActive() || (S.unlockedFrames && S.unlockedFrames[f.id]) || IS_ADMIN;
     const el = document.createElement('div');
     el.className = 'custom-item frame' + (S.frame===f.id?' selected':'') + (!frameUnlocked?' locked':'');
-    el.innerHTML = <div class="frame-inner" style="border:3px solid ${f.color.startsWith('linear')?'#2AABEE':f.color}; background-image:${f.color.startsWith('linear')?f.color:'none'}; background:${f.color.startsWith('linear')?f.color:(f.color==='transparent'?'#2B7FD4':f.color)}"><img src="${AVATARS.find(a=>a.id===S.avatar)?.url||''}" alt=""></div>;
+    el.innerHTML = `<div class="frame-inner" style="border:3px solid ${f.color.startsWith('linear')?'#2AABEE':f.color}; background-image:${f.color.startsWith('linear')?f.color:'none'}; background:${f.color.startsWith('linear')?f.color:(f.color==='transparent'?'#2B7FD4':f.color)}"><img src="${AVATARS.find(a=>a.id===S.avatar)?.url||''}" alt=""></div>`;
     el.onclick = ()=>{ if (!frameUnlocked){ SFX.error(); toast('Только для Premium или из кейса'); return; } S.frame = f.id; SFX.click(); save(); renderAll(); };
     fg.appendChild(el);
   });
@@ -2712,8 +2729,8 @@ function renderCustom(){
     if (IS_ADMIN) unlocked = true;
     const el = document.createElement('div');
     el.className = 'bg-item' + (S.bg===b.id?' selected':'') + (unlocked?'':' locked');
-    el.style.backgroundImage = url('${b.url}');
-    el.innerHTML = <div class="bg-lbl">${b.name}</div><div class="bg-check">✓</div>;
+    el.style.backgroundImage = `url('${b.url}')`;
+    el.innerHTML = `<div class="bg-lbl">${b.name}</div><div class="bg-check">✓</div>`;
     el.onclick = ()=>{
       if (!unlocked){ SFX.error(); toast(b.building?'Купите это здание':'Недоступно'); return; }
       if (S.bg === b.id){ S.bg = 'default'; S.bgCustom = ''; SFX.click(); save(); renderAll(); toast('Фон отключён'); }
@@ -2749,21 +2766,21 @@ function renderRouletteInfo(){
   const info = $('#rouletteInfo');
   const free = canSpinFree();
   const luck = petBonusLuck();
-  const luckStr = luck > 0 ?  · 🍀 +${Math.round(luck*100)}% удача : '';
+  const luckStr = luck > 0 ? ` · 🍀 +${Math.round(luck*100)}% удача` : '';
   if (free){
     const extra = (S.tickets || 0) > 0 ? ' · 🎟️' + S.tickets : '';
-    info.innerHTML = <div class="ri-main">Вращение доступно!</div><div class="ri-sub">${(S.tickets||0)>0?'Билет активируется автоматически':'Крутите и получайте призы'}${luckStr}</div><div class="ri-pill free">🎁 БЕСПЛАТНО${extra}${IS_ADMIN?' (ADMIN)':''}</div>;
+    info.innerHTML = `<div class="ri-main">Вращение доступно!</div><div class="ri-sub">${(S.tickets||0)>0?'Билет активируется автоматически':'Крутите и получайте призы'}${luckStr}</div><div class="ri-pill free">🎁 БЕСПЛАТНО${extra}${IS_ADMIN?' (ADMIN)':''}</div>`;
   } else {
     const left = Math.ceil((5*60*1000 - (Date.now()-S.lastSpin))/1000);
     const m = Math.floor(left/60), s = left%60;
-    info.innerHTML = <div class="ri-main">Следующее бесплатное через ${m}:${String(s).padStart(2,'0')}</div><div class="ri-sub">Или крутите за 1 💎${luckStr}</div><div class="ri-pill paid">💎 1 алмаз</div>;
+    info.innerHTML = `<div class="ri-main">Следующее бесплатное через ${m}:${String(s).padStart(2,'0')}</div><div class="ri-sub">Или крутите за 1 💎${luckStr}</div><div class="ri-pill paid">💎 1 алмаз</div>`;
   }
 }
 function renderPrizes(){
   const g = $('#prizesGrid'); g.innerHTML = '';
   WHEEL_PRIZES.forEach(p=>{
     const div = document.createElement('div'); div.className='prize-card';
-    div.innerHTML = <div class="prize-ico" style="background:${p.color}22;color:${p.color}">🎁</div><div class="prize-info"><div class="prize-label">${p.label}</div><div class="prize-desc">${p.type}</div></div>;
+    div.innerHTML = `<div class="prize-ico" style="background:${p.color}22;color:${p.color}">🎁</div><div class="prize-info"><div class="prize-label">${p.label}</div><div class="prize-desc">${p.type}</div></div>`;
     g.appendChild(div);
   });
 }
@@ -2791,7 +2808,7 @@ function spin(){
   const targetAngle = 360*5 + (360 - idx*arc - arc/2);
   wheelAngle += targetAngle;
   canvas.style.transition = 'transform 4s cubic-bezier(.17,.67,.25,1)';
-  canvas.style.transform = rotate(${wheelAngle}deg);
+  canvas.style.transform = `rotate(${wheelAngle}deg)`;
   setTimeout(()=>{
     spinning = false;
     $('#spinBtn').disabled = false;
@@ -2806,7 +2823,7 @@ function spin(){
     if (prize.type === 'coins' && prize.value >= 2000) SFX.reveal('epic');
     else if (prize.type === 'diamonds' || prize.value >= 5000) SFX.reveal('rare');
     else SFX.reveal('common');
-    modal(<div class="win-icon-big">🎉</div><div class="win-title">${prize.label}</div><div class="win-reward ${cls}">${msg}</div>, [{label:'Забрать', cls: 'ok'}]);
+    modal(`<div class="win-icon-big">🎉</div><div class="win-title">${prize.label}</div><div class="win-reward ${cls}">${msg}</div>`, [{label:'Забрать', cls: 'ok'}]);
   }, 4200);
 }
 
@@ -2910,7 +2927,7 @@ document.getElementById('btnMusic').addEventListener('click', function(){
 
 /* ==================== RENAME ==================== */
 const NAME_MAX = 8, NAME_MIN = 2;
-const NAME_FIRST_FORBIDDEN = /^[@#₽&\-_()\=%"*':/!?+$€¥¢©®™~¿\[\]{}<>^¡;÷\\|¦¬×§¶°]/;
+const NAME_FIRST_FORBIDDEN = /^[@#₽&\-_()\=%"*':/!?+$€¥¢©®™~¿\[\]{}<>^¡`;÷\\|¦¬×§¶°]/;
 const NAME_ALLOWED = /^[A-Za-zА-Яа-яЁё0-9 _\-]+$/;
 function validateName(val){
   if (!val) return 'Введите имя';
@@ -2928,7 +2945,7 @@ $('#renameBtn').onclick = ()=>{
   if (S.coins < price){ SFX.error(); toast('Нужно ' + fmt(price) + ' 🪙'); return; }
   const content = document.getElementById('modalContent');
   const btns = document.getElementById('modalBtns');
-  content.innerHTML = <h3>✏️ Смена имени</h3><p>Цена: <b>${IS_ADMIN ? 'бесплатно' : fmt(price) + ' 🪙'}</b></p><input id="renameInput" type="text" maxlength="${NAME_MAX}" value="${cur}" style="width:100%;padding:12px 14px;border:1.5px solid #E4EBF3;border-radius:12px;font-family:inherit;font-size:15px;text-align:center;outline:none;margin:6px 0 4px;"><p style="font-size:11px;color:#8798AE;text-align:center;margin-top:6px;line-height:1.5;">${NAME_MIN}–${NAME_MAX} символов.<br>Начинается с буквы или цифры.</p>;
+  content.innerHTML = `<h3>✏️ Смена имени</h3><p>Цена: <b>${IS_ADMIN ? 'бесплатно' : fmt(price) + ' 🪙'}</b></p><input id="renameInput" type="text" maxlength="${NAME_MAX}" value="${cur}" style="width:100%;padding:12px 14px;border:1.5px solid #E4EBF3;border-radius:12px;font-family:inherit;font-size:15px;text-align:center;outline:none;margin:6px 0 4px;"><p style="font-size:11px;color:#8798AE;text-align:center;margin-top:6px;line-height:1.5;">${NAME_MIN}–${NAME_MAX} символов.<br>Начинается с буквы или цифры.</p>`;
   btns.innerHTML = '';
   const cancel = document.createElement('button'); cancel.className = 'cancel'; cancel.textContent = 'Отмена'; cancel.onclick = closeModal;
   const ok = document.createElement('button'); ok.className = 'ok'; ok.textContent = IS_ADMIN ? 'Сменить' : 'Заплатить ' + fmt(price) + ' 🪙';
@@ -3021,7 +3038,7 @@ $('#prestigeBtn').onclick = ()=>{
   const newMult = (1 + ((S.prestige||0)+1)*0.5).toFixed(1);
   const starsReward = 1 + Math.floor((S.prestige||0));
   modal(
-    <h3>♻️ Престиж</h3><p>Ты сбросишь: <b>монеты, здания, апгрейды, уровни</b>.</p><p>Останутся: алмазы, премиум, аватарки, фоны, скины, питомцы, рекорды.</p><p>Получишь: <b>×${newMult} к доходу</b> и <b>⭐ ${starsReward} звёзд престижа</b>.</p>`,
+    `<h3>♻️ Престиж</h3><p>Ты сбросишь: <b>монеты, здания, апгрейды, уровни</b>.</p><p>Останутся: алмазы, премиум, аватарки, фоны, скины, питомцы, рекорды.</p><p>Получишь: <b>×${newMult} к доходу</b> и <b>⭐ ${starsReward} звёзд престижа</b>.</p>`,
     [{label:'Отмена', cls:'cancel'},{label:'Сбросить', cls:'ok', onClick:()=>{
       S.prestige = (S.prestige||0) + 1;
       S.prestigeStars = (S.prestigeStars||0) + starsReward;
@@ -3081,7 +3098,7 @@ window.addEventListener('visibilitychange', ()=>{ if (document.visibilityState =
   setTimeout(()=>{ checkDailyChoice(); }, 2600);
   try{
     const params = new URLSearchParams(window.location.search);
-    const startParam = tg?.initDataUnsa params.get('startapp') t('startapp') || '';
+    const startParam = tg?.initDataUnsafe?.start_param || params.get('startapp') || '';
     const m = String(startParam).match(/^ref_(\d+)$/);
     if (m && !lastLoadOk){ const refId = Number(m[1]); const myId = getMyId(); if (refId && refId !== myId){ console.log('🎁 Реф-ссылка от', refId); setTimeout(()=>registerReferral(refId), 1500); } }
   }catch(e){}

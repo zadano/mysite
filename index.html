@@ -87,7 +87,22 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
   user-select:none;touch-action:manipulation;cursor:pointer;background-size:cover;background-position:center;background-repeat:no-repeat;
   transition:background-image .4s;}
 .home::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,30,55,.15) 0%,rgba(10,30,55,.55) 100%);pointer-events:none;}
-.balance{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;padding-top:64px;pointer-events:none;}
+
+/* НОВАЯ ШАПКА ГЛАВНОГО ЭКРАНА */
+.home-header { position: absolute; top: 15px; left: 15px; right: 15px; display: flex; align-items: center; z-index: 10; pointer-events: none; }
+.home-header .profile-info { display: flex; align-items: center; gap: 10px; pointer-events: auto; cursor: pointer; background: rgba(0,0,0,.3); padding: 5px 12px 5px 5px; border-radius: 20px; backdrop-filter: blur(10px); }
+.home-header .profile-info:active { background: rgba(0,0,0,.5); }
+.home-header .avatar-small { width: 42px; height: 42px; border-radius: 50%; border: 2px solid #fff; overflow: hidden; background: #2B7FD4; }
+.home-header .avatar-small img { width: 100%; height: 100%; object-fit: cover; }
+.home-header .name-lvl { display: flex; flex-direction: column; }
+.home-header .name-lvl b { font-size: 14px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.5); line-height: 1.2; }
+.home-header .name-lvl span { font-size: 10.5px; color: #fff; opacity: .85; font-weight: 600; }
+.home-header .xp-bar-small { width: 100px; height: 5px; background: rgba(255,255,255,.25); border-radius: 5px; margin-top: 3px; overflow: hidden; }
+.home-header .xp-bar-small i { display: block; height: 100%; background: #fff; border-radius: 5px; }
+.home-header .settings-btn { margin-left: auto; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.25); border: 1px solid rgba(255,255,255,.3); color: #fff; display: grid; place-items: center; pointer-events: auto; backdrop-filter: blur(10px); }
+.home-header .settings-btn:active { background: rgba(255,255,255,.4); }
+
+.balance{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;padding-top:100px;pointer-events:none;}
 .bal-num-row{display:flex;align-items:center;gap:12px;}
 .bal-num{font-size:46px;font-weight:800;color:#fff;letter-spacing:-1.6px;text-shadow:0 4px 14px rgba(14,80,130,.6);line-height:1;}
 .bal-per{font-size:16px;font-weight:600;color:#fff;opacity:.95;margin-top:8px;text-shadow:0 2px 8px rgba(14,80,130,.5);}
@@ -102,15 +117,28 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 .boost-pill.weekend{background:linear-gradient(135deg,#FF6B35,#E8487F);color:#fff;}
 .boost-pill.prestige{background:linear-gradient(135deg,#5BE39A,#2ECC71);color:#fff;}
 .home-spacer{flex:1;min-height:0;}
-.tap-btn{position:relative;z-index:4;margin:0 auto 22px;display:flex;align-items:center;justify-content:center;gap:9px;
-  padding:15px 0;width:min(84%,340px);border-radius:12px;font-size:17px;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.25);}
-.tap-btn svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* НОВАЯ КНОПКА ТАПА */
+.tap-btn{position:relative;z-index:4;margin:0 auto 30px;display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:18px 0;width:min(85%,340px);border-radius:30px;font-size:20px;font-weight:800;
+  background: #2AABEE;
+  border: 4px solid #fff;
+  box-shadow: 0 8px 20px rgba(42, 171, 238, 0.5), inset 0 -4px 0 rgba(0,0,0,0.15);
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+.tap-btn:active {
+  transform: translateY(2px) scale(0.98);
+  box-shadow: 0 4px 10px rgba(42, 171, 238, 0.5), inset 0 -2px 0 rgba(0,0,0,0.15);
+}
+.tap-btn svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+
 .float-coin{position:absolute;transform:translate(-50%,-50%);font-weight:700;font-size:22px;color:#fff;
   text-shadow:0 2px 8px rgba(20,80,130,.6);pointer-events:none;z-index:30;animation:floatUp .9s cubic-bezier(.2,.8,.3,1) forwards;}
 @keyframes floatUp{0%{opacity:0;transform:translate(-50%,-50%) scale(.5);}18%{opacity:1;transform:translate(-50%,-80%) scale(1.15);}
   100%{opacity:0;transform:translate(-50%,-200%) scale(.95);}}
 
-.weekend-banner{position:absolute;top:56px;left:8px;right:8px;z-index:5;background:linear-gradient(135deg,#FF6B35,#E8487F);
+.weekend-banner{position:absolute;top:75px;left:8px;right:8px;z-index:5;background:linear-gradient(135deg,#FF6B35,#E8487F);
   color:#fff;font-size:11.5px;font-weight:700;padding:8px 14px;border-radius:12px;text-align:center;
   box-shadow:0 4px 14px rgba(232,72,127,.5);pointer-events:none;animation:weekendPulse 2s ease-in-out infinite;}
 @keyframes weekendPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.02);}}
@@ -535,7 +563,24 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 
     <section class="screen active" id="s-home">
       <div class="home" id="tapZone">
+        
+        <!-- НОВАЯ ШАПКА -->
+        <div class="home-header">
+          <div class="profile-info" id="homeProfileBtn">
+            <div class="avatar-small" id="homeAvatar"><img src="" alt="" id="homeAvatarImg"></div>
+            <div class="name-lvl">
+              <b id="homeName">КриптоКот</b>
+              <span id="homeLevel">Ур. 1</span>
+              <div class="xp-bar-small"><i id="homeXpBar" style="width:0%"></i></div>
+            </div>
+          </div>
+          <button class="settings-btn" id="homeSettingsBtn">
+            <svg viewBox="0 0 24 24" width="22" height="22" stroke="#fff" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+        </div>
+
         <div class="weekend-banner" id="weekendBanner" style="display:none;"></div>
+        
         <div class="balance">
           <div class="bal-num-row">
             <img class="coin-img big" src="https://i.postimg.cc/cJSLVwDf/78279804-36B3-474D-A7E2-D7E5ECB0B900.png" alt="" id="coinLogo">
@@ -548,7 +593,10 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
           </div>
           <div class="boost-bar" id="boostBar"></div>
         </div>
+        
         <div class="home-spacer"></div>
+        
+        <!-- НОВАЯ КНОПКА -->
         <button class="tap-btn" id="tapBtn">
           <svg viewBox="0 0 24 24"><path d="M9 11V5.5a2 2 0 0 1 4 0V11"/><path d="M13 11V4.5a2 2 0 0 1 4 0V12"/><path d="M17 12V7.5a2 2 0 0 1 4 0V15a7 7 0 0 1-7 7h-2a7 7 0 0 1-7-7v-3.5a2 2 0 0 1 4 0V13"/></svg>
           Тапай!
@@ -1560,13 +1608,13 @@ function showPush(text){
 
 /* ==================== DATA ==================== */
 const BUILDINGS = [
-  {id:'farm', name:'Ферма', icon:'🌾', img:'https://i.postimg.cc/6yJBLdFr/4EA55DEA-7B5C-40B3-81C0-58FB6E27625F.jpg', base:150, inc:0.15},
-  {id:'mine', name:'Шахта', icon:'⛏️', img:'https://i.postimg.cc/fJnMjx17/4EA55DEA-7B5C-40B3-81C0-58FB6E27625F.jpg', base:900, inc:0.9},
+  {id:'farm', name:'Ферма', icon:'🌾', img:'https://i.postimg.cc/6yJBLdFr/4EA55DEA-7B5C-40B3-81C0-58FB6E27625F.jpg', base:150, inc:1.0},
+  {id:'mine', name:'Шахта', icon:'⛏️', img:'https://i.postimg.cc/fJnMjx17/4EA55DEA-7B5C-40B3-81C0-58FB6E27625F.jpg', base:900, inc:5.0},
   {id:'factory', name:'Фабрика', icon:'🏭', img:'https://i.postimg.cc/mtfTNQKN/4EA55DEA-7B5C-40B3-81C0-58FB6E27625F.jpg', base:5500, inc:5.5},
   {id:'bank', name:'Банк', icon:'🏦', img:'https://i.postimg.cc/crydMQPB/4EA55DEA-7B5C-40B3-81C0-58FB6E27625F.jpg', base:30000, inc:32},
   {id:'mall', name:'Торговый центр', icon:'🏬', img:'https://i.postimg.cc/Mv2zbygD/4EA55DEA-7B5C-40B3-81C0-58FB6E27625F.jpg', base:150000, inc:170},
-  {id:'hotel', name:'Отель', icon:'🏨', img:'https://i.postimg.cc/8jQTBhx4/4EA55DEA-7B5C-40B3-81C0-58FB6E27625F.jpg', base:750000, inc:900},
-  {id:'station', name:'Электростанция', icon:'⚡', img:'https://i.postimg.cc/D8k7dqR5/4EA55DEA-7B5C-40B3-81C0-58FB6E27625F.jpg', base:3500000, inc:4200},
+  {id:'hotel', name:'Отель', icon:'🏨', img:'https://i.postimg.cc/D8k7dqR5/4EA55DEA-7B5C-40B3-81C0-58FB6E27625F.jpg', base:750000, inc:900},
+  {id:'station', name:'Электростанция', icon:'⚡', img:'https://i.postimg.cc/8jQTBhx4/4EA55DEA-7B5C-40B3-81C0-58FB6E27625F.jpg', base:3500000, inc:4200},
   {id:'cosmo', name:'Космопорт', icon:'🚀', img:'https://i.postimg.cc/3d53CgzL/4EA55DEA-7B5C-40B3-81C0-58FB6E27625F.jpg', base:18000000, inc:22000},
   {id:'exchange', name:'Биржа', icon:'📈', img:'https://i.postimg.cc/Mv2zbyg3/4EA55DEA-7B5C-40B3-81C0-58FB6E27625F.jpg', base:90000000, inc:120000}
 ];
@@ -2494,6 +2542,17 @@ function renderHome(){
   $$('.diamondVal').forEach(e=>e.textContent = S.diamonds);
   const heroD = $('#heroDiamonds');
   if (heroD) heroD.textContent = S.diamonds;
+
+  // ОБНОВЛЕНИЕ ШАПКИ
+  const av = AVATARS.find(a=>a.id===S.avatar) || AVATARS[0];
+  const nameEl = $('#homeName');
+  const lvlEl = $('#homeLevel');
+  const xpEl = $('#homeXpBar');
+  const homeAvatarImg = $('#homeAvatarImg');
+  if (nameEl) nameEl.innerHTML = S.name || 'КриптоКот';
+  if (lvlEl) lvlEl.textContent = 'Ур. ' + S.level;
+  if (xpEl) xpEl.style.width = Math.min(100, (S.xp/xpForLevel(S.level))*100) + '%';
+  if (homeAvatarImg) homeAvatarImg.src = av.url;
 
   const tapBtn = $('#tapBtn');
   tapBtn.className = 'tap-btn';
@@ -4052,6 +4111,10 @@ $('#drawerClose').onclick = ()=>{ SFX.click(); closeDrawer(); };
 $('#overlay').onclick = closeDrawer;
 $('#premBtn').onclick = ()=>{ SFX.click(); goTo('s-shop'); currentShopTab='premium'; $$('.tab[data-shop]').forEach(t=>t.classList.toggle('active',t.dataset.shop==='premium')); renderShop(); };
 
+// Кнопка профиля в шапке
+$('#homeProfileBtn').onclick = ()=>{ SFX.click(); goTo('s-profile'); };
+$('#homeSettingsBtn').onclick = ()=>{ SFX.click(); openDrawer(); };
+
 /* ==================== TABS ==================== */
 $$('.tab[data-tab]').forEach(t=>t.onclick = ()=>{
   SFX.click();
@@ -4068,7 +4131,7 @@ $$('.tab[data-shop]').forEach(t=>t.onclick = ()=>{
 
 /* ==================== TAP ZONE ==================== */
 $('#tapZone').addEventListener('click', e=>{
-  if (e.target.closest('button')) return;
+  if (e.target.closest('button') || e.target.closest('.profile-info')) return;
   doTap(e.clientX, e.clientY);
 });
 $('#tapBtn').addEventListener('click', e=>{

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>КриптоКот</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --tg-blue:#2AABEE;--tg-blue-hover:#1E96D6;--tg-blue-light:#E5F5FF;
@@ -1049,9 +1050,11 @@ html,body{margin:0;padding:0;height:100%;font-family:-apple-system,BlinkMacSyste
 <div id="toast"></div>
 <script>
 /* ============================================================
-   API BASE — ЗАМЕНИ на свой URL Railway
+   SUPABASE CONFIG
    ============================================================ */
-const API_BASE = 'https://твой-проект.up.railway.app';
+const SUPABASE_URL  = 'https://bhvgrabogixbcdpahftw.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_HzwXGQJRT2QnchjZ2J_rIQ_KOmZbyP4';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 /* ==================== TITLES ==================== */
 function getTitle(){
@@ -1444,14 +1447,17 @@ function showConfetti(){
   setTimeout(() => container.remove(), 4200);
 }
 
-/* ==================== SAVE via API ==================== */
+/* ==================== SAVE via Supabase ==================== */
 const SAVE_KEY = 'cryptocat_save_v3';
 let saveBusy = false;
 let saveTimeout = null;
 let lastLoadOk = false;
 
 function getInitData(){ return tg?.initData || ''; }
-function getMyId(){ return Number(tg?.initDataUnsafe?.user?.id || 0); }
+function getMyId(){
+  const id = tg?.initDataUnsafe?.user?.id;
+  return id ? Number(id) : 0;
+}
 
 function save(){
   S.lastSeen = Date.now();
@@ -1462,37 +1468,44 @@ function save(){
 
 async function saveCloud(){
   if (saveBusy) return;
-  const initData = getInitData();
-  if (!initData) return;
+  const myId = getMyId();
+  if (!myId) return;
   saveBusy = true;
   try{
-    const res = await fetch(API_BASE + '/api/save', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Init-Data': initData },
-      body: JSON.stringify({ save: S })
-    });
-    if (!res.ok) console.warn('Save HTTP', res.status);
+    const tgUser = tg?.initDataUnsafe?.user || {};
+    const payload = {
+      telegram_id: myId,
+      first_name: tgUser.first_name || S.name || 'Игрок',
+      username: tgUser.username || '',
+      avatar: S.avatar || 'cat1',
+      level: S.level || 1,
+      coins: Math.floor(S.coins || 0),
+      prestige: S.prestige || 0,
+      save_data: S
+    };
+    const { error } = await sb.from('saves').upsert(payload, { onConflict: 'telegram_id' });
+    if (error) console.warn('Supabase save error:', error);
   }catch(e){ console.warn('Cloud save failed:', e); }
   saveBusy = false;
 }
 
 async function load(){
-  const initData = getInitData();
-  if (initData){
+  const myId = getMyId();
+  if (myId){
     try{
-      const res = await fetch(API_BASE + '/api/save', {
-        headers: { 'X-Init-Data': initData }
-      });
-      if (res.ok){
-        const j = await res.json();
-        if (j.save){
-          applySave(j.save);
-          lastLoadOk = true;
-          console.log('✅ Загружено с сервера');
-          return;
-        }
+      const { data, error } = await sb
+        .from('saves')
+        .select('save_data')
+        .eq('telegram_id', myId)
+        .maybeSingle();
+      if (error) throw error;
+      if (data && data.save_data){
+        applySave(data.save_data);
+        lastLoadOk = true;
+        console.log('✅ Загружено из Supabase');
+        return;
       }
-    }catch(e){ console.warn('Cloud load failed:', e); }
+    }catch(e){ console.warn('Supabase load failed:', e); }
   }
   try{
     const raw = localStorage.getItem(SAVE_KEY);
@@ -1526,41 +1539,6 @@ function applySave(data){
   });
   if (typeof S.musicOn === 'boolean') Music.on = S.musicOn;
   if (typeof S.muted === 'boolean') SFX.muted = S.muted;
-}
-
-/* ==================== PUSH NOTIFICATIONS ==================== */
-async function pollPushes(){
-  const initData = getInitData();
-  if (!initData) return;
-  try{
-    const res = await fetch(API_BASE + '/api/push/pending', {
-      headers: { 'X-Init-Data': initData }
-    });
-    if (!res.ok) return;
-    const j = await res.json();
-    (j.list || []).forEach(n => handlePush(n));
-  }catch(e){}
-}
-function handlePush(n){
-  if (n.type === 'ref_bonus'){
-    showPush('💎 +' + fmt(n.payload?.bonus || 0) + ' 🪙 от ' + (n.payload?.from || 'друга'));
-    SFX.coin();
-  } else if (n.type === 'new_ref'){
-    showPush('🎉 Новый друг: ' + (n.payload?.name || 'Игрок'));
-    SFX.upgrade();
-  } else if (n.type === 'test'){
-    showPush('🔔 ' + (n.payload?.msg || 'Тестовое уведомление'));
-  } else {
-    showPush('🔔 Уведомление');
-  }
-}
-function showPush(text){
-  const el = document.getElementById('pushToast');
-  if (!el) return;
-  el.textContent = text;
-  el.classList.add('show');
-  clearTimeout(showPush._t);
-  showPush._t = setTimeout(()=>el.classList.remove('show'), 4000);
 }
 
 /* ==================== DATA ==================== */
@@ -2012,14 +1990,7 @@ function adminAction(cmd, val){
     case 'spin-reset': S.lastSpin = 0; toast('🎰 Кулдаун сброшен'); break;
     case 'chest-reset': S.lastChest = 0; save(); renderAll(); toast('🎁 Сундук сброшен'); break;
     case 'push-test': {
-      const initData = getInitData();
-      if (initData){
-        fetch(API_BASE + '/api/push/test', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-Init-Data': initData },
-          body: JSON.stringify({})
-        }).then(()=>toast('🔔 Пуш отправлен')).catch(()=>toast('Ошибка'));
-      }
+      toast('🔔 Пуш отправлен');
       break;
     }
     case 'cloud-save': saveCloud().then(()=>toast('☁️ Сохранено')); break;
@@ -2780,330 +2751,144 @@ function renderFoodInventory(){
   });
 }
 
-/* ==================== LEADERBOARD ==================== */
+/* ==================== LEADERBOARD (Supabase) ==================== */
 let lbTab = 'coins';
 let lbCache = { coins: null, level: null, prestige: null };
+const LB_LIMIT = 50;
 
 async function loadLeaderboard(type){
+  type = type || lbTab;
+  lbTab = type;
+
   const box = document.getElementById('lbList');
   if (!box) return;
+
   if (lbCache[type]){
-    renderLeaderboard(lbCache[type]);
+    renderLeaderboard(lbCache[type], type);
   } else {
     box.innerHTML = '<div style="text-align:center;padding:30px;color:#8798AE;font-size:13px;">Загрузка топа…</div>';
   }
+
   try{
-    const res = await fetch(API_BASE + '/api/leaderboard?type=' + type);
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const j = await res.json();
-    lbCache[type] = j.list || [];
-    renderLeaderboard(lbCache[type]);
+    const { data, error } = await sb
+      .from('saves')
+      .select('telegram_id, first_name, username, avatar, level, coins, prestige')
+      .order(type, { ascending: false })
+      .limit(LB_LIMIT);
+
+    if (error) throw error;
+    lbCache[type] = data || [];
+    renderLeaderboard(lbCache[type], type);
   }catch(e){
-    console.error(e);
-    box.innerHTML = '<div style="text-align:center;padding:30px;color:#E8487F;font-size:13px;">Не удалось загрузить топ<br><span style="font-size:11px;color:#8798AE;">Проверь соединение с сервером</span></div>';
+    console.error('Leaderboard error:', e);
+    box.innerHTML =
+      '<div style="text-align:center;padding:30px;color:#E8487F;font-size:13px;">' +
+      'Не удалось загрузить топ<br><span style="font-size:11px;color:#8798AE;">' +
+      (e?.message ? escapeHtml(e.message) : 'Проверь соединение') +
+      '</span></div>';
   }
-  try{
-    const initData = getInitData();
-    if (initData){
-      const r = await fetch(API_BASE + '/api/me/rank?type=' + type, {
-        headers: { 'X-Init-Data': initData }
-      });
-      if (r.ok){
-        const j = await r.json();
-        const t = document.getElementById('myRankText');
-        if (t){
-          if (j.rank) t.textContent = `Твоё место: #${j.rank} из ${j.total}`;
-          else t.textContent = 'Ты пока не в топе. Играй больше!';
-        }
-      }
-    }
-  }catch(e){}
+
+  updateMyRank(type);
 }
 
-function renderLeaderboard(list){
+function renderLeaderboard(list, type){
   const box = document.getElementById('lbList');
   if (!box) return;
-  if (!list.length){
+  if (!list || !list.length){
     box.innerHTML = '<div style="text-align:center;padding:30px;color:#8798AE;font-size:13px;">Пока нет игроков</div>';
     return;
   }
+
   const myId = getMyId();
   box.innerHTML = '';
+
   list.forEach((u, i)=>{
-    const place = i+1;
+    const place = i + 1;
     const medal = place === 1 ? '🥇' : place === 2 ? '🥈' : place === 3 ? '🥉' : '#' + place;
-    const isMe = u.id === myId;
+    const isMe = myId !== 0 && Number(u.telegram_id) === myId;
+
     const div = document.createElement('div');
     div.className = 'item';
     if (isMe) div.classList.add('lb-item-me');
-    const av = AVATARS.find(a=>a.id===u.avatar) || AVATARS[0];
+
+    const av = AVATARS.find(a => a.id === u.avatar) || AVATARS[0];
+
     let statVal = '';
-    if (lbTab === 'coins') statVal = fmt(u.coins||0) + ' 🪙';
-    else if (lbTab === 'level') statVal = 'Ур. ' + (u.level||1);
-    else if (lbTab === 'prestige') statVal = '×' + (1 + (u.prestige||0) * 0.5).toFixed(1);
-    const clanTag = u.clan_tag ? `<span style="background:#8B5CF6;color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:4px;margin-left:4px;">[${escapeHtml(u.clan_tag)}]</span>` : '';
+    if (type === 'coins')         statVal = fmt(u.coins || 0) + ' 🪙';
+    else if (type === 'level')    statVal = 'Ур. ' + (u.level || 1);
+    else if (type === 'prestige') statVal = '×' + (1 + (u.prestige || 0) * 0.5).toFixed(1);
+
+    const displayName = u.first_name || u.username || 'Игрок';
+
     div.innerHTML = `
-      <div class="lb-rank top${place<=3?place:''}">${medal}</div>
+      <div class="lb-rank top${place <= 3 ? place : ''}">${medal}</div>
       <div class="item-icon" style="width:38px;height:38px;flex:0 0 38px;border-radius:50%;overflow:hidden;">
         <img src="${av.url}" style="width:100%;height:100%;object-fit:cover;">
       </div>
       <div class="item-body">
-        <div class="item-name">${escapeHtml(u.name||'Игрок')}${clanTag}${isMe?' <span style="color:#FFB800;font-size:10px;">(ты)</span>':''}</div>
+        <div class="item-name">${escapeHtml(displayName)}${isMe ? ' <span style="color:#FFB800;font-size:10px;">(ты)</span>' : ''}</div>
         <div class="item-sub">${statVal}</div>
       </div>`;
     box.appendChild(div);
   });
 }
 
-document.addEventListener('click', e=>{
-  const tab = e.target.closest('[data-lb]');
-  if (tab){
-    SFX.click();
-    lbTab = tab.dataset.lb;
-    document.querySelectorAll('[data-lb]').forEach(t=>t.classList.toggle('active', t===tab));
-    loadLeaderboard(lbTab);
-  }
-});
+async function updateMyRank(type){
+  const t = document.getElementById('myRankText');
+  if (!t) return;
 
-/* ==================== REFERRALS ==================== */
-async function loadReferrals(){
-  const initData = getInitData();
-  if (!initData) return;
   const myId = getMyId();
-  const link = 'https://t.me/TheCryptoCat_nowBot?startapp=ref_' + myId;
-  const linkInput = document.getElementById('refLink');
-  if (linkInput) linkInput.value = link;
+  if (!myId){
+    t.textContent = 'Войди через Telegram, чтобы видеть своё место';
+    return;
+  }
 
   try{
-    const res = await fetch(API_BASE + '/api/ref/list', {
-      headers: { 'X-Init-Data': initData }
-    });
-    if (!res.ok) throw new Error();
-    const j = await res.json();
-    const list = j.list || [];
-    document.getElementById('refCount').textContent = list.length;
-    document.getElementById('refEarned').textContent = fmt(list.reduce((s,x)=>s+Number(x.total_earned||0),0));
-    const box = document.getElementById('refList');
-    if (!list.length){
-      box.innerHTML = '<div style="text-align:center;padding:20px;color:#8798AE;font-size:12px;">Пока никого. Пригласи друга!</div>';
+    const { data: me, error: meErr } = await sb
+      .from('saves')
+      .select('coins, level, prestige')
+      .eq('telegram_id', myId)
+      .maybeSingle();
+
+    if (meErr) throw meErr;
+    if (!me){
+      t.textContent = 'Ты пока не в топе. Играй больше!';
       return;
     }
-    box.innerHTML = '';
-    list.forEach(r=>{
-      const div = document.createElement('div'); div.className = 'item';
-      div.innerHTML = `
-        <div class="item-icon" style="background:linear-gradient(135deg,#2AABEE,#1490D8);color:#fff;font-size:22px;font-weight:800;">${(r.first_name||'?')[0].toUpperCase()}</div>
-        <div class="item-body">
-          <div class="item-name">${escapeHtml(r.first_name || r.username || 'Друг')}</div>
-          <div class="item-sub">Ур. ${r.level || 1} · ${fmt(r.coins)} 🪙 · принёс <b style="color:#31B545;">${fmt(r.total_earned)}</b> 🪙</div>
-        </div>`;
-      box.appendChild(div);
-    });
+
+    const myValue = Number(me[type] || 0);
+
+    const { count, error: cntErr } = await sb
+      .from('saves')
+      .select('telegram_id', { count: 'exact', head: true })
+      .gt(type, myValue);
+
+    if (cntErr) throw cntErr;
+
+    const { count: total, error: totErr } = await sb
+      .from('saves')
+      .select('telegram_id', { count: 'exact', head: true });
+
+    if (totErr) throw totErr;
+
+    const rank = (count || 0) + 1;
+    t.textContent = `Твоё место: #${rank} из ${total || rank}`;
   }catch(e){
-    document.getElementById('refList').innerHTML = '<div style="text-align:center;padding:20px;color:#E8487F;font-size:12px;">Ошибка загрузки</div>';
+    console.warn('updateMyRank error:', e);
+    t.textContent = 'Не удалось получить твоё место';
   }
 }
 
-async function registerReferral(refId){
-  const initData = getInitData();
-  if (!initData) return;
-  try{
-    const res = await fetch(API_BASE + '/api/ref/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Init-Data': initData },
-      body: JSON.stringify({ referrerId: refId })
-    });
-    const j = await res.json();
-    if (j.ok){
-      S.coins += j.bonus || 25000;
-      S.totalEarned += j.bonus || 25000;
-      save(); renderAll();
-      modal(`<div class="win-icon-big">🎉</div><div class="win-title">Добро пожаловать!</div><div class="win-reward gold">+25 000 🪙 за регистрацию по ссылке друга</div>`, [{label:'Забрать', cls:'ok'}]);
-    } else if (j.reason === 'already'){
-      console.log('Уже зарегистрирован по реф-ссылке');
-    }
-  }catch(e){ console.warn('Register referral failed:', e); }
-}
-
-/* ==================== CLANS ==================== */
-async function loadClanTop(){
-  try{
-    const res = await fetch(API_BASE + '/api/clan/top');
-    if (!res.ok) throw new Error();
-    const j = await res.json();
-    const list = j.list || [];
-    const box = document.getElementById('clanTopList');
-    if (!box) return;
-    if (!list.length){
-      box.innerHTML = '<div style="text-align:center;padding:20px;color:#8798AE;font-size:12px;">Кланов пока нет. Создай первый!</div>';
-      return;
-    }
-    box.innerHTML = '';
-    list.slice(0, 30).forEach(c=>{
-      const div = document.createElement('div'); div.className = 'item';
-      div.innerHTML = `
-        <div class="item-icon" style="background:linear-gradient(135deg,#1B3F63,#0F2A47);color:#fff;font-size:24px;">${c.icon || '🛡️'}</div>
-        <div class="item-body">
-          <div class="item-name">${escapeHtml(c.name)} <span style="color:#8B5CF6;font-weight:800;">[${escapeHtml(c.tag)}]</span></div>
-          <div class="item-sub">👥 ${c.members} · Банк: <b>${fmt(c.bank)}</b> 🪙 · Доход: <b>${fmt(c.total_earned)}</b></div>
-        </div>
-        <button class="buy green-btn" data-join-clan="${c.id}">Вступить</button>`;
-      div.querySelector('.buy').onclick = ()=>joinClan(c.id);
-      box.appendChild(div);
-    });
-  }catch(e){
-    const box = document.getElementById('clanTopList');
-    if (box) box.innerHTML = '<div style="text-align:center;padding:20px;color:#E8487F;font-size:12px;">Ошибка загрузки</div>';
-  }
-}
-
-async function loadMyClan(){
-  const initData = getInitData();
-  if (!initData) return;
-  try{
-    const res = await fetch(API_BASE + '/api/clan/my', {
-      headers: { 'X-Init-Data': initData }
-    });
-    if (!res.ok) throw new Error();
-    const j = await res.json();
-    const main = document.getElementById('clanMain');
-    const none = document.getElementById('clanNone');
-    if (j.clan){
-      main.style.display = 'block';
-      none.style.display = 'none';
-      const c = j.clan;
-      document.getElementById('clanHero').innerHTML = `
-        <div style="position:relative;z-index:1;">
-          <div style="font-size:36px;margin-bottom:4px;">${c.icon || '🛡️'}</div>
-          <h3>${escapeHtml(c.name)}</h3>
-          <span class="ctag">[${escapeHtml(c.tag)}]</span>
-          <div class="cinfo">
-            👥 ${j.members.length} участников · 💰 Банк: ${fmt(c.bank)} 🪙<br>
-            📈 Общий доход: ${fmt(c.total_earned)} 🪙 · Твоя роль: <b>${c.role === 'owner' ? '👑 Владелец' : '👤 Участник'}</b>
-          </div>
-        </div>`;
-      document.getElementById('clanMembersCount').textContent = j.members.length;
-      const mb = document.getElementById('clanMembers');
-      mb.innerHTML = '';
-      j.members.forEach(m=>{
-        const role = m.role === 'owner' ? '👑' : '👤';
-        const av = AVATARS.find(a=>a.id===m.avatar) || AVATARS[0];
-        const div = document.createElement('div'); div.className = 'item';
-        div.innerHTML = `
-          <div class="item-icon" style="width:38px;height:38px;flex:0 0 38px;border-radius:50%;overflow:hidden;">
-            <img src="${av.url}" style="width:100%;height:100%;object-fit:cover;">
-          </div>
-          <div class="item-body">
-            <div class="item-name">${role} ${escapeHtml(m.first_name || m.username || 'Участник')}</div>
-            <div class="item-sub">Ур. ${m.level} · Внёс: <b>${fmt(m.contributed)}</b> 🪙</div>
-          </div>`;
-        mb.appendChild(div);
-      });
-    } else {
-      main.style.display = 'none';
-      none.style.display = 'block';
-      loadClanTop();
-    }
-  }catch(e){
-    const main = document.getElementById('clanMain');
-    const none = document.getElementById('clanNone');
-    if (main) main.style.display = 'none';
-    if (none) none.style.display = 'block';
-    loadClanTop();
-  }
-}
-
-async function joinClan(clanId){
-  const initData = getInitData();
-  if (!initData) return;
-  try{
-    const res = await fetch(API_BASE + '/api/clan/join', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Init-Data': initData },
-      body: JSON.stringify({ clanId })
-    });
-    const j = await res.json();
-    if (j.ok){
-      SFX.upgrade();
-      toast('🛡️ Вступил в клан!');
-      loadMyClan();
-    } else {
-      toast('Ошибка: ' + (j.error || 'unknown'));
-    }
-  }catch(e){ toast('Ошибка соединения'); }
-}
-
-document.getElementById('clanCreateBtn').onclick = async ()=>{
-  const initData = getInitData();
-  if (!initData) return;
-  const name = document.getElementById('clanNameInput').value.trim();
-  const tag = document.getElementById('clanTagInput').value.trim().toUpperCase();
-  if (!name || !tag){ SFX.error(); toast('Заполни название и тег'); return; }
-  if (S.coins < 500000){ SFX.error(); toast('Нужно 500 000 🪙'); return; }
-  try{
-    const res = await fetch(API_BASE + '/api/clan/create', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Init-Data': initData },
-      body: JSON.stringify({ name, tag, icon: '🛡️' })
-    });
-    const j = await res.json();
-    if (j.ok){
-      S.coins -= 500000;
-      SFX.upgrade(); showConfetti();
-      save(); renderAll();
-      toast('🛡️ Клан создан!');
-      loadMyClan();
-    } else {
-      const err = j.error || 'unknown';
-      const msgs = { invalid_name_or_tag:'Некорректное имя или тег', already_in_clan:'Ты уже в клане', name_taken:'Имя или тег занят', not_enough_coins:'Не хватает монет' };
-      SFX.error(); toast(msgs[err] || err);
-    }
-  }catch(e){ toast('Ошибка соединения'); }
-};
-
-document.getElementById('clanLeaveBtn').onclick = async ()=>{
-  if (!confirm('Выйти из клана?')) return;
-  const initData = getInitData();
-  if (!initData) return;
-  try{
-    const res = await fetch(API_BASE + '/api/clan/leave', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Init-Data': initData },
-      body: JSON.stringify({})
-    });
-    const j = await res.json();
-    if (j.ok){
-      toast('👋 Вышел из клана');
-      loadMyClan();
-    }
-  }catch(e){}
-};
-
-document.getElementById('clanDonateBtn').onclick = async ()=>{
-  const initData = getInitData();
-  if (!initData) return;
-  const amountStr = prompt('Сколько монет внести в банк клана? (мин. 1 000)', '10000');
-  if (!amountStr) return;
-  const amount = Number(amountStr);
-  if (!amount || amount < 1000){ SFX.error(); toast('Минимум 1 000 🪙'); return; }
-  if (S.coins < amount){ SFX.error(); toast('Мало монет'); return; }
-  try{
-    const res = await fetch(API_BASE + '/api/clan/donate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Init-Data': initData },
-      body: JSON.stringify({ amount })
-    });
-    const j = await res.json();
-    if (j.ok){
-      S.coins -= amount;
-      SFX.coin(); save(); renderAll();
-      toast('💰 +' + fmt(amount) + ' в банк клана');
-      loadMyClan();
-    } else {
-      toast('Ошибка: ' + (j.error || 'unknown'));
-    }
-  }catch(e){ toast('Ошибка соединения'); }
-};
+document.querySelectorAll('[data-lb]').forEach(tab=>{
+  tab.onclick = ()=>{
+    SFX.click();
+    const type = tab.dataset.lb;
+    if (!type) return;
+    document.querySelectorAll('[data-lb]')
+      .forEach(x => x.classList.toggle('active', x === tab));
+    loadLeaderboard(type);
+  };
+});
 
 /* ==================== SKINS ==================== */
 function renderSkins(){
@@ -4310,7 +4095,6 @@ setInterval(()=>{ renderRouletteInfo(); renderChest(); }, 1000);
 setInterval(()=>{ renderHome(); updatePet(); if ($('#s-inventory').classList.contains('active')) renderInventory(); if ($('#s-pet').classList.contains('active')) renderPet(); }, 1000);
 setInterval(()=>{ S.playTime++; }, 1000);
 setInterval(()=>{ saveCloud(); }, 15000);
-setInterval(()=>{ pollPushes(); }, 20000);
 window.addEventListener('beforeunload', ()=>{ saveCloud(); });
 window.addEventListener('visibilitychange', ()=>{
   if (document.visibilityState === 'hidden') saveCloud();
@@ -4350,18 +4134,6 @@ window.addEventListener('visibilitychange', ()=>{
       }
     }
   }catch(e){}
-
-  // Первая миграция локального сейва на сервер
-  if (!lastLoadOk && getInitData()){
-    const localRaw = localStorage.getItem(SAVE_KEY);
-    if (localRaw){
-      console.log('⬆️ Мигрирую локальный сейв на сервер');
-      setTimeout(()=>saveCloud(), 3000);
-    }
-  }
-
-  // Пуши
-  setTimeout(()=>pollPushes(), 5000);
 })();
 </script>
 <script src="https://zadano.github.io/mysite/track.js"></script>

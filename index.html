@@ -81,7 +81,8 @@ input.s{width:100%;border:0;background:var(--card);color:var(--fg);padding:15px 
 </style></head><body><div id="app"><div id="snow"></div><main id="m"></main><nav id="nav"></nav><div class="ov" id="ov" onclick="if(event.target==this)shut()"><div class="sh" id="sh"></div></div><div class="toast" id="to"></div></div>
 <script>
 var RN=["Обычный","Редкий","Эпический","Легендарный","Ультралегендарный"],RC=["#8a8f9c","#3b6cf6","#9b51e0","#e8a100","#e0245e"];
-var P=[["Apple iPhone Duo",120000,4,"#f2f2f4","duo"],["Honor Robot Phone",90000,4,"#4a4c55","rb"],["Apple iPhone 17 Pro Max",85000,4,"#5b4a8a","ap"],["REDMAGIC 11 Pro",80000,4,"#b4b8c2","rm"],["Apple iPhone 17 Pro",75000,4,"#b8a48c","ap"],["Oppo Find X9 Ultra",60000,4,"#2b2b2e","rn"],["Vivo X300 Ultra",60000,3,"#bcd8b0","rn"],["iQOO 15 Ultra",55000,3,"#3a3a4a","vt"],["Apple iPhone 17",55000,3,"#1c1c22","ap"],["Apple iPhone 16 Pro Max",48000,3,"#c4bdb5","ap"],["Vivo X200 Pro",45000,3,"#1f3fa0","rn"],["OnePlus 13",35000,3,"#2450a8","rn"],["Apple iPhone 16",30000,2,"#e8d8c4","ap"],["Apple iPhone 15 Pro",28000,2,"#3a3a4a","ap"],["Apple iPhone 16e",26000,2,"#1a1a1d","ap1"],["Apple iPhone 14",24000,2,"#a9cbe8","ap2"],["Apple iPhone 13",18000,1,"#5b4a8a","ap2"],["HONOR 400 Pro",12000,2,"#9aa0a8","vt"],["POCO M7 Pro 5G",9000,1,"#24242b","vt"],["Samsung Galaxy A36",6500,1,"#b9a4e6","vt"],["Xiaomi Redmi Note 13 Pro 5G",5000,1,"#8a6fd8","vt"],["Samsung A17",4500,1,"#1d1d26","vt"],["Tecno Spark 40C",2500,0,"#8a9099","vt"],["Infinix HOT 60i",1300,0,"#3f9a6b","vt"],["Xiaomi Redmi A5",1100,0,"#d8a95a","vt"],["Realme Note 80",700,0,"#8cc4e6","vt"],["Redmi 9A",600,0,"#4a90d9","vt"],["Xiaomi 18 Pro Max",60000,4,"#c4262c","vt"],["Google Pixel 10",85000,4,"#2a5bd7","vt"]];
+var P=[["Apple iPhone Duo",120000,4,"#f2f2f4","duo"],["Honor Robot Phone",90000,4,"#4a4c55","rb"],["Apple iPhone 17 Pro Max",85000,4,"#5b4a8a","ap"],["REDMAGIC 11 Pro",80000,4,"#b4b8c2","rm"],["Apple iPhone 17 Pro",75000,4,"#b8a48c","ap"],["Oppo Find X9 Ultra",60000,4,"#2b2b2e","rn"],["Vivo X300 Ultra",60000,3,"#bcd8b0","rn"],["iQOO 15 Ultra",55000,3,"#3a3a4a","vt"],["Apple iPhone 17",55000,3,"#1c1c22","ap"],["Apple iPhone 16 Pro Max",48000,3,"#c4bdb5","ap"],["Vivo X200 Pro",45000,3,"#1f3fa0","rn"],["OnePlus 13",35000,3,"#2450a8","rn"],["Apple iPhone 16",30000,2,"#e8d8c4","ap"],["Apple iPhone 15 Pro",28000,2,"#3a3a4a","ap"],["Apple iPhone 16e",26000,2,"#1a1a1d","ap1"],["Apple iPhone 14",24000,2,"#a9cbe8","ap2"],["Apple iPhone 13",18000,1,"#5b4a8a","ap2"],["HONOR 400 Pro",12000,2,"#9aa0a8","vt"],["POCO M7 Pro 5G",9000,1,"#24242b","vt"],["Samsung Galaxy A36",6500,1,"#b9a4e6","vt"],["Xiaomi Redmi Note 13 Pro 5G",5000,1,"#8a6fd8","vt"],["Samsung A17",4500,1,"#1d1d26","vt"],["Tecno Spark 40C",2500,0,"#8a9099","vt"],["Infinix HOT 60i",1300,0,"#3f9a6b","vt"],["Xiaomi Redmi A5",1100,0,"#d8a95a","vt"],["Realme Note 80",700,0,"#8cc4e6","vt"],["Redmi 9A",600,0,"#4a90d9","vt"],["Xiaomi 18 Pro Max",60000,4,"#c4262c","vt"],["Google Pixel 10",85000,4,"#2a5bd7","vt"]
+,["Apple iPhone 13 Pro",22000,2,"#2a5bd7","ap"],["Apple iPhone 11 Orange",9500,1,"#ff5a1f","ap"],["Samsung Galaxy Z Flip4",15000,2,"#c9b4f2","vt"],["Apple iPhone 11 Purple",9500,1,"#5b3fa0","ap"],["Apple iPhone 11 Pro",12000,2,"#ece9e0","ap"],["Honor 90 Fold",14000,2,"#f4f4f6","vt"],["Nothing Phone (2a)",8000,1,"#e8e8ea","vt"],["Honor Magic V2 Red",50000,3,"#a3122f","vt"],["Honor 90",10000,1,"#4a8fe0","vt"],["Honor 90 White",10000,1,"#f2f2f2","vt"],["Honor Magic V2",52000,3,"#8e1230","vt"],["Honor Magic6 Pro",42000,3,"#f1eee6","rn"],["Redmi Note 12 Pro+",7000,1,"#b79af0","vt"],["Xiaomi 13T Pro",20000,2,"#16161a","rn"],["Poco X6 Pro",8500,1,"#7fb2ea","vt"],["Realme GT Neo 3",9000,1,"#f2f4f8","vt"],["Oppo Find X6 Pro",38000,3,"#17171a","rn"],["Xiaomi 11T",8000,1,"#8ab8ee","vt"],["ZTE Nubia Z50",16000,2,"#1f5fd0","vt"],["Oppo Find X7",36000,3,"#f4f1ea","rn"],["Xiaomi 12T Pro",15000,2,"#202228","vt"],["Redmi Note 11",4000,1,"#5aa9ee","vt"],["Xiaomi 12",11000,2,"#bcc8e8","vt"],["Xiaomi 11T Pro",11000,2,"#2a2c33","vt"],["Nothing Phone (1)",10000,1,"#ececee","vt"],["Xiaomi 11T 5G",7500,1,"#1a1a1e","vt"],["Xiaomi 12 Pro",18000,2,"#1e5be0","vt"],["Xiaomi 12 Lite",6500,1,"#8cc6f2","vt"],["Xiaomi Redmi Note 13",5500,1,"#6a1020","vt"],["Poco M5",3500,0,"#e6e6ea","vt"],["Samsung S20 FE",9000,1,"#2a3fa8","vt"],["ZTE Axon 30",6000,1,"#16161a","vt"],["OnePlus 15",45000,3,"#f4f2ee","rn"],["Samsung Galaxy S10 Plus",9000,1,"#d8dcf0","vt"],["Samsung Galaxy Watch Ultra",28000,2,"#101114","vt"],["CMF Buds Pro",3000,0,"#1a1c22","vt"],["Nothing Phone (3a)",14000,2,"#ececee","vt"],["Realme 12 Pro Plus",12000,2,"#1f5a3a","vt"],["Xiaomi 14T",16000,2,"#18181c","vt"],["Apple iPhone 14 Pro",26000,2,"#f0efe8","ap"]];
 var CS=[["Кейс бомжа","🗑️",0,1500],["Ломбард","🏦",800,1500],["Странная коробка с Авито","📦",1300,2500],["Гараж","🚗",2500,5000],["Маленький магазин","🏪",3500,8000],["Распродажа","🛍️",8000,18000],["Склад","📦",25000,45000],["VIP-сейф","💎",70000,110000]];
 var DR=[1200,1800,2400,"Xiaomi Redmi A5",4200,6000,"Apple iPhone 16e"],BPR=[900,1000,1200,1300,"Redmi 9A",1500,1800,2000,"Samsung A17",3000],DAY=864e5,CLRS=["#2f6bff","#22b573","#e5484d","#a876f0","#ff8a3d","#ff5fa0","#f2c12e","#22c5d8"];
 var AC=[["📱","Первый телефон",function(){return S.drop>0},100],["🎒","Коллекционер 10",function(){return S.drop>=10},400],["📦","Склад 50",function(){return S.drop>=50},1500],["🔵","Редкая находка",function(){return S.g[1]>0},200],["🟣","Эпичная удача",function(){return S.g[2]>0},600],["🟡","Легенда",function(){return S.g[3]>0},2000],["💎","Ультра удача",function(){return S.g[4]>0},6000],["⬆️","Апгрейдер",function(){return S.up>0},300],["💰","Богач 100 000",function(){return S.bal>=1e5},2000],["👆","Кликер 10 ур.",function(){return S.cl>=10},500]];
@@ -102,6 +103,104 @@ function giveP(i){S.inv.push({m:i});S.drop++;S.g[P[i][2]]++;S.seen[i]=1}
 function reward(r){if(typeof r=="number"){S.bal+=r;return rub(r)}var i=pidx(r);giveP(i);return r}
 function cimg(i,w,fs){return IMG[i]?'<img class="ci" src="'+IMG[i]+'" alt="" style="width:'+(w=="100%"?"100%":w+"px")+';height:'+(w=="100%"?112:w)+'px;border-radius:'+(w=="100%"?14:20)+'px">':'<div class="ci" style="width:'+(w=="100%"?"100%":w+"px")+';height:'+(w=="100%"?112:w)+'px;border-radius:'+(w=="100%"?14:20)+'px;font-size:'+fs+'px">'+CS[i][1]+'</div>'}
 /* devices */
+function wsvg(w){return '<svg viewBox="0 0 100 190" style="width:'+w+'px;height:'+w*1.83+'px;display:block;margin:0 auto;filter:drop-shadow(0 4px 6px rgba(0,0,0,.3))"><rect x="29" y="0" width="42" height="190" rx="9" fill="#1a1b20"/><g fill="#0c0c0f"><circle cx="50" cy="150" r="2.5"/><circle cx="50" cy="160" r="2.5"/><circle cx="50" cy="170" r="2.5"/><circle cx="50" cy="180" r="2.5"/></g><rect x="12" y="48" width="74" height="92" rx="26" fill="#2b2d33" stroke="#9a9ca3" stroke-width="2.5"/><rect x="19" y="55" width="60" height="78" rx="20" fill="#050507"/><text x="49" y="92" font-size="30" font-weight="800" fill="#ffe81f" text-anchor="middle" font-family="Arial,sans-serif">09</text><text x="49" y="122" font-size="30" font-weight="800" fill="#ffe81f" text-anchor="middle" font-family="Arial,sans-serif">28</text><rect x="86" y="78" width="6" height="26" rx="3" fill="#ff7a1a"/><rect x="86" y="110" width="5" height="14" rx="2.5" fill="#6d707b"/><rect x="6" y="84" width="6" height="18" rx="3" fill="#6d707b"/></svg>'}
+function bsvg(w){return '<svg viewBox="0 0 100 190" style="width:'+w+'px;height:'+w*1.83+'px;display:block;margin:0 auto;filter:drop-shadow(0 4px 6px rgba(0,0,0,.3))"><g transform="rotate(-8 34 50)"><rect x="22" y="14" width="26" height="34" rx="13" fill="#23252e"/><rect x="30" y="40" width="10" height="32" rx="5" fill="#2d2f39"/><circle cx="35" cy="26" r="4" fill="#0c0c0f"/></g><g transform="rotate(8 66 50)"><rect x="52" y="14" width="26" height="34" rx="13" fill="#23252e"/><rect x="60" y="40" width="10" height="32" rx="5" fill="#2d2f39"/><circle cx="65" cy="26" r="4" fill="#0c0c0f"/></g><rect x="12" y="94" width="76" height="64" rx="20" fill="#1b1c22" stroke="#3a3c44" stroke-width="2"/><rect x="12" y="110" width="76" height="2" fill="#0c0c0f"/><circle cx="50" cy="134" r="13" fill="#2a2b33"/><text x="50" y="138" font-size="10" font-weight="800" fill="#cfd2dc" text-anchor="middle" font-family="Arial,sans-serif">cmf</text></svg>'}
+function cam2(n,R,C,Lz,T,pl,st){var f='#f3e7ae',b='#0c0c0f',s='#3a3c44',
+ G='<path d="M62 24v46M52 80q10 12 20 0M30 112h40" stroke="rgba(255,255,255,.85)" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M62 78v6" stroke="#ff2d2d" stroke-width="2.5"/>',
+ FD=function(x){return R(x,4,3,182,0,'rgba(0,0,0,.35)')},
+ M=function(k,x,y,r,ap,fl){var d=2*r,p=5,g=4,Q={v2:[1,2,[[0,0],[0,1]]],v3:[1,3,[[0,0],[0,1],[0,2]]],tri:[2,2,[[0,0],[0,1],[1,.5]]],quad:[2,2,[[0,0],[1,0],[0,1],[1,1]]],h3:[3,1,[[0,0],[1,0],[2,0]]],h4:[4,1,[[0,0],[1,0],[2,0],[3,0]]]}[k],w=Q[0]*d+(Q[0]-1)*g+2*p,h=Q[1]*d+(Q[1]-1)*g+2*p,o=R(x,y,w,h,Math.min(w,h)*.28,ap?pl:b,ap?st:s);Q[2].forEach(function(l){o+=Lz(x+p+r+l[0]*(d+g),y+p+r+l[1]*(d+g),r)});return o+(fl?C(x+w+7,y+9,3,f):'')},
+ Z=function(cx,cy,Rr,k,ring,cream){var o=(cream?C(cx,cy,Rr+4,'#e9e3d3','#b9a47e'):'')+C(cx,cy,Rr,b,ring||'#9a9ca3'),a=Math.PI/180;
+  if(k==1)return o+Lz(cx,cy,Rr*.72);
+  if(k==2)return o+Lz(cx,cy-Rr*.46,Rr*.4)+Lz(cx,cy+Rr*.46,Rr*.4);
+  if(k==3){for(var i=0;i<3;i++){var t=(-90+i*120)*a;o+=Lz(cx+Math.cos(t)*Rr*.5,cy+Math.sin(t)*Rr*.5,Rr*.33)}return o}
+  var q=Rr*.46;return o+Lz(cx-q,cy-q,Rr*.32)+Lz(cx+q,cy-q,Rr*.32)+Lz(cx-q,cy+q,Rr*.32)+Lz(cx+q,cy+q,Rr*.32)},
+ NP=function(){return C(50,112,26,'rgba(255,255,255,.3)')+C(50,112,17,'rgba(0,0,0,.08)')},
+ i11=function(){return M('v2',9,9,9,1,1)},
+ h90=function(){return Z(27,28,17,1)+Z(27,64,17,1)+Z(63,22,8,1)+Z(63,42,8,1)},
+ m={
+ "Apple iPhone 13 Pro":function(){return M('tri',9,9,10,1,1)},
+ "Apple iPhone 11 Pro":function(){return M('tri',9,9,9,1,1)},
+ "Apple iPhone 14 Pro":function(){return M('tri',9,9,11,1,1)},
+ "Apple iPhone 11 Orange":i11,"Apple iPhone 11 Purple":i11,
+ "Samsung Galaxy Z Flip4":function(){return M('v2',9,9,9,0,1)+R(4,93,90,2,0,'rgba(0,0,0,.4)')},
+ "Honor 90 Fold":function(){return FD(48)+M('v2',9,9,9,0,1)},
+ "Honor Magic V2 Red":function(){return FD(48)+Z(28,30,22,4)},
+ "Honor Magic V2":function(){return FD(62)+M('h3',9,9,5,0,1)},
+ "Honor 90":function(){return Z(44,44,32,4)},"Honor 90 White":h90,
+ "Nothing Phone (2a)":function(){return Z(32,32,22,2)+G},
+ "Nothing Phone (1)":function(){return NP()+M('v2',9,9,8,0,1)+G},
+ "Nothing Phone (3a)":function(){return Z(36,36,28,3,'#444')+G},
+ "Honor Magic6 Pro":function(){return Z(48,44,34,4,'#b9a47e',1)},
+ "Oppo Find X7":function(){return Z(48,46,36,4,'#9a9ca3',1)},
+ "Oppo Find X6 Pro":function(){return Z(46,46,36,4)+T(46,124,5,'HASSELBLAD')},
+ "Honor 90 Blue":function(){return Z(44,44,32,4)},
+ "Redmi Note 12 Pro+":function(){return M('v2',9,9,10,0,1)},
+ "Xiaomi 13T Pro":function(){return M('tri',9,9,9,0,1)},
+ "Poco X6 Pro":function(){return Z(42,42,32,4)+T(74,14,6,'POCO')},
+ "Realme GT Neo 3":function(){return R(54,4,5,182,0,'#1f6bff')+M('v2',9,9,8,0,1)},
+ "Xiaomi 11T":function(){return M('v2',9,9,8,0,1)},
+ "ZTE Nubia Z50":function(){return M('v2',9,9,6,0,0)},
+ "Xiaomi 12T Pro":function(){return M('tri',9,9,9,0,1)},
+ "Redmi Note 11":function(){return M('tri',9,9,7,0,1)},
+ "Xiaomi 12":function(){return M('v2',9,9,9,0,1)},
+ "Xiaomi 11T Pro":function(){return M('tri',9,9,8,0,1)},
+ "Xiaomi 11T 5G":function(){return M('tri',9,9,8,0,1)},
+ "Xiaomi 12 Pro":function(){return M('v2',9,9,6,0,0)},
+ "Xiaomi 12 Lite":function(){return M('v2',9,9,8,0,0)},
+ "Xiaomi Redmi Note 13":function(){return M('tri',9,9,8,0,1)},
+ "Poco M5":function(){return M('tri',9,9,10,0,1)},
+ "Samsung S20 FE":function(){return M('v3',9,9,8,0,1)},
+ "ZTE Axon 30":function(){return M('tri',9,9,8,0,1)},
+ "OnePlus 15":function(){return M('tri',9,9,10,0,1)},
+ "Samsung Galaxy S10 Plus":function(){return M('h4',20,9,5,0,0)},
+ "Realme 12 Pro Plus":function(){return Z(48,46,32,3,'#c9a24a')},
+ "Xiaomi 14T":function(){return M('tri',9,9,10,0,1)}
+ };return m[n]?m[n]():''}
+function cam(n,R,C,Lz,T,pl,st){var f='#f3e7ae',b='#0c0c0f',s='#3a3c44',
+ A=function(x,y,w,h,r,ls,fl){return R(x,y,w,h,r,b,s)+ls.map(function(l){return Lz(l[0],l[1],l[2]||8)}).join('')+(fl?C(fl[0],fl[1],3,f):'')},
+ AP=function(w,h,r,ls,fl){return R(8,8,w,h,r,pl,st)+ls.map(function(l){return Lz(l[0],l[1],l[2])}).join('')+C(fl[0],fl[1],3.5,f)},
+ G='<path d="M62 24v46M52 80q10 12 20 0M30 112h40" stroke="rgba(255,255,255,.85)" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M62 78v6" stroke="#ff2d2d" stroke-width="2.5"/>',
+ FD=R(48,4,3,182,0,'rgba(0,0,0,.35)'),
+ i11=function(){return AP(46,46,12,[[21,21,9],[33,38,9]],[41,16])},
+ h90=function(){return C(26,28,19,'#0c0c0e','#7a7d86')+Lz(26,28,12)+C(26,64,19,'#0c0c0e','#7a7d86')+Lz(26,64,12)+C(62,20,8,'#0c0c0e','#7a7d86')+Lz(62,20,5)},
+ v2=function(){return FD+C(26,30,22,'#0c0c0e','#9a9ca3')+Lz(18,22,6)+Lz(34,22,6)+Lz(18,40,6)+Lz(34,40,6)},
+ m={
+ "Apple iPhone 13 Pro":function(){return AP(52,54,14,[[22,22,10],[22,46,10],[45,34,10]],[48,14])},
+ "Apple iPhone 11 Pro":function(){return AP(46,48,12,[[21,21,9],[21,43,9],[40,32,9]],[43,14])},
+ "Apple iPhone 14 Pro":function(){return AP(58,60,15,[[23,24,11],[23,50,11],[47,37,11]],[50,14])},
+ "Apple iPhone 11 Orange":i11,"Apple iPhone 11 Purple":i11,
+ "Samsung Galaxy Z Flip4":function(){return R(52,9,38,26,8,'#050507',s)+Lz(20,20,8)+Lz(20,40,8)+C(36,30,2.5,f)+R(4,93,90,2,0,'rgba(0,0,0,.45)')},
+ "Honor 90 Fold":function(){return FD+A(9,9,36,58,12,[[22,23,9],[22,46,9]],[38,16])},
+ "Honor Magic V2 Red":v2,"Honor Magic V2":v2,
+ "Honor 90":h90,"Honor 90 White":h90,
+ "Nothing Phone (2a)":function(){return A(10,12,80,28,14,[[34,26,9],[66,26,9]])+G},
+ "Nothing Phone (1)":function(){return C(50,108,28,'rgba(255,255,255,.35)')+C(50,108,19,'rgba(0,0,0,.1)')+A(9,9,36,58,12,[[22,23,8],[22,45,8]],[38,16])+G},
+ "Nothing Phone (3a)":function(){return A(9,9,66,50,14,[[26,26,10],[26,48,8],[54,32,9]])+G},
+ "Honor Magic6 Pro":function(){return C(48,42,36,'#e9e3d3','#b9a47e')+C(48,42,31,b)+Lz(48,42,14)+Lz(31,25,7)+Lz(65,25,7)+Lz(31,59,7)+Lz(65,59,7)},
+ "Oppo Find X7":function(){return C(48,44,38,'#e9e3d3','#b9a47e')+C(48,44,33,b)+Lz(48,26,10)+Lz(32,56,10)+Lz(64,56,10)+C(48,46,3,f)+T(48,110,5,'HASSELBLAD')},
+ "Oppo Find X6 Pro":function(){return C(38,40,32,b,'#9a9ca3')+Lz(38,22,9)+Lz(23,50,9)+Lz(53,50,9)+C(80,16,3.5,f)+T(40,128,5,'HASSELBLAD')},
+ "Redmi Note 12 Pro+":function(){return A(9,9,44,62,16,[[24,26,10],[24,52,10]],[43,16])},
+ "Xiaomi 13T Pro":function(){return A(8,8,52,52,7,[[21,21,9],[45,21,9],[33,43,10]])+T(34,72,5,'LEICA')},
+ "Poco X6 Pro":function(){return C(30,32,26,b,s)+Lz(30,21,8)+Lz(30,43,8)+C(66,18,3,f)},
+ "Realme GT Neo 3":function(){return R(70,4,12,182,0,'#1f6bff')+A(9,9,36,56,10,[[24,24,8],[24,46,8]],[38,58])},
+ "Xiaomi 11T":function(){return A(9,9,36,50,12,[[22,22,8],[22,43,8]],[38,16])},
+ "ZTE Nubia Z50":function(){return C(26,26,20,b,'#6a82e8')+Lz(26,26,11)+Lz(60,18,7)+Lz(60,38,7)+C(78,28,3,f)},
+ "Xiaomi 12T Pro":function(){return A(8,8,84,38,10,[[22,27,9],[46,27,9],[70,27,9]])},
+ "Redmi Note 11":function(){return A(9,9,56,26,13,[[23,22,8],[48,22,8]])},
+ "Xiaomi 12":function(){return A(9,9,44,52,12,[[22,22,9],[22,44,9],[42,33,8]],[44,14])},
+ "Xiaomi 11T Pro":function(){return A(9,9,66,36,10,[[24,27,9],[45,27,9],[64,27,8]])},
+ "Xiaomi 11T 5G":function(){return A(9,9,54,50,8,[[22,22,8],[44,22,8],[33,42,9]])},
+ "Xiaomi 12 Pro":function(){return A(8,8,56,56,12,[[22,22,9],[44,22,9],[22,44,9],[44,44,9]])},
+ "Xiaomi 12 Lite":function(){return A(9,9,34,40,11,[[22,23,8],[22,40,6]])},
+ "Xiaomi Redmi Note 13":function(){return A(9,9,40,40,10,[[21,21,7],[37,21,7],[21,37,7],[37,37,7]])},
+ "Poco M5":function(){return A(9,9,42,50,8,[[23,24,9],[23,45,9]],[44,16])},
+ "Samsung S20 FE":function(){return A(9,9,40,68,10,[[24,24,9],[24,46,9],[24,67,8]])},
+ "ZTE Axon 30":function(){return A(9,9,54,54,10,[[22,22,9],[22,44,9],[43,22,8],[43,44,8]])},
+ "OnePlus 15":function(){return A(8,8,58,58,14,[[22,22,9],[46,22,9],[22,46,9],[46,46,9]])},
+ "Samsung Galaxy S10 Plus":function(){return A(18,9,66,22,11,[[33,20,6],[47,20,6],[61,20,6],[74,20,5]])},
+ "Realme 12 Pro Plus":function(){return C(38,40,31,b,'#c9a24a')+Lz(38,23,9)+Lz(23,52,9)+Lz(53,52,9)+C(78,16,3.5,f)},
+ "Xiaomi 14T":function(){return A(8,8,54,48,9,[[21,22,9],[21,44,8],[43,33,10]])+T(34,68,5,'LEICA')}
+ };return m[n]?m[n]():''}
 var APP='M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z',_u=0;
 function lum(c){c=c.replace('#','');return(parseInt(c.substr(0,2),16)*299+parseInt(c.substr(2,2),16)*587+parseInt(c.substr(4,2),16)*114)/1000}
 function dev(p,w){var n=p[0],col=p[3],u='g'+(++_u),ap=n.indexOf('Apple')==0,pro=/Pro|Duo/.test(n),h='',pl='rgba(255,255,255,.16)',st='rgba(0,0,0,.3)',dk=lum(col)>150,tx=dk?'rgba(0,0,0,.45)':'rgba(255,255,255,.6)',
@@ -109,7 +208,10 @@ function dev(p,w){var n=p[0],col=p[3],u='g'+(++_u),ap=n.indexOf('Apple')==0,pro=
  C=function(x,y,r,f,s){return '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+f+'"'+(s?' stroke="'+s+'" stroke-width="1.5"':'')+'/>'},
  Lz=function(x,y,r){return C(x,y,r,'#2e3037')+C(x,y,r*.86,'#07080b')+C(x,y,r*.62,'url(#'+u+'l)')+C(x,y,r*.3,'#04050a')+C(x-r*.28,y-r*.3,r*.14,'#fff')},
  T=function(x,y,s,t,rot){return '<text x="'+x+'" y="'+y+'" font-size="'+s+'" fill="'+tx+'" font-weight="600" text-anchor="middle" letter-spacing=".5"'+(rot?' transform="rotate(-90 '+x+' '+y+')"':'')+'>'+t+'</text>'};
- if(/Duo/.test(n)){h=R(10,10,80,36,18,'#f6f6f8','#cfcfd6')+Lz(32,28,12)+Lz(68,28,12)+C(50,28,3,'#d9d9de')}
+ var cm=cam2(n,R,C,Lz,T,pl,st);if(/Watch/.test(n)){return wsvg(w)}if(/Buds/.test(n)){return bsvg(w)}if(0){h=R(32,4,36,182,10,'#1a1a1d')+R(14,56,72,78,20,'#2b2d33','#8a8d98')+R(19,61,62,68,16,'#050507')+'<text x="50" y="105" font-size="22" font-weight="800" fill="#ffe81f" text-anchor="middle">09:28</text>'}
+ else if(/Buds/.test(n)){h=R(26,26,20,48,10,'#23252e')+R(54,26,20,48,10,'#23252e')+R(22,92,56,52,14,'#1b1c22','#3a3c44')+C(50,118,14,'#2a2b33')}
+ else if(cm){h=cm}
+ else if(/Duo/.test(n)){h=R(10,10,80,36,18,'#f6f6f8','#cfcfd6')+Lz(32,28,12)+Lz(68,28,12)+C(50,28,3,'#d9d9de')}
  else if(/Xiaomi 18/.test(n)){h=R(10,10,78,46,9,'rgba(60,0,0,.38)','rgba(0,0,0,.35)')+Lz(25,24,9)+Lz(25,44,9)+R(62,18,17,28,2.5,'rgba(255,60,60,.4)')+R(10,62,19,8,4,'#101012')+C(37,66,3.4,'#d9d2cc')+T(60,69,5.5,'LEICA')+C(49,116,26,'rgba(255,255,255,.16)')+C(49,116,18,'rgba(0,0,0,.16)')+T(49,118.5,6,'xiaomi')+R(45,143,8,38,0,'rgba(0,0,0,.16)')}
  else if(/Pixel/.test(n)){h=R(6,16,88,30,15,'rgba(10,25,110,.3)','rgba(5,10,70,.8)')+R(9,19,57,24,12,'#07080c')+Lz(21,31,6)+Lz(37,31,6)+Lz(52,31,6)+C(79,31,5.5,'#f1e3c8')+'<text x="49" y="123" font-size="26" font-weight="800" fill="rgba(10,30,130,.5)" text-anchor="middle" font-family="Arial,sans-serif">G</text>'}
  else if(ap&&pro){h=R(9,9,82,56,15,pl,st)+Lz(27,27,10)+Lz(27,49,10)+Lz(52,38,10)+C(76,23,4.5,'#f3e7ae')+C(76,45,4,'#0b0b0e')}
@@ -122,7 +224,7 @@ function dev(p,w){var n=p[0],col=p[3],u='g'+(++_u),ap=n.indexOf('Apple')==0,pro=
  else if(/iQOO|HONOR/.test(n)){h=R(9,9,54,54,14,'#0c0c0f','#3a3c44')+Lz(26,26,9)+Lz(26,47,9)+Lz(47,36,9)+C(74,18,3.5,'#f3e7ae')+(/iQOO/.test(n)?T(36,60,5,'ULTRA'):'')}
  else{var big=p[1]>=3000;h=R(9,9,32,big?60:44,16,'#0c0c0f','#3a3c44')+Lz(25,25,8)+Lz(25,43,8)+(big?Lz(25,61,7):'')+C(52,17,3.5,'#f3e7ae')}
  if(ap)h+='<g transform="translate(38,86) scale(1.1)"><path d="'+APP+'" fill="'+tx+'"/></g>';
- else if(!/Xiaomi 18|Pixel/.test(n))h+=T(50,168,9,(n.split(' ')[0]=='Xiaomi'?'Redmi':n.split(' ')[0]).toUpperCase());
+ else if(!/Xiaomi 18|Pixel|Watch|Buds/.test(n))h+=T(50,168,9,(n.split(' ')[0]=='Xiaomi'?'Redmi':n.split(' ')[0]).toUpperCase());
  var duo=/Duo/.test(n),rob=/Robot/.test(n);return '<svg viewBox="'+(duo?'0 0 206 190':rob?'0 -16 104 206':'0 0 104 190')+'" style="width:'+(duo?w*2:w)+'px;height:'+(rob?w*1.98:w*1.83)+'px;display:block;margin:0 auto;filter:drop-shadow(0 4px 6px rgba(0,0,0,.3))"><defs><linearGradient id="'+u+'e" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a8d98"/><stop offset=".5" stop-color="#1a1b20"/><stop offset="1" stop-color="#6d707b"/></linearGradient><linearGradient id="'+u+'s" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset=".4" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient><radialGradient id="'+u+'l"><stop offset="0" stop-color="#5a6fb5"/><stop offset=".6" stop-color="#1a1d3a"/><stop offset="1" stop-color="#07080f"/></radialGradient></defs>'+(duo?'<g class="dw">':'')+'<rect x="1" y="1" width="96" height="188" rx="18" fill="url(#'+u+'e)"/><rect x="98" y="54" width="3" height="22" rx="1.5" fill="#555"/><rect x="98" y="88" width="3" height="14" rx="1.5" fill="#555"/><rect x="4" y="4" width="90" height="182" rx="15" fill="'+col+'"/><rect x="4" y="4" width="90" height="182" rx="15" fill="url(#'+u+'s)"/>'+h+(duo?'</g><g class="fr"><rect x="100" y="8" width="6" height="174" rx="3" fill="#0c0c0e"/><rect x="104" y="1" width="97" height="188" rx="18" fill="#17181c"/><rect x="108" y="5" width="89" height="180" rx="14" fill="#e6d9bd"/><polygon points="108,125 135,85 155,108 176,72 197,112 197,185 108,185" fill="#8b8d82"/><polygon points="108,155 140,125 165,143 197,120 197,185 108,185" fill="#efe3c8"/><rect x="184" y="12" width="7" height="16" rx="3.5" fill="#111"/></g>':'')+'</svg>'}
 /* nav */
 var TI=['<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>','<path d="M21 16V8l-9-5-9 5v8l9 5z"/><path d="M3.3 7L12 12l8.7-5M12 22V12"/>','<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>','<path d="M5 3l14 8-6 2-2 6z"/>','<path d="M12 19V5M5 12l7-7 7 7"/>','<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>'],TN=["Магазин","Кейсы","Инвентарь","Кликер","Апгрейдер","Аккаунт"];

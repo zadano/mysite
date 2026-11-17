@@ -11,6 +11,8 @@
 
   var STATUS_URL = "https://zadano.github.io/mysite/status.txt";
   var AUDIO_URL  = "https://raw.githubusercontent.com/zadano/mysite/main/ston-melodi.mp3";
+  var BANNER_URL = "https://github.com/zadano/mysite/blob/main/banner.png?raw=true";
+  var TG_URL     = "https://t.me/ScrepMasterBot";
 
   /* ---------- 1. Проверяем статус ---------- */
   fetch(STATUS_URL, { cache: "no-store" })
@@ -265,6 +267,8 @@
         justify-content: center;
         align-items: flex-start;
         padding: 2em 1.5em;
+        padding-top: 16em;   /* место под баннер сверху */
+        padding-bottom: 2em;
         max-width: 720px;
         margin: 0 auto;
         z-index: 1000000;
@@ -369,6 +373,37 @@
       .vz-btn-close:hover {
         background: #ffb04d;
       }
+
+      /* ===== Рекламный баннер (сверху, в 2 раза больше, без фона, отступ 18px) ===== */
+      .vz-banner {
+        position: fixed;
+        top: 18px;
+        left: 18px;
+        right: 18px;
+        z-index: 1000002;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+        background: transparent;
+        border: none;
+        pointer-events: none;
+      }
+      .vz-banner a {
+        display: block;
+        max-width: 100%;
+        line-height: 0;
+        pointer-events: auto;
+      }
+      .vz-banner img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        max-height: 180px;
+        border-radius: 0;
+        box-shadow: none;
+        background: transparent;
+      }
     `;
     document.head.appendChild(style);
 
@@ -387,6 +422,12 @@
           </svg>
         </div>
         <div class="vz-icon"></div>
+      </div>
+
+      <div class="vz-banner">
+        <a href="${TG_URL}" target="_blank" rel="noopener noreferrer">
+          <img src="${BANNER_URL}" alt="@ScrepMasterBot" loading="lazy" />
+        </a>
       </div>
 
       <div class="vz-content">

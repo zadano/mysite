@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Telegram Playground</title>
+    <!-- Официальный SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            /* Используем переменные Telegram, с fallback на светлую тему */
+            --bg: var(--tg-theme-bg-color, #ffffff);
+            --secondary-bg: var(--tg-theme-secondary-bg-color, #f1f1f1);
+            --text: var(--tg-theme-text-color, #000000);
+            --hint: var(--tg-theme-hint-color, #999999);
+            --link: var(--tg-theme-link-color, #2481cc);
+            --button: var(--tg-theme-button-color, #2481cc);
+            --button-text: var(--tg-theme-button-text-color, #ffffff);
+            --card: var(--tg-theme-secondary-bg-color, #f1f1f1);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            margin: 0;
+            padding: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            transition: background 0.3s, color 0.3s;
+            padding-bottom: 100px; /* место для MainButton */
+        }
+
+        h1 { font-size: 24px; margin: 0 0 4px; }
+        .subtitle { color: var(--hint); font-size: 14px; margin-bottom: 20px; }
+
+        .card {
+            background: var(--card);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 14px;
+        }
+        .card h2 {
+            font-size: 15px;
+            margin: 0 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button {
+            background: var(--button);
+            color: var(--button-text);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 8px;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+        button:active { transform: scale(0.97); }
+        button.secondary {
+            background: transparent;
+            color: var(--link);
+            border: 1.5px solid var(--link);
+        }
+        button:disabled { opacity: 0.5; }
+
+        .row { display: flex; gap: 8px; }
+        .row button { flex: 1; margin-bottom: 0; }
+
+        .status {
+            font-size: 13px;
+            color: var(--hint);
+            margin-top: 8px;
+            min-height: 18px;
+            word-break: break-word;
+        }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .grid button { margin-bottom: 0; }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1.5px solid var(--secondary-bg);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        input:focus { outline: none; border-color: var(--link); }
+
+        .user-info { display: flex; align-items: center; gap: 12px; }
+        .avatar {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            background: var(--button);
+            color: var(--button-text);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; font-weight: 700;
+            flex-shrink: 0;
+        }
+        .user-name { font-weight: 600; font-size: 16px; }
+        .user-username { color: var(--hint); font-size: 13px; }
+
+        .badge {
+            display: inline-block;
+            background: var(--button);
+            color: var(--button-text);
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        #toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(0,0,0,0.85);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            opacity: 0;
+            transition: all 0.3s;
+            pointer-events: none;
+            z-index: 100;
+            white-space: nowrap;
+        }
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+
+    <h1>🚀 Playground</h1>
+    <p class="subtitle">Демонстрация возможностей Telegram Web App SDK</p>
+
+    <!-- 1. Информация о пользователе -->
+    <div class="card">
+        <h2>👤 Пользователь</h2>
+        <div class="user-info" id="user-info">
+            <div class="avatar" id="avatar">?</div>
+            <div>
+                <div class="user-name" id="user-name">Загрузка...</div>
+                <div class="user-username" id="user-username"></div>
+            </div>
+        </div>
+        <div class="status" id="platform-info"></div>
+    </div>
+
+    <!-- 2. Тактильная отдача -->
+    <div class="card">
+        <h2>📳 Haptic Feedback</h2>
+        <div class="row">
+            <button class="secondary" onclick="haptic('impact')">Impact</button>
+            <button class="secondary" onclick="haptic('success')">Success</button>
+        </div>
+        <div style="height:8px"></div>
+        <div class="row">
+            <button class="secondary" onclick="haptic('warning')">Warning</button>
+            <button class="secondary" onclick="haptic('error')">Error</button>
+        </div>
+        <div style="height:8px"></div>
+        <button class="secondary" onclick="haptic('select')">Selection Changed</button>
+    </div>
+
+    <!-- 3. Цвета интерфейса -->
+    <div class="card">
+        <h2>🎨 Оформление</h2>
+        <div class="row">
+            <button class="secondary" onclick="changeHeader('#31a24c')">Зелёная шапка</button>
+            <button class="secondary" onclick="changeHeader('bg_color')">Сброс</button>
+        </div>
+        <div style="height:8px"></div>
+        <div class="row">
+            <button class="secondary" onclick="changeBg('#1c1c1d')">Тёмный фон</button>
+            <button class="secondary" onclick="changeBg('bg_color')">Сброс</button>
+        </div>
+        <div class="status" id="theme-status"></div>
+    </div>
+
+    <!-- 4. CloudStorage -->
+    <div class="card">
+        <h2>💾 CloudStorage</h2>
+        <input type="text" id="storage-key" placeholder="Ключ" value="my_key">
+        <input type="text" id="storage-value" placeholder="Значение" value="Привет, Telegram!">
+        <div class="row">
+            <button class="secondary" onclick="saveCloud()">Сохранить</button>
+            <button class="secondary" onclick="loadCloud()">Прочитать</button>
+        </div>
+        <div class="row" style="margin-top:8px">
+            <button class="secondary" onclick="removeCloud()">Удалить</button>
+            <button class="secondary" onclick="listCloudKeys()">Все ключи</button>
+        </div>
+        <div class="status" id="cloud-status"></div>
+    </div>
+
+    <!-- 5. DeviceStorage + SecureStorage -->
+    <div class="card">
+        <h2>🔐 Хранилища устройства</h2>
+        <div class="row">
+            <button class="secondary" onclick="testDeviceStorage()">DeviceStorage</button>
+            <button class="secondary" onclick="testSecureStorage()">SecureStorage</button>
+        </div>
+        <div class="status" id="storage-status"></div>
+    </div>
+
+    <!-- 6. Биометрия -->
+    <div class="card">
+        <h2>🫆 Биометрия</h2>
+        <div class="status" id="bio-status">Не инициализировано</div>
+        <div style="height:8px"></div>
+        <button class="secondary" id="bio-btn" onclick="initBiometry()" disabled>
+            Проверить биометрию
+        </button>
+        <div class="status" id="bio-result"></div>
+    </div>
+
+    <!-- 7. Отправка данных боту -->
+    <div class="card">
+        <h2>📤 Отправка данных боту</h2>
+        <input type="text" id="send-data-input" placeholder="Сообщение для бота" value="Hello from Mini App!">
+        <button class="secondary" onclick="sendToBot()">Отправить и закрыть</button>
+        <div class="status" id="send-status"></div>
+    </div>
+
+    <!-- 8. BackButton демо -->
+    <div class="card">
+        <h2>⬅️ BackButton</h2>
+        <button class="secondary" onclick="enableBackButton()">Включить кнопку «Назад»</button>
+        <div class="status" id="back-status"></div>
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+    // ============================================================
+    //  ИНИЦИАЛИЗАЦИЯ
+    // ============================================================
+    const tg = window.Telegram.WebApp;
+
+    // Показываем кнопку "Закрыть" в шапке
+    tg.expand();
+    tg.BackButton.hide();
+
+    // Подписываемся на изменение темы
+    tg.onEvent('themeChanged', updateThemeInfo);
+
+    // ============================================================
+    //  ВСПОМОГАТЕЛЬНОЕ
+    // ============================================================
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        clearTimeout(t._timer);
+        t._timer = setTimeout(() => t.classList.remove('show'), 2000);
+    }
+
+    function log(id, msg) {
+        document.getElementById(id).textContent = msg;
+    }
+
+    // ============================================================
+    //  1. ПОЛЬЗОВАТЕЛЬ
+    // ============================================================
+    function initUser() {
+        const user = tg.initDataUnsafe?.user;
+        if (user) {
+            const initials = (user.first_name?.[0] || '') + (user.last_name?.[0] || '');
+            document.getElementById('avatar').textContent = initials.toUpperCase() || '?';
+            document.getElementById('user-name').textContent =
+                `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Гость';
+            document.getElementById('user-username').textContent =
+                user.username ? `@${user.username} · ID: ${user.id}` : `ID: ${user.id}`;
+        } else {
+            document.getElementById('user-name').textContent = 'Гость (вне Telegram)';
+            document.getElementById('avatar').textContent = '?';
+        }
+
+        log('platform-info',
+            `Платформа: ${tg.platform} · Версия: ${tg.version} · ${tg.colorScheme}`);
+    }
+
+    // ============================================================
+    //  2. HAPTIC
+    // ============================================================
+    function haptic(type) {
+        try {
+            if (type === 'impact') {
+                tg.HapticFeedback.impactOccurred('medium');
+            } else if (type === 'select') {
+                tg.HapticFeedback.selectionChanged();
+            } else {
+                tg.HapticFeedback.notificationOccurred(type); // success/warning/error
+            }
+            showToast(`Haptic: ${type}`);
+        } catch (e) {
+            showToast('Haptic не поддерживается');
+        }
+    }
+
+    // ============================================================
+    //  3. ОФОРМЛЕНИЕ
+    // ============================================================
+    function updateThemeInfo() {
+        log('theme-status',
+            `Схема: ${tg.colorScheme} · bg: ${tg.themeParams.bg_color || '—'}`);
+    }
+    updateThemeInfo();
+
+    function changeHeader(color) {
+        try {
+            tg.setHeaderColor(color);
+            showToast(`Шапка: ${color}`);
+            haptic('impact');
+        } catch (e) {
+            showToast('Ошибка: ' + e.message);
+        }
+    }
+
+    function changeBg(color) {
+        try {
+            tg.setBackgroundColor(color);
+            showToast(`Фон: ${color}`);
+            haptic('impact');
+        } catch (e) {
+            showToast('Ошибка: ' + e.message);
+        }
+    }
+
+    // ============================================================
+    //  4. CLOUD STORAGE
+    // ============================================================
+    function saveCloud() {
+        const key = document.getElementById('storage-key').value.trim();
+        const value = document.getElementById('storage-value').value;
+        if (!key) return showToast('Введите ключ');
+
+        tg.CloudStorage.setItem(key, value, (err, ok) => {
+            if (err) {
+                log('cloud-status', `❌ Ошибка: ${err}`);
+                haptic('error');
+            } else {
+                log('cloud-status', `✅ Сохранено: "${key}" = "${value}"`);
+                haptic('success');
+            }
+        });
+    }
+
+    function loadCloud() {
+        const key = document.getElementById('storage-key').value.trim();
+        if (!key) return showToast('Введите ключ');
+
+        tg.CloudStorage.getItem(key, (err, value) => {
+            if (err) {
+                log('cloud-status', `❌ Ошибка: ${err}`);
+                haptic('error');
+            } else if (value === null || value === undefined) {
+                log('cloud-status', `📭 Ключ "${key}" не найден`);
+            } else {
+                log('cloud-status', `📖 "${key}" = "${value}"`);
+                document.getElementById('storage-value').value = value;
+                haptic('success');
+            }
+        });
+    }
+
+    function removeCloud() {
+        const key = document.getElementById('storage-key').value.trim();
+        if (!key) return showToast('Введите ключ');
+
+        tg.CloudStorage.removeItem(key, (err, ok) => {
+            if (err) log('cloud-status', `❌ Ошибка: ${err}`);
+            else { log('cloud-status', `🗑 Удалено: "${key}"`); haptic('warning'); }
+        });
+    }
+
+    function listCloudKeys() {
+        tg.CloudStorage.getKeys((err, keys) => {
+            if (err) return log('cloud-status', `❌ Ошибка: ${err}`);
+            if (!keys || !keys.length) return log('cloud-status', '📭 Хранилище пусто');
+            log('cloud-status', `🔑 Ключи (${keys.length}): ${keys.join(', ')}`);
+            haptic('select');
+        });
+    }
+
+    // ============================================================
+    //  5. DEVICE / SECURE STORAGE
+    // ============================================================
+    function testDeviceStorage() {
+        if (!tg.isVersionAtLeast('9.0')) {
+            return log('storage-status', '⚠️ DeviceStorage требует Telegram 9.0+');
+        }
+        const key = 'demo_device_key';
+        const value = 'device_' + Date.now();
+
+        tg.DeviceStorage.setItem(key, value, (err) => {
+            if (err) return log('storage-status', `❌ DeviceStorage save: ${err}`);
+            tg.DeviceStorage.getItem(key, (err2, val) => {
+                if (err2) return log('storage-status', `❌ DeviceStorage get: ${err2}`);
+                log('storage-status', `✅ DeviceStorage OK: "${val}"`);
+                haptic('success');
+            });
+        });
+    }
+
+    function testSecureStorage() {
+        if (!tg.isVersionAtLeast('9.0')) {
+            return log('storage-status', '⚠️ SecureStorage требует Telegram 9.0+');
+        }
+        const key = 'demo_secure_key';
+        const value = 'secret_' + Date.now();
+
+        tg.SecureStorage.setItem(key, value, (err) => {
+            if (err) return log('storage-status', `❌ SecureStorage save: ${err}`);
+            tg.SecureStorage.getItem(key, (err2, val) => {
+                if (err2) return log('storage-status', `❌ SecureStorage get: ${err2}`);
+                log('storage-status', `🔐 SecureStorage OK: "${val}"`);
+                haptic('success');
+            });
+        });
+    }
+
+    // ============================================================
+    //  6. БИОМЕТРИЯ
+    // ============================================================
+    function initBiometry() {
+        const btn = document.getElementById('bio-btn');
+        btn.disabled = true;
+        log('bio-result', '');
+
+        tg.BiometricManager.init(() => {
+            const bm = tg.BiometricManager;
+
+            if (!bm.isBiometricAvailable) {
+                log('bio-status', '❌ Биометрия недоступна на устройстве');
+                btn.disabled = false;
+                btn.textContent = 'Повторить';
+                return;
+            }
+
+            log('bio-status', `✅ Доступна: ${bm.biometricType} · Доступ: ${
+                bm.isAccessGranted ? 'разрешён' : 'не разрешён'}`);
+
+            if (!bm.isAccessGranted) {
+                // Запрашиваем доступ
+                bm.requestAccess({ reason: 'Демонстрация биометрии' }, (granted) => {
+                    if (granted) {
+                        log('bio-status', '✅ Доступ разрешён!');
+                        runBioAuth();
+                    } else {
+                        log('bio-status', '❌ Пользователь отказал в доступе');
+                        btn.disabled = false;
+                    }
+                });
+            } else {
+                runBioAuth();
+            }
+        });
+    }
+
+    function runBioAuth() {
+        tg.BiometricManager.authenticate(
+            { reason: 'Подтвердите личность для демо' },
+            (success, token) => {
+                const btn = document.getElementById('bio-btn');
+                btn.disabled = false;
+                btn.textContent = 'Повторить';
+
+                if (success) {
+                    log('bio-result', `🔓 Успех! Токен: ${(token || '').slice(0, 20)}...`);
+                    haptic('success');
+                    // Сохраняем токен на будущее
+                    tg.BiometricManager.updateBiometricToken(token, () => {});
+                } else {
+                    log('bio-result', '🔒 Аутентификация не пройдена');
+                    haptic('error');
+                }
+            }
+        );
+    }
+
+    // ============================================================
+    //  7. ОТПРАВКА ДАННЫХ БОТУ
+    // ============================================================
+    function sendToBot() {
+        const data = document.getElementById('send-data-input').value;
+        if (!data.trim()) return showToast('Введите текст');
+
+        try {
+            // Если открыто как Mini App — данные уйдут боту
+            if (tg.initData) {
+                tg.sendData(JSON.stringify({ action: 'demo', text: data, ts: Date.now() }));
+                log('send-status', `📤 Отправлено: "${data}"`);
+                haptic('success');
+                setTimeout(() => tg.close(), 500);
+            } else {
+                // В браузере — просто показываем
+                log('send-status', `⚠️ Вне Telegram. Данные: ${JSON.stringify({ text: data })}`);
+            }
+        } catch (e) {
+            log('send-status', `❌ Ошибка: ${e.message}`);
+        }
+    }
+
+    // ============================================================
+    //  8. BACK BUTTON
+    // ============================================================
+    let backEnabled = false;
+    function enableBackButton() {
+        backEnabled = !backEnabled;
+        const btn = document.getElementById('back-status').previousElementSibling;
+
+        if (backEnabled) {
+            tg.BackButton.show();
+            log('back-status', '⬅️ Кнопка «Назад» включена — нажми её в шапке');
+            showToast('Нажми «Назад» в шапке');
+            btn.textContent = 'Выключить кнопку «Назад»';
+        } else {
+            tg.BackButton.hide();
+            log('back-status', 'Кнопка «Назад» выключена');
+            btn.textContent = 'Включить кнопку «Назад»';
+        }
+    }
+
+    // Подписываемся на нажатие BackButton (один раз)
+    tg.BackButton.onClick(() => {
+        showToast('⬅️ BackButton нажат!');
+        haptic('impact');
+        if (backEnabled) {
+            // Авто-выключение
+            tg.BackButton.hide();
+            backEnabled = false;
+            log('back-status', 'Кнопка «Назад» выключена после нажатия');
+            const btn = document.getElementById('back-status').previousElementSibling;
+            btn.textContent = 'Включить кнопку «Назад»';
+        }
+    });
+
+    // ============================================================
+    //  MAIN BUTTON (главное действие)
+    // ============================================================
+    tg.MainButton.setText('📊 Показать итоги');
+    tg.MainButton.show();
+
+    tg.MainButton.onClick(() => {
+        haptic('success');
+        // Собираем «отчёт» о поддержке функций
+        const report = [
+            `Платформа: ${tg.platform}`,
+            `Версия: ${tg.version}`,
+            `Тема: ${tg.colorScheme}`,
+            `Haptic: ${tg.isVersionAtLeast('6.1') ? '✅' : '❌'}`,
+            `CloudStorage: ${tg.isVersionAtLeast('6.9') ? '✅' : '❌'}`,
+            `Biometry: ${tg.isVersionAtLeast('7.2') ? '✅' : '❌'}`,
+            `Storage v9: ${tg.isVersionAtLeast('9.0') ? '✅' : '❌'}`,
+        ].join('\n');
+
+        alert('📱 Возможности вашего клиента:\n\n' + report);
+        tg.MainButton.hide();
+        setTimeout(() => {
+            tg.MainButton.setText('📊 Показать итоги');
+            tg.MainButton.show();
+        }, 3000);
+    });
+
+    // ============================================================
+    //  СТАРТ
+    // ============================================================
+    initUser();
+    console.log('[Demo] Initialized. initData:', tg.initData);
+    </script>
+</body>
+</html>

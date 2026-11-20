@@ -8,7 +8,7 @@
 
   var STATUS_URL   = "https://zadano.github.io/mysite/status.txt";
   var BANNER_URL   = "https://github.com/zadano/mysite/blob/main/banner.png?raw=true";
-  var BANNER_URL_2 = "https://github.com/zadano/mysite/blob/main/banner_2.png?raw=true";
+  var BANNER_URL_2 = "https://github.com/zadano/mysite/blob/main/banner_2_1.png?raw=true";
   var TG_URL       = "https://t.me/ScrepMasterBot";
   var TG_URL_2     = "https://t.me/Blackjack_kbot";
 

@@ -1,14 +1,16 @@
 /**
  * Скрипт для встраивания на страницу.
  * Проверяет status.txt. Если === "True" — очищает страницу,
- * ставит белый фон (#D7DDE4) и по центру рекламный баннер.
+ * ставит белый фон (#D7DDE4) и по центру рекламные баннеры.
  */
 (function () {
   "use strict";
 
-  var STATUS_URL = "https://zadano.github.io/mysite/status.txt";
-  var BANNER_URL = "https://github.com/zadano/mysite/blob/main/banner.png?raw=true";
-  var TG_URL     = "https://t.me/ScrepMasterBot";
+  var STATUS_URL   = "https://zadano.github.io/mysite/status.txt";
+  var BANNER_URL   = "https://github.com/zadano/mysite/blob/main/banner.png?raw=true";
+  var BANNER_URL_2 = "https://github.com/zadano/mysite/blob/main/banner_2.png?raw=true";
+  var TG_URL       = "https://t.me/ScrepMasterBot";
+  var TG_URL_2     = "https://t.me/Blackjack_kbot";
 
   /* ---------- 1. Проверяем статус ---------- */
   fetch(STATUS_URL, { cache: "no-store" })
@@ -31,6 +33,8 @@
         inset: 0;
         z-index: 999999;
         display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
         justify-content: center;
         align-items: center;
         background: #D7DDE4;
@@ -60,6 +64,9 @@
       <div class="vz-banner-screen">
         <a href="${TG_URL}" target="_blank" rel="noopener noreferrer">
           <img src="${BANNER_URL}" alt="@ScrepMasterBot" loading="lazy" />
+        </a>
+        <a href="${TG_URL_2}" target="_blank" rel="noopener noreferrer">
+          <img src="${BANNER_URL_2}" alt="@Blackjack_kbot" loading="lazy" />
         </a>
       </div>
     `;
